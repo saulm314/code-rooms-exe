@@ -1,4 +1,6 @@
-﻿namespace CRECSharpInterpreter
+﻿using System;
+
+namespace CRECSharpInterpreter
 {
     public class Interpreter
     {
