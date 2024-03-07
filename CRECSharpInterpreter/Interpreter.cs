@@ -7,7 +7,7 @@ namespace CRECSharpInterpreter
         public Interpreter(string text)
         {
             this.text = text;
-            Console.WriteLine($"Interpreter for the following text created:\n{text}");
+            Console.WriteLine($"Interpreter for the following text created:\n\n{text}\n");
         }
 
         public readonly string text;
