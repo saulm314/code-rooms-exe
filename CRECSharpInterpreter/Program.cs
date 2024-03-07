@@ -6,7 +6,6 @@
         {
             string dummyText = "int number;\nnumber = 1;";
             Interpreter interpreter = new(dummyText);
-            interpreter.Initialise();
             while (true) { }
         }
     }
