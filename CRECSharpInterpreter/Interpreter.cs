@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace CRECSharpInterpreter
 {
@@ -39,7 +40,11 @@ namespace CRECSharpInterpreter
         // needs to be updated as new components are added
         private string[] GetLinesFromText(string text)
         {
-            return text.Split(new char[] { ';', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            return
+                text
+                .Split(';', StringSplitOptions.RemoveEmptyEntries)
+                .Where(str => !string.IsNullOrWhiteSpace(str))
+                .ToArray();
         }
 
         private void ParseLine(string line)
@@ -62,7 +67,12 @@ namespace CRECSharpInterpreter
             foreach (string keyString in nonKeywordKeyStrings)
                 line = line.Replace(keyString, $" {keyString} ");
 
-            return line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            // remove all whitespace characters and return everything else, separated
+            return
+                line
+                .Split(default(char[]), StringSplitOptions.TrimEntries)
+                .Where(str => !string.IsNullOrWhiteSpace(str))
+                .ToArray();
         }
 
         public bool InterpretNextLine()
