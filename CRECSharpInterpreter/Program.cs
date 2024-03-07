@@ -5,7 +5,8 @@
         static void Main(string[] args)
         {
             string dummyText = "int number;\nnumber = 1;";
-            new Interpreter(dummyText);
+            Interpreter interpreter = new(dummyText);
+            interpreter.Initialise();
             while (true) { }
         }
     }
