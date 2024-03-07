@@ -4,7 +4,8 @@
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
+            string dummyText = "Console.WriteLine(\"Hello World!\");\nConsole.WriteLine(\"Goodbye!\");";
+            new Interpreter(dummyText);
             while (true) { }
         }
     }
