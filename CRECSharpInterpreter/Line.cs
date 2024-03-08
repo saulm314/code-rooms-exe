@@ -19,10 +19,21 @@ namespace CRECSharpInterpreter
                 case Type.Invalid:
                     throw new LineException(this, $"Unrecognised operation in line:\n{Text}");
                 case Type.Declaration:
+                    VerifyDeclarationValid();
+                    DeclareVariable();
+                    break;
                 case Type.DeclarationInitialisation:
-                    VarType varType = VarType.VarTypes.Find(vt => vt.Name == KeyStrings[0].Text);
-                    string varName = KeyStrings[1].Text;
-                    DeclaredVariable = new(varType, varName);
+                    VerifyDeclarationValid();
+                    _Expression = CreateExpression(); // must be done before declaring variable to ensure no self-references
+                    VarToWrite = DeclareVariable();
+                    VerifyWriteValid();
+                    VarToWrite.Initialised = true;
+                    break;
+                case Type.Write:
+                    _Expression = CreateExpression();
+                    VarToWrite = GetVarToWrite_NoDeclaration();
+                    VerifyWriteValid();
+                    VarToWrite.Initialised = true;
                     break;
             }
         }
@@ -33,11 +44,79 @@ namespace CRECSharpInterpreter
 
         public Type _Type { get; init; }
 
-        // appropriate variable if type is Declaration or DeclarationInitialisation, else null
-        public Variable DeclaredVariable { get; init; }
+        public Variable VarToWrite { get; init; }
 
-        // for DeclarationInitialisation and Write lines only; controlled by Chunk
-        public Expression _Expression { get; set; }
+        public Expression _Expression { get; init; }
+
+        private bool IsDeclarationValid(out string errorMessage)
+        {
+            string varName = KeyStrings[1].Text;
+            if (Info.DeclaredVariables.Exists(var => var.Name == varName))
+            {
+                errorMessage = $"Variable {varName} has already been declared";
+                return false;
+            }
+            errorMessage = null;
+            return true;
+        }
+
+        private void VerifyDeclarationValid()
+        {
+            string varName = KeyStrings[1].Text;
+            if (Info.DeclaredVariables.Exists(var => var.Name == varName))
+                throw new LineException(this, $"Variable {varName} has already been declared");
+        }
+
+        private Variable DeclareVariable()
+        {
+            VarType varType = VarType.VarTypes.Find(vt => vt.Name == KeyStrings[0].Text);
+            string varName = KeyStrings[1].Text;
+            Variable declaredVariable = new(varType, varName);
+            Info.DeclaredVariables.Add(declaredVariable);
+            return declaredVariable;
+        }
+
+        private Expression CreateExpression()
+        {
+            int expressionOffset = _Type switch
+            {
+                Type.DeclarationInitialisation => 3,
+                Type.Write => 2,
+                _ => throw new LineException(this, "internal error")
+            };
+            KeyString[] expressionKeyStrings = new KeyString[KeyStrings.Length - expressionOffset];
+            Array.Copy(KeyStrings, expressionOffset, expressionKeyStrings, 0, expressionKeyStrings.Length);
+
+            // verify that no invalid variables are present
+            // this leaves less work for the expression itself
+            //      as it does not have to verify whether each variable has been declared
+            foreach (KeyString keyString in expressionKeyStrings)
+            {
+                if (keyString._Type == KeyString.Type.Variable)
+                {
+                    Variable variable = Info.DeclaredVariables.Find(var => var.Name == keyString.Text);
+                    if (variable == null)
+                        throw new LineException(this, $"Variable {keyString.Text} hasn't been declared");
+                    if (!variable.Initialised)
+                        throw new LineException(this, $"Variable {keyString.Text} hasn't been initialised");
+                }
+            }
+            return new(expressionKeyStrings);
+        }
+
+        private void VerifyWriteValid()
+        {
+            if (VarToWrite._VarType != _Expression._VarType)
+                throw new LineException(this, $"Cannot write expression of type {_Expression._VarType} to variable of type {VarToWrite._VarType}");
+        }
+
+        private Variable GetVarToWrite_NoDeclaration()
+        {
+            Variable varToWrite = Info.DeclaredVariables.Find(var => var.Name == KeyStrings[0].Text);
+            if (varToWrite == null)
+                throw new LineException(this, $"Variable {KeyStrings[0].Text} hasn't been declared");
+            return varToWrite;
+        }
 
         private static string[] nonKeywordKeyStrings = new string[]
         {

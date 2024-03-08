@@ -9,10 +9,6 @@ namespace CRECSharpInterpreter
         {
             Text = text;
             _Type = GetType();
-            Console.WriteLine($"{_Type}: {Text}");
-
-            if (_Type == Type.Invalid)
-                throw new KeyStringException(this, $"Unrecognised key string: {Text}");
 
             switch (_Type)
             {

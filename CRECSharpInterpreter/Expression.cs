@@ -7,59 +7,29 @@ namespace CRECSharpInterpreter
         public Expression(KeyString[] keyStrings)
         {
             KeyStrings = keyStrings;
-            VarType varType;
-            string errorMessage;
-            bool isValid = IsValid(out varType, out errorMessage);
-            _VarType = varType;
-            ErrorMessage = errorMessage;
-
-            if (!isValid)
-                throw new ExpressionException(this, ErrorMessage);
+            _VarType = ComputeVarType();
         }
 
         public KeyString[] KeyStrings { get; init; }
 
         public VarType _VarType { get; init; }
-        public string ErrorMessage { get; init; }
         public object Value { get; private set; }
 
-        public bool IsValid(out VarType varType, out string errorMessage)
+        private VarType ComputeVarType()
         {
             if (KeyStrings.Length != 1)
-            {
-                varType = null;
-                errorMessage = $"Unrecognised expression of length {KeyStrings.Length}";
-                return false;
-            }
+                throw new ExpressionException(this, $"Unrecognised expression of length {KeyStrings.Length}");
             if (KeyStrings[0]._Type == KeyString.Type.Variable)
             {
                 Variable variable = Info.DeclaredVariables.Find(var => var.Name == KeyStrings[0].Text);
-                if (variable == null)
-                {
-                    varType = null;
-                    errorMessage = $"Variable {KeyStrings[0].Text} hasn't been declared";
-                    return false;
-                }
-                if (!variable.Initialised)
-                {
-                    varType = null;
-                    errorMessage = $"Variable {KeyStrings[0].Text} hasn't been intialised";
-                    return false;
-                }
-                varType = variable._VarType;
-                errorMessage = null;
-                return true;
+                return variable._VarType;
             }
             if (KeyStrings[0]._Literal != null)
             {
                 Literal literal = KeyStrings[0]._Literal;
-                varType = literal._VarType;
-                errorMessage = null;
-                return true;
+                return literal._VarType;
             }
-            varType = null;
-            errorMessage = $"Could not parse key string {KeyStrings[0].Text} in expression";
-            return false;
+            throw new ExpressionException(this, $"Could not parse key string {KeyStrings[0]} in expression");
         }
 
         public class ExpressionException : Exception

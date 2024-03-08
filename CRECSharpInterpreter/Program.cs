@@ -6,7 +6,7 @@ namespace CRECSharpInterpreter
     {
         static void Main(string[] args)
         {
-            string dummyText = "int number;\nnumber = 1;";
+            string dummyText = "int _number = 1;\nint secondNumber = _number;\nsecondNumber = 3;\n_number = secondNumber;\nsecondNumber=_number;";
             try
             {
                 Interpreter interpreter = new(dummyText);
