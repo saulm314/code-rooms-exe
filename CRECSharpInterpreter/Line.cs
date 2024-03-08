@@ -17,10 +17,10 @@ namespace CRECSharpInterpreter
             switch (_Type)
             {
                 case Type.Invalid:
-                    throw new Exception($"Unrecognised operation in line:\n{Text}");
+                    throw new LineException(this, $"Unrecognised operation in line:\n{Text}");
                 case Type.Declaration:
                 case Type.DeclarationInitialisation:
-                    Variable.Type varType = Variable.GetTypeFromString(KeyStrings[0].Text);
+                    VarType varType = VarType.VarTypes.Find(vt => vt.Name == KeyStrings[0].Text);
                     string varName = KeyStrings[1].Text;
                     DeclaredVariable = new(varType, varName);
                     break;

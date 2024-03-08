@@ -4,30 +4,16 @@ namespace CRECSharpInterpreter
 {
     public class Variable
     {
-        public Variable(Type type, string name)
+        public Variable(VarType varType, string name)
         {
-            _Type = type;
+            _VarType = varType;
             Name = name;
         }
 
-        public Type _Type { get; set; }
-        public string Name { get; set; }
+        public VarType _VarType { get; init; }
+        public string Name { get; init; }
         public object Value { get; set; }
-
-        public enum Type
-        {
-            Invalid,
-            @int
-        }
-
-        public static Type GetTypeFromString(string typeStr)
-        {
-            return typeStr switch
-            {
-                "int" => Type.@int,
-                _ => throw new VariableException()
-            };
-        }
+        public bool Initialised { get; set; }
 
         public class VariableException : Exception
         {

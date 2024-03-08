@@ -13,16 +13,25 @@ namespace CRECSharpInterpreter
 
             if (_Type == Type.Invalid)
                 throw new KeyStringException(this, $"Unrecognised key string: {Text}");
+
+            switch (_Type)
+            {
+                case Type.Invalid:
+                    throw new KeyStringException(this, $"Unrecognised key string: {Text}");
+                case Type.Integer:
+                    VarType varType = VarType.@int;
+                    int value = int.Parse(Text);
+                    _Literal = new(varType, value);
+                    break;
+            }
         }
 
         public string Text { get; init; }
 
         public Type _Type { get; init; }
 
-        private static string[] types = new string[]
-        {
-            "int"
-        };
+        // null if not a literal
+        public Literal _Literal { get; init; }
 
         private new Type GetType()
         {
@@ -39,7 +48,7 @@ namespace CRECSharpInterpreter
 
         private bool IsKeyword { get => IsType; }
 
-        private bool IsType { get => _isType ??= types.Contains(Text); }
+        private bool IsType { get => _isType ??= VarType.VarTypes.Exists(varType => varType.Name == Text); }
         private bool? _isType;
 
         private bool IsVariable
