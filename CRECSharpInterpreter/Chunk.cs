@@ -17,7 +17,6 @@ namespace CRECSharpInterpreter
 
         public Line[] Lines { get; init; }
 
-        // needs to be updated as new components are added
         private string[] GetLines()
             =>
                 Text

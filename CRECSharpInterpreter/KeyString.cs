@@ -16,13 +16,11 @@ namespace CRECSharpInterpreter
 
         public Type _Type { get; private set; }
 
-        // needs updating as features are added
         private static string[] types = new string[]
         {
             "int"
         };
 
-        // needs updating as features are added
         private new Type GetType()
         {
             if (IsType)
@@ -67,7 +65,6 @@ namespace CRECSharpInterpreter
         private bool IsInteger { get => _isInteger ??= int.TryParse(Text, out _); }
         private bool? _isInteger;
 
-        // needs updating as features are added
         public enum Type
         {
             Invalid,

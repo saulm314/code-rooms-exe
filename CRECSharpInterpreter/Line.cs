@@ -18,13 +18,11 @@ namespace CRECSharpInterpreter
 
         public KeyString[] KeyStrings { get; init; }
 
-        // needs to be updated as new components are added
         private static string[] nonKeywordKeyStrings = new string[]
         {
             "="
         };
 
-        // needs to be updated as new components are added
         private string[] GetKeyStrings()
         {
             // ensure that every key string is surrounded by at least one space on either side
