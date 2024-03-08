@@ -36,6 +36,9 @@ namespace CRECSharpInterpreter
         // appropriate variable if type is Declaration or DeclarationInitialisation, else null
         public Variable DeclaredVariable { get; init; }
 
+        // for DeclarationInitialisation and Write lines only; controlled by Chunk
+        public Expression _Expression { get; set; }
+
         private static string[] nonKeywordKeyStrings = new string[]
         {
             "="
