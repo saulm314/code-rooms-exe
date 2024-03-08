@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace CRECSharpInterpreter
 {
@@ -6,8 +7,8 @@ namespace CRECSharpInterpreter
     {
         static void Main(string[] args)
         {
-            string dummyText = "int _number = 1;\nint secondNumber = _number;\nsecondNumber = 3;\n_number = secondNumber;\nsecondNumber=_number;\n" +
-                "int thirdNumber = _number;\nint numbernumber = -193214;\nthirdNumber = numbernumber;";
+            StreamReader streamReader = new(@"..\..\..\..\Files\Dummy.cs");
+            string dummyText = streamReader.ReadToEnd();
             try
             {
                 Interpreter interpreter = new(dummyText);
