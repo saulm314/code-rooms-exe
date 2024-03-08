@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 
 namespace CRECSharpInterpreter
 {
@@ -7,6 +8,10 @@ namespace CRECSharpInterpreter
         public Chunk(string text)
         {
             Text = text;
+            string trimmedText = Text.TrimEnd();
+            if (trimmedText[trimmedText.Length - 1] != ';')
+                throw new ChunkException(this, "Semicolon on final line expected");
+
             string[] linesStr = GetLines();
             Lines = new Line[linesStr.Length];
             for (int i = 0; i < Lines.Length; i++)
@@ -23,5 +28,15 @@ namespace CRECSharpInterpreter
                 .Split(';', System.StringSplitOptions.RemoveEmptyEntries)
                 .Where(str => !string.IsNullOrWhiteSpace(str))
                 .ToArray();
+
+        public class ChunkException : Exception
+        {
+            public ChunkException(Chunk chunk, string message = null) : base(message)
+            {
+                this.chunk = chunk;
+            }
+
+            public Chunk chunk;
+        }
     }
 }

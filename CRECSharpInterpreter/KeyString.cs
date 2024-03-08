@@ -12,7 +12,7 @@ namespace CRECSharpInterpreter
             Console.WriteLine($"{_Type}: {Text}");
 
             if (_Type == Type.Invalid)
-                throw new Exception($"Invalid key string {Text}");
+                throw new KeyStringException(this, $"Unrecognised key string: {Text}");
         }
 
         public string Text { get; init; }
@@ -75,6 +75,16 @@ namespace CRECSharpInterpreter
             Variable,
             Equals,
             Integer
+        }
+
+        public class KeyStringException : Exception
+        {
+            public KeyStringException(KeyString keyString, string message = null) : base(message)
+            {
+                this.keyString = keyString;
+            }
+
+            KeyString keyString;
         }
     }
 }
