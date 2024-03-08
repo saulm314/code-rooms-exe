@@ -14,7 +14,7 @@ namespace CRECSharpInterpreter
 
         public string Text { get; init; }
 
-        public Type _Type { get; private set; }
+        public Type _Type { get; init; }
 
         private static string[] types = new string[]
         {
