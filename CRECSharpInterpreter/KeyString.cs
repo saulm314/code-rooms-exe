@@ -10,6 +10,9 @@ namespace CRECSharpInterpreter
             Text = text;
             _Type = GetType();
             Console.WriteLine($"{_Type}: {Text}");
+
+            if (_Type == Type.Invalid)
+                throw new Exception($"Invalid key string {Text}");
         }
 
         public string Text { get; init; }
