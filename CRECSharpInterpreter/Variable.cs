@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace CRECSharpInterpreter
+﻿namespace CRECSharpInterpreter
 {
     public class Variable
     {
@@ -23,6 +21,11 @@ namespace CRECSharpInterpreter
             }
 
             public Variable variable;
+        }
+
+        public override string ToString()
+        {
+            return $"{_VarType}\t{Name}\t:\t{Value}";
         }
     }
 }

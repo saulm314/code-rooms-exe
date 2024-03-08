@@ -8,6 +8,14 @@ namespace CRECSharpInterpreter
         {
             Console.WriteLine($"Creating interpreter for the following text:\n\n{text}\n");
             chunk = new(text, Mode.Compilation);
+            Console.ReadLine();
+
+            chunk = new(text, Mode.Runtime);
+            while (chunk.RunNextLine())
+            {
+                Console.ReadLine();
+            }
+            Console.WriteLine("Done");
         }
 
         public Chunk chunk;

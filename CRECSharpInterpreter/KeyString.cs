@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace CRECSharpInterpreter
+﻿namespace CRECSharpInterpreter
 {
     public class KeyString
     {

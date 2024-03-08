@@ -36,6 +36,9 @@ namespace CRECSharpInterpreter
                     VarToWrite.Initialised = true;
                     break;
             }
+
+            if (Info.Instance._Mode == Mode.Runtime)
+                InitialiseRuntime();
         }
 
         public string Text { get; init; }
@@ -48,10 +51,25 @@ namespace CRECSharpInterpreter
 
         public Expression _Expression { get; init; }
 
+        private void InitialiseRuntime()
+        {
+            Console.WriteLine(Text.TrimStart() + '\n');
+            switch (_Type)
+            {
+                case Type.DeclarationInitialisation:
+                case Type.Write:
+                    PerformWrite();
+                    break;
+            }
+            foreach (Variable variable in Info.Instance.DeclaredVariables)
+                Console.WriteLine(variable);
+            Console.WriteLine("__________________________________");
+        }
+
         private bool IsDeclarationValid(out string errorMessage)
         {
             string varName = KeyStrings[1].Text;
-            if (Info.DeclaredVariables.Exists(var => var.Name == varName))
+            if (Info.Instance.DeclaredVariables.Exists(var => var.Name == varName))
             {
                 errorMessage = $"Variable {varName} has already been declared";
                 return false;
@@ -63,7 +81,7 @@ namespace CRECSharpInterpreter
         private void VerifyDeclarationValid()
         {
             string varName = KeyStrings[1].Text;
-            if (Info.DeclaredVariables.Exists(var => var.Name == varName))
+            if (Info.Instance.DeclaredVariables.Exists(var => var.Name == varName))
                 throw new LineException(this, $"Variable {varName} has already been declared");
         }
 
@@ -72,7 +90,7 @@ namespace CRECSharpInterpreter
             VarType varType = VarType.VarTypes.Find(vt => vt.Name == KeyStrings[0].Text);
             string varName = KeyStrings[1].Text;
             Variable declaredVariable = new(varType, varName);
-            Info.DeclaredVariables.Add(declaredVariable);
+            Info.Instance.DeclaredVariables.Add(declaredVariable);
             return declaredVariable;
         }
 
@@ -94,7 +112,7 @@ namespace CRECSharpInterpreter
             {
                 if (keyString._Type == KeyString.Type.Variable)
                 {
-                    Variable variable = Info.DeclaredVariables.Find(var => var.Name == keyString.Text);
+                    Variable variable = Info.Instance.DeclaredVariables.Find(var => var.Name == keyString.Text);
                     if (variable == null)
                         throw new LineException(this, $"Variable {keyString.Text} hasn't been declared");
                     if (!variable.Initialised)
@@ -112,10 +130,16 @@ namespace CRECSharpInterpreter
 
         private Variable GetVarToWrite_NoDeclaration()
         {
-            Variable varToWrite = Info.DeclaredVariables.Find(var => var.Name == KeyStrings[0].Text);
+            Variable varToWrite = Info.Instance.DeclaredVariables.Find(var => var.Name == KeyStrings[0].Text);
             if (varToWrite == null)
                 throw new LineException(this, $"Variable {KeyStrings[0].Text} hasn't been declared");
             return varToWrite;
+        }
+
+        private void PerformWrite()
+        {
+            _Expression.Compute();
+            VarToWrite.Value = _Expression.Value;
         }
 
         private static string[] nonKeywordKeyStrings = new string[]

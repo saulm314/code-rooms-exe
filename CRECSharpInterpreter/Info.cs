@@ -2,8 +2,18 @@
 
 namespace CRECSharpInterpreter
 {
-    public static class Info
+    public class Info
     {
-        public static List<Variable> DeclaredVariables { get; } = new();
+        public Info(Mode mode)
+        {
+            Instance = this;
+            _Mode = mode;
+        }
+
+        public static Info Instance { get; private set; }
+
+        public List<Variable> DeclaredVariables { get; } = new();
+
+        public Mode _Mode { get; }
     }
 }

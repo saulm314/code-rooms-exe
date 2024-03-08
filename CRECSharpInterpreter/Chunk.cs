@@ -8,7 +8,6 @@ namespace CRECSharpInterpreter
         public Chunk(string text, Mode mode)
         {
             Text = text;
-            _Mode = mode;
             string trimmedText = Text.TrimEnd();
             if (trimmedText[trimmedText.Length - 1] != ';')
                 throw new ChunkException(this, "Semicolon on final line expected");
@@ -16,14 +15,14 @@ namespace CRECSharpInterpreter
             linesStr = GetLines();
             Lines = new Line[linesStr.Length];
 
-            if (_Mode == Mode.Compilation)
+            _ = new Info(mode);
+
+            if (Info.Instance._Mode == Mode.Compilation)
                 for (int i = 0; i < Lines.Length; i++)
                     Lines[i] = new(linesStr[i]);
         }
 
         public string Text { get; init; }
-
-        public Mode _Mode { get; init; }
 
         public Line[] Lines { get; init; }
 
