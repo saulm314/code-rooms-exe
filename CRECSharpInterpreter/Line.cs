@@ -188,7 +188,7 @@ namespace CRECSharpInterpreter
             Write
         }
 
-        public class LineException : Exception
+        public class LineException : InterpreterException
         {
             public LineException(Line line, string message = null) : base(message)
             {

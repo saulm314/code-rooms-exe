@@ -32,7 +32,7 @@ namespace CRECSharpInterpreter
             throw new ExpressionException(this, $"Could not parse key string {KeyStrings[0]} in expression");
         }
 
-        public class ExpressionException : Exception
+        public class ExpressionException : InterpreterException
         {
             public ExpressionException(Expression expression, string message = null) : base(message)
             {

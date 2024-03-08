@@ -13,7 +13,7 @@ namespace CRECSharpInterpreter
         public VarType _VarType { get; init; }
         public object Value { get; init; }
 
-        public class LiteralException : Exception
+        public class LiteralException : InterpreterException
         {
             public LiteralException(Literal literal, string message = null) : base(message)
             {

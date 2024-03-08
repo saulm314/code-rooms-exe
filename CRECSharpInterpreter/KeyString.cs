@@ -81,7 +81,7 @@ namespace CRECSharpInterpreter
             Integer
         }
 
-        public class KeyStringException : Exception
+        public class KeyStringException : InterpreterException
         {
             public KeyStringException(KeyString keyString, string message = null) : base(message)
             {

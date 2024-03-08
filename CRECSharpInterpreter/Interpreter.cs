@@ -7,7 +7,7 @@ namespace CRECSharpInterpreter
         public Interpreter(string text)
         {
             Console.WriteLine($"Creating interpreter for the following text:\n\n{text}\n");
-            chunk = new(text);
+            chunk = new(text, Mode.Compilation);
         }
 
         public Chunk chunk;
@@ -23,10 +23,5 @@ namespace CRECSharpInterpreter
         Supported data types:
             * int
         */
-
-        public bool InterpretNextLine()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

@@ -15,9 +15,14 @@ namespace CRECSharpInterpreter
         public object Value { get; set; }
         public bool Initialised { get; set; }
 
-        public class VariableException : Exception
+        public class VariableException : InterpreterException
         {
-            public VariableException(string message = null) : base(message) { }
+            public VariableException(Variable variable, string message = null) : base(message)
+            {
+                this.variable = variable;
+            }
+
+            public Variable variable;
         }
     }
 }
