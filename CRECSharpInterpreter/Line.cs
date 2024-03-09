@@ -66,18 +66,6 @@ namespace CRECSharpInterpreter
             Console.WriteLine("__________________________________");
         }
 
-        private bool IsDeclarationValid(out string errorMessage)
-        {
-            string varName = KeyStrings[1].Text;
-            if (Info.Instance.DeclaredVariables.Exists(var => var.Name == varName))
-            {
-                errorMessage = $"Variable {varName} has already been declared";
-                return false;
-            }
-            errorMessage = null;
-            return true;
-        }
-
         private void VerifyDeclarationValid()
         {
             string varName = KeyStrings[1].Text;
