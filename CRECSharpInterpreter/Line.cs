@@ -113,7 +113,8 @@ namespace CRECSharpInterpreter
         private void VerifyWriteValid()
         {
             if (VarToWrite._VarType != _Expression._VarType)
-                throw new LineException(this, $"Cannot write expression of type {_Expression._VarType} to variable of type {VarToWrite._VarType}");
+                throw new LineException(this,
+                    $"Cannot write expression of type {_Expression._VarType} to variable {VarToWrite.Name} of type {VarToWrite._VarType}");
         }
 
         private Variable GetVarToWrite_NoDeclaration()

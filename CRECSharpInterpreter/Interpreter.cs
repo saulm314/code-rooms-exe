@@ -31,6 +31,7 @@ namespace CRECSharpInterpreter
         
         Supported data types:
             * int
+            * bool
         */
     }
 }

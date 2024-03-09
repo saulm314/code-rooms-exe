@@ -7,14 +7,20 @@
             Text = text;
             _Type = GetType();
 
+            VarType varType;
             switch (_Type)
             {
                 case Type.Invalid:
                     throw new KeyStringException(this, $"Unrecognised key string: {Text}");
                 case Type.Integer:
-                    VarType varType = VarType.@int;
-                    int value = int.Parse(Text);
-                    _Literal = new(varType, value);
+                    varType = VarType.@int;
+                    int intValue = int.Parse(Text);
+                    _Literal = new(varType, intValue);
+                    break;
+                case Type.Boolean:
+                    varType = VarType.@bool;
+                    bool boolValue = bool.Parse(Text);
+                    _Literal = new(varType, boolValue);
                     break;
             }
         }
@@ -36,10 +42,12 @@
                 return Type.Equals;
             if (IsInteger)
                 return Type.Integer;
+            if (IsBoolean)
+                return Type.Boolean;
             return Type.Invalid;
         }
 
-        private bool IsKeyword { get => IsType; }
+        private bool IsKeyword { get => IsType || IsBoolean; }
 
         private bool IsType { get => _isType ??= VarType.VarTypes.Exists(varType => varType.Name == Text); }
         private bool? _isType;
@@ -70,13 +78,17 @@
         private bool IsInteger { get => _isInteger ??= int.TryParse(Text, out _); }
         private bool? _isInteger;
 
+        private bool IsBoolean { get => _isBoolean ??= bool.TryParse(Text, out _); }
+        private bool? _isBoolean;
+
         public enum Type
         {
             Invalid,
             Type,
             Variable,
             Equals,
-            Integer
+            Integer,
+            Boolean
         }
 
         public class KeyStringException : InterpreterException

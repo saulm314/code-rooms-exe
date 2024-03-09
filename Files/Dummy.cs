@@ -7,3 +7,10 @@ secondNumber=_number;
 int thirdNumber = _number;
 int numbernumber = -193214;
 thirdNumber = numbernumber;
+
+bool boolean = false;
+bool boolean2 = true;
+boolean2 = boolean;
+boolean = true;
+
+numbernumber = 17;
