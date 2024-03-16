@@ -54,7 +54,6 @@ namespace CRECSharpInterpreter
         private void InitialiseRuntime()
         {
             Console.WriteLine(Text.TrimStart() + '\n');
-            Console.WriteLine("Stack:");
             switch (_Type)
             {
                 case Type.DeclarationInitialisation:
@@ -64,7 +63,7 @@ namespace CRECSharpInterpreter
             }
             foreach (Variable variable in Info.Instance.DeclaredVariables)
                 Console.WriteLine(variable);
-            Console.WriteLine("\nHeap:\n");
+            Console.WriteLine();
             for (int i = 0; i < Info.Instance.ConstructedArrays.Count; i++)
             {
                 Console.WriteLine($"{{{i}}}:");
