@@ -67,10 +67,12 @@
                 return Type.Character;
             if (IsDoubleFloat)
                 return Type.DoubleFloat;
+            if (IsNewKeyword)
+                return Type.NewKeyword;
             return Type.Invalid;
         }
 
-        private bool IsKeyword { get => IsType || IsBoolean; }
+        private bool IsKeyword { get => IsType || IsBoolean || IsNewKeyword; }
 
         private bool IsType
         {
@@ -141,6 +143,9 @@
         private bool IsDoubleFloat { get => _isDoubleFloat ??= double.TryParse(Text, out _); }
         private bool? _isDoubleFloat;
 
+        private bool IsNewKeyword { get => _isNewKeyword ??= Text == "new"; }
+        private bool? _isNewKeyword;
+
         public enum Type
         {
             Invalid,
@@ -150,8 +155,11 @@
             Integer,
             Boolean,
             Character,
-            DoubleFloat
+            DoubleFloat,
+            NewKeyword
         }
+
+        public override string ToString() => Text;
 
         public class KeyStringException : InterpreterException
         {
