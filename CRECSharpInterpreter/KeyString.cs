@@ -78,7 +78,7 @@
         private bool IsInteger { get => _isInteger ??= int.TryParse(Text, out _); }
         private bool? _isInteger;
 
-        private bool IsBoolean { get => _isBoolean ??= bool.TryParse(Text, out _); }
+        private bool IsBoolean { get => _isBoolean ??= Text == "false" || Text == "true"; }
         private bool? _isBoolean;
 
         public enum Type

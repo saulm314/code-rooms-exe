@@ -23,9 +23,28 @@
             public Variable variable;
         }
 
+        public string ValueAsString
+        {
+            get
+            {
+                switch (_VarType.Name)
+                {
+                    case "int":
+                        return Value.ToString();
+                    case "bool":
+                        if ((bool)Value)
+                            return "true";
+                        return "false";
+                    default:
+                        throw new VariableException(this,
+                            $"Internal error: cannot convert value of type {_VarType} to string");
+                }
+            }
+        }
+
         public override string ToString()
         {
-            return $"{_VarType}\t{Name}\t:\t{Value}";
+            return $"{_VarType}\t{Name}\t:\t{ValueAsString}";
         }
     }
 }
