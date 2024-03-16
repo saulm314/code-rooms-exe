@@ -28,3 +28,5 @@ _number = integer;
 
 int[] intArray = new int[5];
 int[] intArray2 = intArray;
+int[] intArray3 = new int[3];
+int[] intArray4 = intArray2;

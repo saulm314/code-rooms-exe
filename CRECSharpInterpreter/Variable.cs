@@ -42,9 +42,17 @@ namespace CRECSharpInterpreter
                     case "double":
                         return Value.ToString();
                     default:
+                        if (_VarType.IsArray)
+                            break;
                         throw new VariableException(this,
                             $"Internal error: cannot convert value of type {_VarType} to string");
                 }
+
+                // varType is an array
+                if (Value == null)
+                    return "null";
+                int referenceNumber = Info.Instance.ConstructedArrays.IndexOf(Value);
+                return $"{{{referenceNumber}}}";
             }
         }
 
