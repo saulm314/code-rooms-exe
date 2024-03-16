@@ -69,6 +69,8 @@
                 return Type.DoubleFloat;
             if (IsNewKeyword)
                 return Type.NewKeyword;
+            if (IsArrayConstruction)
+                return Type.ArrayConstruction;
             return Type.Invalid;
         }
 
@@ -146,6 +148,31 @@
         private bool IsNewKeyword { get => _isNewKeyword ??= Text == "new"; }
         private bool? _isNewKeyword;
 
+        // also provides array construction length
+        // i.e. "int[] array = new int[5];" will set arrayConstructionLength to 5
+        private bool IsArrayConstruction
+        {
+            get
+            {
+                if (_isArrayConstruction != null)
+                    return (bool)_isArrayConstruction;
+                int openSquareBraceIndex = Text.IndexOf('[');
+                if (openSquareBraceIndex == -1)
+                    return _isArrayConstruction ??= false;
+                int closeSquareBraceIndex = Text.IndexOf(']');
+                if (closeSquareBraceIndex == -1)
+                    return _isArrayConstruction ??= false;
+                if (closeSquareBraceIndex <= openSquareBraceIndex)
+                    return _isArrayConstruction ??= false;
+                string stringInsideBraces = Text.Substring(openSquareBraceIndex + 1, closeSquareBraceIndex - openSquareBraceIndex - 1);
+                arrayConstructionType = Text.Substring(0, openSquareBraceIndex) + "[]";
+                return int.TryParse(stringInsideBraces, out arrayConstructionLength);
+            }
+        }
+        private bool? _isArrayConstruction;
+        private int arrayConstructionLength = -1;
+        private string arrayConstructionType;
+
         public enum Type
         {
             Invalid,
@@ -156,7 +183,8 @@
             Boolean,
             Character,
             DoubleFloat,
-            NewKeyword
+            NewKeyword,
+            ArrayConstruction
         }
 
         public override string ToString() => Text;

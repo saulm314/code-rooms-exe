@@ -26,4 +26,4 @@ int integer;
 integer = 0;
 _number = integer;
 
-int[] intArray = new;
+int[] intArray = new int[5];
