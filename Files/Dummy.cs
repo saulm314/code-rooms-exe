@@ -16,3 +16,5 @@ boolean = true;
 numbernumber = 17;
 
 char character = '\n';
+
+double num = 5.3;

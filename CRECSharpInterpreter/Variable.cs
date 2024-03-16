@@ -38,6 +38,8 @@ namespace CRECSharpInterpreter
                         }
                         throw new VariableException(this,
                             $"Internal error: cannot convert character {Value} to string");
+                    case "double":
+                        return Value.ToString();
                     default:
                         throw new VariableException(this,
                             $"Internal error: cannot convert value of type {_VarType} to string");

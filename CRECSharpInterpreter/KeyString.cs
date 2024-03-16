@@ -36,6 +36,11 @@
                     }
                     _Literal = new(varType, charValue);
                     break;
+                case Type.DoubleFloat:
+                    varType = VarType.@double;
+                    double doubleValue = double.Parse(Text);
+                    _Literal = new(varType, doubleValue);
+                    break;
             }
         }
 
@@ -60,6 +65,8 @@
                 return Type.Boolean;
             if (IsCharacter)
                 return Type.Character;
+            if (IsDoubleFloat)
+                return Type.DoubleFloat;
             return Type.Invalid;
         }
 
@@ -117,6 +124,9 @@
         }
         private bool? _isCharacter;
 
+        private bool IsDoubleFloat { get => _isDoubleFloat ??= double.TryParse(Text, out _); }
+        private bool? _isDoubleFloat;
+
         public enum Type
         {
             Invalid,
@@ -125,7 +135,8 @@
             Equals,
             Integer,
             Boolean,
-            Character
+            Character,
+            DoubleFloat
         }
 
         public class KeyStringException : InterpreterException
