@@ -25,3 +25,5 @@ double num2 = num;
 int integer;
 integer = 0;
 _number = integer;
+
+int[] intArray;

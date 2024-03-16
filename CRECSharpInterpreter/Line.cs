@@ -133,7 +133,9 @@ namespace CRECSharpInterpreter
 
         private static string[] nonKeywordKeyStrings = new string[]
         {
-            "="
+            "=",
+            "{",
+            "}"
         };
 
         private string[] GetKeyStrings()

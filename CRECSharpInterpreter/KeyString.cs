@@ -72,7 +72,21 @@
 
         private bool IsKeyword { get => IsType || IsBoolean; }
 
-        private bool IsType { get => _isType ??= VarType.VarTypes.Exists(varType => varType.Name == Text); }
+        private bool IsType
+        {
+            get
+            {
+                if (_isType != null)
+                    return (bool)_isType;
+                if (VarType.VarTypes.Exists(varType => varType.Name == Text))
+                    return _isType ??= true;
+                if (!Text.EndsWith("[]"))
+                    return _isType ??= false;
+                if (VarType.VarTypes.Exists(varType => varType.Name == Text.Substring(0, Text.Length - 2)))
+                    return _isType ??= true;
+                return _isType ??= false;
+            }
+        }
         private bool? _isType;
 
         private bool IsVariable
