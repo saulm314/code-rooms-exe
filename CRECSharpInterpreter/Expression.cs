@@ -1,4 +1,6 @@
-﻿namespace CRECSharpInterpreter
+﻿using System;
+
+namespace CRECSharpInterpreter
 {
     public class Expression
     {
@@ -46,14 +48,24 @@
 
         public void Compute()
         {
-            KeyString keyString = KeyStrings[0];
-            if (keyString._Type == KeyString.Type.Variable)
+            if (KeyStrings[0]._Type == KeyString.Type.Variable)
             {
-                Variable variable = Info.Instance.DeclaredVariables.Find(var => var.Name == keyString.Text);
+                Variable variable = Info.Instance.DeclaredVariables.Find(var => var.Name == KeyStrings[0].Text);
                 Value = variable.Value;
                 return;
             }
-            Value = keyString._Literal.Value;
+            if (KeyStrings[0]._Literal != null)
+            {
+                Value = KeyStrings[0]._Literal.Value;
+                return;
+            }
+            if (KeyStrings[0]._Type == KeyString.Type.NewKeyword && KeyStrings[1]._Type == KeyString.Type.ArrayConstruction)
+            {
+                ArrayConstruction arrayConstruction = KeyStrings[1]._ArrayConstruction;
+                Value = Array.CreateInstance(arrayConstruction._VarType.SystemType, arrayConstruction.ArrayLength);
+                Info.Instance.ConstructedArrays.Add(Value);
+                return;
+            }
         }
 
         public class ExpressionException : InterpreterException

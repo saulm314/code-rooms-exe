@@ -6,6 +6,7 @@ namespace CRECSharpInterpreter
     public class VarType
     {
         public string Name { get; init; }
+        public Type SystemType { get; init; }
         public bool IsArray { get; init; }
         public VarType Array { get; init; }
         public object DefaultValue
@@ -23,25 +24,26 @@ namespace CRECSharpInterpreter
         }
         private object _defaultValue;
 
-        private VarType(string name, bool isArray = false)
+        private VarType(string name, Type systemType, bool isArray = false)
         {
             Name = name;
+            SystemType = systemType;
             IsArray = isArray;
 
             VarTypes.Add(this);
 
             if (!isArray)
-                Array = new(name + "[]", true);
+                Array = new(name + "[]", systemType.MakeArrayType(), true);
         }
 
         // must be declared above the types themselves,
         //      else a runtime error will occur during static construction
         public static List<VarType> VarTypes { get; } = new();
 
-        public static VarType @int { get; } = new("int");
-        public static VarType @bool { get; } = new("bool");
-        public static VarType @char { get; } = new("char");
-        public static VarType @double { get; } = new("double");
+        public static VarType @int { get; } = new("int", typeof(int));
+        public static VarType @bool { get; } = new("bool", typeof(bool));
+        public static VarType @char { get; } = new("char", typeof(char));
+        public static VarType @double { get; } = new("double", typeof(double));
 
         public static VarType GetVarType(string varTypeAsString)
         {
