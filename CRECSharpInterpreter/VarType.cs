@@ -1,13 +1,29 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace CRECSharpInterpreter
 {
     public class VarType
     {
         public string Name { get; init; }
-        public System.Type SystemType { get; init; }
+        public Type SystemType { get; init; }
+        public object DefaultValue
+        {
+            get =>
+                _defaultValue ??=
+                    Name switch
+                    {
+                        "int" => default(int),
+                        "bool" => default(bool),
+                        "char" => default(char),
+                        "double" => default(double),
+                        _ => throw new VarTypeException(this,
+                            $"Internal exception: Cannot find default value for varType {this}")
+                    };
+        }
+        private object _defaultValue;
 
-        private VarType(string name, System.Type systemType)
+        private VarType(string name, Type systemType)
         {
             Name = name;
             SystemType = systemType;
@@ -25,5 +41,15 @@ namespace CRECSharpInterpreter
         public static VarType @double { get; } = new("double", typeof(double));
 
         public override string ToString() => Name;
+
+        public class VarTypeException : InterpreterException
+        {
+            public VarTypeException(VarType varType, string message = null) : base(message)
+            {
+                this.varType = varType;
+            }
+
+            public VarType varType;
+        }
     }
 }

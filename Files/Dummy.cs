@@ -16,5 +16,12 @@ boolean = true;
 numbernumber = 17;
 
 char character = '\n';
+char character2 = 'a';
 
-double num = 5.3;
+double num;
+num = 5.3;
+double num2 = num;
+
+int integer;
+integer = 0;
+_number = integer;

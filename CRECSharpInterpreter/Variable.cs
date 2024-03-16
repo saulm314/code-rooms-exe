@@ -8,6 +8,7 @@ namespace CRECSharpInterpreter
         {
             _VarType = varType;
             Name = name;
+            Value = varType.DefaultValue;
         }
 
         public VarType _VarType { get; init; }
