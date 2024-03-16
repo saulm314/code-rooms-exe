@@ -62,8 +62,8 @@ namespace CRECSharpInterpreter
             if (KeyStrings[0]._Type == KeyString.Type.NewKeyword && KeyStrings[1]._Type == KeyString.Type.ArrayConstruction)
             {
                 ArrayConstruction arrayConstruction = KeyStrings[1]._ArrayConstruction;
-                Value = Array.CreateInstance(arrayConstruction._VarType.SystemType, arrayConstruction.ArrayLength);
-                Info.Instance.ConstructedArrays.Add(Value);
+                Value = Array.CreateInstance(arrayConstruction._VarType.Unarray.SystemType, arrayConstruction.ArrayLength);
+                Info.Instance.ConstructedArrays.Add((Array)Value);
                 return;
             }
         }

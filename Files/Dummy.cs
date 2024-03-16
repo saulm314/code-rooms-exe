@@ -30,3 +30,7 @@ int[] intArray = new int[5];
 int[] intArray2 = intArray;
 int[] intArray3 = new int[3];
 int[] intArray4 = intArray2;
+
+char[] charArray;
+charArray = new char[0];
+char[] charArray2 = new char[4];

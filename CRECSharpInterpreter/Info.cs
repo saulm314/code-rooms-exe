@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace CRECSharpInterpreter
 {
@@ -13,7 +14,7 @@ namespace CRECSharpInterpreter
         public static Info Instance { get; private set; }
 
         public List<Variable> DeclaredVariables { get; } = new();
-        public List<object> ConstructedArrays { get; } = new();
+        public List<Array> ConstructedArrays { get; } = new();
 
         public Mode _Mode { get; }
     }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace CRECSharpInterpreter
 {
@@ -51,7 +52,7 @@ namespace CRECSharpInterpreter
                 // varType is an array
                 if (Value == null)
                     return "null";
-                int referenceNumber = Info.Instance.ConstructedArrays.IndexOf(Value);
+                int referenceNumber = Info.Instance.ConstructedArrays.IndexOf((Array)Value);
                 return $"{{{referenceNumber}}}";
             }
         }

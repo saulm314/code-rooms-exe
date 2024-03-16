@@ -8,7 +8,13 @@ namespace CRECSharpInterpreter
         public string Name { get; init; }
         public Type SystemType { get; init; }
         public bool IsArray { get; init; }
+        
+        // the respective array of the type if it is not an array, else null
         public VarType Array { get; init; }
+
+        // the respective normal type if it is an array, else null
+        public VarType Unarray { get; init; }
+
         public object DefaultValue
         {
             get =>
@@ -24,16 +30,17 @@ namespace CRECSharpInterpreter
         }
         private object _defaultValue;
 
-        private VarType(string name, Type systemType, bool isArray = false)
+        private VarType(string name, Type systemType, bool isArray = false, VarType unarray = null)
         {
             Name = name;
             SystemType = systemType;
             IsArray = isArray;
+            Unarray = unarray;
 
             VarTypes.Add(this);
 
             if (!isArray)
-                Array = new(name + "[]", systemType.MakeArrayType(), true);
+                Array = new(name + "[]", systemType.MakeArrayType(), true, this);
         }
 
         // must be declared above the types themselves,
@@ -51,6 +58,14 @@ namespace CRECSharpInterpreter
                 if (varType.Name == varTypeAsString)
                     return varType;
             throw new VarTypeException(null, $"Could not find varType {varTypeAsString}");
+        }
+
+        public static VarType GetVarType(Type varTypeAsSystemType)
+        {
+            foreach (VarType varType in VarTypes)
+                if (varType.SystemType == varTypeAsSystemType)
+                    return varType;
+            throw new VarTypeException(null, $"Could not find varType for system type {varTypeAsSystemType.FullName}");
         }
 
         public override string ToString() => Name;
