@@ -15,17 +15,31 @@
 
         private VarType ComputeVarType()
         {
-            if (KeyStrings.Length != 1)
-                throw new ExpressionException(this, $"Unrecognised expression of length {KeyStrings.Length}");
+            ExpressionException lengthException = new(this, $"Unrecognised expression of length {KeyStrings.Length}");
+            if (KeyStrings.Length < 1 || KeyStrings.Length > 2)
+                throw lengthException;
             if (KeyStrings[0]._Type == KeyString.Type.Variable)
             {
+                if (KeyStrings.Length != 1)
+                    throw lengthException;
                 Variable variable = Info.Instance.DeclaredVariables.Find(var => var.Name == KeyStrings[0].Text);
                 return variable._VarType;
             }
             if (KeyStrings[0]._Literal != null)
             {
+                if (KeyStrings.Length != 1)
+                    throw lengthException;
                 Literal literal = KeyStrings[0]._Literal;
                 return literal._VarType;
+            }
+            if (KeyStrings.Length < 2)
+                throw lengthException;
+            if (KeyStrings[0]._Type == KeyString.Type.NewKeyword && KeyStrings[1]._Type == KeyString.Type.ArrayConstruction)
+            {
+                if (KeyStrings.Length > 2)
+                    throw lengthException;
+                ArrayConstruction arrayConstruction = KeyStrings[1]._ArrayConstruction;
+                return arrayConstruction._VarType;
             }
             throw new ExpressionException(this, $"Could not parse key string {KeyStrings[0]} in expression");
         }

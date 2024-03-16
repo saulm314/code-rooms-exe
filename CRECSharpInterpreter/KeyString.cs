@@ -41,6 +41,10 @@
                     double doubleValue = double.Parse(Text);
                     _Literal = new(varType, doubleValue);
                     break;
+                case Type.ArrayConstruction:
+                    varType = VarType.GetVarType(arrayConstructionType);
+                    _ArrayConstruction = new(varType, arrayConstructionLength);
+                    break;
             }
         }
 
@@ -50,6 +54,9 @@
 
         // null if not a literal
         public Literal _Literal { get; init; }
+
+        // null if not an array construction
+        public ArrayConstruction _ArrayConstruction { get; init; }
 
         private new Type GetType()
         {

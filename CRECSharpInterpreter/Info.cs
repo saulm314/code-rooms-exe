@@ -13,6 +13,7 @@ namespace CRECSharpInterpreter
         public static Info Instance { get; private set; }
 
         public List<Variable> DeclaredVariables { get; } = new();
+        public List<object> ConstructedArrays { get; } = new();
 
         public Mode _Mode { get; }
     }
