@@ -14,3 +14,5 @@ boolean2 = boolean;
 boolean = true;
 
 numbernumber = 17;
+
+char character = '\n';

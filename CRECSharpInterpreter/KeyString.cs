@@ -22,6 +22,20 @@
                     bool boolValue = bool.Parse(Text);
                     _Literal = new(varType, boolValue);
                     break;
+                case Type.Character:
+                    varType = VarType.@char;
+                    string substring = Text.Substring(1, Text.Length - 2);
+                    char charValue;
+                    try
+                    {
+                        charValue = char.Parse(substring);
+                    }
+                    catch
+                    {
+                        charValue = CharUtils.BasicEscapeCharacters[substring];
+                    }
+                    _Literal = new(varType, charValue);
+                    break;
             }
         }
 
@@ -44,6 +58,8 @@
                 return Type.Integer;
             if (IsBoolean)
                 return Type.Boolean;
+            if (IsCharacter)
+                return Type.Character;
             return Type.Invalid;
         }
 
@@ -81,6 +97,26 @@
         private bool IsBoolean { get => _isBoolean ??= Text == "false" || Text == "true"; }
         private bool? _isBoolean;
 
+        private bool IsCharacter
+        {
+            get
+            {
+                if (_isCharacter != null)
+                    return (bool)_isCharacter;
+                if (Text[0] != '\'')
+                    return _isCharacter ??= false;
+                if (Text[Text.Length - 1] != '\'')
+                    return _isCharacter ??= false;
+                string substring = Text.Substring(1, Text.Length - 2);
+                if (char.TryParse(substring, out _))
+                    return _isCharacter ??= true;
+                if (CharUtils.BasicEscapeCharacters.ContainsKey(substring))
+                    return _isCharacter ??= true;
+                return _isCharacter ??= false;
+            }
+        }
+        private bool? _isCharacter;
+
         public enum Type
         {
             Invalid,
@@ -88,7 +124,8 @@
             Variable,
             Equals,
             Integer,
-            Boolean
+            Boolean,
+            Character
         }
 
         public class KeyStringException : InterpreterException

@@ -21,6 +21,7 @@ namespace CRECSharpInterpreter
 
         public static VarType @int { get; } = new("int", typeof(int));
         public static VarType @bool { get; } = new("bool", typeof(bool));
+        public static VarType @char { get; } = new("char", typeof(char));
 
         public override string ToString() => Name;
     }
