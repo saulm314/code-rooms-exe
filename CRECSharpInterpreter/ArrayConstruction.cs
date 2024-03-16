@@ -6,6 +6,9 @@
         {
             _VarType = varType;
             ArrayLength = arrayLength;
+
+            if (ArrayLength < 0)
+                throw new ArrayConstructionException(this, $"Cannot create an array of length {ArrayLength}");
         }
 
         public VarType _VarType { get; init; }
