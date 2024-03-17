@@ -53,6 +53,7 @@ namespace CRECSharpInterpreter
 
         private void InitialiseRuntime()
         {
+            string separator = Interpreter.SEPARATOR;
             Console.WriteLine(Text.TrimStart() + '\n');
             switch (_Type)
             {
@@ -62,8 +63,13 @@ namespace CRECSharpInterpreter
                     break;
             }
             Console.WriteLine("Stack:\n");
-            foreach (Variable variable in Memory.Instance.GetDeclaredVariables())
-                Console.WriteLine(variable);
+            Console.WriteLine(separator + "\n");
+            foreach (Scope scope in Memory.Instance.Stack)
+            {
+                foreach (Variable variable in scope.DeclaredVariables)
+                    Console.WriteLine(variable);
+                Console.WriteLine(separator);
+            }
             Console.WriteLine("\nHeap:\n");
             for (int i = 0; i < 10; i++)
             {
@@ -72,7 +78,7 @@ namespace CRECSharpInterpreter
                 Console.Write("\n");
             }
             Console.WriteLine();
-            Console.WriteLine("__________________________________");
+            Console.WriteLine(separator + separator + separator);
         }
 
         private void VerifyDeclarationValid()

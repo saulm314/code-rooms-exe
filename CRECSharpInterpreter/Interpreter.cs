@@ -9,7 +9,7 @@ namespace CRECSharpInterpreter
             Console.WriteLine($"Creating interpreter for the following text:\n\n{text}");
             chunk = new(text, Mode.Compilation);
             Console.ReadLine();
-            Console.WriteLine("__________________________________\n");
+            Console.WriteLine(SEPARATOR + "\n");
 
             chunk = new(text, Mode.Runtime);
             while (chunk.RunNextLine())
@@ -20,6 +20,8 @@ namespace CRECSharpInterpreter
         }
 
         public Chunk chunk;
+
+        public const string SEPARATOR = "____________________________________________";
 
         /*
         Possible lines:
