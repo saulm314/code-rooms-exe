@@ -15,6 +15,14 @@ namespace CRECSharpInterpreter
             {
                 case Type.Invalid:
                     throw new KeyStringException(this, $"Unrecognised key string: {Text}");
+                case Type.Type:
+                    if (!Text.EndsWith("[]"))
+                        break;
+                    SubKeyStrings = new KeyString[3];
+                    SubKeyStrings[0] = new(Text.Split("[]", StringSplitOptions.RemoveEmptyEntries)[0]);
+                    SubKeyStrings[1] = new("[");
+                    SubKeyStrings[2] = new("]");
+                    break;
                 case Type.Integer:
                     varType = VarType.@int;
                     int intValue = int.Parse(Text);
@@ -60,6 +68,9 @@ namespace CRECSharpInterpreter
 
         // null if not an array construction
         public ArrayConstruction _ArrayConstruction { get; init; }
+
+        // null if not applicable
+        public KeyString[] SubKeyStrings { get; init; }
 
         private static string[] nonKeywordKeyStrings = new string[]
         {
@@ -169,6 +180,10 @@ namespace CRECSharpInterpreter
                 return Type.NewKeyword;
             if (IsArrayConstruction)
                 return Type.ArrayConstruction;
+            if (IsOpenSquareBrace)
+                return Type.OpenSquareBrace;
+            if (IsCloseSquareBrace)
+                return Type.CloseSquareBrace;
             return Type.Invalid;
         }
 
@@ -246,6 +261,12 @@ namespace CRECSharpInterpreter
         private bool IsNewKeyword { get => _isNewKeyword ??= Text == "new"; }
         private bool? _isNewKeyword;
 
+        private bool IsOpenSquareBrace { get => _isOpenSquareBrace ??= Text == "["; }
+        private bool? _isOpenSquareBrace;
+
+        private bool IsCloseSquareBrace { get => _isCloseSquareBrace ??= Text == "]"; }
+        private bool? _isCloseSquareBrace;
+
         // also provides array construction length
         // i.e. "int[] array = new int[5];" will set arrayConstructionLength to 5
         private bool IsArrayConstruction
@@ -282,7 +303,9 @@ namespace CRECSharpInterpreter
             Character,
             DoubleFloat,
             NewKeyword,
-            ArrayConstruction
+            ArrayConstruction,
+            OpenSquareBrace,
+            CloseSquareBrace
         }
 
         public override string ToString() => Text;
