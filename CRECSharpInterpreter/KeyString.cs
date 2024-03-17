@@ -201,29 +201,20 @@ namespace CRECSharpInterpreter
 
         private new Type GetType()
         {
-            if (IsType)
-                return Type.Type;
-            if (IsVariable)
-                return Type.Variable;
-            if (IsEquals)
-                return Type.Equals;
-            if (IsInteger)
-                return Type.Integer;
-            if (IsBoolean)
-                return Type.Boolean;
-            if (IsCharacter)
-                return Type.Character;
-            if (IsDoubleFloat)
-                return Type.DoubleFloat;
-            if (IsNewKeyword)
-                return Type.NewKeyword;
-            if (_ArrayConstruction != null)
-                return Type.ArrayConstruction;
-            if (IsOpenSquareBrace)
-                return Type.OpenSquareBrace;
-            if (IsCloseSquareBrace)
-                return Type.CloseSquareBrace;
-            return Type.Invalid;
+            if (IsType)                 return Type.Type;
+            if (IsVariable)             return Type.Variable;
+            if (IsEquals)               return Type.Equals;
+            if (IsInteger)              return Type.Integer;
+            if (IsBoolean)              return Type.Boolean;
+            if (IsCharacter)            return Type.Character;
+            if (IsDoubleFloat)          return Type.DoubleFloat;
+            if (IsNewKeyword)           return Type.NewKeyword;
+            if (IsArrayConstruction)    return Type.ArrayConstruction;
+            if (IsOpenSquareBrace)      return Type.OpenSquareBrace;
+            if (IsCloseSquareBrace)     return Type.CloseSquareBrace;
+            if (IsOpenCurlyBrace)       return Type.OpenCurlyBrace;
+            if (IsCloseCurlyBrace)      return Type.CloseCurlyBrace;
+                                        return Type.Invalid;
         }
 
         private bool IsKeyword { get => IsType || IsBoolean || IsNewKeyword; }
@@ -300,11 +291,20 @@ namespace CRECSharpInterpreter
         private bool IsNewKeyword { get => _isNewKeyword ??= Text == "new"; }
         private bool? _isNewKeyword;
 
+        private bool IsArrayConstruction { get => _isArrayConstruction ??= _ArrayConstruction != null; }
+        private bool? _isArrayConstruction;
+
         private bool IsOpenSquareBrace { get => _isOpenSquareBrace ??= Text == "["; }
         private bool? _isOpenSquareBrace;
 
         private bool IsCloseSquareBrace { get => _isCloseSquareBrace ??= Text == "]"; }
         private bool? _isCloseSquareBrace;
+
+        private bool IsOpenCurlyBrace { get => _isOpenCurlyBrace ??= Text == "{"; }
+        private bool? _isOpenCurlyBrace;
+
+        private bool IsCloseCurlyBrace { get => _isCloseCurlyBrace ??= Text == "}"; }
+        private bool? _isCloseCurlyBrace;
 
         public enum Type
         {
@@ -319,7 +319,9 @@ namespace CRECSharpInterpreter
             NewKeyword,
             ArrayConstruction,
             OpenSquareBrace,
-            CloseSquareBrace
+            CloseSquareBrace,
+            OpenCurlyBrace,
+            CloseCurlyBrace
         }
 
         public override string ToString() => Text;
