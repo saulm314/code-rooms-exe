@@ -68,6 +68,12 @@ namespace CRECSharpInterpreter
             throw new VarTypeException(null, $"Could not find varType for system type {varTypeAsSystemType.FullName}");
         }
 
+        public static VarType GetVarType(object value)
+        {
+            Type type = value.GetType();
+            return GetVarType(type);
+        }
+
         public override string ToString() => Name;
 
         public class VarTypeException : InterpreterException

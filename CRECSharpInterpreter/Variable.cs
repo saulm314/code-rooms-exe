@@ -5,7 +5,7 @@ namespace CRECSharpInterpreter
 {
     public class Variable
     {
-        public Variable(VarType varType, string name)
+        public Variable(VarType varType, string name = null)
         {
             _VarType = varType;
             Name = name;
@@ -52,14 +52,19 @@ namespace CRECSharpInterpreter
                 // varType is an array
                 if (Value == null)
                     return "null";
-                int referenceNumber = Info.Instance.ConstructedArrays.IndexOf((Array)Value);
-                return $"{{{referenceNumber}}}";
+                return $"{{{Value}}}";
             }
         }
 
         public override string ToString()
         {
             return $"{_VarType}\t{Name}\t:\t{ValueAsString}";
+        }
+
+        public static IEnumerable<Variable> GetBlankVariables(VarType varType, int count)
+        {
+            for (int i = 0; i < count; i++)
+                yield return new(varType);
         }
 
         public class VariableException : InterpreterException

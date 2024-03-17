@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace CRECSharpInterpreter
 {
@@ -24,7 +25,7 @@ namespace CRECSharpInterpreter
             {
                 if (KeyStrings.Length != 1)
                     throw lengthException;
-                Variable variable = Info.Instance.DeclaredVariables.Find(var => var.Name == KeyStrings[0].Text);
+                Variable variable = Memory.Instance.GetVariable(KeyStrings[0].Text);
                 return variable._VarType;
             }
             if (KeyStrings[0]._Literal != null)
@@ -50,7 +51,7 @@ namespace CRECSharpInterpreter
         {
             if (KeyStrings[0]._Type == KeyString.Type.Variable)
             {
-                Variable variable = Info.Instance.DeclaredVariables.Find(var => var.Name == KeyStrings[0].Text);
+                Variable variable = Memory.Instance.GetVariable(KeyStrings[0].Text);
                 Value = variable.Value;
                 return;
             }
@@ -62,8 +63,9 @@ namespace CRECSharpInterpreter
             if (KeyStrings[0]._Type == KeyString.Type.NewKeyword && KeyStrings[1]._Type == KeyString.Type.ArrayConstruction)
             {
                 ArrayConstruction arrayConstruction = KeyStrings[1]._ArrayConstruction;
-                Value = Array.CreateInstance(arrayConstruction._VarType.Unarray.SystemType, arrayConstruction.ArrayLength);
-                Info.Instance.ConstructedArrays.Add((Array)Value);
+                IEnumerable<Variable> variables = Variable.GetBlankVariables(arrayConstruction._VarType, arrayConstruction.ArrayLength);
+                int heapIndex = Memory.Instance.Heap.Allocate(arrayConstruction.ArrayLength, variables);
+                Value = heapIndex;
                 return;
             }
         }

@@ -15,9 +15,9 @@ namespace CRECSharpInterpreter
             linesStr = GetLines();
             Lines = new Line[linesStr.Length];
 
-            _ = new Info(mode);
+            _ = new Memory(mode);
 
-            if (Info.Instance._Mode == Mode.Compilation)
+            if (Memory.Instance._Mode == Mode.Compilation)
                 for (int i = 0; i < Lines.Length; i++)
                     Lines[i] = new(linesStr[i]);
         }

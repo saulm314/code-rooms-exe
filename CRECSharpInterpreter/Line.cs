@@ -37,7 +37,7 @@ namespace CRECSharpInterpreter
                     break;
             }
 
-            if (Info.Instance._Mode == Mode.Runtime)
+            if (Memory.Instance._Mode == Mode.Runtime)
                 InitialiseRuntime();
         }
 
@@ -61,28 +61,24 @@ namespace CRECSharpInterpreter
                     PerformWrite();
                     break;
             }
-            foreach (Variable variable in Info.Instance.DeclaredVariables)
+            Console.WriteLine("Stack:");
+            foreach (Variable variable in Memory.Instance.GetDeclaredVariables())
                 Console.WriteLine(variable);
-            Console.WriteLine();
-            for (int i = 0; i < Info.Instance.ConstructedArrays.Count; i++)
+            Console.WriteLine("\nHeap:\n");
+            for (int i = 0; i < 10; i++)
             {
-                Console.WriteLine($"{{{i}}}:");
-                Array array = Info.Instance.ConstructedArrays[i];
-                VarType varType = VarType.GetVarType(array.GetType()).Unarray;
-                foreach (object element in array)
-                {
-                    Variable variable = new(varType, null);
-                    Console.WriteLine(variable.ValueAsString);
-                }
-                Console.WriteLine();
+                for (int j = 0; j < 10; j++)
+                    Console.Write(Memory.Instance.Heap[10 * i + j] + "\t");
+                Console.Write("\n");
             }
+            Console.WriteLine();
             Console.WriteLine("__________________________________");
         }
 
         private void VerifyDeclarationValid()
         {
             string varName = KeyStrings[1].Text;
-            if (Info.Instance.DeclaredVariables.Exists(var => var.Name == varName))
+            if (Memory.Instance.IsDeclared(varName))
                 throw new LineException(this, $"Variable {varName} has already been declared");
         }
 
@@ -91,7 +87,7 @@ namespace CRECSharpInterpreter
             VarType varType = VarType.VarTypes.Find(vt => vt.Name == KeyStrings[0].Text);
             string varName = KeyStrings[1].Text;
             Variable declaredVariable = new(varType, varName);
-            Info.Instance.DeclaredVariables.Add(declaredVariable);
+            Memory.Instance.AddToCurrentScope(declaredVariable);
             return declaredVariable;
         }
 
@@ -113,7 +109,7 @@ namespace CRECSharpInterpreter
             {
                 if (keyString._Type == KeyString.Type.Variable)
                 {
-                    Variable variable = Info.Instance.DeclaredVariables.Find(var => var.Name == keyString.Text);
+                    Variable variable = Memory.Instance.GetVariable(keyString.Text);
                     if (variable == null)
                         throw new LineException(this, $"Variable {keyString.Text} hasn't been declared");
                     if (!variable.Initialised)
@@ -132,7 +128,7 @@ namespace CRECSharpInterpreter
 
         private Variable GetVarToWrite_NoDeclaration()
         {
-            Variable varToWrite = Info.Instance.DeclaredVariables.Find(var => var.Name == KeyStrings[0].Text);
+            Variable varToWrite = Memory.Instance.GetVariable(KeyStrings[0].Text);
             if (varToWrite == null)
                 throw new LineException(this, $"Variable {KeyStrings[0].Text} hasn't been declared");
             return varToWrite;
