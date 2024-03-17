@@ -62,7 +62,7 @@ namespace CRECSharpInterpreter
                     PerformWrite();
                     break;
             }
-            Console.WriteLine("Stack:\n");
+            Console.WriteLine("Stack:");
             Console.WriteLine(separator + "\n");
             foreach (Scope scope in Memory.Instance.Stack)
             {
