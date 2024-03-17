@@ -41,7 +41,10 @@ namespace CRECSharpInterpreter
                         throw new VariableException(this,
                             $"Internal error: cannot convert character {Value} to string");
                     case "double":
-                        return Value.ToString();
+                        string valueAsString = Value.ToString();
+                        if (valueAsString.Contains('.'))
+                            return valueAsString;
+                        return $"{valueAsString}.0";
                     default:
                         if (_VarType.IsArray)
                             break;

@@ -53,8 +53,11 @@ namespace CRECSharpInterpreter
                     _Literal = new(varType, doubleValue);
                     break;
                 case Type.ArrayConstruction:
-                    varType = VarType.GetVarType(arrayConstructionType);
-                    _ArrayConstruction = new(varType, arrayConstructionLength);
+                    SubKeyStrings = new KeyString[3 + _ArrayConstruction.ArrayLengthExpression.KeyStrings.Length];
+                    SubKeyStrings[0] = new(_ArrayConstruction._VarType.Unarray.Name);
+                    SubKeyStrings[1] = new("[");
+                    _ArrayConstruction.ArrayLengthExpression.KeyStrings.CopyTo(SubKeyStrings, 2);
+                    SubKeyStrings[SubKeyStrings.Length - 1] = new("]");
                     break;
             }
         }
@@ -67,7 +70,43 @@ namespace CRECSharpInterpreter
         public Literal _Literal { get; init; }
 
         // null if not an array construction
-        public ArrayConstruction _ArrayConstruction { get; init; }
+        public ArrayConstruction _ArrayConstruction { get => _arrayConstruction ??= CreateArrayConstruction(); }
+        private ArrayConstruction _arrayConstruction;
+        private bool arrayConstructionIsNull;
+
+        private ArrayConstruction CreateArrayConstruction()
+        {
+            if (arrayConstructionIsNull)
+                return null;
+            arrayConstructionIsNull = true;
+            int openSquareBraceIndex = Text.IndexOf('[');
+            if (openSquareBraceIndex == -1)
+                return null;
+            int closeSquareBraceIndex = Text.IndexOf(']');
+            if (closeSquareBraceIndex == -1)
+                return null;
+            if (closeSquareBraceIndex <= openSquareBraceIndex)
+                return null;
+            string varTypeAsString = Text[..openSquareBraceIndex] + "[]";
+            VarType varType;
+            try
+            {
+                varType = VarType.GetVarType(varTypeAsString);
+            }
+            catch (VarType.VarTypeException)
+            {
+                return null;
+            }
+            string stringInsideBraces = Text[(openSquareBraceIndex + 1)..closeSquareBraceIndex];
+            if (string.IsNullOrWhiteSpace(stringInsideBraces))
+                return null;
+            string stringAfterBraces = Text[(closeSquareBraceIndex + 1)..];
+            if (!string.IsNullOrWhiteSpace(stringAfterBraces))
+                return null;
+            ArrayConstruction arrayConstruction = new(varType, stringInsideBraces);
+            arrayConstructionIsNull = false;
+            return arrayConstruction;
+        }
 
         // null if not applicable
         public KeyString[] SubKeyStrings { get; init; }
@@ -178,7 +217,7 @@ namespace CRECSharpInterpreter
                 return Type.DoubleFloat;
             if (IsNewKeyword)
                 return Type.NewKeyword;
-            if (IsArrayConstruction)
+            if (_ArrayConstruction != null)
                 return Type.ArrayConstruction;
             if (IsOpenSquareBrace)
                 return Type.OpenSquareBrace;
@@ -266,31 +305,6 @@ namespace CRECSharpInterpreter
 
         private bool IsCloseSquareBrace { get => _isCloseSquareBrace ??= Text == "]"; }
         private bool? _isCloseSquareBrace;
-
-        // also provides array construction length
-        // i.e. "int[] array = new int[5];" will set arrayConstructionLength to 5
-        private bool IsArrayConstruction
-        {
-            get
-            {
-                if (_isArrayConstruction != null)
-                    return (bool)_isArrayConstruction;
-                int openSquareBraceIndex = Text.IndexOf('[');
-                if (openSquareBraceIndex == -1)
-                    return _isArrayConstruction ??= false;
-                int closeSquareBraceIndex = Text.IndexOf(']');
-                if (closeSquareBraceIndex == -1)
-                    return _isArrayConstruction ??= false;
-                if (closeSquareBraceIndex <= openSquareBraceIndex)
-                    return _isArrayConstruction ??= false;
-                string stringInsideBraces = Text.Substring(openSquareBraceIndex + 1, closeSquareBraceIndex - openSquareBraceIndex - 1);
-                arrayConstructionType = Text.Substring(0, openSquareBraceIndex) + "[]";
-                return int.TryParse(stringInsideBraces, out arrayConstructionLength);
-            }
-        }
-        private bool? _isArrayConstruction;
-        private int arrayConstructionLength = -1;
-        private string arrayConstructionType;
 
         public enum Type
         {

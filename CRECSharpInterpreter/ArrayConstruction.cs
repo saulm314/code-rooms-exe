@@ -2,17 +2,19 @@
 {
     public class ArrayConstruction
     {
-        public ArrayConstruction(VarType varType, int arrayLength)
+        public ArrayConstruction(VarType varType, string stringInsideBraces)
         {
             _VarType = varType;
-            ArrayLength = arrayLength;
-
-            if (ArrayLength < 0)
-                throw new ArrayConstructionException(this, $"Cannot create an array of length {ArrayLength}");
+            string[] arrayLengthKeyStringsAsStrings = KeyString.GetKeyStringsAsStrings(stringInsideBraces);
+            KeyString[] arrayLengthKeyStrings = new KeyString[arrayLengthKeyStringsAsStrings.Length];
+            for (int i = 0; i < arrayLengthKeyStrings.Length; i++)
+                arrayLengthKeyStrings[i] = new(arrayLengthKeyStringsAsStrings[i]);
+            ArrayLengthExpression = new(arrayLengthKeyStrings);
         }
 
         public VarType _VarType { get; init; }
-        public int ArrayLength { get; init; }
+        public int ArrayLength { get; set; }
+        public Expression ArrayLengthExpression { get; init; }
 
         public class ArrayConstructionException : InterpreterException
         {

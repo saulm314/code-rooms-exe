@@ -76,6 +76,8 @@ namespace CRECSharpInterpreter
             if (KeyStrings[0]._Type == KeyString.Type.NewKeyword && KeyStrings[1]._Type == KeyString.Type.ArrayConstruction)
             {
                 ArrayConstruction arrayConstruction = KeyStrings[1]._ArrayConstruction;
+                arrayConstruction.ArrayLengthExpression.Compute();
+                arrayConstruction.ArrayLength = (int)arrayConstruction.ArrayLengthExpression.Value;
                 IEnumerable<Variable> variables = Variable.GetBlankVariables(arrayConstruction._VarType.Unarray, arrayConstruction.ArrayLength);
                 int heapIndex = Memory.Instance.Heap.Allocate(arrayConstruction.ArrayLength, variables);
                 Value = heapIndex;

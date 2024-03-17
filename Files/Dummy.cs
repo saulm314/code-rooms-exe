@@ -34,3 +34,5 @@ int[] intArray4 = intArray2;
 char[] charArray;
 charArray = new char[0];
 char[] charArray2 = new char[4];
+
+double[] doubleArray = new double[numbernumber];
