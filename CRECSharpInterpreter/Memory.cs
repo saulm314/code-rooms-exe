@@ -28,7 +28,7 @@ namespace CRECSharpInterpreter
             foreach (Variable variable in GetDeclaredVariables())
                 if (variable.Name == name)
                     return variable;
-            throw new MemoryException(this, $"Cannot find variable \"{name}\"");
+            return null;
         }
 
         public bool IsDeclared(string variableName)

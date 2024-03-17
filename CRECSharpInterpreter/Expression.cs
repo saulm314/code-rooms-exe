@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace CRECSharpInterpreter
 {
@@ -8,6 +7,7 @@ namespace CRECSharpInterpreter
         public Expression(KeyString[] keyStrings)
         {
             KeyStrings = keyStrings;
+            VerifyVariablesAreInitialised();
             _VarType = ComputeVarType();
         }
 
@@ -15,6 +15,19 @@ namespace CRECSharpInterpreter
 
         public VarType _VarType { get; init; }
         public object Value { get; private set; }
+
+        private void VerifyVariablesAreInitialised()
+        {
+            foreach (KeyString keyString in KeyStrings)
+                if (keyString._Type == KeyString.Type.Variable)
+                {
+                    Variable variable = Memory.Instance.GetVariable(keyString.Text);
+                    if (variable == null)
+                        throw new ExpressionException(this, $"Variable \"{keyString.Text}\" hasn't been declared");
+                    if (!variable.Initialised)
+                        throw new ExpressionException(this, $"Variable \"{keyString.Text}\" hasn't been initialised");
+                }
+        }
 
         private VarType ComputeVarType()
         {

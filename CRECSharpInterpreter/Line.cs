@@ -8,7 +8,7 @@ namespace CRECSharpInterpreter
         public Line(string text)
         {
             Text = text;
-            string[] keyStringsStr = GetKeyStrings();
+            string[] keyStringsStr = KeyString.GetKeyStringsAsStrings(Text);
             KeyStrings = new KeyString[keyStringsStr.Length];
             for (int i = 0; i < KeyStrings.Length; i++)
                 KeyStrings[i] = new(keyStringsStr[i]);
@@ -50,6 +50,13 @@ namespace CRECSharpInterpreter
         public Variable VarToWrite { get; init; }
 
         public Expression _Expression { get; init; }
+
+        public static string[] GetLinesAsStrings(string text)
+            =>
+                text
+                .Split(';', StringSplitOptions.RemoveEmptyEntries)
+                .Where(str => !string.IsNullOrWhiteSpace(str))
+                .ToArray();
 
         private void InitialiseRuntime()
         {
@@ -107,21 +114,6 @@ namespace CRECSharpInterpreter
             };
             KeyString[] expressionKeyStrings = new KeyString[KeyStrings.Length - expressionOffset];
             Array.Copy(KeyStrings, expressionOffset, expressionKeyStrings, 0, expressionKeyStrings.Length);
-
-            // verify that no invalid variables are present
-            // this leaves less work for the expression itself
-            //      as it does not have to verify whether each variable has been declared
-            foreach (KeyString keyString in expressionKeyStrings)
-            {
-                if (keyString._Type == KeyString.Type.Variable)
-                {
-                    Variable variable = Memory.Instance.GetVariable(keyString.Text);
-                    if (variable == null)
-                        throw new LineException(this, $"Variable {keyString.Text} hasn't been declared");
-                    if (!variable.Initialised)
-                        throw new LineException(this, $"Variable {keyString.Text} hasn't been initialised");
-                }
-            }
             return new(expressionKeyStrings);
         }
 
@@ -144,95 +136,6 @@ namespace CRECSharpInterpreter
         {
             _Expression.Compute();
             VarToWrite.Value = _Expression.Value;
-        }
-
-        private static string[] nonKeywordKeyStrings = new string[]
-        {
-            "=",
-            "{",
-            "}"
-        };
-
-        private string[] GetKeyStrings()
-        {
-            // ensure that every key string is surrounded by at least one space on either side
-            string parsedText = Text;
-            foreach (string keyString in nonKeywordKeyStrings)
-                parsedText = parsedText.Replace(keyString, $" {keyString} ");
-
-            parsedText = RemoveWhiteSpaceSurroundingCharacter(parsedText, '[', Direction.LeftRight);
-            parsedText = RemoveWhiteSpaceSurroundingCharacter(parsedText, ']', Direction.Left);
-
-            // remove all whitespace characters and return everything else, separated
-            return
-                parsedText
-                .Split(default(char[]), StringSplitOptions.TrimEntries)
-                .Where(str => !string.IsNullOrWhiteSpace(str))
-                .ToArray();
-        }
-
-        private string RemoveWhiteSpaceSurroundingCharacter(string input, char character, Direction direction)
-        {
-            int i = 0;
-            while (i < input.Length)
-            {
-                if (input[i] == character)
-                    input = RemoveWhiteSpaceSurroundingIndex(input, i, direction, out i);
-                i++;
-            }
-            return input;
-        }
-
-        private enum Direction
-        {
-            Left,
-            Right,
-            LeftRight
-        }
-
-        private string RemoveWhiteSpaceSurroundingIndex(string input, int index, Direction direction, out int newIndex)
-        {
-            newIndex = index;
-            switch (direction)
-            {
-                case Direction.Left:
-                    return RemoveWhiteSpaceLeftOfIndex(input, index, out newIndex);
-                case Direction.Right:
-                    return RemoveWhiteSpaceRightOfIndex(input, index);
-                case Direction.LeftRight:
-                    input = RemoveWhiteSpaceLeftOfIndex(input, index, out newIndex);
-                    return RemoveWhiteSpaceRightOfIndex(input, newIndex);
-                default:
-                    throw new LineException(this,
-                        $"Internal exception: Invalid direction {direction}");
-            }
-        }
-
-        private string RemoveWhiteSpaceLeftOfIndex(string input, int index, out int newIndex)
-        {
-            newIndex = index;
-            int i = newIndex - 1;
-            while (i >= 0)
-                if (char.IsWhiteSpace(input[i]))
-                {
-                    input = input.Remove(i, 1);
-                    newIndex--;
-                    i--;
-                }
-                else
-                    break;
-            return input;
-        }
-
-        private string RemoveWhiteSpaceRightOfIndex(string input, int index)
-        {
-            int i = index + 1;
-            while (i < input.Length)
-                if (char.IsWhiteSpace(input[i]))
-                    input = input.Remove(i, 1);
-                else
-                    break;
-            return input;
         }
 
         private new Type GetType()

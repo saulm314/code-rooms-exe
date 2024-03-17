@@ -12,7 +12,7 @@ namespace CRECSharpInterpreter
             if (trimmedText[trimmedText.Length - 1] != ';')
                 throw new ChunkException(this, "Semicolon on final line expected");
 
-            linesStr = GetLines();
+            linesStr = Line.GetLinesAsStrings(Text);
             Lines = new Line[linesStr.Length];
 
             _ = new Memory(mode);
@@ -37,13 +37,6 @@ namespace CRECSharpInterpreter
         }
 
         private string[] linesStr;
-
-        private string[] GetLines()
-            =>
-                Text
-                .Split(';', StringSplitOptions.RemoveEmptyEntries)
-                .Where(str => !string.IsNullOrWhiteSpace(str))
-                .ToArray();
 
         public class ChunkException : InterpreterException
         {

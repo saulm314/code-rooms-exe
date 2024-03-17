@@ -1,4 +1,7 @@
-﻿namespace CRECSharpInterpreter
+﻿using System;
+using System.Linq;
+
+namespace CRECSharpInterpreter
 {
     public class KeyString
     {
@@ -57,6 +60,94 @@
 
         // null if not an array construction
         public ArrayConstruction _ArrayConstruction { get; init; }
+
+        private static string[] nonKeywordKeyStrings = new string[]
+        {
+            "=",
+            "{",
+            "}"
+        };
+
+        public static string[] GetKeyStringsAsStrings(string text)
+        {
+            // ensure that every key string is surrounded by at least one space on either side
+            foreach (string keyString in nonKeywordKeyStrings)
+                text = text.Replace(keyString, $" {keyString} ");
+
+            text = RemoveWhiteSpaceSurroundingCharacter(text, '[', Direction.LeftRight);
+            text = RemoveWhiteSpaceSurroundingCharacter(text, ']', Direction.Left);
+
+            // remove all whitespace characters and return everything else, separated
+            return
+                text
+                .Split(default(char[]), StringSplitOptions.TrimEntries)
+                .Where(str => !string.IsNullOrWhiteSpace(str))
+                .ToArray();
+        }
+
+        private static string RemoveWhiteSpaceSurroundingCharacter(string input, char character, Direction direction)
+        {
+            int i = 0;
+            while (i < input.Length)
+            {
+                if (input[i] == character)
+                    input = RemoveWhiteSpaceSurroundingIndex(input, i, direction, out i);
+                i++;
+            }
+            return input;
+        }
+
+        private enum Direction
+        {
+            Left,
+            Right,
+            LeftRight
+        }
+
+        private static string RemoveWhiteSpaceSurroundingIndex(string input, int index, Direction direction, out int newIndex)
+        {
+            newIndex = index;
+            switch (direction)
+            {
+                case Direction.Left:
+                    return RemoveWhiteSpaceLeftOfIndex(input, index, out newIndex);
+                case Direction.Right:
+                    return RemoveWhiteSpaceRightOfIndex(input, index);
+                case Direction.LeftRight:
+                    input = RemoveWhiteSpaceLeftOfIndex(input, index, out newIndex);
+                    return RemoveWhiteSpaceRightOfIndex(input, newIndex);
+                default:
+                    throw new KeyStringException(null,
+                        $"Internal exception: Invalid direction {direction}");
+            }
+        }
+
+        private static string RemoveWhiteSpaceLeftOfIndex(string input, int index, out int newIndex)
+        {
+            newIndex = index;
+            int i = newIndex - 1;
+            while (i >= 0)
+                if (char.IsWhiteSpace(input[i]))
+                {
+                    input = input.Remove(i, 1);
+                    newIndex--;
+                    i--;
+                }
+                else
+                    break;
+            return input;
+        }
+
+        private static string RemoveWhiteSpaceRightOfIndex(string input, int index)
+        {
+            int i = index + 1;
+            while (i < input.Length)
+                if (char.IsWhiteSpace(input[i]))
+                    input = input.Remove(i, 1);
+                else
+                    break;
+            return input;
+        }
 
         private new Type GetType()
         {
