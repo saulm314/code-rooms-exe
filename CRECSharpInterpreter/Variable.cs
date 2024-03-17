@@ -58,7 +58,7 @@ namespace CRECSharpInterpreter
 
         public override string ToString()
         {
-            return $"{_VarType}\t{Name}\t:\t{ValueAsString}";
+            return string.Format("{0,10} {1,20} {2,10}", _VarType, Name, ValueAsString);
         }
 
         public static IEnumerable<Variable> GetBlankVariables(VarType varType, int count)

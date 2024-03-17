@@ -61,14 +61,14 @@ namespace CRECSharpInterpreter
                     PerformWrite();
                     break;
             }
-            Console.WriteLine("Stack:");
+            Console.WriteLine("Stack:\n");
             foreach (Variable variable in Memory.Instance.GetDeclaredVariables())
                 Console.WriteLine(variable);
             Console.WriteLine("\nHeap:\n");
             for (int i = 0; i < 10; i++)
             {
                 for (int j = 0; j < 10; j++)
-                    Console.Write((Memory.Instance.Heap[10 * i + j]?.ValueAsString ?? "x") + "\t");
+                    Console.Write(string.Format("{0,10}", Memory.Instance.Heap[10 * i + j]?.ValueAsString ?? "x"));
                 Console.Write("\n");
             }
             Console.WriteLine();
