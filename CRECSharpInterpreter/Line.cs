@@ -68,7 +68,7 @@ namespace CRECSharpInterpreter
             for (int i = 0; i < 10; i++)
             {
                 for (int j = 0; j < 10; j++)
-                    Console.Write(Memory.Instance.Heap[10 * i + j] + "\t");
+                    Console.Write((Memory.Instance.Heap[10 * i + j]?.ValueAsString ?? "x") + "\t");
                 Console.Write("\n");
             }
             Console.WriteLine();
