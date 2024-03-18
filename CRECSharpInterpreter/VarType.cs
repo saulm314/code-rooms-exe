@@ -60,7 +60,7 @@ namespace CRECSharpInterpreter
             foreach (VarType varType in VarTypes)
                 if (varType.Name == varTypeAsString)
                     return varType;
-            throw new VarTypeException(null, $"Could not find varType {varTypeAsString}");
+            return null;
         }
 
         public static VarType GetVarType(Type varTypeAsSystemType)
@@ -68,7 +68,7 @@ namespace CRECSharpInterpreter
             foreach (VarType varType in VarTypes)
                 if (varType.SystemType == varTypeAsSystemType)
                     return varType;
-            throw new VarTypeException(null, $"Could not find varType for system type {varTypeAsSystemType.FullName}");
+            return null;
         }
 
         public static VarType GetVarType(object value)
