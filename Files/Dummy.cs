@@ -4,6 +4,8 @@ secondNumber = 3;
 _number = secondNumber;
 secondNumber=_number;
 
+int number__ = 5;
+
 int thirdNumber = _number;
 int numbernumber = -193214;
 thirdNumber = numbernumber;
