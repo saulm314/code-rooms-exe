@@ -58,3 +58,6 @@ bool[] boolArray2 = new bool[] { };
 
 double[] doubleArray2 = new double[] { 17.3 };
 double[] doubleArray3 = new double[] { };
+
+int[] test = null;
+int[] arrayarray = test;

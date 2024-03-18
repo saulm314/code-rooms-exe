@@ -7,8 +7,9 @@ namespace CRECSharpInterpreter
         public Expression(KeyString[] keyStrings)
         {
             KeyStrings = keyStrings;
-            VerifyVariablesAreInitialised();
             _VarType = ComputeVarType();
+            if (_Type == Type.Variable)
+                VerifyVariableInitialised();
         }
 
         public KeyString[] KeyStrings { get; init; }
@@ -17,17 +18,13 @@ namespace CRECSharpInterpreter
         public object Value { get; private set; }
         public Type _Type { get; private set; }
 
-        private void VerifyVariablesAreInitialised()
+        private void VerifyVariableInitialised()
         {
-            foreach (KeyString keyString in KeyStrings)
-                if (keyString._Type == KeyString.Type.Variable)
-                {
-                    Variable variable = Memory.Instance.GetVariable(keyString.Text);
-                    if (variable == null)
-                        throw new ExpressionException(this, $"Variable \"{keyString.Text}\" hasn't been declared");
-                    if (!variable.Initialised)
-                        throw new ExpressionException(this, $"Variable \"{keyString.Text}\" hasn't been initialised");
-                }
+            Variable variable = Memory.Instance.GetVariable(KeyStrings[0].Text);
+            if (variable == null)
+                throw new ExpressionException(this, $"Variable \"{KeyStrings[0].Text}\" hasn't been declared");
+            if (!variable.Initialised)
+                throw new ExpressionException(this, $"Variable \"{KeyStrings[0].Text}\" hasn't been initialised");
         }
 
         private ExpressionException lengthException;
@@ -148,7 +145,9 @@ namespace CRECSharpInterpreter
             Value = variable.Value;
             if (variable._VarType._Storage == VarType.Storage.Value)
                 return;
-            // if it's a reference type then its value is the heap index
+            if (Value == null)
+                return;
+            // if it's a reference type with a non-null value then its value is the heap index
             int heapIndex = (int)Value;
             Memory.Instance.Heap.IncrementReferenceCounter(heapIndex);
         }
