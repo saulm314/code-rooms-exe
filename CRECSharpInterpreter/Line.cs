@@ -173,6 +173,15 @@ namespace CRECSharpInterpreter
         private void PerformWriteVariable()
         {
             _Expression.Compute();
+
+            bool isReferenceType = VarToWrite._VarType._Storage == VarType.Storage.Reference;
+            bool isNull = VarToWrite.Value == null;
+            if (isReferenceType && !isNull)
+            {
+                int oldAllocation = (int)VarToWrite.Value;
+                Memory.Instance.Heap.DecrementReferenceCounter(oldAllocation);
+            }
+
             VarToWrite.Value = _Expression.Value;
         }
 
@@ -185,6 +194,15 @@ namespace CRECSharpInterpreter
             ElementToWrite.IndexExpression.Compute();
             ElementToWrite.Index = (int)ElementToWrite.IndexExpression.Value;
             int index = ElementToWrite.Index;
+
+            bool isReferenceType = ElementToWrite.Array._VarType.Unarray._Storage == VarType.Storage.Reference;
+            bool isNull = Memory.Instance.Heap.GetValue(heapIndex, index) == null;
+            if (isReferenceType && !isNull)
+            {
+                int oldAllocation = (int)Memory.Instance.Heap.GetValue(heapIndex, index);
+                Memory.Instance.Heap.DecrementReferenceCounter(oldAllocation);
+            }
+
             Memory.Instance.Heap.SetValue(heapIndex, index, _Expression.Value);
         }
 

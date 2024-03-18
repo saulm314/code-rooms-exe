@@ -47,3 +47,9 @@ char letterC = anotherCharArray[index];
 anotherCharArray = null;
 
 intArray5[2] = 137;
+
+intArray = null;
+intArray2 = intArray3;
+intArray4 = null;
+
+bool[] boolArray = new bool[] { true, false, true };

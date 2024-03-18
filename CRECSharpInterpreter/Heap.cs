@@ -25,7 +25,7 @@ namespace CRECSharpInterpreter
 
         public int Allocate(int length, IEnumerable<Variable> data)
         {
-            Variable lengthAsVariable = new(VarType.@int, null);
+            HeapLengthVariable lengthAsVariable = new();
             lengthAsVariable.Value = length;
             int sizeRequired = length + 1;
             int index = GetEmptySpace(sizeRequired);
@@ -70,6 +70,19 @@ namespace CRECSharpInterpreter
                 throw new HeapException(this,
                     $"Internal exception: cannot place {value} into slot of type {variable._VarType}");
             variable.Value = value;
+        }
+
+        public void IncrementReferenceCounter(int index)
+        {
+            HeapLengthVariable lengthVariable = (HeapLengthVariable)variables[index];
+            lengthVariable.referenceCount++;
+        }
+
+        public void DecrementReferenceCounter(int index)
+        {
+            HeapLengthVariable lengthVariable = (HeapLengthVariable)variables[index];
+            if (--lengthVariable.referenceCount == 0)
+                Free(index);
         }
 
         private void VerifyRange(int index, int offset)

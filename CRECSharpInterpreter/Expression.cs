@@ -146,6 +146,11 @@ namespace CRECSharpInterpreter
         {
             Variable variable = Memory.Instance.GetVariable(KeyStrings[0].Text);
             Value = variable.Value;
+            if (variable._VarType._Storage == VarType.Storage.Value)
+                return;
+            // if it's a reference type then its value is the heap index
+            int heapIndex = (int)Value;
+            Memory.Instance.Heap.IncrementReferenceCounter(heapIndex);
         }
 
         private void ComputeLiteral()
