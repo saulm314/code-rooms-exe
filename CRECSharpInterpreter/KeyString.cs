@@ -258,10 +258,11 @@ namespace CRECSharpInterpreter
             if (IsCloseCurlyBrace)      return Type.CloseCurlyBrace;
             if (IsComma)                return Type.Comma;
             if (IsArrayElement)         return Type.ArrayElement;
+            if (IsNull)                 return Type.Null;
                                         return Type.Invalid;
         }
 
-        private bool IsKeyword { get => IsType || IsBoolean || IsNewKeyword; }
+        private bool IsKeyword { get => IsType || IsBoolean || IsNewKeyword || IsNull; }
 
         private bool IsType
         {
@@ -356,6 +357,9 @@ namespace CRECSharpInterpreter
         private bool IsArrayElement { get => _isArrayElement ??= _ArrayElement != null; }
         private bool? _isArrayElement;
 
+        private bool IsNull { get => _isNull ??= Text == "null"; }
+        private bool? _isNull;
+
         public enum Type
         {
             Invalid,
@@ -373,7 +377,8 @@ namespace CRECSharpInterpreter
             OpenCurlyBrace,
             CloseCurlyBrace,
             Comma,
-            ArrayElement
+            ArrayElement,
+            Null
         }
 
         public override string ToString() => Text;

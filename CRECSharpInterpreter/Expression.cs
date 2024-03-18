@@ -42,6 +42,7 @@ namespace CRECSharpInterpreter
                 Type.ArrayConstruction => ComputeVarTypeArrayConstruction(),
                 Type.ArrayLiteral => ComputeVarTypeArrayLiteral(),
                 Type.ArrayElement => ComputeVarTypeArrayElement(),
+                Type.Null => ComputeVarTypeNull(),
                 _ => throw lengthException
             };
         }
@@ -65,6 +66,8 @@ namespace CRECSharpInterpreter
             }
             if (KeyStrings[0]._Type == KeyString.Type.ArrayElement && KeyStrings.Length == 1)
                 return Type.ArrayElement;
+            if (KeyStrings[0]._Type == KeyString.Type.Null && KeyStrings.Length == 1)
+                return Type.Null;
             return Type.Invalid;
         }
 
@@ -83,6 +86,11 @@ namespace CRECSharpInterpreter
         private VarType ComputeVarTypeArrayConstruction()
         {
             return KeyStrings[1]._ArrayConstruction._VarType;
+        }
+
+        private VarType ComputeVarTypeNull()
+        {
+            return null;
         }
 
         private VarType ComputeVarTypeArrayLiteral()
@@ -124,6 +132,9 @@ namespace CRECSharpInterpreter
                     break;
                 case Type.ArrayElement:
                     ComputeArrayElement();
+                    break;
+                case Type.Null:
+                    ComputeNull();
                     break;
                 default:
                     throw new ExpressionException(this,
@@ -213,6 +224,11 @@ namespace CRECSharpInterpreter
             Value = Memory.Instance.Heap.GetValue(heapIndex, index);
         }
 
+        private void ComputeNull()
+        {
+            Value = null;
+        }
+
         public enum Type
         {
             Invalid,
@@ -220,7 +236,8 @@ namespace CRECSharpInterpreter
             Literal,
             ArrayConstruction,
             ArrayLiteral,
-            ArrayElement
+            ArrayElement,
+            Null
         }
 
         public class ExpressionException : InterpreterException

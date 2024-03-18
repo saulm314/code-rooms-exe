@@ -119,6 +119,13 @@ namespace CRECSharpInterpreter
 
         private void VerifyWriteValid()
         {
+            if (_Expression._VarType == null)
+            {
+                if (VarToWrite._VarType.DefaultValue == null)
+                    return;
+                throw new LineException(this,
+                    $"Cannot write null to the value type variable \"{VarToWrite.Name}\"");
+            }
             if (VarToWrite._VarType != _Expression._VarType)
                 throw new LineException(this,
                     $"Cannot write expression of type {_Expression._VarType} to variable {VarToWrite.Name} of type {VarToWrite._VarType}");

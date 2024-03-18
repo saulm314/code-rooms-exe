@@ -43,3 +43,5 @@ int anotherNumber = intArray5[1];
 char[] anotherCharArray = new char[] { 'a', 'b', 'c' };
 int index = 2;
 char letterC = anotherCharArray[index];
+
+anotherCharArray = null;
