@@ -45,3 +45,5 @@ int index = 2;
 char letterC = anotherCharArray[index];
 
 anotherCharArray = null;
+
+intArray5[2] = 137;

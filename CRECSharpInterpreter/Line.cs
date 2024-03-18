@@ -26,14 +26,19 @@ namespace CRECSharpInterpreter
                     VerifyDeclarationValid();
                     _Expression = CreateExpression(); // must be done before declaring variable to ensure no self-references
                     VarToWrite = DeclareVariable();
-                    VerifyWriteValid();
+                    VerifyWriteVariableValid();
                     VarToWrite.Initialised = true;
                     break;
-                case Type.Write:
+                case Type.WriteVariable:
                     _Expression = CreateExpression();
                     VarToWrite = GetVarToWrite_NoDeclaration();
-                    VerifyWriteValid();
+                    VerifyWriteVariableValid();
                     VarToWrite.Initialised = true;
+                    break;
+                case Type.WriteArrayElement:
+                    _Expression = CreateExpression();
+                    ElementToWrite = GetElementToWrite();
+                    VerifyWriteArrayElementValid();
                     break;
             }
 
@@ -48,6 +53,8 @@ namespace CRECSharpInterpreter
         public Type _Type { get; init; }
 
         public Variable VarToWrite { get; init; }
+
+        public ArrayElement ElementToWrite { get; init; }
 
         public Expression _Expression { get; init; }
 
@@ -65,8 +72,11 @@ namespace CRECSharpInterpreter
             switch (_Type)
             {
                 case Type.DeclarationInitialisation:
-                case Type.Write:
-                    PerformWrite();
+                case Type.WriteVariable:
+                    PerformWriteVariable();
+                    break;
+                case Type.WriteArrayElement:
+                    PerformWriteArrayElement();
                     break;
             }
             Console.WriteLine("Stack:");
@@ -109,7 +119,8 @@ namespace CRECSharpInterpreter
             int expressionOffset = _Type switch
             {
                 Type.DeclarationInitialisation => 3,
-                Type.Write => 2,
+                Type.WriteVariable => 2,
+                Type.WriteArrayElement => 2,
                 _ => throw new LineException(this, "internal error")
             };
             KeyString[] expressionKeyStrings = new KeyString[KeyStrings.Length - expressionOffset];
@@ -117,7 +128,7 @@ namespace CRECSharpInterpreter
             return new(expressionKeyStrings);
         }
 
-        private void VerifyWriteValid()
+        private void VerifyWriteVariableValid()
         {
             if (_Expression._VarType == null)
             {
@@ -131,6 +142,21 @@ namespace CRECSharpInterpreter
                     $"Cannot write expression of type {_Expression._VarType} to variable {VarToWrite.Name} of type {VarToWrite._VarType}");
         }
 
+        private void VerifyWriteArrayElementValid()
+        {
+            if (_Expression._VarType == null)
+            {
+                if (ElementToWrite.Array._VarType.Unarray.DefaultValue == null)
+                    return;
+                throw new LineException(this,
+                    $"Cannot write null to a value type element of array \"{ElementToWrite.Array.Name}\"");
+            }
+            if (ElementToWrite.Array._VarType.Unarray != _Expression._VarType)
+                throw new LineException(this,
+                    $"Cannot write expression of type {_Expression._VarType} to element of array " +
+                    $"{ElementToWrite.Array.Name} of type {ElementToWrite.Array._VarType.Unarray}");
+        }
+
         private Variable GetVarToWrite_NoDeclaration()
         {
             Variable varToWrite = Memory.Instance.GetVariable(KeyStrings[0].Text);
@@ -139,21 +165,36 @@ namespace CRECSharpInterpreter
             return varToWrite;
         }
 
-        private void PerformWrite()
+        private ArrayElement GetElementToWrite()
+        {
+            return KeyStrings[0]._ArrayElement;
+        }
+
+        private void PerformWriteVariable()
         {
             _Expression.Compute();
             VarToWrite.Value = _Expression.Value;
         }
 
+        private void PerformWriteArrayElement()
+        {
+            _Expression.Compute();
+            if (ElementToWrite.Array.Value == null)
+                throw new LineException(this, $"Array \"{ElementToWrite.Array.Name}\" has value null");
+            int heapIndex = (int)ElementToWrite.Array.Value;
+            ElementToWrite.IndexExpression.Compute();
+            ElementToWrite.Index = (int)ElementToWrite.IndexExpression.Value;
+            int index = ElementToWrite.Index;
+            Memory.Instance.Heap.SetValue(heapIndex, index, _Expression.Value);
+        }
+
         private new Type GetType()
         {
-            if (IsDeclaration)
-                return Type.Declaration;
-            if (IsDeclarationInitialisation)
-                return Type.DeclarationInitialisation;
-            if (IsWrite)
-                return Type.Write;
-            return Type.Invalid;
+            if (IsDeclaration)                  return Type.Declaration;
+            if (IsDeclarationInitialisation)    return Type.DeclarationInitialisation;
+            if (IsWriteVariable)                return Type.WriteVariable;
+            if (IsWriteArrayElement)            return Type.WriteArrayElement;
+                                                return Type.Invalid;
         }
 
         private bool IsDeclaration
@@ -177,22 +218,33 @@ namespace CRECSharpInterpreter
         }
         private bool? _isDeclarationInitialisation;
 
-        private bool IsWrite
+        private bool IsWriteVariable
         {
             get =>
-                _isWrite ??=
+                _isWriteVariable ??=
                     KeyStrings.Length >= 3 &&
                     KeyStrings[0]._Type == KeyString.Type.Variable &&
                     KeyStrings[1]._Type == KeyString.Type.Equals;
         }
-        private bool? _isWrite;
+        private bool? _isWriteVariable;
+
+        private bool IsWriteArrayElement
+        {
+            get =>
+                _isWriteArrayElement ??=
+                    KeyStrings.Length >= 3 &&
+                    KeyStrings[0]._Type == KeyString.Type.ArrayElement &&
+                    KeyStrings[1]._Type == KeyString.Type.Equals;
+        }
+        private bool? _isWriteArrayElement;
 
         public enum Type
         {
             Invalid,
             Declaration,
             DeclarationInitialisation,
-            Write
+            WriteVariable,
+            WriteArrayElement
         }
 
         public class LineException : InterpreterException
