@@ -115,7 +115,8 @@ namespace CRECSharpInterpreter
         {
             "=",
             "{",
-            "}"
+            "}",
+            ","
         };
 
         public static string[] GetKeyStringsAsStrings(string text)
@@ -214,6 +215,7 @@ namespace CRECSharpInterpreter
             if (IsCloseSquareBrace)     return Type.CloseSquareBrace;
             if (IsOpenCurlyBrace)       return Type.OpenCurlyBrace;
             if (IsCloseCurlyBrace)      return Type.CloseCurlyBrace;
+            if (IsComma)                return Type.Comma;
                                         return Type.Invalid;
         }
 
@@ -306,6 +308,9 @@ namespace CRECSharpInterpreter
         private bool IsCloseCurlyBrace { get => _isCloseCurlyBrace ??= Text == "}"; }
         private bool? _isCloseCurlyBrace;
 
+        private bool IsComma { get => _isComma ??= Text == ","; }
+        private bool? _isComma;
+
         public enum Type
         {
             Invalid,
@@ -321,7 +326,8 @@ namespace CRECSharpInterpreter
             OpenSquareBrace,
             CloseSquareBrace,
             OpenCurlyBrace,
-            CloseCurlyBrace
+            CloseCurlyBrace,
+            Comma
         }
 
         public override string ToString() => Text;
