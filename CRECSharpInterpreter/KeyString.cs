@@ -66,6 +66,12 @@ namespace CRECSharpInterpreter
                     _ArrayElement.IndexExpression.KeyStrings.CopyTo(SubKeyStrings, 2);
                     SubKeyStrings[SubKeyStrings.Length - 1] = new("]");
                     break;
+                case Type.ArrayLength:
+                    SubKeyStrings = new KeyString[3];
+                    SubKeyStrings[0] = new(_ArrayLength.Array.Name);
+                    SubKeyStrings[1] = new(".");
+                    SubKeyStrings[2] = new("Length");
+                    break;
             }
         }
 
@@ -115,6 +121,34 @@ namespace CRECSharpInterpreter
             return arrayConstruction;
         }
 
+        public ArrayLength _ArrayLength { get => _arrayLength ??= CreateArrayLength(); }
+        private ArrayLength _arrayLength;
+        private bool arrayLengthIsNull;
+
+        private ArrayLength CreateArrayLength()
+        {
+            if (arrayLengthIsNull)
+                return null;
+            arrayLengthIsNull = true;
+            int dotIndex = Text.IndexOf('.');
+            if (dotIndex == -1)
+                return null;
+            string variableName = Text[..dotIndex];
+            Variable variable = Memory.Instance.GetVariable(variableName);
+            if (variable == null)
+                return null;
+            if (!variable.Initialised)
+                return null;
+            if (!variable._VarType.IsArray)
+                return null;
+            string stringAfterDot = Text[(dotIndex + 1)..];
+            if (stringAfterDot != "Length")
+                return null;
+            ArrayLength arrayLength = new(variable);
+            arrayLengthIsNull = false;
+            return arrayLength;
+        }
+
         public ArrayElement _ArrayElement { get => _arrayElement ??= CreateArrayElement(); }
         private ArrayElement _arrayElement;
         private bool arrayElementIsNull;
@@ -137,6 +171,8 @@ namespace CRECSharpInterpreter
             if (variable == null)
                 return null;
             if (!variable.Initialised)
+                return null;
+            if (!variable._VarType.IsArray)
                 return null;
             string stringInsideBraces = Text[(openSquareBraceIndex + 1)..closeSquareBraceIndex];
             if (string.IsNullOrWhiteSpace(stringInsideBraces))
@@ -168,6 +204,7 @@ namespace CRECSharpInterpreter
 
             text = RemoveWhiteSpaceSurroundingCharacter(text, '[', Direction.LeftRight);
             text = RemoveWhiteSpaceSurroundingCharacter(text, ']', Direction.Left);
+            text = RemoveWhiteSpaceSurroundingCharacter(text, '.', Direction.LeftRight);
 
             // remove all whitespace characters and return everything else, separated
             return
@@ -259,6 +296,9 @@ namespace CRECSharpInterpreter
             if (IsComma)                return Type.Comma;
             if (IsArrayElement)         return Type.ArrayElement;
             if (IsNull)                 return Type.Null;
+            if (IsArrayLength)          return Type.ArrayLength;
+            if (IsDot)                  return Type.Dot;
+            if (IsLengthProperty)       return Type.LengthProperty;
                                         return Type.Invalid;
         }
 
@@ -360,6 +400,15 @@ namespace CRECSharpInterpreter
         private bool IsNull { get => _isNull ??= Text == "null"; }
         private bool? _isNull;
 
+        private bool IsArrayLength { get => _isArrayLength ??= _ArrayLength != null; }
+        private bool? _isArrayLength;
+
+        private bool IsDot { get => _isDot ??= Text == "."; }
+        private bool? _isDot;
+
+        private bool IsLengthProperty { get => _isLengthProperty ??= Text == "Length"; }
+        private bool? _isLengthProperty;
+
         public enum Type
         {
             Invalid,
@@ -378,7 +427,10 @@ namespace CRECSharpInterpreter
             CloseCurlyBrace,
             Comma,
             ArrayElement,
-            Null
+            Null,
+            ArrayLength,
+            Dot,
+            LengthProperty
         }
 
         public override string ToString() => Text;

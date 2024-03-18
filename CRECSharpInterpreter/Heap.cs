@@ -72,6 +72,12 @@ namespace CRECSharpInterpreter
             variable.Value = value;
         }
 
+        public int GetLength(int index)
+        {
+            Variable lengthVariable = variables[index];
+            return (int)lengthVariable.Value;
+        }
+
         public void IncrementReferenceCounter(int index)
         {
             HeapLengthVariable lengthVariable = (HeapLengthVariable)variables[index];

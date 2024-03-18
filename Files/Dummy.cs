@@ -63,3 +63,9 @@ double[] doubleArray3 = new double[] { };
 
 int[] test = null;
 int[] arrayarray = test;
+
+int newInt = boolArray.Length;
+bool[] boolArrayCopy = new bool[boolArray.Length];
+boolArrayCopy[0] = boolArray[0];
+boolArrayCopy[1] = boolArray[1];
+boolArrayCopy[2] = boolArray[2];

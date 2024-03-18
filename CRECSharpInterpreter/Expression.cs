@@ -40,6 +40,7 @@ namespace CRECSharpInterpreter
                 Type.ArrayLiteral => ComputeVarTypeArrayLiteral(),
                 Type.ArrayElement => ComputeVarTypeArrayElement(),
                 Type.Null => ComputeVarTypeNull(),
+                Type.ArrayLength => ComputeVarTypeArrayLength(),
                 _ => throw lengthException
             };
         }
@@ -65,6 +66,8 @@ namespace CRECSharpInterpreter
                 return Type.ArrayElement;
             if (KeyStrings[0]._Type == KeyString.Type.Null && KeyStrings.Length == 1)
                 return Type.Null;
+            if (KeyStrings[0]._Type == KeyString.Type.ArrayLength && KeyStrings.Length == 1)
+                return Type.ArrayLength;
             return Type.Invalid;
         }
 
@@ -111,6 +114,11 @@ namespace CRECSharpInterpreter
             return KeyStrings[0]._ArrayElement.Array._VarType.Unarray;
         }
 
+        private VarType ComputeVarTypeArrayLength()
+        {
+            return VarType.@int;
+        }
+
         public void Compute()
         {
             switch (_Type)
@@ -132,6 +140,9 @@ namespace CRECSharpInterpreter
                     break;
                 case Type.Null:
                     ComputeNull();
+                    break;
+                case Type.ArrayLength:
+                    ComputeArrayLength();
                     break;
                 default:
                     throw new ExpressionException(this,
@@ -235,6 +246,12 @@ namespace CRECSharpInterpreter
             Value = null;
         }
 
+        private void ComputeArrayLength()
+        {
+            ArrayLength arrayLength = KeyStrings[0]._ArrayLength;
+            Value = arrayLength.Length;
+        }
+
         public enum Type
         {
             Invalid,
@@ -243,7 +260,8 @@ namespace CRECSharpInterpreter
             ArrayConstruction,
             ArrayLiteral,
             ArrayElement,
-            Null
+            Null,
+            ArrayLength
         }
 
         public class ExpressionException : InterpreterException
