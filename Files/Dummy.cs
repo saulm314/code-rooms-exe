@@ -53,3 +53,5 @@ intArray2 = intArray3;
 intArray4 = null;
 
 bool[] boolArray = new bool[] { true, false, true };
+
+bool[] boolArray2 = new bool[] { };

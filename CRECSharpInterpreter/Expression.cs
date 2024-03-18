@@ -185,6 +185,8 @@ namespace CRECSharpInterpreter
 
         private List<Expression> GetExpressionsInArrayLiteral()
         {
+            if (KeyStrings.Length == 4)
+                return new();
             List<Expression> expressionsInsideBraces = new();
             List<KeyString> keyStringsInCurrentExpression = new();
             bool expectingNonComma = true;
