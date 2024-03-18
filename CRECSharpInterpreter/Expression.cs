@@ -122,6 +122,9 @@ namespace CRECSharpInterpreter
                 case Type.ArrayLiteral:
                     ComputeArrayLiteral();
                     break;
+                case Type.ArrayElement:
+                    ComputeArrayElement();
+                    break;
                 default:
                     throw new ExpressionException(this,
                         $"Internal exception: don't know how to compute expression of type {_Type}");
@@ -192,6 +195,22 @@ namespace CRECSharpInterpreter
             Expression finalExpression = new(keyStringsInCurrentExpression.ToArray());
             expressionsInsideBraces.Add(finalExpression);
             return expressionsInsideBraces;
+        }
+
+        private void ComputeArrayElement()
+        {
+            Expression indexExpression = KeyStrings[0]._ArrayElement.IndexExpression;
+            indexExpression.Compute();
+            KeyStrings[0]._ArrayElement.Index = (int)indexExpression.Value;
+            int index = KeyStrings[0]._ArrayElement.Index;
+            Variable array = KeyStrings[0]._ArrayElement.Array;
+            if (array.Value == null)
+                throw new ExpressionException(this, $"Array \"{array.Name}\" has value null");
+            int heapIndex = (int)array.Value;
+            int length = (int)Memory.Instance.Heap[heapIndex].Value;
+            if (index >= length)
+                throw new ExpressionException(this, $"Index {index} out of range of array \"{array.Name}\"");
+            Value = Memory.Instance.Heap.GetValue(heapIndex, index);
         }
 
         public enum Type
