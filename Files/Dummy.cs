@@ -38,3 +38,5 @@ char[] charArray2 = new char[4];
 double[] doubleArray = new double[numbernumber];
 
 int[] intArray5 = new int[] { 59, -17, thirdNumber };
+
+int anotherNumber = intArray5[1];

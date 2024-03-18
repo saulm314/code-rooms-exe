@@ -10,6 +10,8 @@
             for (int i = 0; i < indexKeyStrings.Length; i++)
                 indexKeyStrings[i] = new(indexKeyStringsAsStrings[i]);
             IndexExpression = new(indexKeyStrings);
+            if (IndexExpression._VarType != VarType.@int)
+                throw new ArrayElementException(this, "Array index must be an integer");
         }
 
         public Variable Array { get; init; }

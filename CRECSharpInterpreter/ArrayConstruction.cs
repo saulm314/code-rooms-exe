@@ -10,6 +10,8 @@
             for (int i = 0; i < arrayLengthKeyStrings.Length; i++)
                 arrayLengthKeyStrings[i] = new(arrayLengthKeyStringsAsStrings[i]);
             ArrayLengthExpression = new(arrayLengthKeyStrings);
+            if (ArrayLengthExpression._VarType != VarType.@int)
+                throw new ArrayConstructionException(this, "Array length must be an integer");
         }
 
         public VarType _VarType { get; init; }

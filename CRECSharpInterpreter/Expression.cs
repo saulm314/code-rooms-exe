@@ -41,6 +41,7 @@ namespace CRECSharpInterpreter
                 Type.Literal => ComputeVarTypeLiteral(),
                 Type.ArrayConstruction => ComputeVarTypeArrayConstruction(),
                 Type.ArrayLiteral => ComputeVarTypeArrayLiteral(),
+                Type.ArrayElement => ComputeVarTypeArrayElement(),
                 _ => throw lengthException
             };
         }
@@ -62,36 +63,30 @@ namespace CRECSharpInterpreter
                 if (KeyStrings[1]._Type == KeyString.Type.Type && KeyStrings.Length >= 4)
                     return Type.ArrayLiteral;
             }
+            if (KeyStrings[0]._Type == KeyString.Type.ArrayElement && KeyStrings.Length == 1)
+                return Type.ArrayElement;
             return Type.Invalid;
         }
 
         private VarType ComputeVarTypeVariable()
         {
-            if (KeyStrings.Length != 1)
-                throw lengthException;
             Variable variable = Memory.Instance.GetVariable(KeyStrings[0].Text);
             return variable._VarType;
         }
 
         private VarType ComputeVarTypeLiteral()
         {
-            if (KeyStrings.Length != 1)
-                throw lengthException;
             Literal literal = KeyStrings[0]._Literal;
             return literal._VarType;
         }
 
         private VarType ComputeVarTypeArrayConstruction()
         {
-            if (KeyStrings.Length > 2)
-                throw lengthException;
             return KeyStrings[1]._ArrayConstruction._VarType;
         }
 
         private VarType ComputeVarTypeArrayLiteral()
         {
-            if (KeyStrings.Length < 4)
-                throw lengthException;
             string varTypeAsString = KeyStrings[1].Text;
             VarType varType = VarType.GetVarType(varTypeAsString);
             if (KeyStrings[2]._Type != KeyString.Type.OpenCurlyBrace)
@@ -104,6 +99,11 @@ namespace CRECSharpInterpreter
                     throw new ExpressionException(this,
                         $"Cannot have variable of type {expression._VarType} in array of type {varType}");
             return varType;
+        }
+
+        private VarType ComputeVarTypeArrayElement()
+        {
+            return KeyStrings[0]._ArrayElement.Array._VarType.Unarray;
         }
 
         public void Compute()
@@ -200,7 +200,8 @@ namespace CRECSharpInterpreter
             Variable,
             Literal,
             ArrayConstruction,
-            ArrayLiteral
+            ArrayLiteral,
+            ArrayElement
         }
 
         public class ExpressionException : InterpreterException

@@ -136,6 +136,8 @@ namespace CRECSharpInterpreter
             Variable variable = Memory.Instance.GetVariable(variableName);
             if (variable == null)
                 return null;
+            if (!variable.Initialised)
+                return null;
             string stringInsideBraces = Text[(openSquareBraceIndex + 1)..closeSquareBraceIndex];
             if (string.IsNullOrWhiteSpace(stringInsideBraces))
                 return null;
