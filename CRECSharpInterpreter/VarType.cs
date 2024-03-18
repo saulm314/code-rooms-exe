@@ -30,6 +30,9 @@ namespace CRECSharpInterpreter
         }
         private object _defaultValue;
 
+        public Storage _Storage { get => _storage ??= DefaultValue != null ? Storage.Value : Storage.Reference; }
+        private Storage? _storage;
+
         private VarType(string name, Type systemType, bool isArray = false, VarType unarray = null)
         {
             Name = name;
@@ -75,6 +78,12 @@ namespace CRECSharpInterpreter
         }
 
         public override string ToString() => Name;
+
+        public enum Storage
+        {
+            Value,
+            Reference
+        }
 
         public class VarTypeException : InterpreterException
         {
