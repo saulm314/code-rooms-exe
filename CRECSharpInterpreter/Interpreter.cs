@@ -7,7 +7,17 @@ namespace CRECSharpInterpreter
         public Interpreter(string text)
         {
             Console.WriteLine($"Creating interpreter for the following text:\n\n{text}");
-            chunk = new(text, Mode.Compilation);
+            try
+            {
+                chunk = new(text, Mode.Compilation);
+            }
+            catch (Expression.ExpressionException e)
+            {
+                Console.WriteLine();
+                foreach (KeyString keyString in e.expression.KeyStrings);
+                    //Console.WriteLine(keyString.Text);
+                throw;
+            }
             Console.ReadLine();
             Console.WriteLine(SEPARATOR + "\n");
 

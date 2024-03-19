@@ -53,8 +53,6 @@ namespace CRECSharpInterpreter
         {
             if (KeyStrings.Length == 0)
                 return Type.Invalid;
-            if (Array.Exists(KeyStrings, keyString => keyString._Type == KeyString.Type.Operator))
-                return Type.ContainsOperators;
             if (KeyStrings[0]._Type == KeyString.Type.Variable && KeyStrings.Length == 1)
                 return Type.Variable;
             if (KeyStrings[0]._Literal != null && KeyStrings.Length == 1)
@@ -74,6 +72,8 @@ namespace CRECSharpInterpreter
                 return Type.Null;
             if (KeyStrings[0]._Type == KeyString.Type.ArrayLength && KeyStrings.Length == 1)
                 return Type.ArrayLength;
+            if (Array.Exists(KeyStrings, keyString => keyString._Type == KeyString.Type.Operator))
+                return Type.ContainsOperators;
             return Type.Invalid;
         }
 

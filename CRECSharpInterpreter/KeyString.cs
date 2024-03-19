@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace CRECSharpInterpreter
@@ -205,6 +206,7 @@ namespace CRECSharpInterpreter
             text = RemoveWhiteSpaceSurroundingCharacter(text, '[', Direction.LeftRight);
             text = RemoveWhiteSpaceSurroundingCharacter(text, ']', Direction.Left);
             text = RemoveWhiteSpaceSurroundingCharacter(text, '.', Direction.LeftRight);
+            text = RemoveWhiteSpaceBetweenCharacters(text, '[', ']');
 
             // remove all whitespace characters and return everything else, separated
             return
@@ -222,6 +224,47 @@ namespace CRECSharpInterpreter
                 if (input[i] == character)
                     input = RemoveWhiteSpaceSurroundingIndex(input, i, direction, out i);
                 i++;
+            }
+            return input;
+        }
+
+        private static string RemoveWhiteSpaceBetweenCharacters(string input, char char1, char char2)
+        {
+            int i = 0;
+            int bracketsOpened = 0;
+            int lastIndexOfChar2 = input.LastIndexOf(char2);
+            while (i < input.Length)
+            {
+                if (input[i] == char1)
+                {
+                    bracketsOpened++;
+                    i++;
+                    continue;
+                }
+                if (input[i] == char2)
+                {
+                    bracketsOpened--;
+                    if (bracketsOpened < 0)
+                        bracketsOpened = 0;
+                    i++;
+                    continue;
+                }
+                if (bracketsOpened == 0)
+                {
+                    i++;
+                    continue;
+                }
+                if (!char.IsWhiteSpace(input[i]))
+                {
+                    i++;
+                    continue;
+                }
+                if (i >= lastIndexOfChar2)
+                {
+                    i++;
+                    continue;
+                }
+                input = input.Remove(i, 1);
             }
             return input;
         }
