@@ -69,3 +69,10 @@ bool[] boolArrayCopy = new bool[boolArray.Length];
 boolArrayCopy[0] = boolArray[0];
 boolArrayCopy[1] = boolArray[1];
 boolArrayCopy[2] = boolArray[2];
+
+int addInt = +5;
+int addInt2 = 5 + 5;
+int addInt3 = +addInt + addInt2 + 17 + 2;
+
+int[] addIntArray = new int[2 + 1];
+int[] addIntArray2 = new int[] { addInt + addInt2, 17 + 2, +3 };

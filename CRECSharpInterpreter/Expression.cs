@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace CRECSharpInterpreter
 {
-    public class Expression
+    public class Expression : IEvaluable
     {
         public Expression(KeyString[] keyStrings)
         {
@@ -17,6 +18,8 @@ namespace CRECSharpInterpreter
         public VarType _VarType { get; init; }
         public object Value { get; private set; }
         public Type _Type { get; private set; }
+
+        private IEvaluable evaluable;
 
         private void VerifyVariableInitialised()
         {
@@ -41,6 +44,7 @@ namespace CRECSharpInterpreter
                 Type.ArrayElement => ComputeVarTypeArrayElement(),
                 Type.Null => ComputeVarTypeNull(),
                 Type.ArrayLength => ComputeVarTypeArrayLength(),
+                Type.ContainsOperators => ComputeVarTypeContainsOperators(),
                 _ => throw lengthException
             };
         }
@@ -49,6 +53,8 @@ namespace CRECSharpInterpreter
         {
             if (KeyStrings.Length == 0)
                 return Type.Invalid;
+            if (Array.Exists(KeyStrings, keyString => keyString._Type == KeyString.Type.Operator))
+                return Type.ContainsOperators;
             if (KeyStrings[0]._Type == KeyString.Type.Variable && KeyStrings.Length == 1)
                 return Type.Variable;
             if (KeyStrings[0]._Literal != null && KeyStrings.Length == 1)
@@ -119,6 +125,27 @@ namespace CRECSharpInterpreter
             return VarType.@int;
         }
 
+        private VarType ComputeVarTypeContainsOperators()
+        {
+            GetEvaluablesSeparatedByOperators(out List<IEvaluable> evaluables, out List<Operator> operators);
+            while (operators.Count > 0)
+            {
+                for (int i = 0; i < operators.Count; i++)
+                {
+                    Operation operation = Operation.GetOperation(evaluables, operators, i);
+                    if (operation != null)
+                    {
+                        operators.RemoveAt(i);
+                        evaluables.RemoveAt(i);
+                        evaluables[i] = operation;
+                        break;
+                    }
+                }
+            }
+            evaluable = evaluables[0];
+            return evaluable._VarType;
+        }
+
         public void Compute()
         {
             switch (_Type)
@@ -143,6 +170,9 @@ namespace CRECSharpInterpreter
                     break;
                 case Type.ArrayLength:
                     ComputeArrayLength();
+                    break;
+                case Type.ContainsOperators:
+                    ComputeContainsOperators();
                     break;
                 default:
                     throw new ExpressionException(this,
@@ -191,6 +221,53 @@ namespace CRECSharpInterpreter
             }
             int heapIndex = Memory.Instance.Heap.Allocate(variablesToAllocate.Length, variablesToAllocate);
             Value = heapIndex;
+        }
+
+        // there will always be 1 more evaluable than operator
+        // this is because it is assumed that the parent expression starts with an expression
+        //      (if it in fact does not then we say it starts with a null expression)
+        // and similarly it is assumed that the parent expression ends with an expression (same caveat)
+        private void GetEvaluablesSeparatedByOperators(out List<IEvaluable> evaluables, out List<Operator> operators)
+        {
+            operators = new();
+            evaluables = new();
+            List<KeyString> keyStringsInCurrentExpression = new();
+            bool expectingNonOperator = true;
+            if (KeyStrings[0]._Type == KeyString.Type.Operator)
+            {
+                evaluables.Add(null);
+                expectingNonOperator = false;
+            }
+            foreach (KeyString keyString in KeyStrings)
+            {
+                switch (keyString._Type)
+                {
+                    case KeyString.Type.Operator:
+                        if (expectingNonOperator)
+                            throw lengthException;
+                        expectingNonOperator = true;
+                        Expression currentExpression = keyStringsInCurrentExpression.Count > 0 ?
+                            new(keyStringsInCurrentExpression.ToArray()) :
+                            null;
+                        if (currentExpression != null)
+                            evaluables.Add(currentExpression);
+                        keyStringsInCurrentExpression = new();
+                        operators.Add(keyString._Operator);
+                        break;
+                    default:
+                        expectingNonOperator = false;
+                        keyStringsInCurrentExpression.Add(keyString);
+                        break;
+                }
+            }
+            bool finishedOnOperator = expectingNonOperator;
+            if (finishedOnOperator)
+            {
+                evaluables.Add(null);
+                return;
+            }
+            Expression finalExpression = new(keyStringsInCurrentExpression.ToArray());
+            evaluables.Add(finalExpression);
         }
 
         private List<Expression> GetExpressionsInArrayLiteral()
@@ -252,6 +329,12 @@ namespace CRECSharpInterpreter
             Value = arrayLength.Length;
         }
 
+        private void ComputeContainsOperators()
+        {
+            evaluable.Compute();
+            Value = evaluable.Value;
+        }
+
         public enum Type
         {
             Invalid,
@@ -261,7 +344,8 @@ namespace CRECSharpInterpreter
             ArrayLiteral,
             ArrayElement,
             Null,
-            ArrayLength
+            ArrayLength,
+            ContainsOperators
         }
 
         public class ExpressionException : InterpreterException
