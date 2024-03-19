@@ -39,6 +39,11 @@ namespace CRECSharpInterpreter
                 new IntegerNegation()
             });
 
+        public static Operator Multiply { get; } = new("*", OperatorPriority.ImmediateExpressions, new IOperator[]
+            {
+                new IntegerMultiplication()
+            });
+
         public static Operator GetOperator(string symbol)
         {
             foreach (Operator @operator in Operators)

@@ -76,3 +76,8 @@ int addInt3 = +addInt + addInt2 + 17 + 2;
 
 int[] addIntArray = new int[2 + 1];
 int[] addIntArray2 = new int[] { +addInt, 17+addInt2, 2 - 5 + addInt, 3 };
+
+int mult = 5 * 3;
+int mult2 = 5 * 3 + 2;
+int mult3 = 2 + 5 * 3;
+int mult4 = 2 + 5 * 3 - 7 - 2 * 3 * 2 + 5;
