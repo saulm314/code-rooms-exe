@@ -33,6 +33,12 @@ namespace CRECSharpInterpreter
                 new IntegerConfirmation()
             });
 
+        public static Operator Minus { get; } = new("-", OperatorPriority.LeftToRight, new IOperator[]
+            {
+                new IntegerSubtraction(),
+                new IntegerNegation()
+            });
+
         public static Operator GetOperator(string symbol)
         {
             foreach (Operator @operator in Operators)

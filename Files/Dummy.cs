@@ -71,8 +71,8 @@ boolArrayCopy[1] = boolArray[1];
 boolArrayCopy[2] = boolArray[2];
 
 int addInt = +5;
-int addInt2 = 5 + 5;
+int addInt2 = 5 + 5 - 2 - 2 + 3;
 int addInt3 = +addInt + addInt2 + 17 + 2;
 
 int[] addIntArray = new int[2 + 1];
-int[] addIntArray2 = new int[] { +addInt, 17+addInt2, 2 + 5 + addInt, 3 };
+int[] addIntArray2 = new int[] { +addInt, 17+addInt2, 2 - 5 + addInt, 3 };
