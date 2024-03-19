@@ -30,23 +30,29 @@ namespace CRECSharpInterpreter
         public static Operator Plus { get; } = new("+", OperatorPriority.LeftToRight, new IOperator[]
             {
                 new IntegerAddition(),
-                new IntegerConfirmation()
+                new IntegerConfirmation(),
+                new DoubleFloatAddition(),
+                new DoubleFloatConfirmation()
             });
 
         public static Operator Minus { get; } = new("-", OperatorPriority.LeftToRight, new IOperator[]
             {
                 new IntegerSubtraction(),
-                new IntegerNegation()
+                new IntegerNegation(),
+                new DoubleFloatSubtraction(),
+                new DoubleFloatConfirmation()
             });
 
         public static Operator Multiply { get; } = new("*", OperatorPriority.ImmediateExpressions, new IOperator[]
             {
-                new IntegerMultiplication()
+                new IntegerMultiplication(),
+                new DoubleFloatMultiplication()
             });
 
         public static Operator Divide { get; } = new("/", OperatorPriority.ImmediateExpressions, new IOperator[]
             {
-                new IntegerDivision()
+                new IntegerDivision(),
+                new DoubleFloatDivision()
             });
 
         public static Operator GetOperator(string symbol)
