@@ -44,6 +44,11 @@ namespace CRECSharpInterpreter
                 new IntegerMultiplication()
             });
 
+        public static Operator Divide { get; } = new("/", OperatorPriority.ImmediateExpressions, new IOperator[]
+            {
+                new IntegerDivision()
+            });
+
         public static Operator GetOperator(string symbol)
         {
             foreach (Operator @operator in Operators)

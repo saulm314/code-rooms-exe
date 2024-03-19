@@ -81,3 +81,5 @@ int mult = 5 * 3;
 int mult2 = 5 * 3 + 2;
 int mult3 = 2 + 5 * 3;
 int mult4 = 2 + 5 * 3 - 7 - 2 * 3 * 2 + 5;
+
+int div = 5 / 2 * 3 * 2 - 6 / 2 * 3;
