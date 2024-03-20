@@ -55,6 +55,18 @@ namespace CRECSharpInterpreter
                 new DoubleFloatDivision()
             });
 
+        public static Operator LessThan { get; } = new("<", OperatorPriority.AllExpressions, new IOperator[]
+            {
+                new IntegerLessThan(),
+                new DoubleFloatLessThan()
+            });
+
+        public static Operator GreaterThan { get; } = new(">", OperatorPriority.AllExpressions, new IOperator[]
+            {
+                new IntegerGreaterThan(),
+                new DoubleFloatGreaterThan()
+            });
+
         public static Operator GetOperator(string symbol)
         {
             foreach (Operator @operator in Operators)

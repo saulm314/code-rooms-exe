@@ -85,3 +85,20 @@ int mult4 = 2 + 5 * 3 - 7 - 2 * 3 * 2 + 5;
 int div = 5 / 2 * 3 * 2 - 6 / 2 * 3;
 
 double doubleCalc = 5.3 / 7.2 * 1.9 - 2.3 + 1.4 + 1.3 - 2.1 * 5.9;
+
+bool comparison = 5 < 3;
+bool comparison2 = 3 < 5;
+bool comparison3 = 5 > 3;
+bool comparison4 = 3 > 5;
+bool comparison5 = 5 < 5;
+bool comparison6 = 5 > 5;
+
+bool comparison7 = 5.0 < 3.0;
+bool comparison8 = 3.0 < 5.0;
+bool comparison9 = 5.0 > 3.0;
+bool comparison10 = 3.0 > 5.0;
+bool comparison11 = 5.0 < 5.0;
+bool comparison12 = 5.0 > 5.0;
+
+bool comparison13 = addInt < addInt2;
+bool comparison14 = addInt > addInt2;
