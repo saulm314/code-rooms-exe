@@ -6,5 +6,7 @@
         public object Value { get; }
 
         public void Compute();
+
+        public KeyString[] GetKeyStrings();
     }
 }

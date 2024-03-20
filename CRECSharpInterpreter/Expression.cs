@@ -15,6 +15,8 @@ namespace CRECSharpInterpreter
 
         public KeyString[] KeyStrings { get; init; }
 
+        public KeyString[] GetKeyStrings() => KeyStrings;
+
         public VarType _VarType { get; init; }
         public object Value { get; private set; }
         public Type _Type { get; private set; }

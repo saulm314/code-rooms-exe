@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace CRECSharpInterpreter
 {
@@ -71,6 +72,22 @@ namespace CRECSharpInterpreter
                     throw new OperationException(null, "internal error");
             }
         }
+
+        public KeyString[] GetKeyStrings()
+        {
+            if (_keyStrings != null)
+                return _keyStrings;
+            KeyString[] leftKeyStrings = LeftEvaluable?.GetKeyStrings() ?? Array.Empty<KeyString>();
+            KeyString operatorKeyString = _Operator.KeyString;
+            KeyString[] rightKeyStrings = RightEvaluable?.GetKeyStrings() ?? Array.Empty<KeyString>();
+            KeyString[] keyStrings = new KeyString[leftKeyStrings.Length + 1 + rightKeyStrings.Length];
+            leftKeyStrings.CopyTo(keyStrings, 0);
+            keyStrings[leftKeyStrings.Length] = operatorKeyString;
+            rightKeyStrings.CopyTo(keyStrings, leftKeyStrings.Length + 1);
+            return keyStrings;
+        }
+
+        private KeyString[] _keyStrings;
 
         public class OperationException : InterpreterException
         {

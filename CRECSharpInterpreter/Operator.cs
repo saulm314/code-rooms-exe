@@ -8,6 +8,8 @@ namespace CRECSharpInterpreter
         public OperatorPriority Priority { get; init; }
         public IOperator[] PotentialSpecificOperators { get; init; }
 
+        public KeyString KeyString { get => new(Symbol); }
+
         private Operator(string symbol, OperatorPriority priority, IOperator[] potentialSpecificOperators)
         {
             Symbol = symbol;
