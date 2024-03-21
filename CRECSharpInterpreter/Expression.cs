@@ -231,45 +231,107 @@ namespace CRECSharpInterpreter
         // and similarly it is assumed that the parent expression ends with an expression (same caveat)
         private void GetEvaluablesSeparatedByOperators(out List<IEvaluable> evaluables, out List<Operator> operators)
         {
-            operators = new();
+            internalException = new(this, "internal error");
             evaluables = new();
-            List<KeyString> keyStringsInCurrentExpression = new();
-            bool expectingNonOperator = true;
-            if (KeyStrings[0]._Type == KeyString.Type.Operator)
+            operators = new();
+            int i = 0;
+            ItemType previous = ItemType.None;
+            while (i < KeyStrings.Length)
             {
-                evaluables.Add(null);
-                expectingNonOperator = false;
+                KeyString[] remainingKeyStrings = new KeyString[KeyStrings.Length - i];
+                Array.Copy(KeyStrings, i, remainingKeyStrings, 0, KeyStrings.Length - i);
+                IEvaluable evaluable = GetNextEvaluable(ref previous, i, out i);
+                evaluables.Add(evaluable);
+                if (i >= KeyStrings.Length)
+                    break;
+                Operator @operator = GetNextOperator(ref previous, i, out i);
+                operators.Add(@operator);
             }
-            foreach (KeyString keyString in KeyStrings)
+            switch (previous)
             {
-                switch (keyString._Type)
+                case ItemType.Evaluable:
+                    break;
+                case ItemType.AllExpressionsOperator:
+                case ItemType.Operator_NotAllExpressions:
+                    evaluables.Add(null);
+                    break;
+            }
+        }
+
+        private ExpressionException internalException;
+
+        private IEvaluable GetNextEvaluable(ref ItemType previous, int startIndex, out int endIndex)
+        {
+            endIndex = startIndex + 1;
+
+            bool isOperator = KeyStrings[startIndex]._Type == KeyString.Type.Operator;
+            switch (previous, isOperator)
+            {
+                case (ItemType.None, false):
+                case (ItemType.AllExpressionsOperator, false):
+                case (ItemType.Operator_NotAllExpressions, false):
+                    previous = ItemType.Evaluable;
+                    break;
+                case (ItemType.None, true):
+                case (ItemType.AllExpressionsOperator, true):
+                    previous = ItemType.Evaluable;
+                    endIndex--;
+                    return null;
+                case (ItemType.Evaluable, false):
+                case (ItemType.Evaluable, true):
+                    throw internalException;
+                case (ItemType.Operator_NotAllExpressions, true):
+                    if (KeyStrings[startIndex]._Operator.Priority == OperatorPriority.AllExpressions)
+                    {
+                        previous = ItemType.Evaluable;
+                        endIndex--;
+                        return null;
+                    }
+                    throw new ExpressionException(this,
+                        $"Cannot have operator {KeyStrings[startIndex]._Operator.Symbol} immediately after another operator");
+            }
+
+            List<KeyString> keyStringsInExpression = new();
+            int i = startIndex;
+            while (i < KeyStrings.Length)
+            {
+                switch (KeyStrings[i]._Type)
                 {
-                    case KeyString.Type.Operator:
-                        if (expectingNonOperator)
-                            throw lengthException;
-                        expectingNonOperator = true;
-                        Expression currentExpression = keyStringsInCurrentExpression.Count > 0 ?
-                            new(keyStringsInCurrentExpression.ToArray()) :
-                            null;
-                        if (currentExpression != null)
-                            evaluables.Add(currentExpression);
-                        keyStringsInCurrentExpression = new();
-                        operators.Add(keyString._Operator);
-                        break;
                     default:
-                        expectingNonOperator = false;
-                        keyStringsInCurrentExpression.Add(keyString);
+                        keyStringsInExpression.Add(KeyStrings[i]);
                         break;
+                    case KeyString.Type.Operator:
+                        endIndex = i;
+                        return new Expression(keyStringsInExpression.ToArray());
                 }
+                i++;
             }
-            bool finishedOnOperator = expectingNonOperator;
-            if (finishedOnOperator)
-            {
-                evaluables.Add(null);
-                return;
-            }
-            Expression finalExpression = new(keyStringsInCurrentExpression.ToArray());
-            evaluables.Add(finalExpression);
+            endIndex = i;
+            return new Expression(keyStringsInExpression.ToArray());
+        }
+
+        private Operator GetNextOperator(ref ItemType previous, int startIndex, out int endIndex)
+        {
+            endIndex = startIndex + 1;
+
+            if (previous != ItemType.Evaluable)
+                throw internalException;
+            if (KeyStrings[startIndex]._Type != KeyString.Type.Operator)
+                throw internalException;
+
+            previous = KeyStrings[startIndex]._Operator.Priority == OperatorPriority.AllExpressions ?
+                ItemType.AllExpressionsOperator :
+                ItemType.Operator_NotAllExpressions;
+
+            return KeyStrings[startIndex]._Operator;
+        }
+
+        private enum ItemType
+        {
+            None,
+            Evaluable,
+            AllExpressionsOperator,
+            Operator_NotAllExpressions
         }
 
         private List<Expression> GetExpressionsInArrayLiteral()

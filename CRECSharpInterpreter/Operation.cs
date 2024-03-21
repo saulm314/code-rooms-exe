@@ -84,7 +84,7 @@ namespace CRECSharpInterpreter
             leftKeyStrings.CopyTo(keyStrings, 0);
             keyStrings[leftKeyStrings.Length] = operatorKeyString;
             rightKeyStrings.CopyTo(keyStrings, leftKeyStrings.Length + 1);
-            return keyStrings;
+            return _keyStrings = keyStrings;
         }
 
         private KeyString[] _keyStrings;
