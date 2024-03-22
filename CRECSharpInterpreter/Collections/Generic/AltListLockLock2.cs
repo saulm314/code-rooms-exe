@@ -5,11 +5,7 @@ namespace CRECSharpInterpreter.Collections.Generic
 {
     public class AltListLockLock2<T1, T2> : IAltList<T1, T2>
     {
-        public AltListLockLock2(T1 head, T2 tail)
-        {
-            Head = new(head);
-            Tail = new(tail);
-        }
+        public AltListLockLock2(T1 head) => Head = new(head);
 
         public Required<T1> Head { get; }
         public List<Pair<T2, T1>> Pairs { get; } = new();
