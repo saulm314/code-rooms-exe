@@ -9,7 +9,7 @@ namespace CRECSharpInterpreter
         {
             _VarType = varType;
             Name = name;
-            Value = varType.DefaultValue;
+            Value = varType?.DefaultValue;
         }
 
         public VarType _VarType { get; init; }
@@ -21,7 +21,7 @@ namespace CRECSharpInterpreter
         {
             get
             {
-                switch (_VarType.Name)
+                switch (_VarType?.Name)
                 {
                     case "int":
                         return Value.ToString();
@@ -45,6 +45,8 @@ namespace CRECSharpInterpreter
                         if (valueAsString.Contains('.'))
                             return valueAsString;
                         return $"{valueAsString}.0";
+                    case null:
+                        return string.Empty;
                     default:
                         if (_VarType.IsArray)
                             break;

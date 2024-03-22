@@ -10,6 +10,7 @@ namespace CRECSharpInterpreter
         public Heap()
         {
             variables.AddRange(GetNullVariables(INITIAL_HEAP_CAPACITY));
+            variables[0] = new(null);
         }
 
         private IEnumerable<Variable> GetNullVariables(int count)
