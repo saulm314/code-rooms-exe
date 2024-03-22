@@ -1,4 +1,4 @@
-﻿namespace CRECSharpInterpreter
+﻿namespace CRECSharpInterpreter.Operators
 {
     public enum OperatorPriority
     {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using CRECSharpInterpreter.Operators;
 
 namespace CRECSharpInterpreter
 {
@@ -11,7 +12,7 @@ namespace CRECSharpInterpreter
             _Operator = @operator;
             RightEvaluable = rightEvaluable;
 
-            _VarType = ComputeVarType(out IOperator specificOperator);
+            _VarType = ComputeVarType(out ISpecificOperator specificOperator);
             SpecificOperator = specificOperator;
         }
 
@@ -22,9 +23,9 @@ namespace CRECSharpInterpreter
         public VarType _VarType { get; init; }
         public object Value { get; private set; }
 
-        public IOperator SpecificOperator { get; init; }
+        public ISpecificOperator SpecificOperator { get; init; }
 
-        private VarType ComputeVarType(out IOperator specificOperator)
+        private VarType ComputeVarType(out ISpecificOperator specificOperator)
         {
             VarType leftType = LeftEvaluable?._VarType;
             VarType rightType = RightEvaluable?._VarType;

@@ -1,16 +1,16 @@
 ﻿using System.Collections.Generic;
 
-namespace CRECSharpInterpreter
+namespace CRECSharpInterpreter.Operators
 {
     public class Operator
     {
         public string Symbol { get; init; }
         public OperatorPriority Priority { get; init; }
-        public IOperator[] PotentialSpecificOperators { get; init; }
+        public ISpecificOperator[] PotentialSpecificOperators { get; init; }
 
         public KeyString KeyString { get => new(Symbol); }
 
-        private Operator(string symbol, OperatorPriority priority, IOperator[] potentialSpecificOperators)
+        private Operator(string symbol, OperatorPriority priority, ISpecificOperator[] potentialSpecificOperators)
         {
             Symbol = symbol;
             Priority = priority;
@@ -19,9 +19,9 @@ namespace CRECSharpInterpreter
             Operators.Add(this);
         }
 
-        public IOperator GetSpecificOperator(VarType leftType, VarType rightType)
+        public ISpecificOperator GetSpecificOperator(VarType leftType, VarType rightType)
         {
-            foreach (IOperator specificOperator in PotentialSpecificOperators)
+            foreach (ISpecificOperator specificOperator in PotentialSpecificOperators)
                 if (specificOperator.LeftType == leftType && specificOperator.RightType == rightType)
                     return specificOperator;
             return null;
@@ -29,7 +29,7 @@ namespace CRECSharpInterpreter
 
         public static List<Operator> Operators { get; } = new();
 
-        public static Operator Plus { get; } = new("+", OperatorPriority.LeftToRight, new IOperator[]
+        public static Operator Plus { get; } = new("+", OperatorPriority.LeftToRight, new ISpecificOperator[]
             {
                 new IntegerAddition(),
                 new IntegerConfirmation(),
@@ -37,7 +37,7 @@ namespace CRECSharpInterpreter
                 new DoubleFloatConfirmation()
             });
 
-        public static Operator Minus { get; } = new("-", OperatorPriority.LeftToRight, new IOperator[]
+        public static Operator Minus { get; } = new("-", OperatorPriority.LeftToRight, new ISpecificOperator[]
             {
                 new IntegerSubtraction(),
                 new IntegerNegation(),
@@ -45,25 +45,25 @@ namespace CRECSharpInterpreter
                 new DoubleFloatConfirmation()
             });
 
-        public static Operator Multiply { get; } = new("*", OperatorPriority.ImmediateExpressions, new IOperator[]
+        public static Operator Multiply { get; } = new("*", OperatorPriority.ImmediateExpressions, new ISpecificOperator[]
             {
                 new IntegerMultiplication(),
                 new DoubleFloatMultiplication()
             });
 
-        public static Operator Divide { get; } = new("/", OperatorPriority.ImmediateExpressions, new IOperator[]
+        public static Operator Divide { get; } = new("/", OperatorPriority.ImmediateExpressions, new ISpecificOperator[]
             {
                 new IntegerDivision(),
                 new DoubleFloatDivision()
             });
 
-        public static Operator LessThan { get; } = new("<", OperatorPriority.AllExpressions, new IOperator[]
+        public static Operator LessThan { get; } = new("<", OperatorPriority.AllExpressions, new ISpecificOperator[]
             {
                 new IntegerLessThan(),
                 new DoubleFloatLessThan()
             });
 
-        public static Operator GreaterThan { get; } = new(">", OperatorPriority.AllExpressions, new IOperator[]
+        public static Operator GreaterThan { get; } = new(">", OperatorPriority.AllExpressions, new ISpecificOperator[]
             {
                 new IntegerGreaterThan(),
                 new DoubleFloatGreaterThan()

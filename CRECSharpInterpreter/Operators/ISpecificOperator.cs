@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace CRECSharpInterpreter
+﻿namespace CRECSharpInterpreter.Operators
 {
-    public interface IOperator
+    public interface ISpecificOperator
     {
         public VarType LeftType { get; }
         public VarType RightType { get; }

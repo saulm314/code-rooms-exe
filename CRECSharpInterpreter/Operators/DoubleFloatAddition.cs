@@ -1,6 +1,6 @@
-﻿namespace CRECSharpInterpreter
+﻿namespace CRECSharpInterpreter.Operators
 {
-    public class DoubleFloatAddition : IOperator
+    public class DoubleFloatAddition : ISpecificOperator
     {
         public VarType LeftType { get; } = VarType.@double;
         public VarType RightType { get; } = VarType.@double;

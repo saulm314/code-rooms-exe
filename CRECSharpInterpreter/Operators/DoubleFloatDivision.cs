@@ -1,14 +1,14 @@
-﻿namespace CRECSharpInterpreter
+﻿namespace CRECSharpInterpreter.Operators
 {
-    public class DoubleFloatConfirmation : IOperator
+    public class DoubleFloatDivision : ISpecificOperator
     {
-        public VarType LeftType { get; } = null;
+        public VarType LeftType { get; } = VarType.@double;
         public VarType RightType { get; } = VarType.@double;
         public VarType ReturnType { get; } = VarType.@double;
 
         public object Calculate(object leftValue, object rightValue)
         {
-            return rightValue;
+            return (double)leftValue / (double)rightValue;
         }
     }
 }

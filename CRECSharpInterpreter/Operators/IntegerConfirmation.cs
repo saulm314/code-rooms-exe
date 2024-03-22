@@ -1,6 +1,6 @@
-﻿namespace CRECSharpInterpreter
+﻿namespace CRECSharpInterpreter.Operators
 {
-    public class IntegerConfirmation : IOperator
+    public class IntegerConfirmation : ISpecificOperator
     {
         public VarType LeftType { get; } = null;
         public VarType RightType { get; } = VarType.@int;
