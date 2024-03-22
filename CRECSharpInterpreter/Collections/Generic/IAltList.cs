@@ -21,6 +21,8 @@ namespace CRECSharpInterpreter.Collections.Generic
                 yield return item;
         }
 
+        object IList.this[int i] { get => this[i]; set => this[i] = value; }
+
         public new object this[int i]
         {
             get
@@ -86,34 +88,6 @@ namespace CRECSharpInterpreter.Collections.Generic
             if (listIndex == -1)
                 return -1;
             return GetGlobalIndex(listIndex, 0);
-        }
-
-        public int IndexOfPair(Pair<T1, T2> pair)
-        {
-            int i = 0;
-            bool currentlyT1;
-            if (Head.Count == 1)
-                currentlyT1 = true;
-            currentlyT1 = false;
-            Pair<T1, T2> currentPair = new(default, default);
-            bool initialised = false;
-            foreach (object item in this)
-            {
-                if (currentlyT1)
-                {
-                    currentlyT1 = false;
-                    currentPair.First = (T1)item;
-                    initialised = true;
-                    i++;
-                    continue;
-                }
-                currentlyT1 = true;
-                currentPair.Second = (T2)item;
-                if (initialised && pair.Equals(currentPair))
-                    return --i;
-                i++;
-            }
-            return -1;
         }
 
         public bool IsIndexOutOfRange(int index)
