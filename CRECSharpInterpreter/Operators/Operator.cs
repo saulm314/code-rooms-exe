@@ -2,13 +2,15 @@
 
 namespace CRECSharpInterpreter.Operators
 {
-    public class Operator
+    public class Operator : IExpressionComponent
     {
         public string Symbol { get; init; }
         public OperatorPriority Priority { get; init; }
         public ISpecificOperator[] PotentialSpecificOperators { get; init; }
 
         public KeyString KeyString { get => new(Symbol); }
+
+        public ExpressionComponentType _Type { get; } = ExpressionComponentType.Operator;
 
         private Operator(string symbol, OperatorPriority priority, ISpecificOperator[] potentialSpecificOperators)
         {
