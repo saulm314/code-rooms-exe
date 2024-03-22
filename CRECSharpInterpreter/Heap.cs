@@ -41,6 +41,7 @@ namespace CRECSharpInterpreter
             return index;
         }
 
+        // we assume that there are no circular references
         public void Free(int index)
         {
             Variable lengthAsVariable = variables[index];
