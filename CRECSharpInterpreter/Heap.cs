@@ -45,7 +45,14 @@ namespace CRECSharpInterpreter
             Variable lengthAsVariable = variables[index];
             int length = (int)lengthAsVariable.Value;
             for (int i = index; i <= index + length; i++)
+            {
+                bool isNonNullReferenceVariable =
+                    variables[i]._VarType._Storage == VarType.Storage.Reference &&
+                    variables[i].Value != null;
+                if (isNonNullReferenceVariable)
+                    DecrementReferenceCounter((int)variables[i].Value);
                 variables[i] = null;
+            }
         }
 
         public object GetValue(int index, int offset)
