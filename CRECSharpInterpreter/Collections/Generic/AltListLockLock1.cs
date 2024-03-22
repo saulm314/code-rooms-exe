@@ -23,29 +23,6 @@ namespace CRECSharpInterpreter.Collections.Generic
         public bool IsFixedSize { get; } = false;
         public bool IsReadOnly { get; } = false;
 
-        public object this[int i]
-        {
-            get
-            {
-                if (Base.IsIndexOutOfRange(i))
-                    throw new ArgumentOutOfRangeException(i.ToString());
-                if (i == 0)
-                    return Head.Value;
-                Base.GetSubIndexes(i, out int listIndex, out int pairIndex);
-                return Pairs[listIndex][pairIndex];
-            }
-            set
-            {
-                if (Base.IsIndexOutOfRange(i))
-                    throw new ArgumentOutOfRangeException(i.ToString());
-                if (i == 0)
-                    Head.Value = (T1)value;
-                Base.GetSubIndexes(i, out int listIndex, out int pairIndex);
-                Pair<T2, T1> pair = Pairs[listIndex];
-                pair[pairIndex] = value;
-            }
-        }
-
         public int Add(object value) => Add((Pair<T2, T1>)value);
         public int Add(T2 t2, T1 t1) => Add(new(t2, t1));
 
