@@ -3,7 +3,7 @@ using System.Collections;
 
 namespace CRECSharpInterpreter.Collections.Generic
 {
-    public class Pair<T1, T2> : IList
+    public struct Pair<T1, T2> : IList
     {
         public Pair(T1 first, T2 second)
         {
@@ -21,8 +21,8 @@ namespace CRECSharpInterpreter.Collections.Generic
         }
 
         public int Count { get; } = 2;
-        public bool IsSynchronized { get; set; }
-        public object SyncRoot { get; set; }
+        public bool IsSynchronized { get; set; } = false;
+        public object SyncRoot { get; set; } = null;
 
         public void CopyTo(Array array, int index)
         {

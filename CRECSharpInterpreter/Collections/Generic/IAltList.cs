@@ -46,5 +46,42 @@ namespace CRECSharpInterpreter.Collections.Generic
             }
             return -1;
         }
+
+        public int IndexOfPair(Pair<T2, T1> pair)
+        {
+            int listIndex = Pairs.IndexOf(pair);
+            if (listIndex == -1)
+                return -1;
+            return GetGlobalIndex(listIndex, 0);
+        }
+
+        public bool IsIndexOutOfRange(int index)
+        {
+            return index < 0 || index >= Count;
+        }
+
+        // return -1 if globalIndex points to head, or -2 if it points to tail
+        public void GetSubIndexes(int globalIndex, out int listIndex, out int pairIndex)
+        {
+            if (globalIndex < Head.Count)
+            {
+                listIndex = pairIndex = -1;
+                return;
+            }
+            if (Tail.Count > 0 && globalIndex > Count - Tail.Count - 1)
+            {
+                listIndex = pairIndex = -2;
+                return;
+            }
+            listIndex = (globalIndex - Head.Count) / 2;
+            pairIndex = (globalIndex - Head.Count) % 2;
+        }
+
+        public int GetGlobalIndex(int listIndex, int pairIndex)
+        {
+            if (listIndex < 0 || pairIndex < 0)
+                return listIndex <= pairIndex ? listIndex : pairIndex;
+            return listIndex * 2 + pairIndex + Head.Count;
+        }
     }
 }
