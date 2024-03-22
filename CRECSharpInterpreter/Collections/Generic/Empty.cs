@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace CRECSharpInterpreter.Collections.Generic
 {
-    public class Empty<T> : Single<T>, IReadOnlyList<T>
+    public class Empty<T> : Single<T>
     {
         public override IEnumerator<T> GetEnumerator()
         {
@@ -12,7 +12,7 @@ namespace CRECSharpInterpreter.Collections.Generic
 
         public override int Count { get; } = 0;
         public override bool IsFixedSize { get; } = true;
-        public override bool IsReadOnly { get; } = true;
+        public override bool IsReadOnly { get; } = false;
         public override T this[int i]
         {
             get => throw new NotSupportedException();

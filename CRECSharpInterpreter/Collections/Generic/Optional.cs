@@ -19,7 +19,26 @@ namespace CRECSharpInterpreter.Collections.Generic
 
         public override bool IsFixedSize { get; } = false;
         public override bool IsReadOnly { get; } = false;
-        public override T this[int i] { get => _value; set => _value = value; }
+
+        public override T this[int i]
+        {
+            get
+            {
+                if (_count == 0)
+                    throw new ArgumentOutOfRangeException(i.ToString());
+                if (i != 0)
+                    throw new ArgumentOutOfRangeException(i.ToString());
+                return _value;
+            }
+            set
+            {
+                if (_count == 0)
+                    throw new ArgumentOutOfRangeException(i.ToString());
+                if (i != 0)
+                    throw new ArgumentOutOfRangeException(i.ToString());
+                _value = value;
+            }
+        }
 
         public override int Add(T item)
         {

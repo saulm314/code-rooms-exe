@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace CRECSharpInterpreter.Collections.Generic
 {
-    public class Required<T> : Single<T>, IReadOnlyList<T>
+    public class Required<T> : Single<T>
     {
         public Required(T value) => Value = value;
 
@@ -16,7 +16,7 @@ namespace CRECSharpInterpreter.Collections.Generic
 
         public override int Count { get; } = 1;
         public override bool IsFixedSize { get; } = true;
-        public override bool IsReadOnly { get; } = true;
+        public override bool IsReadOnly { get; } = false;
         public override T this[int i] { get => Value; set => Value = value; }
         public override int Add(T item) => throw new NotSupportedException();
         public override void Clear() => throw new NotSupportedException();
