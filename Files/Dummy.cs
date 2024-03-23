@@ -1,5 +1,3 @@
-bool boolbool = 5 + 3 * 7 < 37 - 5 * 2;
-
 int _number = 1;
 int secondNumber = _number;
 secondNumber = 3;
@@ -104,3 +102,6 @@ bool comparison12 = 5.0 > 5.0;
 
 bool comparison13 = addInt < addInt2;
 bool comparison14 = addInt > addInt2;
+
+bool comparison15 = 5 + 3 * 7 < 37 - 5 * 2;
+bool comparison16 = 5 + 3 * 7 + 1 < 37 - 5 * 2;

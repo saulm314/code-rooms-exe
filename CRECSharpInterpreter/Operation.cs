@@ -82,7 +82,7 @@ namespace CRECSharpInterpreter
                 operatorIndex <= altExpressionComponents.Count - 4 ?
                 (Operator)altExpressionComponents[operatorIndex + 2] :
                 null;
-            bool nextOperatorIsImmediateUnits = previousOperator?.Priority == OperatorPriority.ImmediateUnits;
+            bool nextOperatorIsImmediateUnits = nextOperator?.Priority == OperatorPriority.ImmediateUnits;
             if (previousOperatorIsImmediateUnits || nextOperatorIsImmediateUnits)
                 return null;
             return new(leftEvaluable, @operator, rightEvaluable);
