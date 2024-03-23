@@ -105,3 +105,11 @@ bool comparison14 = addInt > addInt2;
 
 bool comparison15 = 5 + 3 * 7 < 37 - 5 * 2;
 bool comparison16 = 5 + 3 * 7 + 1 < 37 - 5 * 2;
+
+int bracketTest = ((((((5))))));
+int bracketTest2 = (2 + 5) * 3;
+int bracketTest3 = 5 * (3 + 2);
+
+int operationTest = + + + + + 5;
+int operationTest2 = - + - + - 5;
+int operationTest3 = + - + - + 5;
