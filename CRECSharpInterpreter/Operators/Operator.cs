@@ -49,25 +49,25 @@ namespace CRECSharpInterpreter.Operators
                 new DoubleFloatConfirmation()
             });
 
-        public static Operator Multiply { get; } = new("*", OperatorPriority.ImmediateExpressions, new ISpecificOperator[]
+        public static Operator Multiply { get; } = new("*", OperatorPriority.ImmediateUnits, new ISpecificOperator[]
             {
                 new IntegerMultiplication(),
                 new DoubleFloatMultiplication()
             });
 
-        public static Operator Divide { get; } = new("/", OperatorPriority.ImmediateExpressions, new ISpecificOperator[]
+        public static Operator Divide { get; } = new("/", OperatorPriority.ImmediateUnits, new ISpecificOperator[]
             {
                 new IntegerDivision(),
                 new DoubleFloatDivision()
             });
 
-        public static Operator LessThan { get; } = new("<", OperatorPriority.AllExpressions, new ISpecificOperator[]
+        public static Operator LessThan { get; } = new("<", OperatorPriority.AllUnits, new ISpecificOperator[]
             {
                 new IntegerLessThan(),
                 new DoubleFloatLessThan()
             });
 
-        public static Operator GreaterThan { get; } = new(">", OperatorPriority.AllExpressions, new ISpecificOperator[]
+        public static Operator GreaterThan { get; } = new(">", OperatorPriority.AllUnits, new ISpecificOperator[]
             {
                 new IntegerGreaterThan(),
                 new DoubleFloatGreaterThan()
@@ -81,7 +81,10 @@ namespace CRECSharpInterpreter.Operators
             return null;
         }
 
-
+        public override string ToString()
+        {
+            return Symbol;
+        }
 
         public class OperatorException : InterpreterException
         {

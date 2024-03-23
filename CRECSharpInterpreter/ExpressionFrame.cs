@@ -51,5 +51,13 @@ namespace CRECSharpInterpreter
             resolvedEvaluable.Compute();
             Value = resolvedEvaluable.Value;
         }
+
+        public override string ToString()
+        {
+            string str = string.Empty;
+            foreach (KeyString keyString in GetKeyStrings())
+                str += keyString.Text;
+            return str;
+        }
     }
 }

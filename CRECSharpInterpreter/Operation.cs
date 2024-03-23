@@ -51,7 +51,7 @@ namespace CRECSharpInterpreter
             IEvaluable rightEvaluable = (IEvaluable)altExpressionComponents[operatorIndex + 1];
             switch (@operator.Priority)
             {
-                case OperatorPriority.ImmediateExpressions:
+                case OperatorPriority.ImmediateUnits:
                     return new(leftEvaluable, @operator, rightEvaluable);
                 case OperatorPriority.LeftToRight:
                     if (operatorIndex != 1)
@@ -59,53 +59,22 @@ namespace CRECSharpInterpreter
                     if (altExpressionComponents.Count < operatorIndex + 3)
                         return new(leftEvaluable, @operator, rightEvaluable);
                     Operator nextOperator = (Operator)altExpressionComponents[operatorIndex + 2];
-                    if (nextOperator.Priority == OperatorPriority.ImmediateExpressions)
+                    if (nextOperator.Priority == OperatorPriority.ImmediateUnits)
                         return null;
                     return new(leftEvaluable, @operator, rightEvaluable);
-                case OperatorPriority.AllExpressions:
+                case OperatorPriority.AllUnits:
                     if (operatorIndex != 1)
                         return null;
                     AltListLockLock1<IEvaluable, Operator> remainingAltExpressionComponents;
                     int endIndex = altExpressionComponents.Count;
                     for (int i = operatorIndex + 2; i < altExpressionComponents.Count; i += 2)
-                        if (((Operator)altExpressionComponents[i]).Priority == OperatorPriority.AllExpressions)
+                        if (((Operator)altExpressionComponents[i]).Priority == OperatorPriority.AllUnits)
                         {
                             endIndex = i;
                             break;
                         }
                     remainingAltExpressionComponents = altExpressionComponents.Sublist(2, endIndex);
                     rightEvaluable = new ExpressionFrame(remainingAltExpressionComponents);
-                    return new(leftEvaluable, @operator, rightEvaluable);
-                default:
-                    throw new OperationException(null, "internal error");
-            }
-        }
-
-        public static Operation GetOperation(List<IEvaluable> evaluables, List<Operator> operators, int operatorIndex)
-        {
-            if (operators.Count == 0)
-                throw new OperationException(null, "internal error");
-            if (evaluables.Count != operators.Count + 1)
-                throw new OperationException(null, "internal error");
-            IEvaluable leftEvaluable = evaluables[operatorIndex];
-            IEvaluable rightEvaluable = evaluables[operatorIndex + 1];
-            Operator @operator = operators[operatorIndex];
-            switch (@operator.Priority)
-            {
-                case OperatorPriority.ImmediateExpressions:
-                    return new(leftEvaluable, @operator, rightEvaluable);
-                case OperatorPriority.AllExpressions:
-                    if (evaluables.Count != 2)
-                        return null;
-                    return new (leftEvaluable, @operator, rightEvaluable);
-                case OperatorPriority.LeftToRight:
-                    if (operatorIndex != 0)
-                        return null;
-                    if (operators.Count == 1)
-                        return new(leftEvaluable, @operator, rightEvaluable);
-                    Operator nextOperator = operators[operatorIndex + 1];
-                    if (nextOperator.Priority == OperatorPriority.ImmediateExpressions)
-                        return null;
                     return new(leftEvaluable, @operator, rightEvaluable);
                 default:
                     throw new OperationException(null, "internal error");
@@ -127,6 +96,14 @@ namespace CRECSharpInterpreter
         }
 
         private KeyString[] _keyStrings;
+
+        public override string ToString()
+        {
+            string str = string.Empty;
+            foreach (KeyString keyString in GetKeyStrings())
+                str += keyString.Text;
+            return str;
+        }
 
         public class OperationException : InterpreterException
         {

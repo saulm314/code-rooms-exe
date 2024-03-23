@@ -3,7 +3,7 @@ using System.Collections;
 
 namespace CRECSharpInterpreter.Collections.Generic
 {
-    public struct Pair<T1, T2> : IList
+    public class Pair<T1, T2> : IList
     {
         public Pair(T1 first, T2 second)
         {
@@ -46,9 +46,15 @@ namespace CRECSharpInterpreter.Collections.Generic
             set
             {
                 if (i == 0)
+                {
                     First = (T1)value;
+                    return;
+                }
                 if (i == 1)
+                {
                     Second = (T2)value;
+                    return;
+                }
                 throw new ArgumentOutOfRangeException(i.ToString());
             }
         }
@@ -77,5 +83,13 @@ namespace CRECSharpInterpreter.Collections.Generic
         public void Insert(int index, object value) => throw new NotSupportedException();
         public void Remove(object value) => throw new NotSupportedException();
         public void RemoveAt(int index) => throw new NotSupportedException();
+
+        public override bool Equals(object obj)
+        {
+            Pair<T1, T2> other = (Pair<T1, T2>)obj;
+            return
+                (object)First == (object)other.First &&
+                (object)Second == (object)other.Second;
+        }
     }
 }

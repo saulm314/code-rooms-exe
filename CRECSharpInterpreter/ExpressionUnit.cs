@@ -8,6 +8,7 @@ namespace CRECSharpInterpreter
         public ExpressionUnit(KeyString[] keyStrings)
         {
             KeyStrings = keyStrings;
+            _VarType = ComputeVarType();
         }
 
         public KeyString[] KeyStrings { get; init; }
@@ -247,9 +248,17 @@ namespace CRECSharpInterpreter
             ArrayLength
         }
 
+        public override string ToString()
+        {
+            string str = string.Empty;
+            foreach (KeyString keyString in GetKeyStrings())
+                str += keyString.Text;
+            return str;
+        }
+
         public class ExpressionUnitException : InterpreterException
         {
-            public ExpressionUnitException(ExpressionUnit expressionUnit, string message = null) : base(message)
+            public ExpressionUnitException(ExpressionUnit expressionUnit, string message = null) : base(expressionUnit.ToString() + " " + message)
             {
                 this.expressionUnit = expressionUnit;
             }

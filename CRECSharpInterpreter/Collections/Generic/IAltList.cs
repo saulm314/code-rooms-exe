@@ -21,37 +21,34 @@ namespace CRECSharpInterpreter.Collections.Generic
                 yield return item;
         }
 
-        public new object this[int i]
+        public object Get(int i)
         {
-            get
+            if (IsIndexOutOfRange(i))
+                throw new ArgumentOutOfRangeException(i.ToString());
+            GetSubIndexes(i, out int listIndex, out int pairIndex);
+            if (listIndex == -1)
+                return Head[0];
+            if (listIndex == -2)
+                return Tail[0];
+            return Pairs[listIndex][pairIndex];
+        }
+
+        public void Set(int i, object value)
+        {
+            if (IsIndexOutOfRange(i))
+                throw new ArgumentOutOfRangeException(i.ToString());
+            GetSubIndexes(i, out int listIndex, out int pairIndex);
+            if (listIndex == -1)
             {
-                if (IsIndexOutOfRange(i))
-                    throw new ArgumentOutOfRangeException(i.ToString());
-                GetSubIndexes(i, out int listIndex, out int pairIndex);
-                if (listIndex == -1)
-                    return Head[0];
-                if (listIndex == -2)
-                    return Tail[0];
-                return Pairs[listIndex][pairIndex];
+                Head[0] = (T1)value;
+                return;
             }
-            set
+            if (listIndex == -2)
             {
-                if (IsIndexOutOfRange(i))
-                    throw new ArgumentOutOfRangeException(i.ToString());
-                GetSubIndexes(i, out int listIndex, out int pairIndex);
-                if (listIndex == -1)
-                {
-                    Head[0] = (T1)value;
-                    return;
-                }
-                if (listIndex == -2)
-                {
-                    Tail[0] = (T2)value;
-                    return;
-                }
-                Pair<T2, T1> pair = Pairs[listIndex];
-                pair[pairIndex] = value;
+                Tail[0] = (T2)value;
+                return;
             }
+            Pairs[listIndex][pairIndex] = value;
         }
 
         void ICollection.CopyTo(Array array, int index)

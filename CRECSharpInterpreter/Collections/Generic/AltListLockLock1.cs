@@ -23,7 +23,7 @@ namespace CRECSharpInterpreter.Collections.Generic
         public bool IsFixedSize { get; } = false;
         public bool IsReadOnly { get; } = false;
 
-        public object this[int i] { get => this[i]; set => this[i] = value; }
+        public object this[int i] { get => Base.Get(i); set => Base.Set(i, value); }
 
         public int Add(object value) => Add((Pair<T2, T1>)value);
         public int Add(T2 t2, T1 t1) => Add(new(t2, t1));
@@ -104,6 +104,14 @@ namespace CRECSharpInterpreter.Collections.Generic
                 }
             }
             return sublist;
+        }
+
+        public override string ToString()
+        {
+            string str = string.Empty;
+            foreach (object obj in this)
+                str += (obj?.ToString() ?? "null") + "\n";
+            return str;
         }
     }
 }
