@@ -76,5 +76,34 @@ namespace CRECSharpInterpreter.Collections.Generic
                 return;
             RemoveAt(index);
         }
+
+        public AltListLockLock1<T1, T2> Sublist(int startIndex, int endIndex)
+        {
+            if (startIndex % 2 == 1)
+                throw new NotSupportedException("Cannot create sublist from an odd index");
+            if (endIndex % 2 == 0)
+                throw new NotSupportedException("Cannot create sublist stopping at an even index");
+            if (Base.IsIndexOutOfRange(startIndex))
+                throw new ArgumentOutOfRangeException(startIndex.ToString());
+            if (Base.IsIndexOutOfRange(endIndex) && endIndex != Count)
+                throw new ArgumentOutOfRangeException(endIndex.ToString());
+            AltListLockLock1<T1, T2> sublist = new((T1)this[startIndex]);
+            Pair<T2, T1> currentPair = new(default, default);
+            for (int i = startIndex + 1; i < endIndex; i++)
+            {
+                switch (i % 2)
+                {
+                    case 0:
+                        currentPair[0] = this[i];
+                        break;
+                    case 1:
+                        currentPair[1] = this[i];
+                        sublist.Add(currentPair);
+                        currentPair = new(default, default);
+                        break;
+                }
+            }
+            return sublist;
+        }
     }
 }

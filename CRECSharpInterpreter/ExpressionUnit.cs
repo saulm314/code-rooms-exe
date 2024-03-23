@@ -132,7 +132,7 @@ namespace CRECSharpInterpreter
             Value = heapIndex;
         }
 
-        List<Expression> arrayLiteralExpressions;
+        List<Expression> arrayLiteralExpressions = new();
         private VarType ComputeVarTypeArrayLiteral()
         {
             string varTypeAsString = KeyStrings[1].Text;

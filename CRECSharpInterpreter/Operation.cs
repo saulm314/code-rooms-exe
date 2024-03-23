@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using CRECSharpInterpreter.Operators;
+using CRECSharpInterpreter.Collections.Generic;
 
 namespace CRECSharpInterpreter
 {
@@ -42,6 +43,45 @@ namespace CRECSharpInterpreter
             RightEvaluable?.Compute();
             Value = SpecificOperator.Calculate(LeftEvaluable?.Value, RightEvaluable?.Value);
         }
+
+        public static Operation GetOperation(AltListLockLock1<IEvaluable, Operator> altExpressionComponents, int operatorIndex)
+        {
+            IEvaluable leftEvaluable = (IEvaluable)altExpressionComponents[operatorIndex - 1];
+            Operator @operator = (Operator)altExpressionComponents[operatorIndex];
+            IEvaluable rightEvaluable = (IEvaluable)altExpressionComponents[operatorIndex + 1];
+            switch (@operator.Priority)
+            {
+                case OperatorPriority.ImmediateExpressions:
+                    return new(leftEvaluable, @operator, rightEvaluable);
+                case OperatorPriority.LeftToRight:
+                    if (operatorIndex != 1)
+                        return null;
+                    if (altExpressionComponents.Count < operatorIndex + 3)
+                        return new(leftEvaluable, @operator, rightEvaluable);
+                    Operator nextOperator = (Operator)altExpressionComponents[operatorIndex + 2];
+                    if (nextOperator.Priority == OperatorPriority.ImmediateExpressions)
+                        return null;
+                    return new(leftEvaluable, @operator, rightEvaluable);
+                case OperatorPriority.AllExpressions:
+                    if (operatorIndex != 1)
+                        return null;
+                    AltListLockLock1<IEvaluable, Operator> remainingAltExpressionComponents;
+                    int endIndex = altExpressionComponents.Count;
+                    for (int i = operatorIndex + 2; i < altExpressionComponents.Count; i += 2)
+                        if (((Operator)altExpressionComponents[i]).Priority == OperatorPriority.AllExpressions)
+                        {
+                            endIndex = i;
+                            break;
+                        }
+                    remainingAltExpressionComponents = altExpressionComponents.Sublist(2, endIndex);
+                    rightEvaluable = _tempCreateExpressionFrame(remainingAltExpressionComponents);
+                    return new(leftEvaluable, @operator, rightEvaluable);
+                default:
+                    throw new OperationException(null, "internal error");
+            }
+        }
+
+        private static IEvaluable _tempCreateExpressionFrame(AltListLockLock1<IEvaluable, Operator> altExpressionComponents) => null;
 
         public static Operation GetOperation(List<IEvaluable> evaluables, List<Operator> operators, int operatorIndex)
         {
