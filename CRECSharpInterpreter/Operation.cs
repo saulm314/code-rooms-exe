@@ -7,7 +7,7 @@ namespace CRECSharpInterpreter
 {
     public class Operation : IEvaluable
     {
-        private Operation(IEvaluable leftEvaluable, Operator @operator, IEvaluable rightEvaluable)
+        public Operation(IEvaluable leftEvaluable, Operator @operator, IEvaluable rightEvaluable)
         {
             LeftEvaluable = leftEvaluable;
             _Operator = @operator;
