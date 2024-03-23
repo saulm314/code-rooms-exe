@@ -91,5 +91,10 @@ namespace CRECSharpInterpreter.Collections.Generic
                 (object)First == (object)other.First &&
                 (object)Second == (object)other.Second;
         }
+
+        public override int GetHashCode()
+        {
+            return First.GetHashCode() ^ Second.GetHashCode();
+        }
     }
 }

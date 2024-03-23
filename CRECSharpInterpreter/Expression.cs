@@ -78,7 +78,7 @@ namespace CRECSharpInterpreter
             if (finalOperatorIndex == KeyStrings.Length - 1)
                 return null;
             List<KeyString> currentKeyStrings = new();
-            for (int i = finalOperatorIndex; i < KeyStrings.Length; i++)
+            for (int i = finalOperatorIndex + 1; i < KeyStrings.Length; i++)
                 currentKeyStrings.Add(KeyStrings[i]);
             return new(currentKeyStrings.ToArray());
         }
@@ -100,16 +100,9 @@ namespace CRECSharpInterpreter
         {
             if (topLevelOperatorIndexes.Count <= 1)
                 return;
-            int i = 1;
-            while (i < topLevelOperatorIndexes.Count)
-            {
+            for (int i = topLevelOperatorIndexes.Count - 1; i > 0; i--)
                 if (topLevelOperatorIndexes[i] == topLevelOperatorIndexes[i - 1] + 1)
-                {
                     topLevelOperatorIndexes.RemoveAt(i);
-                    continue;
-                }
-                i++;
-            }
         }
 
         private ExpressionUnit GetFirstExpressionUnitFromFirstTopLevelOperatorIndex(int firstTopLevelOperatorIndex)
@@ -234,7 +227,7 @@ namespace CRECSharpInterpreter
             List<KeyString> rightKeyStrings = new();
             for (int i = 0; i < lastTopLevelAllUnitsOperatorIndex; i++)
                 leftKeyStrings.Add(KeyStrings[i]);
-            for (int i = lastTopLevelAllUnitsOperatorIndex; i < KeyStrings.Length; i++)
+            for (int i = lastTopLevelAllUnitsOperatorIndex + 1; i < KeyStrings.Length; i++)
                 rightKeyStrings.Add(KeyStrings[i]);
             if (leftKeyStrings.Count == 0)
                 throw new ExpressionException(this,

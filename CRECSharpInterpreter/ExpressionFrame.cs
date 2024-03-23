@@ -30,20 +30,23 @@ namespace CRECSharpInterpreter
         private VarType ComputeVarType()
         {
             while (AltExpressionComponents.Count > 1)
-            {
-                for (int i = 1; i < AltExpressionComponents.Count; i += 2)
-                {
-                    Operation operation = Operation.GetOperation(AltExpressionComponents, i);
-                    if (operation != null)
-                    {
-                        AltExpressionComponents.RemoveAt(i);
-                        AltExpressionComponents[i - 1] = operation;
-                        break;
-                    }
-                }
-            }
+                ResolveAltExpressionComponents();
             resolvedEvaluable = (IEvaluable)AltExpressionComponents[0];
             return resolvedEvaluable._VarType;
+        }
+
+        private void ResolveAltExpressionComponents()
+        {
+            for (int i = 1; i < AltExpressionComponents.Count; i += 2)
+            {
+                Operation operation = Operation.GetOperation(AltExpressionComponents, i);
+                if (operation != null)
+                {
+                    AltExpressionComponents.RemoveAt(i);
+                    AltExpressionComponents[i - 1] = operation;
+                    break;
+                }
+            }
         }
 
         public void Compute()
