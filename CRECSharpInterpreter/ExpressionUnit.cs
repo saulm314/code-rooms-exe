@@ -31,6 +31,7 @@ namespace CRECSharpInterpreter
                 Type.ArrayElement =>        ComputeVarTypeArrayElement(),
                 Type.Null =>                ComputeVarTypeNull(),
                 Type.ArrayLength =>         ComputeVarTypeArrayLength(),
+                Type.Bracket =>             ComputeVarTypeBracket(),
                 _ =>                        throw new ExpressionUnitException(this, "Unrecognised expression unit")
             };
         }
@@ -46,6 +47,7 @@ namespace CRECSharpInterpreter
                 case Type.ArrayElement:         ComputeArrayElement();          break;
                 case Type.Null:                 ComputeNull();                  break;
                 case Type.ArrayLength:          ComputeArrayLength();           break;
+                case Type.Bracket:              ComputeBracket();               break;
                 default:                        throw new ExpressionUnitException(this,
                                                     $"Internal error; don't know how to compute expression of type \"{_Type}\"");
             }
@@ -79,6 +81,8 @@ namespace CRECSharpInterpreter
                 return Type.Null;
             if (KeyStrings[0]._Type == KeyString.Type.ArrayLength && KeyStrings.Length == 1)
                 return Type.ArrayLength;
+            if (KeyStrings[0]._Type == KeyString.Type.OpenBracket && KeyStrings[KeyStrings.Length - 1]._Type == KeyString.Type.CloseBracket)
+                return Type.Bracket;
             return Type.Invalid;
         }
 
@@ -235,6 +239,21 @@ namespace CRECSharpInterpreter
             Value = arrayLength.Length;
         }
 
+        private Expression bracketExpression;
+        private VarType ComputeVarTypeBracket()
+        {
+            KeyString[] innerKeyStrings = new KeyString[KeyStrings.Length - 2];
+            Array.Copy(KeyStrings, 1, innerKeyStrings, 0, innerKeyStrings.Length);
+            bracketExpression = new(innerKeyStrings);
+            return bracketExpression._VarType;
+        }
+
+        private void ComputeBracket()
+        {
+            bracketExpression.Compute();
+            Value = bracketExpression.Value;
+        }
+
 
         public enum Type
         {
@@ -245,7 +264,8 @@ namespace CRECSharpInterpreter
             ArrayLiteral,
             ArrayElement,
             Null,
-            ArrayLength
+            ArrayLength,
+            Bracket
         }
 
         public override string ToString()

@@ -199,7 +199,9 @@ namespace CRECSharpInterpreter
             "*",
             "/",
             "<",
-            ">"
+            ">",
+            "(",
+            ")"
         };
 
         public static string[] GetKeyStringsAsStrings(string text)
@@ -348,6 +350,8 @@ namespace CRECSharpInterpreter
             if (IsDot)                  return Type.Dot;
             if (IsLengthProperty)       return Type.LengthProperty;
             if (IsOperator)             return Type.Operator;
+            if (IsOpenBracket)          return Type.OpenBracket;
+            if (IsCloseBracket)         return Type.CloseBracket;
                                         return Type.Invalid;
         }
 
@@ -447,6 +451,12 @@ namespace CRECSharpInterpreter
         private bool IsOperator { get => _isOperator ??= Operator.GetOperator(Text) != null; }
         private bool? _isOperator;
 
+        private bool IsOpenBracket { get => _isOpenBracket ??= Text == "("; }
+        private bool? _isOpenBracket;
+
+        private bool IsCloseBracket { get => _isCloseBracket ??= Text == ")"; }
+        private bool? _isCloseBracket;
+
         public enum Type
         {
             Invalid,
@@ -469,7 +479,9 @@ namespace CRECSharpInterpreter
             ArrayLength,
             Dot,
             LengthProperty,
-            Operator
+            Operator,
+            OpenBracket,
+            CloseBracket
         }
 
         public override string ToString() => Text;
