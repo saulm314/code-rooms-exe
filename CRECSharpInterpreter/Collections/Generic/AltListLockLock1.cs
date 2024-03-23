@@ -93,10 +93,10 @@ namespace CRECSharpInterpreter.Collections.Generic
             {
                 switch (i % 2)
                 {
-                    case 0:
+                    case 1:
                         currentPair[0] = this[i];
                         break;
-                    case 1:
+                    case 0:
                         currentPair[1] = this[i];
                         sublist.Add(currentPair);
                         currentPair = new(default, default);

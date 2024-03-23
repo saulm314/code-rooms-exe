@@ -1,3 +1,5 @@
+bool boolbool = 5 + 3 * 7 < 37 - 5 * 2;
+
 int _number = 1;
 int secondNumber = _number;
 secondNumber = 3;
