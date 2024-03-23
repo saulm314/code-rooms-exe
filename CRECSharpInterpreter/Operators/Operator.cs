@@ -73,6 +73,11 @@ namespace CRECSharpInterpreter.Operators
                 new DoubleFloatGreaterThan()
             });
 
+        public static Operator Not { get; } = new("!", OperatorPriority.LeftToRight, new ISpecificOperator[]
+            {
+                new BooleanNegation()
+            });
+
         public static Operator GetOperator(string symbol)
         {
             foreach (Operator @operator in Operators)

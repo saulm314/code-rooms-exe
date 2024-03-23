@@ -113,3 +113,10 @@ int bracketTest3 = 5 * (3 + 2);
 int operationTest = + + + + + 5;
 int operationTest2 = - + - + - 5;
 int operationTest3 = + - + - + 5;
+
+bool negationTest = !true;
+bool negationTest2 = !false;
+bool negationTest3 = !negationTest;
+bool negationTest4 = !negationTest2;
+bool negationTest5 = !(5 < 3);
+bool negationTest6 = !(3 < 5);
