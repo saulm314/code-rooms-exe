@@ -7,8 +7,6 @@
 
         public void Compute();
 
-        public KeyString[] GetKeyStrings();
-
         ExpressionComponentType IExpressionComponent._Type { get => ExpressionComponentType.Evaluable; }
     }
 }

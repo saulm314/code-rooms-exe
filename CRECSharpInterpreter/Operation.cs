@@ -74,14 +74,12 @@ namespace CRECSharpInterpreter
                             break;
                         }
                     remainingAltExpressionComponents = altExpressionComponents.Sublist(2, endIndex);
-                    rightEvaluable = _tempCreateExpressionFrame(remainingAltExpressionComponents);
+                    rightEvaluable = new ExpressionFrame(remainingAltExpressionComponents);
                     return new(leftEvaluable, @operator, rightEvaluable);
                 default:
                     throw new OperationException(null, "internal error");
             }
         }
-
-        private static IEvaluable _tempCreateExpressionFrame(AltListLockLock1<IEvaluable, Operator> altExpressionComponents) => null;
 
         public static Operation GetOperation(List<IEvaluable> evaluables, List<Operator> operators, int operatorIndex)
         {

@@ -10,6 +10,8 @@ namespace CRECSharpInterpreter.Operators
 
         public KeyString KeyString { get => new(Symbol); }
 
+        public KeyString[] GetKeyStrings() => new KeyString[] { KeyString };
+
         public ExpressionComponentType _Type { get; } = ExpressionComponentType.Operator;
 
         private Operator(string symbol, OperatorPriority priority, ISpecificOperator[] potentialSpecificOperators)
