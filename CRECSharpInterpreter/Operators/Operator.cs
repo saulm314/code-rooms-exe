@@ -69,13 +69,20 @@ namespace CRECSharpInterpreter.Operators
 
         public static Operator LessThanOrEqualTo { get; } = new("<=", OperatorPriority.AllUnits, new ISpecificOperator[]
             {
-                new IntegerLessThanOrEqualTo()
+                new IntegerLessThanOrEqualTo(),
+                new DoubleFloatLessThanOrEqualTo()
             });
 
         public static Operator GreaterThan { get; } = new(">", OperatorPriority.AllUnits, new ISpecificOperator[]
             {
                 new IntegerGreaterThan(),
                 new DoubleFloatGreaterThan()
+            });
+
+        public static Operator GreaterThanOrEqualTo { get; } = new(">=", OperatorPriority.AllUnits, new ISpecificOperator[]
+            {
+                new IntegerGreaterThanOrEqualTo(),
+                new DoubleFloatGreaterThanOrEqualTo()
             });
 
         public static Operator Not { get; } = new("!", OperatorPriority.LeftToRight, new ISpecificOperator[]
