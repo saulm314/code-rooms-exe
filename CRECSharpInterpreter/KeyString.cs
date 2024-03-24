@@ -214,7 +214,8 @@ namespace CRECSharpInterpreter
             ">=",
             "&&",
             "||",
-            "=="
+            "==",
+            "!="
         };
 
         public static string[] GetKeyStringsAsStrings(string text)

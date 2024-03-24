@@ -127,6 +127,18 @@ namespace CRECSharpInterpreter.Operators
             return specificOperators;
         }
 
+        public static Operator NotEqual { get; } = new("!=", OperatorPriority.AllUnits, GetNotEqualSpecificOperators());
+        private static ISpecificOperator[] GetNotEqualSpecificOperators()
+        {
+            ISpecificOperator[] specificOperators = new ISpecificOperator[VarType.VarTypes.Count];
+            for (int i = 0; i < specificOperators.Length; i++)
+            {
+                VarType varType = VarType.VarTypes[i];
+                specificOperators[i] = new Inequality(varType);
+            }
+            return specificOperators;
+        }
+
         public static Operator GetOperator(string symbol)
         {
             foreach (Operator @operator in Operators)

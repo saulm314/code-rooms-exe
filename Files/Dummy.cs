@@ -162,3 +162,7 @@ bool equal9 = intArray2 == intArray3;
 bool equal10 = boolArray == boolArrayCopy;
 bool equal11 = boolArray == boolArrayCopy == (intArray2 == intArray3);
 bool equal12 = boolArray == boolArrayCopy == !(intArray2 == intArray3);
+
+bool equal13 = 5 != 5;
+bool equal14 = 5 != 6;
+bool equal15 = boolArray == boolArrayCopy != (intArray2 == intArray3);
