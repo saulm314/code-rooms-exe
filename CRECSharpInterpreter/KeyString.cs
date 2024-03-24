@@ -202,13 +202,18 @@ namespace CRECSharpInterpreter
             ">",
             "(",
             ")",
-            "!"
+            "!",
+            "&",
+            "|",
+            "^"
         };
 
         private static string[] nonKeywordKeyStringsContainingOtherKeyStrings = new string[]
         {
             "<=",
-            ">="
+            ">=",
+            "&&",
+            "||"
         };
 
         public static string[] GetKeyStringsAsStrings(string text)

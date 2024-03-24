@@ -90,6 +90,31 @@ namespace CRECSharpInterpreter.Operators
                 new BooleanNegation()
             });
 
+        public static Operator And { get; } = new("&", OperatorPriority.LeftToRight, new ISpecificOperator[]
+            {
+                new BooleanAnd()
+            });
+
+        public static Operator ConditionalAnd { get; } = new("&&", OperatorPriority.LeftToRight, new ISpecificOperator[]
+            {
+                new BooleanConditionalAnd()
+            });
+
+        public static Operator Or { get; } = new("|", OperatorPriority.LeftToRight, new ISpecificOperator[]
+            {
+                new BooleanOr()
+            });
+
+        public static Operator ConditionalOr { get; } = new("||", OperatorPriority.LeftToRight, new ISpecificOperator[]
+            {
+                new BooleanConditionalOr()
+            });
+
+        public static Operator Xor { get; } = new("^", OperatorPriority.LeftToRight, new ISpecificOperator[]
+            {
+                new BooleanXor()
+            });
+
         public static Operator GetOperator(string symbol)
         {
             foreach (Operator @operator in Operators)

@@ -133,3 +133,17 @@ bool lessEqual9 = 6 >= 7;
 bool lessEqual10 = 6.3 >= 5.3;
 bool lessEqual11 = 6.3 >= 6.3;
 bool lessEqual12 = 6.3 >= 7.3;
+
+bool logic = true & true;
+bool logic2 = true && true;
+bool logic3 = true & false;
+bool logic4 = false & true;
+bool logic5 = false && false;
+bool logic6 = true || false;
+bool logic7 = false | true;
+bool logic8 = false || false;
+bool logic9 = false || false;
+bool logic10 = true ^ true;
+bool logic11 = false ^ true;
+bool logic12 = true ^ false;
+bool logic13 = false ^ false;
