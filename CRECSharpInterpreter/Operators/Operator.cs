@@ -23,10 +23,10 @@ namespace CRECSharpInterpreter.Operators
             Operators.Add(this);
         }
 
-        public ISpecificOperator GetSpecificOperator(VarType leftType, VarType rightType)
+        public ISpecificOperator GetSpecificOperator(Operand? leftOperand, Operand? rightOperand)
         {
             foreach (ISpecificOperator specificOperator in PotentialSpecificOperators)
-                if (specificOperator.LeftType == leftType && specificOperator.RightType == rightType)
+                if (Equals(specificOperator.LeftOperand, leftOperand) && Equals(specificOperator.RightOperand, rightOperand))
                     return specificOperator;
             return null;
         }
@@ -120,29 +120,9 @@ namespace CRECSharpInterpreter.Operators
                 new BooleanXor()
             });
 
-        public static new Operator Equals { get; } = new("==", OperatorPriority.AllUnits, GetEqualsSpecificOperators());
-        private static ISpecificOperator[] GetEqualsSpecificOperators()
-        {
-            ISpecificOperator[] specificOperators = new ISpecificOperator[VarType.VarTypes.Count];
-            for (int i = 0; i < specificOperators.Length; i++)
-            {
-                VarType varType = VarType.VarTypes[i];
-                specificOperators[i] = new Equality(varType);
-            }
-            return specificOperators;
-        }
+        public static new Operator Equals { get; } = new("==", OperatorPriority.AllUnits, Equality.GetSpecificOperators());
 
-        public static Operator NotEqual { get; } = new("!=", OperatorPriority.AllUnits, GetNotEqualSpecificOperators());
-        private static ISpecificOperator[] GetNotEqualSpecificOperators()
-        {
-            ISpecificOperator[] specificOperators = new ISpecificOperator[VarType.VarTypes.Count];
-            for (int i = 0; i < specificOperators.Length; i++)
-            {
-                VarType varType = VarType.VarTypes[i];
-                specificOperators[i] = new Inequality(varType);
-            }
-            return specificOperators;
-        }
+        public static Operator NotEqual { get; } = new("!=", OperatorPriority.AllUnits, Inequality.GetSpecificOperators());
 
         public static Operator[] Casts { get; } = GetCastOperators();
         private static Operator[] GetCastOperators()

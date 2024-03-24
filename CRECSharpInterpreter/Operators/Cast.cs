@@ -5,14 +5,14 @@ namespace CRECSharpInterpreter.Operators
 {
     public class Cast : ISpecificOperator
     {
-        private Cast(VarType rightType, VarType returnType)
+        private Cast(Operand? rightOperand, VarType returnType)
         {
-            RightType = rightType;
+            RightOperand = rightOperand;
             ReturnType = returnType;
         }
 
-        public VarType LeftType { get; } = null;
-        public VarType RightType { get; init; }
+        public Operand? LeftOperand { get; } = null;
+        public Operand? RightOperand { get; init; }
         public VarType ReturnType { get; init; }
 
         // for most use cases we could simply return rightValue without doing anything
@@ -23,9 +23,10 @@ namespace CRECSharpInterpreter.Operators
         // this *may* work, but it is safer to explicitly convert
         public object Calculate(object leftValue, object rightValue)
         {
-            if (RightType == null)
+            Operand rightOperand = (Operand)RightOperand;
+            if (rightOperand._VarType == null)
                 return null;
-            if (RightType.IsArray)
+            if (rightOperand._VarType.IsArray)
                 return rightValue;
             return Convert.ChangeType(rightValue, ReturnType.SystemType);
         }
@@ -35,16 +36,16 @@ namespace CRECSharpInterpreter.Operators
             bool isReferenceType = returnType._Storage == VarType.Storage.Reference;
             int trivialCastCount = isReferenceType ? 2 : 1;
             Cast[] trivialCasts = new Cast[trivialCastCount];
-            trivialCasts[0] = new(returnType, returnType);
+            trivialCasts[0] = new(new(returnType), returnType);
             if (isReferenceType)
-                trivialCasts[1] = new(null, returnType);
+                trivialCasts[1] = new(new(null), returnType);
             try
             {
-                VarType[] permittedNonTrivialInputTypes = PermittedNonTrivialCasts[returnType];
-                Cast[] casts = new Cast[permittedNonTrivialInputTypes.Length + trivialCastCount];
-                for (int i = 0; i < permittedNonTrivialInputTypes.Length; i++)
-                    casts[i] = new(permittedNonTrivialInputTypes[i], returnType);
-                trivialCasts.CopyTo(casts, permittedNonTrivialInputTypes.Length);
+                Operand?[] permittedNonTrivialInputs = PermittedNonTrivialCasts[returnType];
+                Cast[] casts = new Cast[permittedNonTrivialInputs.Length + trivialCastCount];
+                for (int i = 0; i < permittedNonTrivialInputs.Length; i++)
+                    casts[i] = new(permittedNonTrivialInputs[i], returnType);
+                trivialCasts.CopyTo(casts, permittedNonTrivialInputs.Length);
                 return casts;
             }
             catch (KeyNotFoundException)
@@ -55,12 +56,12 @@ namespace CRECSharpInterpreter.Operators
 
         // a trivial cast is defined as a cast from a type to the same type,
         //      or a cast from null to any reference type
-        public static Dictionary<VarType, VarType[]> PermittedNonTrivialCasts { get; } = new()
+        public static Dictionary<VarType, Operand?[]> PermittedNonTrivialCasts { get; } = new()
         {
-            [VarType.@int] = new VarType[] { VarType.@double },
-            [VarType.@double] = new VarType[] { VarType.@int },
-            [VarType.@bool] = new VarType[] { },
-            [VarType.@char] = new VarType[] { }
+            [VarType.@int] = new Operand?[] { new(VarType.@double) },
+            [VarType.@double] = new Operand?[] { new(VarType.@int) },
+            [VarType.@bool] = Array.Empty<Operand?>(),
+            [VarType.@char] = Array.Empty<Operand?>()
         };
     }
 }

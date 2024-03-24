@@ -2,8 +2,8 @@
 {
     public interface ISpecificOperator
     {
-        public VarType LeftType { get; }
-        public VarType RightType { get; }
+        public Operand? LeftOperand { get; }
+        public Operand? RightOperand { get; }
         public VarType ReturnType { get; }
 
         // left and right values to be determined based on priority

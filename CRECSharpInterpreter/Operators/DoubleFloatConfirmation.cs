@@ -2,8 +2,8 @@
 {
     public class DoubleFloatConfirmation : ISpecificOperator
     {
-        public VarType LeftType { get; } = null;
-        public VarType RightType { get; } = VarType.@double;
+        public Operand? LeftOperand { get; } = null;
+        public Operand? RightOperand { get; } = new(VarType.@double);
         public VarType ReturnType { get; } = VarType.@double;
 
         public object Calculate(object leftValue, object rightValue)

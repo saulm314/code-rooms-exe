@@ -2,8 +2,8 @@
 {
     public class IntegerNegation : ISpecificOperator
     {
-        public VarType LeftType { get; } = null;
-        public VarType RightType { get; } = VarType.@int;
+        public Operand? LeftOperand { get; } = null;
+        public Operand? RightOperand { get; } = new(VarType.@int);
         public VarType ReturnType { get; } = VarType.@int;
 
         public object Calculate(object leftValue, object rightValue)

@@ -31,9 +31,9 @@ namespace CRECSharpInterpreter
 
         private VarType ComputeVarType(out ISpecificOperator specificOperator)
         {
-            VarType leftType = LeftEvaluable?._VarType;
-            VarType rightType = RightEvaluable?._VarType;
-            specificOperator = _Operator.GetSpecificOperator(leftType, rightType);
+            Operand? leftOperand = LeftEvaluable == null ? null : new(LeftEvaluable._VarType);
+            Operand? rightOperand = RightEvaluable == null ? null : new(RightEvaluable._VarType);
+            specificOperator = _Operator.GetSpecificOperator(leftOperand, rightOperand);
             if (specificOperator == null)
                 throw new OperationException(this,
                     $"Invalid operation {_Operator.Symbol} on expressions of type {LeftEvaluable._VarType} and {RightEvaluable._VarType}");

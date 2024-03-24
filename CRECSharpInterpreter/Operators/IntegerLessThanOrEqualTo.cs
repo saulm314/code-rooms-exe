@@ -2,8 +2,8 @@
 {
     public class IntegerLessThanOrEqualTo : ISpecificOperator
     {
-        public VarType LeftType { get; } = VarType.@int;
-        public VarType RightType { get; } = VarType.@int;
+        public Operand? LeftOperand { get; } = new(VarType.@int);
+        public Operand? RightOperand { get; } = new(VarType.@int);
         public VarType ReturnType { get; } = VarType.@bool;
 
         public object Calculate(object leftValue, object rightValue)

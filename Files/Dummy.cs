@@ -179,3 +179,9 @@ bool cast6 = (bool)((int)5.3 == 5);
 int[] cast7 = (int[]) new int[] { 5, 3 };
 int[] cast8 = (int[])null;
 cast7 = (int[])null;
+
+bool nullCheck = null == null;
+bool nullCheck2 = cast7 == null;
+bool nullCheck3 = null == cast7;
+bool nullCheck4 = null != null;
+bool nullCheck5 = boolArray == null;

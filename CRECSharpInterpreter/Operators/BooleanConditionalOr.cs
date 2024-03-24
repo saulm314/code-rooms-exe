@@ -2,8 +2,9 @@
 {
     public class BooleanConditionalOr : ISpecificOperator
     {
-        public VarType LeftType { get; } = VarType.@bool;
-        public VarType RightType { get; } = VarType.@bool;
+
+        public Operand? LeftOperand { get; } = new(VarType.@bool);
+        public Operand? RightOperand { get; } = new(VarType.@bool);
         public VarType ReturnType { get; } = VarType.@bool;
 
         public object Calculate(object leftValue, object rightValue)
