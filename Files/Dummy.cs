@@ -120,3 +120,7 @@ bool negationTest3 = !negationTest;
 bool negationTest4 = !negationTest2;
 bool negationTest5 = !(5 < 3);
 bool negationTest6 = !(3 < 5);
+
+bool lessEqual = 5 <= 3;
+bool lessEqual2 = 5 <= 5;
+bool lessEqual3 = 5 <= 6;

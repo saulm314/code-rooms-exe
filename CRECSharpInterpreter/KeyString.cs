@@ -205,11 +205,29 @@ namespace CRECSharpInterpreter
             "!"
         };
 
+        private static string[] nonKeywordKeyStringsContainingOtherKeyStrings = new string[]
+        {
+            "<=",
+            ">="
+        };
+
         public static string[] GetKeyStringsAsStrings(string text)
         {
             // ensure that every key string is surrounded by at least one space on either side
             foreach (string keyString in nonKeywordKeyStrings)
                 text = text.Replace(keyString, $" {keyString} ");
+
+            // but now key strings containing other key strings have been separated into two
+            // e.g. "<=" has become " <  = "
+            // therefore when looking for the congregate key strings, we instead look for the transformed version
+            // that is, instead of "<=", we look for " <  = "
+            TransformNonKeywordKeyStringsContainingOtherKeyStrings();
+
+            // find the transformed key strings, remove all spaces from them,
+            //      and finally add two spaces around them again to separate them from other key strings
+            // so " <  = " becomes " <= "
+            foreach (string keyString in nonKeywordKeyStringsContainingOtherKeyStrings)
+                text = text.Replace(keyString, $" {keyString.Replace(" ", string.Empty)} ");
 
             text = RemoveWhiteSpaceSurroundingCharacter(text, '[', Direction.LeftRight);
             text = RemoveWhiteSpaceSurroundingCharacter(text, ']', Direction.Left);
@@ -222,6 +240,24 @@ namespace CRECSharpInterpreter
                 .Split(default(char[]), StringSplitOptions.TrimEntries)
                 .Where(str => !string.IsNullOrWhiteSpace(str))
                 .ToArray();
+        }
+
+        private static bool _transformed = false;
+        private static void TransformNonKeywordKeyStringsContainingOtherKeyStrings()
+        {
+            if (_transformed)
+                return;
+            _transformed = true;
+            for (int i = 0; i < nonKeywordKeyStringsContainingOtherKeyStrings.Length; i++)
+            {
+                foreach (string smallKeyString in nonKeywordKeyStrings)
+                {
+                    string newBigKeyString =
+                        nonKeywordKeyStringsContainingOtherKeyStrings[i]
+                        .Replace(smallKeyString, $" {smallKeyString} ");
+                    nonKeywordKeyStringsContainingOtherKeyStrings[i] = newBigKeyString;
+                }
+            }
         }
 
         private static string RemoveWhiteSpaceSurroundingCharacter(string input, char character, Direction direction)

@@ -67,6 +67,11 @@ namespace CRECSharpInterpreter.Operators
                 new DoubleFloatLessThan()
             });
 
+        public static Operator LessThanOrEqualTo { get; } = new("<=", OperatorPriority.AllUnits, new ISpecificOperator[]
+            {
+                new IntegerLessThanOrEqualTo()
+            });
+
         public static Operator GreaterThan { get; } = new(">", OperatorPriority.AllUnits, new ISpecificOperator[]
             {
                 new IntegerGreaterThan(),
