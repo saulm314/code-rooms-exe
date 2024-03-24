@@ -147,3 +147,5 @@ bool logic10 = true ^ true;
 bool logic11 = false ^ true;
 bool logic12 = true ^ false;
 bool logic13 = false ^ false;
+
+bool logicTest = !(52 - 3 * 6 < 35 + 5) ^ (logic && (logic10 || boolArrayCopy[index - 2]));
