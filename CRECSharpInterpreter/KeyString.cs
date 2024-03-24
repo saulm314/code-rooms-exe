@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using CRECSharpInterpreter.Operators;
 
@@ -242,12 +243,38 @@ namespace CRECSharpInterpreter
             text = RemoveWhiteSpaceSurroundingCharacter(text, '.', Direction.LeftRight);
             text = RemoveWhiteSpaceBetweenCharacters(text, '[', ']');
 
-            // remove all whitespace characters and return everything else, separated
-            return
-                text
+            // remove all whitespace characters and separate everything else into arrays
+            IEnumerable<string> keyStringsEnumerable = text
                 .Split(default(char[]), StringSplitOptions.TrimEntries)
-                .Where(str => !string.IsNullOrWhiteSpace(str))
-                .ToArray();
+                .Where(str => !string.IsNullOrWhiteSpace(str));
+            List<string> keyStrings = new();
+            foreach (string keyString in keyStringsEnumerable)
+                keyStrings.Add(keyString);
+
+            // combine bracket-type-bracket combinations into casts
+            int i = 1;
+            while (i < keyStrings.Count - 1)
+            {
+                string keyString = keyStrings[i];
+                VarType varType = VarType.GetVarType(keyString);
+                if (varType == null)
+                {
+                    i++;
+                    continue;
+                }
+                string previousKeyString = keyStrings[i - 1];
+                string nextKeyString = keyStrings[i + 1];
+                if (previousKeyString != "(" || nextKeyString != ")")
+                {
+                    i++;
+                    continue;
+                }
+                keyStrings.RemoveAt(i);
+                keyStrings.RemoveAt(i);
+                keyStrings[i - 1] = $"({keyString})";
+            }
+
+            return keyStrings.ToArray();
         }
 
         private static bool _transformed = false;

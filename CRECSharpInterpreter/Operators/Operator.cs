@@ -144,6 +144,19 @@ namespace CRECSharpInterpreter.Operators
             return specificOperators;
         }
 
+        public static Operator[] Casts { get; } = GetCastOperators();
+        private static Operator[] GetCastOperators()
+        {
+            Operator[] operators = new Operator[VarType.VarTypes.Count];
+            for (int i = 0; i < operators.Length; i++)
+            {
+                VarType varType = VarType.VarTypes[i];
+                ISpecificOperator[] specificOperators = Cast.GetCastsForReturnType(varType);
+                Operator @operator = new($"({varType.Name})", OperatorPriority.LeftToRight, specificOperators);
+            }
+            return operators;
+        }
+
         public static Operator GetOperator(string symbol)
         {
             foreach (Operator @operator in Operators)

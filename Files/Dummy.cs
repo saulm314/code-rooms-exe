@@ -169,3 +169,13 @@ bool equal15 = boolArray == boolArrayCopy != (intArray2 == intArray3);
 
 int remainder = 5 % 2;
 int remainder2 = 2 + 7 % 3;
+
+bool cast = (bool)(5 == 5);
+bool cast2 = (bool)false;
+int cast3 = (int)5.3;
+double cast4 = (double)5;
+char cast5 = (char)'a';
+bool cast6 = (bool)((int)5.3 == 5);
+int[] cast7 = (int[]) new int[] { 5, 3 };
+int[] cast8 = (int[])null;
+cast7 = (int[])null;
