@@ -166,3 +166,6 @@ bool equal12 = boolArray == boolArrayCopy == !(intArray2 == intArray3);
 bool equal13 = 5 != 5;
 bool equal14 = 5 != 6;
 bool equal15 = boolArray == boolArrayCopy != (intArray2 == intArray3);
+
+int remainder = 5 % 2;
+int remainder2 = 2 + 7 % 3;

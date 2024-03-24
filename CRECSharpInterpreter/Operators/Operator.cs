@@ -61,6 +61,11 @@ namespace CRECSharpInterpreter.Operators
                 new DoubleFloatDivision()
             });
 
+        public static Operator Remainder { get; } = new("%", OperatorPriority.ImmediateUnits, new ISpecificOperator[]
+            {
+                new IntegerRemainder()
+            });
+
         public static Operator LessThan { get; } = new("<", OperatorPriority.AllUnits, new ISpecificOperator[]
             {
                 new IntegerLessThan(),
