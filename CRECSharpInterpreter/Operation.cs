@@ -6,7 +6,7 @@ namespace CRECSharpInterpreter
 {
     public class Operation : IEvaluable
     {
-        private Operation(IEvaluable leftEvaluable, Operator @operator, IEvaluable rightEvaluable)
+        private Operation(IEvaluable? leftEvaluable, Operator @operator, IEvaluable? rightEvaluable)
         {
             LeftEvaluable = leftEvaluable;
             _Operator = @operator;
@@ -16,24 +16,23 @@ namespace CRECSharpInterpreter
             SpecificOperator = specificOperator;
         }
 
-        public Operation(Expression leftExpression, Operator @operator, Expression rightExpression)
-            : this((IEvaluable)leftExpression, @operator, rightExpression) { }
+        public Operation(Expression? leftExpression, Operator @operator, Expression? rightExpression)
+            : this((IEvaluable?)leftExpression, @operator, rightExpression) { }
 
-        public IEvaluable LeftEvaluable { get; init; }
+        public IEvaluable? LeftEvaluable { get; init; }
         public Operator _Operator { get; init; }
-        public IEvaluable RightEvaluable { get; init; }
+        public IEvaluable? RightEvaluable { get; init; }
 
-        public VarType _VarType { get; init; }
-        public object Value { get; private set; }
+        public VarType? _VarType { get; init; }
+        public object? Value { get; private set; }
 
         public ISpecificOperator SpecificOperator { get; init; }
 
-        private VarType ComputeVarType(out ISpecificOperator specificOperator)
+        private VarType? ComputeVarType(out ISpecificOperator specificOperator)
         {
             Operand? leftOperand = LeftEvaluable == null ? null : new(LeftEvaluable._VarType);
             Operand? rightOperand = RightEvaluable == null ? null : new(RightEvaluable._VarType);
-            specificOperator = _Operator.GetSpecificOperator(leftOperand, rightOperand);
-            if (specificOperator == null)
+            specificOperator = _Operator.GetSpecificOperator(leftOperand, rightOperand) ??
                 throw new OperationException(this,
                     $"Invalid operation {_Operator.Symbol} on expressions of type {LeftEvaluable?._VarType} and {RightEvaluable?._VarType}");
             return specificOperator.ReturnType;
@@ -58,13 +57,13 @@ namespace CRECSharpInterpreter
         //
         // if this method is fed any all-units operators, it throws an error
         // to get an operation involving all-units operators, use the public constructor
-        public static Operation GetOperation(AltListLockLock1<IEvaluable, Operator> altExpressionComponents, int operatorIndex)
+        public static Operation? GetOperation(AltListLockLock1<IEvaluable, Operator> altExpressionComponents, int operatorIndex)
         {
             if (altExpressionComponents.Count < 3)
                 throw new OperationException(null, "Internal error: cannot create an operation with fewer than 3 expression components");
-            IEvaluable leftEvaluable = (IEvaluable)altExpressionComponents[operatorIndex - 1];
-            Operator @operator = (Operator)altExpressionComponents[operatorIndex];
-            IEvaluable rightEvaluable = (IEvaluable)altExpressionComponents[operatorIndex + 1];
+            IEvaluable? leftEvaluable = (IEvaluable?)altExpressionComponents[operatorIndex - 1];
+            Operator @operator = (Operator)altExpressionComponents[operatorIndex]!;
+            IEvaluable? rightEvaluable = (IEvaluable?)altExpressionComponents[operatorIndex + 1];
             if (@operator.Priority == OperatorPriority.ImmediateUnits)
                 return new(leftEvaluable, @operator, rightEvaluable);
             if (@operator.Priority != OperatorPriority.LeftToRight)
@@ -72,14 +71,14 @@ namespace CRECSharpInterpreter
                     $"To get an operation using this operator use the public constructor");
             
             // operator priority is LeftToRight
-            Operator previousOperator =
+            Operator? previousOperator =
                 operatorIndex >= 3 ?
-                (Operator)altExpressionComponents[operatorIndex - 2] :
+                (Operator?)altExpressionComponents[operatorIndex - 2] :
                 null;
             bool previousOperatorIsImmediateUnits = previousOperator?.Priority == OperatorPriority.ImmediateUnits;
-            Operator nextOperator =
+            Operator? nextOperator =
                 operatorIndex <= altExpressionComponents.Count - 4 ?
-                (Operator)altExpressionComponents[operatorIndex + 2] :
+                (Operator?)altExpressionComponents[operatorIndex + 2] :
                 null;
             bool nextOperatorIsImmediateUnits = nextOperator?.Priority == OperatorPriority.ImmediateUnits;
             if (previousOperatorIsImmediateUnits || nextOperatorIsImmediateUnits)
@@ -101,7 +100,7 @@ namespace CRECSharpInterpreter
             return _keyStrings = keyStrings;
         }
 
-        private KeyString[] _keyStrings;
+        private KeyString[]? _keyStrings;
 
         public override string ToString()
         {
@@ -113,12 +112,12 @@ namespace CRECSharpInterpreter
 
         public class OperationException : InterpreterException
         {
-            public OperationException(Operation operation, string message = null) : base(message)
+            public OperationException(Operation? operation, string? message = null) : base(message)
             {
                 this.operation = operation;
             }
 
-            public Operation operation;
+            public Operation? operation;
         }
     }
 }

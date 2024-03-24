@@ -10,30 +10,27 @@ namespace CRECSharpInterpreter
         public bool IsArray { get; init; }
         
         // the respective array of the type if it is not an array, else null
-        public VarType Array { get; init; }
+        public VarType? Array { get; init; }
 
         // the respective normal type if it is an array, else null
-        public VarType Unarray { get; init; }
+        public VarType? Unarray { get; init; }
 
-        public object DefaultValue
+        public object? DefaultValue
         {
-            get =>
-                _defaultValue ??=
-                    Name switch
-                    {
-                        "int" => default(int),
-                        "bool" => default(bool),
-                        "char" => default(char),
-                        "double" => default(double),
-                        _ => null
-                    };
+            get => Name switch
+                {
+                    "int" => default(int),
+                    "bool" => default(bool),
+                    "char" => default(char),
+                    "double" => default(double),
+                    _ => null
+                };
         }
-        private object _defaultValue;
 
         public Storage _Storage { get => _storage ??= DefaultValue != null ? Storage.Value : Storage.Reference; }
         private Storage? _storage;
 
-        private VarType(string name, Type systemType, bool isArray = false, VarType unarray = null)
+        private VarType(string name, Type systemType, bool isArray = false, VarType? unarray = null)
         {
             Name = name;
             SystemType = systemType;
@@ -55,7 +52,7 @@ namespace CRECSharpInterpreter
         public static VarType @char { get; } = new("char", typeof(char));
         public static VarType @double { get; } = new("double", typeof(double));
 
-        public static VarType GetVarType(string varTypeAsString)
+        public static VarType? GetVarType(string varTypeAsString)
         {
             foreach (VarType varType in VarTypes)
                 if (varType.Name == varTypeAsString)
@@ -63,7 +60,7 @@ namespace CRECSharpInterpreter
             return null;
         }
 
-        public static VarType GetVarType(Type varTypeAsSystemType)
+        public static VarType? GetVarType(Type varTypeAsSystemType)
         {
             foreach (VarType varType in VarTypes)
                 if (varType.SystemType == varTypeAsSystemType)
@@ -71,7 +68,7 @@ namespace CRECSharpInterpreter
             return null;
         }
 
-        public static VarType GetVarType(object value)
+        public static VarType? GetVarType(object value)
         {
             Type type = value.GetType();
             return GetVarType(type);
@@ -87,12 +84,12 @@ namespace CRECSharpInterpreter
 
         public class VarTypeException : InterpreterException
         {
-            public VarTypeException(VarType varType, string message = null) : base(message)
+            public VarTypeException(VarType? varType, string? message = null) : base(message)
             {
                 this.varType = varType;
             }
 
-            public VarType varType;
+            public VarType? varType;
         }
     }
 }

@@ -5,14 +5,14 @@ namespace CRECSharpInterpreter.Collections.Generic
 {
     public class Pair<T1, T2> : IList
     {
-        public Pair(T1 first, T2 second)
+        public Pair(T1? first, T2? second)
         {
             First = first;
             Second = second;
         }
 
-        public T1 First { get; set; }
-        public T2 Second { get; set; }
+        public T1? First { get; set; }
+        public T2? Second { get; set; }
 
         public IEnumerator GetEnumerator()
         {
@@ -21,8 +21,8 @@ namespace CRECSharpInterpreter.Collections.Generic
         }
 
         public int Count { get; } = 2;
-        public bool IsSynchronized { get; set; } = false;
-        public object SyncRoot { get; set; } = null;
+        public bool IsSynchronized { get => throw new NotSupportedException(); }
+        public object SyncRoot { get => throw new NotSupportedException(); }
 
         public void CopyTo(Array array, int index)
         {
@@ -33,7 +33,7 @@ namespace CRECSharpInterpreter.Collections.Generic
         public bool IsFixedSize { get; } = true;
         public bool IsReadOnly { get; } = false;
 
-        public object this[int i]
+        public object? this[int i]
         {
             get
             {
@@ -47,54 +47,68 @@ namespace CRECSharpInterpreter.Collections.Generic
             {
                 if (i == 0)
                 {
-                    First = (T1)value;
+                    First = (T1?)value;
                     return;
                 }
                 if (i == 1)
                 {
-                    Second = (T2)value;
+                    Second = (T2?)value;
                     return;
                 }
                 throw new ArgumentOutOfRangeException(i.ToString());
             }
         }
 
-        public int Add(object value) => throw new NotSupportedException();
+        public int Add(object? value) => throw new NotSupportedException();
         public void Clear() => throw new NotSupportedException();
 
-        public bool Contains(object value)
+        public bool Contains(object? value)
         {
-            if (value == (object)First)
+            if (value == (object?)First)
                 return true;
-            if (value == (object)Second)
+            if (value == (object?)Second)
                 return true;
             return false;
         }
 
-        public int IndexOf(object value)
+        public int IndexOf(object? value)
         {
-            if (value == (object)First)
+            if (value == (object?)First)
                 return 0;
-            if (value == (object)Second)
+            if (value == (object?)Second)
                 return 1;
             return -1;
         }
 
-        public void Insert(int index, object value) => throw new NotSupportedException();
-        public void Remove(object value) => throw new NotSupportedException();
+        public void Insert(int index, object? value) => throw new NotSupportedException();
+        public void Remove(object? value) => throw new NotSupportedException();
         public void RemoveAt(int index) => throw new NotSupportedException();
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
-            Pair<T1, T2> other = (Pair<T1, T2>)obj;
+            Pair<T1, T2>? other = (Pair<T1, T2>?)obj;
+            if (other == null)
+                return false;
             return
-                (object)First == (object)other.First &&
-                (object)Second == (object)other.Second;
+                (object?)First == (object?)other.First &&
+                (object?)Second == (object?)other.Second;
         }
 
         public override int GetHashCode()
         {
-            return First.GetHashCode() ^ Second.GetHashCode();
+            return
+                First?.GetHashCode() ?? GetFirstNullHashCode() ^
+                Second?.GetHashCode() ?? GetSecondNullHashCode();
+        }
+
+        private int GetFirstNullHashCode()
+        {
+            return 1.GetHashCode() ^ 2.GetHashCode();
+        }
+
+        private int GetSecondNullHashCode()
+        {
+            return 3.GetHashCode() ^ 4.GetHashCode();
         }
     }
 }

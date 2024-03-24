@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace CRECSharpInterpreter.Operators
 {
@@ -23,7 +24,7 @@ namespace CRECSharpInterpreter.Operators
             Operators.Add(this);
         }
 
-        public ISpecificOperator GetSpecificOperator(Operand? leftOperand, Operand? rightOperand)
+        public ISpecificOperator? GetSpecificOperator(Operand? leftOperand, Operand? rightOperand)
         {
             foreach (ISpecificOperator specificOperator in PotentialSpecificOperators)
                 if (Equals(specificOperator.LeftOperand, leftOperand) && Equals(specificOperator.RightOperand, rightOperand))
@@ -132,12 +133,14 @@ namespace CRECSharpInterpreter.Operators
             {
                 VarType varType = VarType.VarTypes[i];
                 ISpecificOperator[] specificOperators = Cast.GetCastsForReturnType(varType);
-                Operator @operator = new($"({varType.Name})", OperatorPriority.LeftToRight, specificOperators);
+                operators[i] = new($"({varType.Name})", OperatorPriority.LeftToRight, specificOperators);
             }
             return operators;
         }
 
-        public static Operator GetOperator(string symbol)
+        public bool IsCast { get => Casts.Contains(this); }
+
+        public static Operator? GetOperator(string symbol)
         {
             foreach (Operator @operator in Operators)
                 if (@operator.Symbol == symbol)
@@ -152,12 +155,12 @@ namespace CRECSharpInterpreter.Operators
 
         public class OperatorException : InterpreterException
         {
-            public OperatorException(Operator @operator, string message = null) : base(message)
+            public OperatorException(Operator? @operator, string? message = null) : base(message)
             {
                 this.@operator = @operator;
             }
 
-            public Operator @operator;
+            public Operator? @operator;
         }
     }
 }

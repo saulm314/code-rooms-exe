@@ -5,7 +5,7 @@ namespace CRECSharpInterpreter.Operators
 {
     public class Cast : ISpecificOperator
     {
-        private Cast(Operand? rightOperand, VarType returnType)
+        private Cast(Operand rightOperand, VarType returnType)
         {
             RightOperand = rightOperand;
             ReturnType = returnType;
@@ -13,7 +13,7 @@ namespace CRECSharpInterpreter.Operators
 
         public Operand? LeftOperand { get; } = null;
         public Operand? RightOperand { get; init; }
-        public VarType ReturnType { get; init; }
+        public VarType? ReturnType { get; init; }
 
         // for most use cases we could simply return rightValue without doing anything
         // then at some point some other specific operator's Calculate method will do the cast anyway
@@ -21,14 +21,14 @@ namespace CRECSharpInterpreter.Operators
         // so if we do not convert manually, we may run into trouble with an expression such as:
         // 5.0 == (double)5
         // this *may* work, but it is safer to explicitly convert
-        public object Calculate(object leftValue, object rightValue)
+        public object? Calculate(object? leftValue, object? rightValue)
         {
-            Operand rightOperand = (Operand)RightOperand;
+            Operand rightOperand = (Operand)RightOperand!;
             if (rightOperand._VarType == null)
                 return null;
             if (rightOperand._VarType.IsArray)
                 return rightValue;
-            return Convert.ChangeType(rightValue, ReturnType.SystemType);
+            return Convert.ChangeType(rightValue, ReturnType!.SystemType);
         }
 
         public static ISpecificOperator[] GetCastsForReturnType(VarType returnType)
@@ -41,7 +41,7 @@ namespace CRECSharpInterpreter.Operators
                 trivialCasts[1] = new(new(null), returnType);
             try
             {
-                Operand?[] permittedNonTrivialInputs = PermittedNonTrivialCasts[returnType];
+                Operand[] permittedNonTrivialInputs = PermittedNonTrivialCasts[returnType];
                 Cast[] casts = new Cast[permittedNonTrivialInputs.Length + trivialCastCount];
                 for (int i = 0; i < permittedNonTrivialInputs.Length; i++)
                     casts[i] = new(permittedNonTrivialInputs[i], returnType);
@@ -56,12 +56,12 @@ namespace CRECSharpInterpreter.Operators
 
         // a trivial cast is defined as a cast from a type to the same type,
         //      or a cast from null to any reference type
-        public static Dictionary<VarType, Operand?[]> PermittedNonTrivialCasts { get; } = new()
+        public static Dictionary<VarType, Operand[]> PermittedNonTrivialCasts { get; } = new()
         {
-            [VarType.@int] = new Operand?[] { new(VarType.@double) },
-            [VarType.@double] = new Operand?[] { new(VarType.@int) },
-            [VarType.@bool] = Array.Empty<Operand?>(),
-            [VarType.@char] = Array.Empty<Operand?>()
+            [VarType.@int] = new Operand[] { new(VarType.@double) },
+            [VarType.@double] = new Operand[] { new(VarType.@int) },
+            [VarType.@bool] = Array.Empty<Operand>(),
+            [VarType.@char] = Array.Empty<Operand>()
         };
     }
 }

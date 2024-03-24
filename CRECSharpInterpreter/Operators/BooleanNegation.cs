@@ -4,11 +4,11 @@
     {
         public Operand? LeftOperand { get; } = null;
         public Operand? RightOperand { get; } = new(VarType.@bool);
-        public VarType ReturnType { get; } = VarType.@bool;
+        public VarType? ReturnType { get; } = VarType.@bool;
 
-        public object Calculate(object leftValue, object rightValue)
+        public object? Calculate(object? leftValue, object? rightValue)
         {
-            return !(bool)rightValue;
+            return !(bool)rightValue!;
         }
     }
 }

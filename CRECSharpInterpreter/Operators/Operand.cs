@@ -2,8 +2,8 @@
 {
     public readonly struct Operand
     {
-        public Operand(VarType varType) => _VarType = varType;
+        public Operand(VarType? varType) => _VarType = varType;
 
-        public VarType _VarType { get; init; }
+        public VarType? _VarType { get; init; }
     }
 }

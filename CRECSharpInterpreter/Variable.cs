@@ -5,16 +5,16 @@ namespace CRECSharpInterpreter
 {
     public class Variable
     {
-        public Variable(VarType varType, string name = null)
+        public Variable(VarType? varType, string? name = null)
         {
             _VarType = varType;
             Name = name;
             Value = varType?.DefaultValue;
         }
 
-        public VarType _VarType { get; init; }
-        public string Name { get; init; }
-        public object Value { get; set; }
+        public VarType? _VarType { get; init; }
+        public string? Name { get; init; }
+        public object? Value { get; set; }
         public bool Initialised { get; set; }
 
         public string ValueAsString
@@ -24,13 +24,13 @@ namespace CRECSharpInterpreter
                 switch (_VarType?.Name)
                 {
                     case "int":
-                        return Value.ToString();
+                        return Value!.ToString()!;
                     case "bool":
-                        if ((bool)Value)
+                        if ((bool)Value!)
                             return "true";
                         return "false";
                     case "char":
-                        if (!CharUtils.BasicEscapeCharacters.ContainsValue((char)Value))
+                        if (!CharUtils.BasicEscapeCharacters.ContainsValue((char)Value!))
                             return $"'{Value}'";
                         Dictionary<string, char>.KeyCollection keys = CharUtils.BasicEscapeCharacters.Keys;
                         foreach (string key in keys)
@@ -41,23 +41,21 @@ namespace CRECSharpInterpreter
                         throw new VariableException(this,
                             $"Internal error: cannot convert character {Value} to string");
                     case "double":
-                        string valueAsString = Value.ToString();
+                        string valueAsString = Value!.ToString()!;
                         if (valueAsString.Contains('.'))
                             return valueAsString;
                         return $"{valueAsString}.0";
                     case null:
                         return string.Empty;
                     default:
-                        if (_VarType.IsArray)
+                        if (_VarType._Storage == VarType.Storage.Reference)
                             break;
                         throw new VariableException(this,
                             $"Internal error: cannot convert value of type {_VarType} to string");
                 }
 
-                // varType is an array
-                if (Value == null)
-                    return "null";
-                return $"{{{Value}}}";
+                // varType is a reference type
+                return Value == null ? "null" : $"{{{Value}}}";
             }
         }
 
@@ -74,12 +72,12 @@ namespace CRECSharpInterpreter
 
         public class VariableException : InterpreterException
         {
-            public VariableException(Variable variable, string message = null) : base(message)
+            public VariableException(Variable? variable, string? message = null) : base(message)
             {
                 this.variable = variable;
             }
 
-            public Variable variable;
+            public Variable? variable;
         }
     }
 }

@@ -15,11 +15,11 @@ namespace CRECSharpInterpreter
 
         public KeyString[] GetKeyStrings() => KeyStrings;
 
-        public VarType _VarType { get; init; }
-        public object Value { get; private set; }
+        public VarType? _VarType { get; init; }
+        public object? Value { get; private set; }
         public Type _Type { get; private set; }
 
-        private VarType ComputeVarType()
+        private VarType? ComputeVarType()
         {
             _Type = GetType();
             return _Type switch
@@ -70,7 +70,7 @@ namespace CRECSharpInterpreter
                 if
                 (
                     KeyStrings[1]._Type == KeyString.Type.Type &&
-                    VarType.GetVarType(KeyStrings[1].Text).IsArray &&
+                    VarType.GetVarType(KeyStrings[1].Text)!.IsArray &&
                     KeyStrings.Length >= 4
                 )
                     return Type.ArrayLiteral;
@@ -86,10 +86,10 @@ namespace CRECSharpInterpreter
             return Type.Invalid;
         }
 
-        private Variable variable;
-        private VarType ComputeVarTypeVariable()
+        private Variable? variable;
+        private VarType? ComputeVarTypeVariable()
         {
-            variable = Memory.Instance.GetVariable(KeyStrings[0].Text);
+            variable = Memory.Instance!.GetVariable(KeyStrings[0].Text);
             if (variable == null)
                 throw new ExpressionUnitException(this, $"Variable \"{KeyStrings[0].Text}\" hasn't been declared");
             if (!variable.Initialised)
@@ -99,49 +99,49 @@ namespace CRECSharpInterpreter
 
         private void ComputeVariable()
         {
-            Value = variable.Value;
-            if (variable._VarType._Storage == VarType.Storage.Value)
+            Value = variable!.Value;
+            if (variable._VarType!._Storage == VarType.Storage.Value)
                 return;
             if (Value == null)
                 return;
             // if it's a reference type with a non-null value then its value is the heap index
             int heapIndex = (int)Value;
-            Memory.Instance.Heap.IncrementReferenceCounter(heapIndex);
+            Memory.Instance!.Heap.IncrementReferenceCounter(heapIndex);
         }
 
-        private Literal literal;
-        private VarType ComputeVarTypeLiteral()
+        private Literal? literal;
+        private VarType? ComputeVarTypeLiteral()
         {
             literal = KeyStrings[0]._Literal;
-            return literal._VarType;
+            return literal!._VarType;
         }
 
         private void ComputeLiteral()
         {
-            Value = literal.Value;
+            Value = literal!.Value;
         }
 
-        private ArrayConstruction arrayConstruction;
-        private VarType ComputeVarTypeArrayConstruction()
+        private ArrayConstruction? arrayConstruction;
+        private VarType? ComputeVarTypeArrayConstruction()
         {
             arrayConstruction = KeyStrings[1]._ArrayConstruction;
-            return arrayConstruction._VarType;
+            return arrayConstruction!._VarType;
         }
 
         private void ComputeArrayConstruction()
         {
-            arrayConstruction.ArrayLengthExpression.Compute();
-            arrayConstruction.ArrayLength = (int)arrayConstruction.ArrayLengthExpression.Value;
-            IEnumerable<Variable> variables = Variable.GetBlankVariables(arrayConstruction._VarType.Unarray, arrayConstruction.ArrayLength);
-            int heapIndex = Memory.Instance.Heap.Allocate(arrayConstruction.ArrayLength, variables);
+            arrayConstruction!.ArrayLengthExpression.Compute();
+            arrayConstruction.ArrayLength = (int)arrayConstruction.ArrayLengthExpression.Value!;
+            IEnumerable<Variable> variables = Variable.GetBlankVariables(arrayConstruction._VarType.Unarray!, arrayConstruction.ArrayLength);
+            int heapIndex = Memory.Instance!.Heap.Allocate(arrayConstruction.ArrayLength, variables);
             Value = heapIndex;
         }
 
         List<Expression> arrayLiteralExpressions = new();
-        private VarType ComputeVarTypeArrayLiteral()
+        private VarType? ComputeVarTypeArrayLiteral()
         {
             string varTypeAsString = KeyStrings[1].Text;
-            VarType varType = VarType.GetVarType(varTypeAsString);
+            VarType varType = VarType.GetVarType(varTypeAsString)!;
             if (KeyStrings[2]._Type != KeyString.Type.OpenCurlyBrace)
                 throw new ExpressionUnitException(this,
                     "\"{\" expected");
@@ -188,36 +188,36 @@ namespace CRECSharpInterpreter
             Variable[] variablesToAllocate = new Variable[arrayLiteralExpressions.Count];
             for (int i = 0; i < variablesToAllocate.Length; i++)
             {
-                variablesToAllocate[i] = new(_VarType.Unarray);
+                variablesToAllocate[i] = new(_VarType!.Unarray!);
                 variablesToAllocate[i].Value = arrayLiteralExpressions[i].Value;
             }
-            int heapIndex = Memory.Instance.Heap.Allocate(variablesToAllocate.Length, variablesToAllocate);
+            int heapIndex = Memory.Instance!.Heap.Allocate(variablesToAllocate.Length, variablesToAllocate);
             Value = heapIndex;
         }
 
-        private ArrayElement arrayElement;
-        private VarType ComputeVarTypeArrayElement()
+        private ArrayElement? arrayElement;
+        private VarType? ComputeVarTypeArrayElement()
         {
             arrayElement = KeyStrings[0]._ArrayElement;
-            return arrayElement.Array._VarType.Unarray;
+            return arrayElement!.Array._VarType!.Unarray;
         }
 
         private void ComputeArrayElement()
         {
-            arrayElement.IndexExpression.Compute();
-            arrayElement.Index = (int)arrayElement.IndexExpression.Value;
+            arrayElement!.IndexExpression.Compute();
+            arrayElement.Index = (int)arrayElement.IndexExpression.Value!;
             int index = arrayElement.Index;
             Variable array = arrayElement.Array;
             if (array.Value == null)
                 throw new ExpressionUnitException(this, $"Array \"{array.Name}\" has value null");
             int heapIndex = (int)array.Value;
-            int length = (int)Memory.Instance.Heap[heapIndex].Value;
+            int length = (int)Memory.Instance!.Heap[heapIndex]!.Value!;
             if (index >= length)
                 throw new ExpressionUnitException(this, $"Index {index} out of range of array \"{array.Name}\"");
             Value = Memory.Instance.Heap.GetValue(heapIndex, index);
         }
 
-        private VarType ComputeVarTypeNull()
+        private VarType? ComputeVarTypeNull()
         {
             return null;
         }
@@ -227,8 +227,8 @@ namespace CRECSharpInterpreter
             Value = null;
         }
 
-        private ArrayLength arrayLength;
-        private VarType ComputeVarTypeArrayLength()
+        private ArrayLength? arrayLength;
+        private VarType? ComputeVarTypeArrayLength()
         {
             arrayLength = KeyStrings[0]._ArrayLength;
             return VarType.@int;
@@ -236,11 +236,11 @@ namespace CRECSharpInterpreter
 
         private void ComputeArrayLength()
         {
-            Value = arrayLength.Length;
+            Value = arrayLength!.Length;
         }
 
-        private Expression bracketExpression;
-        private VarType ComputeVarTypeBracket()
+        private Expression? bracketExpression;
+        private VarType? ComputeVarTypeBracket()
         {
             KeyString[] innerKeyStrings = new KeyString[KeyStrings.Length - 2];
             Array.Copy(KeyStrings, 1, innerKeyStrings, 0, innerKeyStrings.Length);
@@ -250,7 +250,7 @@ namespace CRECSharpInterpreter
 
         private void ComputeBracket()
         {
-            bracketExpression.Compute();
+            bracketExpression!.Compute();
             Value = bracketExpression.Value;
         }
 
@@ -278,12 +278,12 @@ namespace CRECSharpInterpreter
 
         public class ExpressionUnitException : InterpreterException
         {
-            public ExpressionUnitException(ExpressionUnit expressionUnit, string message = null) : base(expressionUnit.ToString() + " " + message)
+            public ExpressionUnitException(ExpressionUnit? expressionUnit, string? message = null) : base(expressionUnit?.ToString() + " " + message)
             {
                 this.expressionUnit = expressionUnit;
             }
 
-            public ExpressionUnit expressionUnit;
+            public ExpressionUnit? expressionUnit;
         }
     }
 }

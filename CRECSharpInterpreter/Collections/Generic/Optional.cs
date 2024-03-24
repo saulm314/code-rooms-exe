@@ -5,9 +5,9 @@ namespace CRECSharpInterpreter.Collections.Generic
 {
     public class Optional<T> : Single<T>
     {
-        private T _value;
+        private T? _value;
 
-        public override IEnumerator<T> GetEnumerator()
+        public override IEnumerator<T?> GetEnumerator()
         {
             if (_count == 0)
                 yield break;
@@ -20,7 +20,7 @@ namespace CRECSharpInterpreter.Collections.Generic
         public override bool IsFixedSize { get; } = false;
         public override bool IsReadOnly { get; } = false;
 
-        public override T this[int i]
+        public override T? this[int i]
         {
             get
             {
@@ -40,7 +40,7 @@ namespace CRECSharpInterpreter.Collections.Generic
             }
         }
 
-        public override int Add(T item)
+        public override int Add(T? item)
         {
             if (_count != 0)
                 throw new NotSupportedException("Element already exists");
@@ -58,21 +58,21 @@ namespace CRECSharpInterpreter.Collections.Generic
             _count = 0;
         }
 
-        public override bool Contains(T item)
+        public override bool Contains(T? item)
         {
             if (_count == 0)
                 return false;
-            return item.Equals(_value);
+            return item?.Equals(_value) ?? _value == null;
         }
 
-        public override int IndexOf(T item)
+        public override int IndexOf(T? item)
         {
             if (_count == 0)
                 return -1;
-            return item.Equals(_value) ? 0 : -1;
+            return item?.Equals(_value) ?? _value == null ? 0 : -1;
         }
 
-        public override void Insert(int index, T item)
+        public override void Insert(int index, T? item)
         {
             if (_count != 0)
                 throw new NotSupportedException("Element already exists");
@@ -82,11 +82,11 @@ namespace CRECSharpInterpreter.Collections.Generic
             _value = item;
         }
 
-        public override bool Remove(T item)
+        public override bool Remove(T? item)
         {
             if (_count == 0)
                 return false;
-            if (!item.Equals(_value))
+            if (!Equals(item, _value))
                 return false;
             _count = 0;
             _value = default;

@@ -42,7 +42,7 @@ namespace CRECSharpInterpreter
                     break;
             }
 
-            if (Memory.Instance._Mode == Mode.Runtime)
+            if (Memory.Instance!._Mode == Mode.Runtime)
                 InitialiseRuntime();
         }
 
@@ -52,11 +52,11 @@ namespace CRECSharpInterpreter
 
         public Type _Type { get; init; }
 
-        public Variable VarToWrite { get; init; }
+        public Variable? VarToWrite { get; init; }
 
-        public ArrayElement ElementToWrite { get; init; }
+        public ArrayElement? ElementToWrite { get; init; }
 
-        public Expression _Expression { get; init; }
+        public Expression? _Expression { get; init; }
 
         public static string[] GetLinesAsStrings(string text)
             =>
@@ -81,7 +81,7 @@ namespace CRECSharpInterpreter
             }
             Console.WriteLine("Stack:");
             Console.WriteLine(separator + "\n");
-            foreach (Scope scope in Memory.Instance.Stack)
+            foreach (Scope scope in Memory.Instance!.Stack)
             {
                 foreach (Variable variable in scope.DeclaredVariables)
                     Console.WriteLine(variable);
@@ -101,16 +101,16 @@ namespace CRECSharpInterpreter
         private void VerifyDeclarationValid()
         {
             string varName = KeyStrings[1].Text;
-            if (Memory.Instance.IsDeclared(varName))
+            if (Memory.Instance!.IsDeclared(varName))
                 throw new LineException(this, $"Variable {varName} has already been declared");
         }
 
         private Variable DeclareVariable()
         {
-            VarType varType = VarType.VarTypes.Find(vt => vt.Name == KeyStrings[0].Text);
+            VarType varType = VarType.GetVarType(KeyStrings[0].Text)!;
             string varName = KeyStrings[1].Text;
             Variable declaredVariable = new(varType, varName);
-            Memory.Instance.AddToCurrentScope(declaredVariable);
+            Memory.Instance!.AddToCurrentScope(declaredVariable);
             return declaredVariable;
         }
 
@@ -130,28 +130,28 @@ namespace CRECSharpInterpreter
 
         private void VerifyWriteVariableValid()
         {
-            if (_Expression._VarType == null)
+            if (_Expression!._VarType == null)
             {
-                if (VarToWrite._VarType.DefaultValue == null)
+                if (VarToWrite!._VarType!.DefaultValue == null)
                     return;
                 throw new LineException(this,
                     $"Cannot write null to the value type variable \"{VarToWrite.Name}\"");
             }
-            if (VarToWrite._VarType != _Expression._VarType)
+            if (VarToWrite!._VarType != _Expression._VarType)
                 throw new LineException(this,
                     $"Cannot write expression of type {_Expression._VarType} to variable {VarToWrite.Name} of type {VarToWrite._VarType}");
         }
 
         private void VerifyWriteArrayElementValid()
         {
-            if (_Expression._VarType == null)
+            if (_Expression!._VarType == null)
             {
-                if (ElementToWrite.Array._VarType.Unarray.DefaultValue == null)
+                if (ElementToWrite!.Array._VarType!.Unarray!.DefaultValue == null)
                     return;
                 throw new LineException(this,
                     $"Cannot write null to a value type element of array \"{ElementToWrite.Array.Name}\"");
             }
-            if (ElementToWrite.Array._VarType.Unarray != _Expression._VarType)
+            if (ElementToWrite!.Array._VarType!.Unarray != _Expression._VarType)
                 throw new LineException(this,
                     $"Cannot write expression of type {_Expression._VarType} to element of array " +
                     $"{ElementToWrite.Array.Name} of type {ElementToWrite.Array._VarType.Unarray}");
@@ -159,7 +159,7 @@ namespace CRECSharpInterpreter
 
         private Variable GetVarToWrite_NoDeclaration()
         {
-            Variable varToWrite = Memory.Instance.GetVariable(KeyStrings[0].Text);
+            Variable? varToWrite = Memory.Instance!.GetVariable(KeyStrings[0].Text);
             if (varToWrite == null)
                 throw new LineException(this, $"Variable {KeyStrings[0].Text} hasn't been declared");
             return varToWrite;
@@ -167,19 +167,19 @@ namespace CRECSharpInterpreter
 
         private ArrayElement GetElementToWrite()
         {
-            return KeyStrings[0]._ArrayElement;
+            return KeyStrings[0]._ArrayElement!;
         }
 
         private void PerformWriteVariable()
         {
-            _Expression.Compute();
+            _Expression!.Compute();
 
-            bool isReferenceType = VarToWrite._VarType._Storage == VarType.Storage.Reference;
+            bool isReferenceType = VarToWrite!._VarType!._Storage == VarType.Storage.Reference;
             bool isNull = VarToWrite.Value == null;
             if (isReferenceType && !isNull)
             {
-                int oldAllocation = (int)VarToWrite.Value;
-                Memory.Instance.Heap.DecrementReferenceCounter(oldAllocation);
+                int oldAllocation = (int)VarToWrite.Value!;
+                Memory.Instance!.Heap.DecrementReferenceCounter(oldAllocation);
             }
 
             VarToWrite.Value = _Expression.Value;
@@ -187,19 +187,19 @@ namespace CRECSharpInterpreter
 
         private void PerformWriteArrayElement()
         {
-            _Expression.Compute();
-            if (ElementToWrite.Array.Value == null)
+            _Expression!.Compute();
+            if (ElementToWrite!.Array.Value == null)
                 throw new LineException(this, $"Array \"{ElementToWrite.Array.Name}\" has value null");
             int heapIndex = (int)ElementToWrite.Array.Value;
             ElementToWrite.IndexExpression.Compute();
-            ElementToWrite.Index = (int)ElementToWrite.IndexExpression.Value;
+            ElementToWrite.Index = (int)ElementToWrite.IndexExpression.Value!;
             int index = ElementToWrite.Index;
 
-            bool isReferenceType = ElementToWrite.Array._VarType.Unarray._Storage == VarType.Storage.Reference;
-            bool isNull = Memory.Instance.Heap.GetValue(heapIndex, index) == null;
+            bool isReferenceType = ElementToWrite.Array._VarType!.Unarray!._Storage == VarType.Storage.Reference;
+            bool isNull = Memory.Instance!.Heap.GetValue(heapIndex, index) == null;
             if (isReferenceType && !isNull)
             {
-                int oldAllocation = (int)Memory.Instance.Heap.GetValue(heapIndex, index);
+                int oldAllocation = (int)Memory.Instance!.Heap.GetValue(heapIndex, index)!;
                 Memory.Instance.Heap.DecrementReferenceCounter(oldAllocation);
             }
 
@@ -267,12 +267,12 @@ namespace CRECSharpInterpreter
 
         public class LineException : InterpreterException
         {
-            public LineException(Line line, string message = null) : base(message)
+            public LineException(Line? line, string? message = null) : base(message)
             {
                 this.line = line;
             }
 
-            public Line line;
+            public Line? line;
         }
     }
 }

@@ -17,7 +17,7 @@ namespace CRECSharpInterpreter
 
             _ = new Memory(mode);
 
-            if (Memory.Instance._Mode == Mode.Compilation)
+            if (Memory.Instance!._Mode == Mode.Compilation)
                 for (int i = 0; i < Lines.Length; i++)
                     Lines[i] = new(linesStr[i]);
         }
@@ -40,7 +40,7 @@ namespace CRECSharpInterpreter
 
         public class ChunkException : InterpreterException
         {
-            public ChunkException(Chunk chunk, string message = null) : base(message)
+            public ChunkException(Chunk chunk, string? message = null) : base(message)
             {
                 this.chunk = chunk;
             }

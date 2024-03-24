@@ -20,7 +20,7 @@
 
         public class ArrayElementException : InterpreterException
         {
-            public ArrayElementException(ArrayElement arrayElement, string message = null) : base(message)
+            public ArrayElementException(ArrayElement arrayElement, string? message = null) : base(message)
             {
                 this.arrayElement = arrayElement;
             }

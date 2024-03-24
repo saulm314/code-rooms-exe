@@ -55,27 +55,34 @@ namespace CRECSharpInterpreter
                     _Literal = new(varType, doubleValue);
                     break;
                 case Type.ArrayConstruction:
-                    SubKeyStrings = new KeyString[3 + _ArrayConstruction.ArrayLengthExpression.KeyStrings.Length];
-                    SubKeyStrings[0] = new(_ArrayConstruction._VarType.Unarray.Name);
+                    SubKeyStrings = new KeyString[3 + _ArrayConstruction!.ArrayLengthExpression.KeyStrings.Length];
+                    SubKeyStrings[0] = new(_ArrayConstruction._VarType.Unarray!.Name);
                     SubKeyStrings[1] = new("[");
                     _ArrayConstruction.ArrayLengthExpression.KeyStrings.CopyTo(SubKeyStrings, 2);
                     SubKeyStrings[SubKeyStrings.Length - 1] = new("]");
                     break;
                 case Type.ArrayElement:
-                    SubKeyStrings = new KeyString[3 + _ArrayElement.IndexExpression.KeyStrings.Length];
-                    SubKeyStrings[0] = new(_ArrayElement.Array.Name);
+                    SubKeyStrings = new KeyString[3 + _ArrayElement!.IndexExpression.KeyStrings.Length];
+                    SubKeyStrings[0] = new(_ArrayElement.Array.Name!);
                     SubKeyStrings[1] = new("[");
                     _ArrayElement.IndexExpression.KeyStrings.CopyTo(SubKeyStrings, 2);
                     SubKeyStrings[SubKeyStrings.Length - 1] = new("]");
                     break;
                 case Type.ArrayLength:
                     SubKeyStrings = new KeyString[3];
-                    SubKeyStrings[0] = new(_ArrayLength.Array.Name);
+                    SubKeyStrings[0] = new(_ArrayLength!.Array.Name!);
                     SubKeyStrings[1] = new(".");
                     SubKeyStrings[2] = new("Length");
                     break;
                 case Type.Operator:
                     _Operator = Operator.GetOperator(Text);
+                    if (!_Operator!.IsCast)
+                        break;
+                    SubKeyStrings = new KeyString[3];
+                    SubKeyStrings[0] = new("(");
+                    SubKeyStrings[2] = new(")");
+                    string varTypeAsString = Text[1..(Text.Length - 1)];
+                    SubKeyStrings[1] = new(varTypeAsString);
                     break;
             }
         }
@@ -85,14 +92,14 @@ namespace CRECSharpInterpreter
         public Type _Type { get; init; }
 
         // null if not a literal
-        public Literal _Literal { get; init; }
+        public Literal? _Literal { get; init; }
 
         // null if not an array construction
-        public ArrayConstruction _ArrayConstruction { get => _arrayConstruction ??= CreateArrayConstruction(); }
-        private ArrayConstruction _arrayConstruction;
+        public ArrayConstruction? _ArrayConstruction { get => _arrayConstruction ??= CreateArrayConstruction(); }
+        private ArrayConstruction? _arrayConstruction;
         private bool arrayConstructionIsNull;
 
-        private ArrayConstruction CreateArrayConstruction()
+        private ArrayConstruction? CreateArrayConstruction()
         {
             if (arrayConstructionIsNull)
                 return null;
@@ -106,7 +113,7 @@ namespace CRECSharpInterpreter
             if (closeSquareBraceIndex <= openSquareBraceIndex)
                 return null;
             string varTypeAsString = Text[..openSquareBraceIndex] + "[]";
-            VarType varType = VarType.GetVarType(varTypeAsString);
+            VarType? varType = VarType.GetVarType(varTypeAsString);
             if (varType == null)
                 return null;
             string stringInsideBraces = Text[(openSquareBraceIndex + 1)..closeSquareBraceIndex];
@@ -120,11 +127,11 @@ namespace CRECSharpInterpreter
             return arrayConstruction;
         }
 
-        public ArrayElement _ArrayElement { get => _arrayElement ??= CreateArrayElement(); }
-        private ArrayElement _arrayElement;
+        public ArrayElement? _ArrayElement { get => _arrayElement ??= CreateArrayElement(); }
+        private ArrayElement? _arrayElement;
         private bool arrayElementIsNull;
 
-        private ArrayElement CreateArrayElement()
+        private ArrayElement? CreateArrayElement()
         {
             if (arrayElementIsNull)
                 return null;
@@ -138,12 +145,12 @@ namespace CRECSharpInterpreter
             if (closeSquareBraceIndex <= openSquareBraceIndex)
                 return null;
             string variableName = Text[..openSquareBraceIndex];
-            Variable variable = Memory.Instance.GetVariable(variableName);
+            Variable? variable = Memory.Instance!.GetVariable(variableName);
             if (variable == null)
                 return null;
             if (!variable.Initialised)
                 return null;
-            if (!variable._VarType.IsArray)
+            if (!variable._VarType!.IsArray)
                 return null;
             string stringInsideBraces = Text[(openSquareBraceIndex + 1)..closeSquareBraceIndex];
             if (string.IsNullOrWhiteSpace(stringInsideBraces))
@@ -156,11 +163,11 @@ namespace CRECSharpInterpreter
             return arrayElement;
         }
 
-        public ArrayLength _ArrayLength { get => _arrayLength ??= CreateArrayLength(); }
-        private ArrayLength _arrayLength;
+        public ArrayLength? _ArrayLength { get => _arrayLength ??= CreateArrayLength(); }
+        private ArrayLength? _arrayLength;
         private bool arrayLengthIsNull;
 
-        private ArrayLength CreateArrayLength()
+        private ArrayLength? CreateArrayLength()
         {
             if (arrayLengthIsNull)
                 return null;
@@ -169,12 +176,12 @@ namespace CRECSharpInterpreter
             if (dotIndex == -1)
                 return null;
             string variableName = Text[..dotIndex];
-            Variable variable = Memory.Instance.GetVariable(variableName);
+            Variable? variable = Memory.Instance!.GetVariable(variableName);
             if (variable == null)
                 return null;
             if (!variable.Initialised)
                 return null;
-            if (!variable._VarType.IsArray)
+            if (!variable._VarType!.IsArray)
                 return null;
             string stringAfterDot = Text[(dotIndex + 1)..];
             if (stringAfterDot != "Length")
@@ -184,10 +191,10 @@ namespace CRECSharpInterpreter
             return arrayLength;
         }
 
-        public Operator _Operator { get; init; }
+        public Operator? _Operator { get; init; }
 
         // null if not applicable
-        public KeyString[] SubKeyStrings { get; init; }
+        public KeyString[]? SubKeyStrings { get; init; }
 
         private static string[] nonKeywordKeyStrings = new string[]
         {
@@ -256,7 +263,7 @@ namespace CRECSharpInterpreter
             while (i < keyStrings.Count - 1)
             {
                 string keyString = keyStrings[i];
-                VarType varType = VarType.GetVarType(keyString);
+                VarType? varType = VarType.GetVarType(keyString);
                 if (varType == null)
                 {
                     i++;
@@ -560,12 +567,12 @@ namespace CRECSharpInterpreter
 
         public class KeyStringException : InterpreterException
         {
-            public KeyStringException(KeyString keyString, string message = null) : base(message)
+            public KeyStringException(KeyString? keyString, string? message = null) : base(message)
             {
                 this.keyString = keyString;
             }
 
-            KeyString keyString;
+            KeyString? keyString;
         }
     }
 }

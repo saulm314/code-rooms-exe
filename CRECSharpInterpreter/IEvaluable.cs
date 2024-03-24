@@ -2,8 +2,8 @@
 {
     public interface IEvaluable : IExpressionComponent
     {
-        public VarType _VarType { get; }
-        public object Value { get; }
+        public VarType? _VarType { get; }
+        public object? Value { get; }
 
         public void Compute();
 

@@ -13,7 +13,7 @@ namespace CRECSharpInterpreter
             variables[0] = new(null);
         }
 
-        private IEnumerable<Variable> GetNullVariables(int count)
+        private IEnumerable<Variable?> GetNullVariables(int count)
         {
             for (int i = 0; i < count; i++)
                 yield return null;
@@ -21,8 +21,8 @@ namespace CRECSharpInterpreter
 
         public int Size { get; private set; } = INITIAL_HEAP_CAPACITY;
 
-        private List<Variable> variables = new(INITIAL_HEAP_CAPACITY);
-        public Variable this[int i] { get => variables[i]; }
+        private List<Variable?> variables = new(INITIAL_HEAP_CAPACITY);
+        public Variable? this[int i] { get => variables[i]; }
 
         public int Allocate(int length, IEnumerable<Variable> data)
         {
@@ -44,38 +44,38 @@ namespace CRECSharpInterpreter
         // we assume that there are no circular references
         public void Free(int index)
         {
-            Variable lengthAsVariable = variables[index];
-            int length = (int)lengthAsVariable.Value;
+            Variable lengthAsVariable = variables[index]!;
+            int length = (int)lengthAsVariable.Value!;
             for (int i = index; i <= index + length; i++)
             {
                 bool isNonNullReferenceVariable =
-                    variables[i]._VarType._Storage == VarType.Storage.Reference &&
-                    variables[i].Value != null;
+                    variables[i]!._VarType!._Storage == VarType.Storage.Reference &&
+                    variables[i]!.Value != null;
                 if (isNonNullReferenceVariable)
-                    DecrementReferenceCounter((int)variables[i].Value);
+                    DecrementReferenceCounter((int)variables[i]!.Value!);
                 variables[i] = null;
             }
         }
 
-        public object GetValue(int index, int offset)
+        public object? GetValue(int index, int offset)
         {
             VerifyRange(index, offset);
-            Variable variable = variables[index + offset + 1];
+            Variable variable = variables[index + offset + 1]!;
             return variable.Value;
         }
 
         public string GetValueAsString(int index, int offset)
         {
             VerifyRange(index, offset);
-            Variable variable = variables[index + offset + 1];
+            Variable variable = variables[index + offset + 1]!;
             return variable.ValueAsString;
         }
 
-        public void SetValue(int index, int offset, object value)
+        public void SetValue(int index, int offset, object? value)
         {
             VerifyRange(index, offset);
-            Variable variable = variables[index + offset + 1];
-            if (VarType.GetVarType(value) != variable._VarType)
+            Variable variable = variables[index + offset + 1]!;
+            if (VarType.GetVarType(value!) != variable._VarType)
                 throw new HeapException(this,
                     $"Internal exception: cannot place {value} into slot of type {variable._VarType}");
             variable.Value = value;
@@ -83,26 +83,26 @@ namespace CRECSharpInterpreter
 
         public int GetLength(int index)
         {
-            Variable lengthVariable = variables[index];
-            return (int)lengthVariable.Value;
+            Variable lengthVariable = variables[index]!;
+            return (int)lengthVariable.Value!;
         }
 
         public void IncrementReferenceCounter(int index)
         {
-            HeapLengthVariable lengthVariable = (HeapLengthVariable)variables[index];
+            HeapLengthVariable lengthVariable = (HeapLengthVariable)variables[index]!;
             lengthVariable.referenceCount++;
         }
 
         public void DecrementReferenceCounter(int index)
         {
-            HeapLengthVariable lengthVariable = (HeapLengthVariable)variables[index];
+            HeapLengthVariable lengthVariable = (HeapLengthVariable)variables[index]!;
             if (--lengthVariable.referenceCount == 0)
                 Free(index);
         }
 
         private void VerifyRange(int index, int offset)
         {
-            Variable lengthAsVariable = variables[index];
+            Variable lengthAsVariable = variables[index]!;
             if (lengthAsVariable._VarType != VarType.@int)
                 throw new HeapException(this, $"Internal exception: expecting int (length) at index {index}");
             if (lengthAsVariable.Value == null)
@@ -154,12 +154,12 @@ namespace CRECSharpInterpreter
 
         public class HeapException : InterpreterException
         {
-            public HeapException(Heap heap, string message = null) : base(message)
+            public HeapException(Heap? heap, string? message = null) : base(message)
             {
                 this.heap = heap;
             }
 
-            public Heap heap;
+            public Heap? heap;
         }
     }
 }

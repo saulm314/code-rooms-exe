@@ -4,7 +4,7 @@ namespace CRECSharpInterpreter.Operators
 {
     public class Equality : ISpecificOperator
     {
-        private Equality(Operand? leftOperand, Operand? rightOperand)
+        private Equality(Operand leftOperand, Operand rightOperand)
         {
             LeftOperand = leftOperand;
             RightOperand = rightOperand;
@@ -13,9 +13,9 @@ namespace CRECSharpInterpreter.Operators
         public Operand? LeftOperand { get; init; }
         public Operand? RightOperand { get; init; }
 
-        public VarType ReturnType { get; } = VarType.@bool;
+        public VarType? ReturnType { get; } = VarType.@bool;
 
-        public object Calculate(object leftValue, object rightValue)
+        public object? Calculate(object? leftValue, object? rightValue)
         {
             return Equals(leftValue, rightValue);
         }

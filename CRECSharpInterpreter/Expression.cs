@@ -16,11 +16,11 @@ namespace CRECSharpInterpreter
 
         public KeyString[] GetKeyStrings() => KeyStrings;
 
-        public VarType _VarType { get; init; }
-        public object Value { get; private set; }
+        public VarType? _VarType { get; init; }
+        public object? Value { get; private set; }
 
-        private IEvaluable resolvedEvaluable;
-        private VarType ComputeVarType()
+        private IEvaluable? resolvedEvaluable;
+        private VarType? ComputeVarType()
         {
             if (KeyStrings.Length == 0)
                 throw new ExpressionException(this, "Cannot have an empty expression");
@@ -41,7 +41,7 @@ namespace CRECSharpInterpreter
         private ExpressionFrame GetExpressionFrameFromTopLevelOperatorIndexes(List<int> topLevelOperatorIndexes)
         {
             AltListLockLock1<IEvaluable, Operator> altExpressionComponents;
-            ExpressionUnit firstExpressionUnit;
+            ExpressionUnit? firstExpressionUnit;
             if (topLevelOperatorIndexes.Count == 0)
             {
                 firstExpressionUnit = new(KeyStrings);
@@ -62,18 +62,18 @@ namespace CRECSharpInterpreter
                 int currentOperatorIndex = topLevelOperatorIndexes[i];
                 int nextOperatorIndex = topLevelOperatorIndexes[i + 1];
                 KeyString currentOperatorKeyString = KeyStrings[currentOperatorIndex];
-                Operator currentOperator = Operator.GetOperator(currentOperatorKeyString.Text);
+                Operator currentOperator = Operator.GetOperator(currentOperatorKeyString.Text)!;
                 Expression expression = GetExpressionBetweenTwoOperators(currentOperatorIndex, nextOperatorIndex);
                 altExpressionComponents.Add(currentOperator, expression);
             }
             int finalOperatorIndex = topLevelOperatorIndexes[topLevelOperatorIndexes.Count - 1];
             KeyString finalOperatorKeyString = KeyStrings[finalOperatorIndex];
-            Operator finalOperator = Operator.GetOperator(finalOperatorKeyString.Text);
-            Expression finalExpression = GetExpressionAfterFinalOperator(finalOperatorIndex);
+            Operator finalOperator = Operator.GetOperator(finalOperatorKeyString.Text)!;
+            Expression? finalExpression = GetExpressionAfterFinalOperator(finalOperatorIndex);
             altExpressionComponents.Add(finalOperator, finalExpression);
         }
 
-        private Expression GetExpressionAfterFinalOperator(int finalOperatorIndex)
+        private Expression? GetExpressionAfterFinalOperator(int finalOperatorIndex)
         {
             if (finalOperatorIndex == KeyStrings.Length - 1)
                 return null;
@@ -105,7 +105,7 @@ namespace CRECSharpInterpreter
                     topLevelOperatorIndexes.RemoveAt(i);
         }
 
-        private ExpressionUnit GetFirstExpressionUnitFromFirstTopLevelOperatorIndex(int firstTopLevelOperatorIndex)
+        private ExpressionUnit? GetFirstExpressionUnitFromFirstTopLevelOperatorIndex(int firstTopLevelOperatorIndex)
         {
             List<KeyString> currentKeyStrings = new();
             for (int i = 0; i < firstTopLevelOperatorIndex; i++)
@@ -191,7 +191,7 @@ namespace CRECSharpInterpreter
                 };
                 bool isAllUnitsOperator =
                     keyString._Type == KeyString.Type.Operator &&
-                    keyString._Operator.Priority == OperatorPriority.AllUnits;
+                    keyString._Operator!.Priority == OperatorPriority.AllUnits;
                 if (isOpenBracket)
                 {
                     totalBracketsOpened++;
@@ -236,14 +236,14 @@ namespace CRECSharpInterpreter
                 throw new ExpressionException(this,
                     $"Must have an expression unit after operator {operatorKeyString.Text}");
             leftExpression = new(leftKeyStrings.ToArray());
-            @operator = Operator.GetOperator(operatorKeyString.Text);
+            @operator = Operator.GetOperator(operatorKeyString.Text)!;
             rightExpression = new(rightKeyStrings.ToArray());
             return new(leftExpression, @operator, rightExpression);
         }
 
         public void Compute()
         {
-            resolvedEvaluable.Compute();
+            resolvedEvaluable!.Compute();
             Value = resolvedEvaluable.Value;
         }
 
@@ -257,12 +257,12 @@ namespace CRECSharpInterpreter
 
         public class ExpressionException : InterpreterException
         {
-            public ExpressionException(Expression expression, string message = null) : base(expression.ToString() + " " + message)
+            public ExpressionException(Expression? expression, string? message = null) : base(expression?.ToString() + " " + message)
             {
                 this.expression = expression;
             }
 
-            public Expression expression;
+            public Expression? expression;
         }
     }
 }

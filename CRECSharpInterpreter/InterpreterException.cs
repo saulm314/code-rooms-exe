@@ -4,6 +4,6 @@ namespace CRECSharpInterpreter
 {
     public class InterpreterException : Exception
     {
-        public InterpreterException(string message = null) : base(message) { }
+        public InterpreterException(string? message = null) : base(message) { }
     }
 }

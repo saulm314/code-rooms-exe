@@ -13,12 +13,12 @@
 
         public class LiteralException : InterpreterException
         {
-            public LiteralException(Literal literal, string message = null) : base(message)
+            public LiteralException(Literal? literal, string? message = null) : base(message)
             {
                 this.literal = literal;
             }
 
-            public Literal literal;
+            public Literal? literal;
         }
     }
 }

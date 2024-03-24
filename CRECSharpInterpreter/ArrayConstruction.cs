@@ -20,7 +20,7 @@
 
         public class ArrayConstructionException : InterpreterException
         {
-            public ArrayConstructionException(ArrayConstruction arrayConstruction, string message = null) : base(message)
+            public ArrayConstructionException(ArrayConstruction arrayConstruction, string? message = null) : base(message)
             {
                 this.arrayConstruction = arrayConstruction;
             }

@@ -10,18 +10,21 @@ namespace CRECSharpInterpreter.Collections.Generic
         public List<Pair<T2, T1>> Pairs { get; }
         public Single<T2> Tail { get; }
 
+        bool ICollection.IsSynchronized { get => throw new NotSupportedException(); }
+        object ICollection.SyncRoot { get => throw new NotSupportedException(); }
+
         IEnumerator IEnumerable.GetEnumerator()
         {
-            foreach (T1 item in Head)
+            foreach (T1? item in Head)
                 yield return item;
             foreach (Pair<T2, T1> pair in Pairs)
-                foreach (object item in pair)
+                foreach (object? item in pair)
                     yield return item;
-            foreach (T2 item in Tail)
+            foreach (T2? item in Tail)
                 yield return item;
         }
 
-        public object Get(int i)
+        public object? Get(int i)
         {
             if (IsIndexOutOfRange(i))
                 throw new ArgumentOutOfRangeException(i.ToString());
@@ -33,19 +36,19 @@ namespace CRECSharpInterpreter.Collections.Generic
             return Pairs[listIndex][pairIndex];
         }
 
-        public void Set(int i, object value)
+        public void Set(int i, object? value)
         {
             if (IsIndexOutOfRange(i))
                 throw new ArgumentOutOfRangeException(i.ToString());
             GetSubIndexes(i, out int listIndex, out int pairIndex);
             if (listIndex == -1)
             {
-                Head[0] = (T1)value;
+                Head[0] = (T1?)value;
                 return;
             }
             if (listIndex == -2)
             {
-                Tail[0] = (T2)value;
+                Tail[0] = (T2?)value;
                 return;
             }
             Pairs[listIndex][pairIndex] = value;
@@ -53,22 +56,22 @@ namespace CRECSharpInterpreter.Collections.Generic
 
         void ICollection.CopyTo(Array array, int index)
         {
-            foreach (object value in this)
+            foreach (object? value in this)
                 array.SetValue(value, index++);
         }
 
-        bool IList.Contains(object value)
+        bool IList.Contains(object? value)
         {
-            foreach (object obj in this)
+            foreach (object? obj in this)
                 if (obj == value)
                     return true;
             return false;
         }
 
-        int IList.IndexOf(object value)
+        int IList.IndexOf(object? value)
         {
             int i = 0;
-            foreach (object obj in this)
+            foreach (object? obj in this)
             {
                 if (obj == value)
                     return i;
@@ -89,23 +92,23 @@ namespace CRECSharpInterpreter.Collections.Generic
         {
             int i = 0;
             bool currentlyT1;
+            currentlyT1 = false;
             if (Head.Count == 1)
                 currentlyT1 = true;
-            currentlyT1 = false;
             Pair<T1, T2> currentPair = new(default, default);
             bool initialised = false;
-            foreach (object item in this)
+            foreach (object? item in this)
             {
                 if (currentlyT1)
                 {
                     currentlyT1 = false;
-                    currentPair.First = (T1)item;
+                    currentPair.First = (T1?)item;
                     initialised = true;
                     i++;
                     continue;
                 }
                 currentlyT1 = true;
-                currentPair.Second = (T2)item;
+                currentPair.Second = (T2?)item;
                 if (initialised && pair.Equals(currentPair))
                     return --i;
                 i++;

@@ -11,7 +11,7 @@ namespace CRECSharpInterpreter
             Stack.Push(new());
         }
 
-        public static Memory Instance { get; private set; }
+        public static Memory? Instance { get; private set; }
 
         public Stack<Scope> Stack { get; } = new();
         public Heap Heap { get; } = new();
@@ -23,7 +23,7 @@ namespace CRECSharpInterpreter
                     yield return variable;
         }
 
-        public Variable GetVariable(string name)
+        public Variable? GetVariable(string name)
         {
             foreach (Variable variable in GetDeclaredVariables())
                 if (variable.Name == name)
@@ -49,12 +49,12 @@ namespace CRECSharpInterpreter
 
         public class MemoryException : InterpreterException
         {
-            public MemoryException(Memory memory, string message = null) : base(message)
+            public MemoryException(Memory? memory, string? message = null) : base(message)
             {
                 this.memory = memory;
             }
 
-            public Memory memory;
+            public Memory? memory;
         }
     }
 }

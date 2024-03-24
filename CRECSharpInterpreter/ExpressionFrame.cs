@@ -14,8 +14,8 @@ namespace CRECSharpInterpreter
 
         public AltListLockLock1<IEvaluable, Operator> AltExpressionComponents { get; init; }
 
-        public VarType _VarType { get; init; }
-        public object Value { get; private set; }
+        public VarType? _VarType { get; init; }
+        public object? Value { get; private set; }
 
         public KeyString[] GetKeyStrings()
         {
@@ -26,12 +26,12 @@ namespace CRECSharpInterpreter
             return keyStrings.ToArray();
         }
 
-        private IEvaluable resolvedEvaluable;
-        private VarType ComputeVarType()
+        private IEvaluable? resolvedEvaluable;
+        private VarType? ComputeVarType()
         {
             while (AltExpressionComponents.Count > 1)
                 ResolveAltExpressionComponents();
-            resolvedEvaluable = (IEvaluable)AltExpressionComponents[0];
+            resolvedEvaluable = (IEvaluable)AltExpressionComponents[0]!;
             return resolvedEvaluable._VarType;
         }
 
@@ -39,7 +39,7 @@ namespace CRECSharpInterpreter
         {
             for (int i = 1; i < AltExpressionComponents.Count; i += 2)
             {
-                Operation operation = Operation.GetOperation(AltExpressionComponents, i);
+                Operation? operation = Operation.GetOperation(AltExpressionComponents, i);
                 if (operation != null)
                 {
                     AltExpressionComponents.RemoveAt(i);
@@ -51,7 +51,7 @@ namespace CRECSharpInterpreter
 
         public void Compute()
         {
-            resolvedEvaluable.Compute();
+            resolvedEvaluable!.Compute();
             Value = resolvedEvaluable.Value;
         }
 
@@ -61,6 +61,16 @@ namespace CRECSharpInterpreter
             foreach (KeyString keyString in GetKeyStrings())
                 str += keyString.Text;
             return str;
+        }
+
+        public class ExpressionFrameException : InterpreterException
+        {
+            public ExpressionFrameException(ExpressionFrame? expressionFrame, string? message = null) : base(message)
+            {
+                this.expressionFrame = expressionFrame;
+            }
+
+            public ExpressionFrame? expressionFrame;
         }
     }
 }
