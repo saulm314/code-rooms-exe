@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using CRECSharpInterpreter.Operators;
 using CRECSharpInterpreter.Collections.Generic;
 
@@ -36,7 +35,7 @@ namespace CRECSharpInterpreter
             specificOperator = _Operator.GetSpecificOperator(leftOperand, rightOperand);
             if (specificOperator == null)
                 throw new OperationException(this,
-                    $"Invalid operation {_Operator.Symbol} on expressions of type {LeftEvaluable._VarType} and {RightEvaluable._VarType}");
+                    $"Invalid operation {_Operator.Symbol} on expressions of type {LeftEvaluable?._VarType} and {RightEvaluable?._VarType}");
             return specificOperator.ReturnType;
         }
 
