@@ -149,3 +149,16 @@ bool logic12 = true ^ false;
 bool logic13 = false ^ false;
 
 bool logicTest = !(52 - 3 * 6 < 35 + 5) ^ (logic && (logic10 || boolArrayCopy[index - 2]));
+
+bool equal = 5 == 5;
+bool equal2 = 5 == 6;
+bool equal3 = 5.0 == 5.0;
+bool equal4 = 5.0 == 6.0;
+bool equal5 = 'a' == 'a';
+bool equal6 = 'a' == 'b';
+bool equal7 = false == false;
+bool equal8 = false == true;
+bool equal9 = intArray2 == intArray3;
+bool equal10 = boolArray == boolArrayCopy;
+bool equal11 = boolArray == boolArrayCopy == (intArray2 == intArray3);
+bool equal12 = boolArray == boolArrayCopy == !(intArray2 == intArray3);

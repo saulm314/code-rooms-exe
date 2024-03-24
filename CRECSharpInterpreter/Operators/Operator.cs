@@ -115,6 +115,18 @@ namespace CRECSharpInterpreter.Operators
                 new BooleanXor()
             });
 
+        public static new Operator Equals { get; } = new("==", OperatorPriority.AllUnits, GetEqualsSpecificOperators());
+        private static ISpecificOperator[] GetEqualsSpecificOperators()
+        {
+            ISpecificOperator[] specificOperators = new ISpecificOperator[VarType.VarTypes.Count];
+            for (int i = 0; i < specificOperators.Length; i++)
+            {
+                VarType varType = VarType.VarTypes[i];
+                specificOperators[i] = new Equality(varType);
+            }
+            return specificOperators;
+        }
+
         public static Operator GetOperator(string symbol)
         {
             foreach (Operator @operator in Operators)
