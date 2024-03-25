@@ -82,6 +82,12 @@ namespace CRECSharpInterpreter
                     SubKeyStrings[1] = new(".");
                     SubKeyStrings[2] = new("Length");
                     break;
+                case Type.StringLength:
+                    SubKeyStrings = new KeyString[3];
+                    SubKeyStrings[0] = new(_StringLength!.String.Name!);
+                    SubKeyStrings[1] = new(".");
+                    SubKeyStrings[2] = new("Length");
+                    break;
                 case Type.Operator:
                     _Operator = Operator.GetOperator(Text);
                     if (!_Operator!.IsCast)
@@ -255,6 +261,34 @@ namespace CRECSharpInterpreter
             ArrayElement arrayElement = new(variable, stringInsideBraces);
             arrayElementIsNull = false;
             return arrayElement;
+        }
+
+        public StringLength? _StringLength { get => _stringLength ??= CreateStringLength(); }
+        private StringLength? _stringLength;
+        private bool stringLengthIsNull;
+
+        private StringLength? CreateStringLength()
+        {
+            if (stringLengthIsNull)
+                return null;
+            stringLengthIsNull = true;
+            int dotIndex = Text.IndexOf('.');
+            if (dotIndex == -1)
+                return null;
+            string variableName = Text[..dotIndex];
+            Variable? variable = Memory.Instance!.GetVariable(variableName);
+            if (variable == null)
+                return null;
+            if (!variable.Initialised)
+                return null;
+            if (variable._VarType != VarType.@string)
+                return null;
+            string stringAfterDot = Text[(dotIndex + 1)..];
+            if (stringAfterDot != "Length")
+                return null;
+            StringLength stringLength = new(variable);
+            stringLengthIsNull = false;
+            return stringLength;
         }
 
         public ArrayLength? _ArrayLength { get => _arrayLength ??= CreateArrayLength(); }
@@ -593,6 +627,7 @@ namespace CRECSharpInterpreter
             if (IsStringElement)        return Type.StringElement;
             if (IsArrayStringElement)   return Type.ArrayStringElement;
             if (IsSemicolon)            return Type.Semicolon;
+            if (IsStringLength)         return Type.StringLength;
                                         return Type.Invalid;
         }
 
@@ -689,6 +724,9 @@ namespace CRECSharpInterpreter
         private bool IsArrayLength { get => _isArrayLength ??= _ArrayLength != null; }
         private bool? _isArrayLength;
 
+        private bool IsStringLength { get => _isStringLength ??= _StringLength != null; }
+        private bool? _isStringLength;
+
         private bool IsDot { get => _isDot ??= Text == "."; }
         private bool? _isDot;
 
@@ -750,7 +788,8 @@ namespace CRECSharpInterpreter
             StringLiteral,
             StringElement,
             ArrayStringElement,
-            Semicolon
+            Semicolon,
+            StringLength
         }
 
         public override string ToString() => Text;

@@ -35,6 +35,7 @@ namespace CRECSharpInterpreter
                 Type.StringLiteral =>       ComputeVarTypeStringLiteral(),
                 Type.StringElement =>       ComputeVarTypeStringElement(),
                 Type.ArrayStringElement =>  ComputeVarTypeArrayStringElement(),
+                Type.StringLength =>        ComputeVarTypeStringLength(),
                 _ =>                        throw new ExpressionUnitException(this, "Unrecognised expression unit")
             };
         }
@@ -54,6 +55,7 @@ namespace CRECSharpInterpreter
                 case Type.StringLiteral:        ComputeStringLiteral();         break;
                 case Type.StringElement:        ComputeStringElement();         break;
                 case Type.ArrayStringElement:   ComputeArrayStringElement();    break;
+                case Type.StringLength:         ComputeStringLength();          break;
                 default:                        throw new ExpressionUnitException(this,
                                                     $"Internal error; don't know how to compute expression of type \"{_Type}\"");
             }
@@ -91,6 +93,8 @@ namespace CRECSharpInterpreter
                 return Type.Null;
             if (KeyStrings[0]._Type == KeyString.Type.ArrayLength && KeyStrings.Length == 1)
                 return Type.ArrayLength;
+            if (KeyStrings[0]._Type == KeyString.Type.StringLength && KeyStrings.Length == 1)
+                return Type.StringLength;
             if (KeyStrings[0]._Type == KeyString.Type.OpenBracket && KeyStrings[KeyStrings.Length - 1]._Type == KeyString.Type.CloseBracket)
                 return Type.Bracket;
             if (KeyStrings[0]._Type == KeyString.Type.StringLiteral && KeyStrings.Length == 1)
@@ -259,6 +263,18 @@ namespace CRECSharpInterpreter
             Value = arrayLength!.Length;
         }
 
+        private StringLength? stringLength;
+        private VarType? ComputeVarTypeStringLength()
+        {
+            stringLength = KeyStrings[0]._StringLength;
+            return VarType.@int;
+        }
+
+        private void ComputeStringLength()
+        {
+            Value = stringLength!.Length;
+        }
+
         private Expression? bracketExpression;
         private VarType? ComputeVarTypeBracket()
         {
@@ -360,7 +376,8 @@ namespace CRECSharpInterpreter
             Bracket,
             StringLiteral,
             StringElement,
-            ArrayStringElement
+            ArrayStringElement,
+            StringLength
         }
 
         public override string ToString()

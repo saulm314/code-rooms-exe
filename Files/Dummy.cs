@@ -228,3 +228,6 @@ string strNumber2 = numbers[0];
 
 string[] strArr = new string[2];
 strArr[0] = "Hello";
+
+string strLenTest = "Hi";
+int stringLength = strLenTest.Length;
