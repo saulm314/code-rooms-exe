@@ -34,6 +34,7 @@ namespace CRECSharpInterpreter
                 Type.Bracket =>             ComputeVarTypeBracket(),
                 Type.StringLiteral =>       ComputeVarTypeStringLiteral(),
                 Type.StringElement =>       ComputeVarTypeStringElement(),
+                Type.ArrayStringElement =>  ComputeVarTypeArrayStringElement(),
                 _ =>                        throw new ExpressionUnitException(this, "Unrecognised expression unit")
             };
         }
@@ -52,6 +53,7 @@ namespace CRECSharpInterpreter
                 case Type.Bracket:              ComputeBracket();               break;
                 case Type.StringLiteral:        ComputeStringLiteral();         break;
                 case Type.StringElement:        ComputeStringElement();         break;
+                case Type.ArrayStringElement:   ComputeArrayStringElement();    break;
                 default:                        throw new ExpressionUnitException(this,
                                                     $"Internal error; don't know how to compute expression of type \"{_Type}\"");
             }
@@ -83,6 +85,8 @@ namespace CRECSharpInterpreter
                 return Type.ArrayElement;
             if (KeyStrings[0]._Type == KeyString.Type.StringElement && KeyStrings.Length == 1)
                 return Type.StringElement;
+            if (KeyStrings[0]._Type == KeyString.Type.ArrayStringElement && KeyStrings.Length == 1)
+                return Type.ArrayStringElement;
             if (KeyStrings[0]._Type == KeyString.Type.Null && KeyStrings.Length == 1)
                 return Type.Null;
             if (KeyStrings[0]._Type == KeyString.Type.ArrayLength && KeyStrings.Length == 1)
@@ -311,6 +315,38 @@ namespace CRECSharpInterpreter
             Value = Memory.Instance.Heap.GetValue(heapIndex, index);
         }
 
+        private ArrayStringElement? arrayStringElement;
+        private VarType? ComputeVarTypeArrayStringElement()
+        {
+            arrayStringElement = KeyStrings[0]._ArrayStringElement;
+            return VarType.@char;
+        }
+
+        private void ComputeArrayStringElement()
+        {
+            arrayStringElement!.ArrayIndexExpression.Compute();
+            arrayStringElement!.StringIndexExpression.Compute();
+            arrayStringElement.ArrayIndex = (int)arrayStringElement.ArrayIndexExpression.Value!;
+            arrayStringElement.StringIndex = (int)arrayStringElement.StringIndexExpression.Value!;
+            int arrayIndex = arrayStringElement.ArrayIndex;
+            int stringIndex = arrayStringElement.StringIndex;
+            Variable array = arrayStringElement.Array;
+            if (array.Value == null)
+                throw new ExpressionUnitException(this, $"Array \"{array.Name}\" has value null");
+            int arrayHeapIndex = (int)array.Value;
+            int arrayLength = (int)Memory.Instance!.Heap[arrayHeapIndex]!.Value!;
+            if (arrayIndex >= arrayLength)
+                throw new ExpressionUnitException(this, $"Index {arrayIndex} out of range of array \"{array.Name}\"");
+            object? stringHeapIndexAsObject = Memory.Instance.Heap.GetValue(arrayHeapIndex, arrayIndex);
+            if (stringHeapIndexAsObject == null)
+                throw new ExpressionUnitException(this, $"String \"{array.Name}[{arrayIndex}]\" has value null");
+            int stringHeapIndex = (int)stringHeapIndexAsObject;
+            int stringLength = (int)Memory.Instance!.Heap[stringHeapIndex]!.Value!;
+            if (stringIndex >= stringLength)
+                throw new ExpressionUnitException(this, $"Index {stringIndex} out of range of string \"{array.Name}[{arrayIndex}]\"");
+            Value = Memory.Instance.Heap.GetValue(stringHeapIndex, stringIndex);
+        }
+
         public enum Type
         {
             Invalid,
@@ -323,7 +359,8 @@ namespace CRECSharpInterpreter
             ArrayLength,
             Bracket,
             StringLiteral,
-            StringElement
+            StringElement,
+            ArrayStringElement
         }
 
         public override string ToString()

@@ -173,6 +173,54 @@ namespace CRECSharpInterpreter
             return stringElement;
         }
 
+        public ArrayStringElement? _ArrayStringElement { get => _arrayStringElement ??= CreateArrayStringElement(); }
+        private ArrayStringElement? _arrayStringElement;
+        private bool arrayStringElementIsNull;
+
+        private ArrayStringElement? CreateArrayStringElement()
+        {
+            if (arrayStringElementIsNull)
+                return null;
+            arrayStringElementIsNull = true;
+            int openSquareBraceIndex1 = Text.IndexOf('[');
+            int openSquareBraceIndex2 = Text.IndexOf('[', openSquareBraceIndex1 + 1);
+            int closeSquareBraceIndex1 = Text.IndexOf(']');
+            int closeSquareBraceIndex2 = Text.IndexOf(']', closeSquareBraceIndex1 + 1);
+            bool anySquareBraceDoesntExist =
+                openSquareBraceIndex1 == -1 ||
+                openSquareBraceIndex2 == -1 ||
+                closeSquareBraceIndex1 == -1 ||
+                closeSquareBraceIndex2 == -1;
+            if (anySquareBraceDoesntExist)
+                return null;
+            if (openSquareBraceIndex2 != closeSquareBraceIndex1 + 1)
+                return null;
+            if (closeSquareBraceIndex1 <= openSquareBraceIndex1)
+                return null;
+            if (closeSquareBraceIndex2 <= openSquareBraceIndex2)
+                return null;
+            string variableName = Text[..openSquareBraceIndex1];
+            Variable? variable = Memory.Instance!.GetVariable(variableName);
+            if (variable == null)
+                return null;
+            if (!variable.Initialised)
+                return null;
+            if (variable._VarType != VarType.@string.Array)
+                return null;
+            string stringInsideBraces1 = Text[(openSquareBraceIndex1 + 1)..closeSquareBraceIndex1];
+            string stringInsideBraces2 = Text[(openSquareBraceIndex2 + 1)..closeSquareBraceIndex2];
+            if (string.IsNullOrWhiteSpace(stringInsideBraces1))
+                return null;
+            if (string.IsNullOrWhiteSpace(stringInsideBraces2))
+                return null;
+            string stringAfterBraces = Text[(closeSquareBraceIndex2 + 1)..];
+            if (!string.IsNullOrWhiteSpace(stringAfterBraces))
+                return null;
+            ArrayStringElement arrayStringElement = new(variable, stringInsideBraces1, stringInsideBraces2);
+            arrayStringElementIsNull = false;
+            return arrayStringElement;
+        }
+
         public ArrayElement? _ArrayElement { get => _arrayElement ??= CreateArrayElement(); }
         private ArrayElement? _arrayElement;
         private bool arrayElementIsNull;
@@ -542,6 +590,7 @@ namespace CRECSharpInterpreter
             if (IsCloseBracket)         return Type.CloseBracket;
             if (IsStringLiteral)        return Type.StringLiteral;
             if (IsStringElement)        return Type.StringElement;
+            if (IsArrayStringElement)   return Type.ArrayStringElement;
                                         return Type.Invalid;
         }
 
@@ -629,6 +678,9 @@ namespace CRECSharpInterpreter
         private bool IsStringElement { get => _isStringElement ??= _StringElement != null; }
         private bool? _isStringElement;
 
+        private bool IsArrayStringElement { get => _isArrayStringElement ??= _ArrayStringElement != null; }
+        private bool? _isArrayStringElement;
+
         private bool IsNull { get => _isNull ??= Text == "null"; }
         private bool? _isNull;
 
@@ -691,7 +743,8 @@ namespace CRECSharpInterpreter
             OpenBracket,
             CloseBracket,
             StringLiteral,
-            StringElement
+            StringElement,
+            ArrayStringElement
         }
 
         public override string ToString() => Text;
