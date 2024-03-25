@@ -21,6 +21,7 @@ namespace CRECSharpInterpreter
                 case Type.Invalid:
                     throw new LineException(this, $"Unrecognised operation in line:\n{Text}");
                 case Type.WriteStringElement:
+                case Type.WriteArrayStringElement:
                     throw new LineException(this, "Cannot write to an element of a string because strings are immutable");
                 case Type.EmptyLine:
                     break;
@@ -332,6 +333,7 @@ namespace CRECSharpInterpreter
             if (IsWriteVariable)                return Type.WriteVariable;
             if (IsWriteArrayElement)            return Type.WriteArrayElement;
             if (IsWriteStringElement)           return Type.WriteStringElement;
+            if (IsWriteArrayStringElement)      return Type.WriteArrayStringElement;
                                                 return Type.Invalid;
         }
 
@@ -389,6 +391,16 @@ namespace CRECSharpInterpreter
         }
         private bool? _isWriteStringElement;
 
+        private bool IsWriteArrayStringElement
+        {
+            get =>
+                _isWriteArrayStringElement ??=
+                    KeyStrings.Length >= 3 &&
+                    KeyStrings[0]._Type == KeyString.Type.ArrayStringElement &&
+                    KeyStrings[1]._Type == KeyString.Type.Equals;
+        }
+        private bool? _isWriteArrayStringElement;
+
         public enum Type
         {
             Invalid,
@@ -397,7 +409,8 @@ namespace CRECSharpInterpreter
             DeclarationInitialisation,
             WriteVariable,
             WriteArrayElement,
-            WriteStringElement
+            WriteStringElement,
+            WriteArrayStringElement
         }
 
         public class LineException : InterpreterException
