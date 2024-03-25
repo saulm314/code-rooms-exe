@@ -1,9 +1,28 @@
-int[] myArr = new int[] { 5, 3 };
-myArr = new int[] { 7, 2 };
-
 string myString;
 myString = "Hello, World!";
 myString = "Goodbye!";
+string myString2 = myString;
+string myString3 = "Goodbye!";
+bool stringComp = myString == myString2;
+bool stringComp2 = myString == myString3;
+string myString4 = null;
+string myString5 = myString4;
+
+string[] stringArr = new string[5];
+string[] animals = new string[] { "Cat", "Dog", "Rabbit" };
+string animal = animals[0];
+animals = null;
+
+int[] dummy = new int[0];
+
+string colour = "Blue";
+string[] colours = new string[] { colour, "Red", "Green" };
+colour = null;
+colours = null;
+
+string number = "One";
+string[] numbers = new string[] { number, "Two", "Three" };
+numbers[0] = null;
 
 int _number = 1;
 int secondNumber = _number;
