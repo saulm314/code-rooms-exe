@@ -1,16 +1,21 @@
 int _number = 1;
 int secondNumber = _number;
 secondNumber = 3;
-_number = secondNumber;
+_number = /*multi-line comment*/secondNumber;
+/* multi-line comment */
 secondNumber=_number;
 
+// This is a comment.
 int number__ = 5;
-
+// this is another comment
 int thirdNumber = _number;
 int numbernumber = -193214;
 thirdNumber = numbernumber;
 
 bool boolean = false;
+/*multi
+line
+comment*/
 bool boolean2 = true;
 boolean2 = boolean;
 boolean = true;

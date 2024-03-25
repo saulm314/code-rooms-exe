@@ -59,11 +59,49 @@ namespace CRECSharpInterpreter
         public Expression? _Expression { get; init; }
 
         public static string[] GetLinesAsStrings(string text)
-            =>
+        {
+            text = RemoveMultiLineComments(text);
+            text = RemoveSingleLineComments(text);
+            return
                 text
                 .Split(';', StringSplitOptions.RemoveEmptyEntries)
                 .Where(str => !string.IsNullOrWhiteSpace(str))
                 .ToArray();
+        }
+
+        private static string RemoveMultiLineComments(string text)
+        {
+            int commentStartIndex = text.IndexOf("/*");
+            while (commentStartIndex != -1)
+            {
+                int commentEndIndex = text.IndexOf("*/");
+                if (commentEndIndex == -1)
+                    throw new LineException(null, "Multi-line comment is never closed");
+                if (commentEndIndex <= commentStartIndex)
+                    throw new LineException(null, "Unexpected \"*/\"");
+                text = text.Remove(commentStartIndex, commentEndIndex - commentStartIndex + 2);
+                commentStartIndex = text.IndexOf("/*");
+            }
+            return text;
+        }
+
+        // this assumes that multi line comments have already been removed
+        private static string RemoveSingleLineComments(string text)
+        {
+            int commentStartIndex = text.IndexOf("//");
+            while (commentStartIndex != -1)
+            {
+                int nextNewlineIndex = text.IndexOf("\n", commentStartIndex);
+                if (nextNewlineIndex == -1)
+                {
+                    text = text.Remove(commentStartIndex);
+                    break;
+                }
+                text = text.Remove(commentStartIndex, nextNewlineIndex - commentStartIndex);
+                commentStartIndex = text.IndexOf("//");
+            }
+            return text;
+        }
 
         private void InitialiseRuntime()
         {
