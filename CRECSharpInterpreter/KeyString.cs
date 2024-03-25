@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using CRECSharpInterpreter.Operators;
+using CRECSharpInterpreter.Collections.Generic;
 
 namespace CRECSharpInterpreter
 {
@@ -229,11 +230,54 @@ namespace CRECSharpInterpreter
 
         public static string[] GetKeyStringsAsStrings(string text)
         {
+            AltListLockLock1<string, string> altNonQuoteQuotes = GetAlternatingNonQuoteQuotes(text);
+            List<string> keyStrings = new();
+            for (int i = 0; i < altNonQuoteQuotes.Count; i++)
+            {
+                switch (i % 2)
+                {
+                    case 0:
+                        List<string> quoteFreeKeyStrings = GetKeyStringsFromQuoteFreeText((string)altNonQuoteQuotes[i]!);
+                        keyStrings.AddRange(quoteFreeKeyStrings);
+                        break;
+                    case 1:
+                        keyStrings.Add((string)altNonQuoteQuotes[i]!);
+                        break;
+                }
+            }
+            return keyStrings.ToArray();
+        }
+
+        private static List<string> GetKeyStringsFromQuoteFreeText(string text)
+        {
             text = PutSpacesBetweenKeyStrings(text);
             text = JoinRequiredKeyStringsTogether(text);
             List<string> keyStrings = SeparateKeyStrings(text);
             CombineCasts(keyStrings);
-            return keyStrings.ToArray();
+            return keyStrings;
+        }
+
+        private static AltListLockLock1<string, string> GetAlternatingNonQuoteQuotes(string text)
+        {
+            List<Pair<int, int>> quoteIndexPairs = Line.GetQuoteIndexPairsFromText(text);
+            if (quoteIndexPairs.Count == 0)
+                return new(text);
+            AltListLockLock1<string, string> altNonQuoteQuotes;
+            string firstNonQuote = text[..quoteIndexPairs[0].First];
+            altNonQuoteQuotes = new(firstNonQuote);
+            for (int i = 0; i < quoteIndexPairs.Count - 1; i++)
+            {
+                Pair<int, int> currentQuoteIndexPair = quoteIndexPairs[i];
+                Pair<int, int> nextQuoteIndexPair = quoteIndexPairs[i + 1];
+                string quote = text[currentQuoteIndexPair.First..(currentQuoteIndexPair.Second + 1)];
+                string nonQuote = text[(currentQuoteIndexPair.Second + 1)..nextQuoteIndexPair.First];
+                altNonQuoteQuotes.Add(quote, nonQuote);
+            }
+            Pair<int, int> finalQuoteIndexPair = quoteIndexPairs[quoteIndexPairs.Count - 1];
+            string finalQuote = text[finalQuoteIndexPair.First..(finalQuoteIndexPair.Second + 1)];
+            string finalNonQuote = text[(finalQuoteIndexPair.Second + 1)..];
+            altNonQuoteQuotes.Add(finalQuote, finalNonQuote);
+            return altNonQuoteQuotes;
         }
 
         private static string PutSpacesBetweenKeyStrings(string text)

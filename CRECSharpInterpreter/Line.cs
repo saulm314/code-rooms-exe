@@ -109,7 +109,7 @@ namespace CRECSharpInterpreter
             return pair.First < index && index < pair.Second;
         }
 
-        private static List<Pair<int, int>> GetQuoteIndexPairsFromText(string text)
+        public static List<Pair<int, int>> GetQuoteIndexPairsFromText(string text)
         {
             List<Pair<int, int>> pairs = new();
             int index = 0;
