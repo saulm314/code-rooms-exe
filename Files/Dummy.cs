@@ -24,6 +24,11 @@ colours = null;
 string number = "One";
 string[] numbers = new string[] { number, "Two", "Three" };
 numbers[0] = null;
+number = numbers[1];
+string strNumber2 = numbers[0];
+
+string[] strArr = new string[2];
+strArr[0] = "Hello";
 
 int _number = 1;
 int secondNumber = _number;

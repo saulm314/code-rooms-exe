@@ -75,9 +75,6 @@ namespace CRECSharpInterpreter
         {
             VerifyRange(index, offset);
             Variable variable = variables[index + offset + 1]!;
-            if (VarType.GetVarType(value!) != variable._VarType)
-                throw new HeapException(this,
-                    $"Internal exception: cannot place {value} into slot of type {variable._VarType}");
             variable.Value = value;
         }
 
