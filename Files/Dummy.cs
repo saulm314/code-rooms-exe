@@ -1,3 +1,6 @@
+int[] myArr = new int[] { 5, 3 };
+myArr = new int[] { 7, 2 };
+
 string myString;
 myString = "Hello, World!";
 myString = "Goodbye!";

@@ -287,8 +287,6 @@ namespace CRECSharpInterpreter
 
         private void PerformWriteVariable()
         {
-            _Expression!.Compute();
-
             bool isReferenceType = VarToWrite!._VarType!._Storage == VarType.Storage.Reference;
             bool isNull = VarToWrite.Value == null;
             if (isReferenceType && !isNull)
@@ -297,12 +295,13 @@ namespace CRECSharpInterpreter
                 Memory.Instance!.Heap.DecrementReferenceCounter(oldAllocation);
             }
 
+            _Expression!.Compute();
+
             VarToWrite.Value = _Expression.Value;
         }
 
         private void PerformWriteArrayElement()
         {
-            _Expression!.Compute();
             if (ElementToWrite!.Array.Value == null)
                 throw new LineException(this, $"Array \"{ElementToWrite.Array.Name}\" has value null");
             int heapIndex = (int)ElementToWrite.Array.Value;
@@ -317,6 +316,8 @@ namespace CRECSharpInterpreter
                 int oldAllocation = (int)Memory.Instance!.Heap.GetValue(heapIndex, index)!;
                 Memory.Instance.Heap.DecrementReferenceCounter(oldAllocation);
             }
+
+            _Expression!.Compute();
 
             Memory.Instance.Heap.SetValue(heapIndex, index, _Expression.Value);
         }
