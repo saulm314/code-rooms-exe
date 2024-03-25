@@ -118,8 +118,8 @@ namespace CRECSharpInterpreter
                 int quoteIndex = text.IndexOf('"', index);
                 if (quoteIndex == -1)
                     break;
-                int nextQuoteIndex = text.IndexOf('"', quoteIndex);
-                int nextNewlineIndex = text.IndexOf('\n', quoteIndex);
+                int nextQuoteIndex = text.IndexOf('"', quoteIndex + 1);
+                int nextNewlineIndex = text.IndexOf('\n', quoteIndex + 1);
                 if (nextQuoteIndex == -1)
                     throw new LineException(null, "Quote was never closed");
                 if (nextNewlineIndex != -1 && nextNewlineIndex <= nextQuoteIndex)

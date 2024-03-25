@@ -1,3 +1,7 @@
+string myString;
+myString = "Hello, World!";
+myString = "Goodbye!";
+
 int _number = 1;
 int secondNumber = _number;
 secondNumber = 3;

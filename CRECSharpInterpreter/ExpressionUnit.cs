@@ -32,6 +32,7 @@ namespace CRECSharpInterpreter
                 Type.Null =>                ComputeVarTypeNull(),
                 Type.ArrayLength =>         ComputeVarTypeArrayLength(),
                 Type.Bracket =>             ComputeVarTypeBracket(),
+                Type.StringLiteral =>       ComputeVarTypeStringLiteral(),
                 _ =>                        throw new ExpressionUnitException(this, "Unrecognised expression unit")
             };
         }
@@ -48,6 +49,7 @@ namespace CRECSharpInterpreter
                 case Type.Null:                 ComputeNull();                  break;
                 case Type.ArrayLength:          ComputeArrayLength();           break;
                 case Type.Bracket:              ComputeBracket();               break;
+                case Type.StringLiteral:        ComputeStringLiteral();         break;
                 default:                        throw new ExpressionUnitException(this,
                                                     $"Internal error; don't know how to compute expression of type \"{_Type}\"");
             }
@@ -83,6 +85,8 @@ namespace CRECSharpInterpreter
                 return Type.ArrayLength;
             if (KeyStrings[0]._Type == KeyString.Type.OpenBracket && KeyStrings[KeyStrings.Length - 1]._Type == KeyString.Type.CloseBracket)
                 return Type.Bracket;
+            if (KeyStrings[0]._Type == KeyString.Type.StringLiteral && KeyStrings.Length == 1)
+                return Type.StringLiteral;
             return Type.Invalid;
         }
 
@@ -254,6 +258,24 @@ namespace CRECSharpInterpreter
             Value = bracketExpression.Value;
         }
 
+        private StringLiteral? stringLiteral;
+        private VarType? ComputeVarTypeStringLiteral()
+        {
+            stringLiteral = KeyStrings[0]._StringLiteral;
+            return VarType.@string;
+        }
+
+        private void ComputeStringLiteral()
+        {
+            Variable[] variablesToAllocate = new Variable[stringLiteral!.Value.Length];
+            for (int i = 0; i < variablesToAllocate.Length; i++)
+            {
+                variablesToAllocate[i] = new(VarType.@char);
+                variablesToAllocate[i].Value = stringLiteral.Value[i];
+            }
+            int heapIndex = Memory.Instance!.Heap.Allocate(variablesToAllocate.Length, variablesToAllocate);
+            Value = heapIndex;
+        }
 
         public enum Type
         {
@@ -265,7 +287,8 @@ namespace CRECSharpInterpreter
             ArrayElement,
             Null,
             ArrayLength,
-            Bracket
+            Bracket,
+            StringLiteral
         }
 
         public override string ToString()

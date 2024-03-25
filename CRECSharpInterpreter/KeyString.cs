@@ -85,6 +85,9 @@ namespace CRECSharpInterpreter
                     string varTypeAsString = Text[1..(Text.Length - 1)];
                     SubKeyStrings[1] = new(varTypeAsString);
                     break;
+                case Type.StringLiteral:
+                    _StringLiteral = new(Text);
+                    break;
             }
         }
 
@@ -94,6 +97,8 @@ namespace CRECSharpInterpreter
 
         // null if not a literal
         public Literal? _Literal { get; init; }
+
+        public StringLiteral? _StringLiteral { get; init; }
 
         // null if not an array construction
         public ArrayConstruction? _ArrayConstruction { get => _arrayConstruction ??= CreateArrayConstruction(); }
@@ -495,6 +500,7 @@ namespace CRECSharpInterpreter
             if (IsOperator)             return Type.Operator;
             if (IsOpenBracket)          return Type.OpenBracket;
             if (IsCloseBracket)         return Type.CloseBracket;
+            if (IsStringLiteral)        return Type.StringLiteral;
                                         return Type.Invalid;
         }
 
@@ -600,6 +606,21 @@ namespace CRECSharpInterpreter
         private bool IsCloseBracket { get => _isCloseBracket ??= Text == ")"; }
         private bool? _isCloseBracket;
 
+        private bool IsStringLiteral
+        {
+            get
+            {
+                if (_isStringLiteral is not null)
+                    return (bool)_isStringLiteral;
+                if (Text[0] != '"')
+                    return _isStringLiteral ??= false;
+                if (Text[Text.Length - 1] != '"')
+                    return _isStringLiteral ??= false;
+                return _isStringLiteral ??= true;
+            }
+        }
+        private bool? _isStringLiteral;
+
         public enum Type
         {
             Invalid,
@@ -624,7 +645,8 @@ namespace CRECSharpInterpreter
             LengthProperty,
             Operator,
             OpenBracket,
-            CloseBracket
+            CloseBracket,
+            StringLiteral
         }
 
         public override string ToString() => Text;
