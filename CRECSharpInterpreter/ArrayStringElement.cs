@@ -11,7 +11,7 @@
 
         private Expression GetIndexExpression(string stringInsideBraces)
         {
-            string[] indexKeyStringsAsStrings = KeyString.GetKeyStringsAsStrings(stringInsideBraces);
+            string[] indexKeyStringsAsStrings = KeyStringSeparator.GetKeyStringsAsStrings(stringInsideBraces);
             KeyString[] indexKeyStrings = new KeyString[indexKeyStringsAsStrings.Length];
             for (int i = 0; i < indexKeyStrings.Length; i++)
                 indexKeyStrings[i] = new(indexKeyStringsAsStrings[i]);

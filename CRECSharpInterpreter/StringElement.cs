@@ -5,7 +5,7 @@
         public StringElement(Variable @string, string stringInsideBraces)
         {
             String = @string;
-            string[] indexKeyStringsAsStrings = KeyString.GetKeyStringsAsStrings(stringInsideBraces);
+            string[] indexKeyStringsAsStrings = KeyStringSeparator.GetKeyStringsAsStrings(stringInsideBraces);
             KeyString[] indexKeyStrings = new KeyString[indexKeyStringsAsStrings.Length];
             for (int i = 0; i < indexKeyStrings.Length; i++)
                 indexKeyStrings[i] = new(indexKeyStringsAsStrings[i]);

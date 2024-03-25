@@ -9,7 +9,7 @@ namespace CRECSharpInterpreter
         {
             Text = text;
 
-            linesStr = Line.GetLinesAsStrings(Text);
+            linesStr = LineSeparator.GetLinesAsStrings(Text);
             Lines = new Line[linesStr.Length];
 
             _ = new Memory(mode);

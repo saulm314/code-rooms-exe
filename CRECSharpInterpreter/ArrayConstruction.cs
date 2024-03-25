@@ -5,7 +5,7 @@
         public ArrayConstruction(VarType varType, string stringInsideBraces)
         {
             _VarType = varType;
-            string[] arrayLengthKeyStringsAsStrings = KeyString.GetKeyStringsAsStrings(stringInsideBraces);
+            string[] arrayLengthKeyStringsAsStrings = KeyStringSeparator.GetKeyStringsAsStrings(stringInsideBraces);
             KeyString[] arrayLengthKeyStrings = new KeyString[arrayLengthKeyStringsAsStrings.Length];
             for (int i = 0; i < arrayLengthKeyStrings.Length; i++)
                 arrayLengthKeyStrings[i] = new(arrayLengthKeyStringsAsStrings[i]);
