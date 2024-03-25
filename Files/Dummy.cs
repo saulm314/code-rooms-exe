@@ -1,37 +1,3 @@
-string myString;
-myString = "Hello, World!";
-myString = "Goodbye!";
-string myString2 = myString;
-string myString3 = "Goodbye!";
-bool stringComp = myString == myString2;
-bool stringComp2 = myString == myString3;
-string myString4 = null;
-string myString5 = myString4;
-
-char strElement = myString3[2];
-
-string[] stringArr = new string[5];
-string[] animals = new string[] { "Cat", "Dog", "Rabbit" };
-string animal = animals[1];
-animals = null;
-animal = null;
-
-int[] dummy = new int[0];
-
-string colour = "Blue";
-string[] colours = new string[] { colour, "Red", "Green" };
-colour = null;
-colours = null;
-
-string number = "One";
-string[] numbers = new string[] { number, "Two", "Three" };
-numbers[0] = null;
-number = numbers[1];
-string strNumber2 = numbers[0];
-
-string[] strArr = new string[2];
-strArr[0] = "Hello";
-
 int _number = 1;
 int secondNumber = _number;
 secondNumber = 3;
@@ -224,3 +190,37 @@ bool nullCheck2 = cast7 == null;
 bool nullCheck3 = null == cast7;
 bool nullCheck4 = null != null;
 bool nullCheck5 = boolArray == null;
+
+string myString;
+myString = "Hello, World!";
+myString = "Goodbye!";
+string myString2 = myString;
+string myString3 = "Goodbye!";
+bool stringComp = myString == myString2;
+bool stringComp2 = myString == myString3;
+string myString4 = null;
+string myString5 = myString4;
+
+char strElement = myString3[2];
+
+string[] stringArr = new string[5];
+string[] animals = new string[] { "Cat", "Dog", "Rabbit" };
+string animal = animals[1];
+animals = null;
+animal = null;
+
+int[] dummy = new int[0];
+
+string colour = "Blue";
+string[] colours = new string[] { colour, "Red", "Green" };
+colour = null;
+colours = null;
+
+string number = "One";
+string[] numbers = new string[] { number, "Two", "Three" };
+numbers[0] = null;
+number = numbers[1];
+string strNumber2 = numbers[0];
+
+string[] strArr = new string[2];
+strArr[0] = "Hello";
