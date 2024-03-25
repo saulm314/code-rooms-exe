@@ -200,6 +200,7 @@ bool stringComp = myString == myString2;
 bool stringComp2 = myString == myString3;
 string myString4 = null;
 string myString5 = myString4;
+myString4 = "semi;colon";
 
 char strElement = myString3[2];
 
