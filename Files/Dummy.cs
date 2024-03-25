@@ -6,7 +6,7 @@ _number = /*multi-line comment*/secondNumber;
 secondNumber=_number;
 
 if (true)
-    int testTest = 1;
+    _number = 43;
 
 // This is a comment.
 int number__ = 5;

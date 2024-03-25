@@ -57,6 +57,13 @@ namespace CRECSharpInterpreter
 
             if (Memory.Instance!._Mode == Mode.Runtime)
                 InitialiseRuntime();
+
+            switch (_Type)
+            {
+                case Type.IfSingleLine:
+                    Memory.Instance.Stack.Pop();
+                    break;
+            }
         }
 
         public string Text { get; init; }
