@@ -308,7 +308,8 @@ namespace CRECSharpInterpreter
             "&",
             "|",
             "^",
-            "%"
+            "%",
+            ";"
         };
 
         private static string[] nonKeywordKeyStringsContainingOtherKeyStrings = new string[]
@@ -352,7 +353,7 @@ namespace CRECSharpInterpreter
 
         private static AltListLockLock1<string, string> GetAlternatingNonQuoteQuotes(string text)
         {
-            List<Pair<int, int>> quoteIndexPairs = Line.GetQuoteIndexPairsFromText(text);
+            List<Pair<int, int>> quoteIndexPairs = Line.GetQuoteIndexPairs(text);
             if (quoteIndexPairs.Count == 0)
                 return new(text);
             AltListLockLock1<string, string> altNonQuoteQuotes;
@@ -591,6 +592,7 @@ namespace CRECSharpInterpreter
             if (IsStringLiteral)        return Type.StringLiteral;
             if (IsStringElement)        return Type.StringElement;
             if (IsArrayStringElement)   return Type.ArrayStringElement;
+            if (IsSemicolon)            return Type.Semicolon;
                                         return Type.Invalid;
         }
 
@@ -717,6 +719,9 @@ namespace CRECSharpInterpreter
         }
         private bool? _isStringLiteral;
 
+        private bool IsSemicolon { get => _isSemicolon ??= Text == ";"; }
+        private bool? _isSemicolon;
+
         public enum Type
         {
             Invalid,
@@ -744,7 +749,8 @@ namespace CRECSharpInterpreter
             CloseBracket,
             StringLiteral,
             StringElement,
-            ArrayStringElement
+            ArrayStringElement,
+            Semicolon
         }
 
         public override string ToString() => Text;

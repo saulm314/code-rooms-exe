@@ -8,9 +8,6 @@ namespace CRECSharpInterpreter
         public Chunk(string text, Mode mode)
         {
             Text = text;
-            string trimmedText = Text.TrimEnd();
-            if (trimmedText[trimmedText.Length - 1] != ';')
-                throw new ChunkException(this, "Semicolon on final line expected");
 
             linesStr = Line.GetLinesAsStrings(Text);
             Lines = new Line[linesStr.Length];

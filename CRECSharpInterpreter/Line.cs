@@ -67,36 +67,92 @@ namespace CRECSharpInterpreter
 
         public static string[] GetLinesAsStrings(string text)
         {
-            text = RemoveMultiLineComments(text);
-            text = RemoveSingleLineComments(text);
-            List<int> semicolonIndexes = GetSemicolonIndexesFromText(text);
-            List<Pair<int, int>> quoteIndexPairs = GetQuoteIndexPairsFromText(text);
-            RemoveSemicolonIndexesWithinQuotes(semicolonIndexes, quoteIndexPairs);
-            return SplitTextBetweenIndexes(text, semicolonIndexes);
+            text = RemoveComments(text);
+
+            List<Pair<int, int>> quoteIndexPairs = GetQuoteIndexPairs(text);
+            List<Pair<int, int>> bracketIndexPairs = GetBracketIndexPairs(text, quoteIndexPairs);
+
+            List<int> semicolonIndexes = GetRelevantSemicolonIndexes(text, quoteIndexPairs, bracketIndexPairs);
+            List<int> closeCurlyBraceIndexes = GetRelevantCloseBraceIndexes(text, bracketIndexPairs);
+
+            List<int> lineEndIndexes = CombineListsAndSort(semicolonIndexes, closeCurlyBraceIndexes);
+
+            string[] lines = SplitTextBetweenIndexesInclusive(text, lineEndIndexes);
+            return lines;
         }
 
-        private static string[] SplitTextBetweenIndexes(string text, List<int> indexes)
+        private static string RemoveComments(string text)
+        {
+            text = RemoveMultiLineComments(text);
+            text = RemoveSingleLineComments(text);
+            return text;
+        }
+
+        private static List<int> GetRelevantSemicolonIndexes(string text, List<Pair<int, int>> quoteIndexPairs, List<Pair<int, int>> bracketIndexPairs)
+        {
+            List<int> semicolonIndexes = GetSemicolonIndexesFromText(text);
+            RemoveIndexesWithinPairs(semicolonIndexes, quoteIndexPairs);
+            RemoveIndexesWithinPairs(semicolonIndexes, bracketIndexPairs);
+            RemoveIndexesFollowedByElse(text, semicolonIndexes);
+            return semicolonIndexes;
+        }
+
+        private static List<T> CombineListsAndSort<T>(List<T> list1, List<T> list2)
+        {
+            List<T> combinedList = new();
+            combinedList.AddRange(list1);
+            combinedList.AddRange(list2);
+            combinedList.Sort();
+            return combinedList;
+        }
+
+        private static string[] SplitTextBetweenIndexesInclusive(string text, List<int> indexes)
         {
             if (indexes.Count == 0)
                 return new string[] { text };
             List<string> splits = new();
-            string firstSplit = text[..indexes[0]];
+            string firstSplit = text[..(indexes[0] + 1)];
             splits.Add(firstSplit);
             for (int i = 0; i < indexes.Count - 1; i++)
             {
                 int currentIndex = indexes[i];
                 int nextIndex = indexes[i + 1];
-                string split = text[(currentIndex + 1)..nextIndex];
+                string split = text[(currentIndex + 1)..(nextIndex + 1)];
                 splits.Add(split);
             }
             string finalSplit = text[(indexes[indexes.Count - 1] + 1)..];
             splits.Add(finalSplit);
+            splits.RemoveAll(str => string.IsNullOrWhiteSpace(str));
             return splits.ToArray();
         }
 
-        private static void RemoveSemicolonIndexesWithinQuotes(List<int> semicolonIndexes, List<Pair<int, int>> quoteIndexPairs)
+        private static void RemoveIndexesFollowedByElse(string text, List<int> indexes)
         {
-            semicolonIndexes.RemoveAll(index => IsIndexBetweenAnyPairs(index, quoteIndexPairs));
+            indexes.RemoveAll(index => IsIndexBeforeElse(text, index));
+        }
+
+        private static bool IsIndexBeforeElse(string text, int index)
+        {
+            int firstNonWhiteSpaceIndexAfterIndex = GetFirstNonWhiteSpaceIndexAfterIndex(text, index);
+            if (index >= text.Length - 3)
+                return false;
+            string firstFourCharacters = text[firstNonWhiteSpaceIndexAfterIndex..(firstNonWhiteSpaceIndexAfterIndex + 4)];
+            if (firstFourCharacters == "else")
+                return true;
+            return false;
+        }
+
+        private static int GetFirstNonWhiteSpaceIndexAfterIndex(string text, int index)
+        {
+            for (int i = index + 1; i < text.Length; i++)
+                if (!char.IsWhiteSpace(text[i]))
+                    return i;
+            return -1;
+        }
+
+        public static void RemoveIndexesWithinPairs(List<int> indexes, List<Pair<int, int>> pairs)
+        {
+            indexes.RemoveAll(index => IsIndexBetweenAnyPairs(index, pairs));
         }
 
         private static bool IsIndexBetweenAnyPairs(int index, List<Pair<int, int>> pairs)
@@ -112,26 +168,143 @@ namespace CRECSharpInterpreter
             return pair.First < index && index < pair.Second;
         }
 
-        public static List<Pair<int, int>> GetQuoteIndexPairsFromText(string text)
+        // relevant means close curly braces '}' that denote a line end
+        // for example:     if (something) { something; }   the '}' here denotes a line end
+        // example:     for (int i = 0; i < length; i++) { something; }     the '}' here denotes a line end
+        // example:     if (something) { something; } else { something; }       only the second '}' denotes a line end
+        // example:     int[] array = new int[] { 5, 3 };       the '}' does *not* denote a line end
+        private static List<int> GetRelevantCloseBraceIndexes(string text, List<Pair<int, int>> bracketIndexPairs)
+        {
+            List<int> closeCurlyBraceIndexes = new();
+            foreach (Pair<int, int> bracketIndexPair in bracketIndexPairs)
+                if (text[bracketIndexPair.Second] == '}' && IsCurlyBracePairAfterCloseBracketOrElse(text, bracketIndexPair))
+                    closeCurlyBraceIndexes.Add(bracketIndexPair.Second);
+            RemoveIndexesFollowedByElse(text, closeCurlyBraceIndexes);
+            return closeCurlyBraceIndexes;
+        }
+
+        private static bool IsCurlyBracePairAfterCloseBracketOrElse(string text, Pair<int, int> curlyBracePair)
+        {
+            int lastNonWhiteSpaceIndexBeforeCurlyBraces = GetLastNonWhiteSpaceIndexBeforeIndex(text, curlyBracePair.First);
+            if (lastNonWhiteSpaceIndexBeforeCurlyBraces == -1)
+                return false;
+            if (text[lastNonWhiteSpaceIndexBeforeCurlyBraces] == ')')
+                return true;
+            if (lastNonWhiteSpaceIndexBeforeCurlyBraces < 3)
+                return false;
+            string lastFourCharacters = text[(lastNonWhiteSpaceIndexBeforeCurlyBraces - 3)..(lastNonWhiteSpaceIndexBeforeCurlyBraces + 1)];
+            if (lastFourCharacters == "else")
+                return true;
+            return false;
+        }
+
+        private static int GetLastNonWhiteSpaceIndexBeforeIndex(string text, int index)
+        {
+            for (int i = index - 1; i >= 0; i--)
+                if (!char.IsWhiteSpace(text[i]))
+                    return i;
+            return -1;
+        }
+
+        // the pairs will consist of any type of open bracket and any type of close bracket
+        // e.g. ( ), { }, ( ] will all be valid pairs
+        // only top level brackets are considered, e.g. ([])    only the () will be returned
+        public static List<Pair<int, int>> GetBracketIndexPairs(string text, List<Pair<int, int>> quoteIndexPairs)
         {
             List<Pair<int, int>> pairs = new();
-            int index = 0;
-            while (index < text.Length)
+            Pair<int, int> currentPair = new(default, default);
+            int bracketsOpened = 0;
+            for (int i = 0; i < text.Length; i++)
             {
-                int quoteIndex = text.IndexOf('"', index);
-                if (quoteIndex == -1)
-                    break;
-                int nextQuoteIndex = text.IndexOf('"', quoteIndex + 1);
-                int nextNewlineIndex = text.IndexOf('\n', quoteIndex + 1);
-                if (nextQuoteIndex == -1)
-                    throw new LineException(null, "Quote was never closed");
-                if (nextNewlineIndex != -1 && nextNewlineIndex <= nextQuoteIndex)
-                    throw new LineException(null, "Quote was not closed before newline character");
-                Pair<int, int> pair = new(quoteIndex, nextQuoteIndex);
-                pairs.Add(pair);
-                index = nextQuoteIndex + 1;
+                if (IsIndexBetweenAnyPairs(i, quoteIndexPairs))
+                    continue;
+                bool isOpenBracket =
+                    text[i] == '(' ||
+                    text[i] == '[' ||
+                    text[i] == '{';
+                bool isCloseBracket =
+                    text[i] == ')' ||
+                    text[i] == ']' ||
+                    text[i] == '}';
+                if (isOpenBracket)
+                {
+                    if (bracketsOpened == 0)
+                        currentPair.First = i;
+                    bracketsOpened++;
+                    continue;
+                }
+                if (isCloseBracket)
+                {
+                    if (bracketsOpened <= 0)
+                        throw new LineException(null, "Closed bracket without opening it");
+                    if (bracketsOpened == 1)
+                    {
+                        currentPair.Second = i;
+                        pairs.Add(currentPair);
+                        currentPair = new(default, default);
+                    }
+                    bracketsOpened--;
+                    continue;
+                }
             }
+            if (bracketsOpened != 0)
+                throw new LineException(null, "Opened bracket without closing it");
             return pairs;
+        }
+
+        public static List<Pair<int, int>> GetQuoteIndexPairs(string text)
+        {
+            List<Pair<int, int>> pairs = new();
+            Pair<int, int> currentPair = new(default, default);
+            QuoteState quoteState = QuoteState.NoQuote;
+            for (int i = 0; i < text.Length; i++)
+            {
+                switch (quoteState)
+                {
+                    case QuoteState.DoubleQuote:
+                        if (text[i] == '"')
+                        {
+                            currentPair.Second = i;
+                            pairs.Add(currentPair);
+                            currentPair = new(default, default);
+                            quoteState = QuoteState.NoQuote;
+                        }
+                        break;
+                    case QuoteState.SingleQuote:
+                        if (text[i] == '\'')
+                        {
+                            currentPair.Second = i;
+                            pairs.Add(currentPair);
+                            currentPair = new(default, default);
+                            quoteState = QuoteState.NoQuote;
+                        }
+                        break;
+                    case QuoteState.NoQuote:
+                        if (text[i] == '"')
+                        {
+                            currentPair.First = i;
+                            quoteState = QuoteState.DoubleQuote;
+                            break;
+                        }
+                        if (text[i] == '\'')
+                        {
+                            currentPair.First = i;
+                            quoteState = QuoteState.SingleQuote;
+                            break;
+                        }
+                        break;
+                }
+            }
+            if (quoteState != QuoteState.NoQuote)
+                throw new LineException(null, "Quote was never closed");
+            return pairs;
+        }
+
+        private enum QuoteState
+        {
+            NoQuote,
+            SingleQuote,
+            DoubleQuote
         }
 
         private static List<int> GetSemicolonIndexesFromText(string text)
@@ -241,7 +414,8 @@ namespace CRECSharpInterpreter
                 Type.WriteArrayElement => 2,
                 _ => throw new LineException(this, "internal error")
             };
-            KeyString[] expressionKeyStrings = new KeyString[KeyStrings.Length - expressionOffset];
+            KeyString[] expressionKeyStrings = new KeyString[KeyStrings.Length - expressionOffset - 1];
+            // not copying the final semicolon
             Array.Copy(KeyStrings, expressionOffset, expressionKeyStrings, 0, expressionKeyStrings.Length);
             return new(expressionKeyStrings);
         }
@@ -337,16 +511,23 @@ namespace CRECSharpInterpreter
                                                 return Type.Invalid;
         }
 
-        private bool IsEmptyLine { get => _isEmptyLine ??= KeyStrings.Length == 0; }
+        private bool IsEmptyLine
+        {
+            get =>
+                _isEmptyLine ??=
+                    KeyStrings.Length == 1 &&
+                    KeyStrings[0]._Type == KeyString.Type.Semicolon;
+        }
         private bool? _isEmptyLine;
 
         private bool IsDeclaration
         {
             get =>
                 _isDeclaration ??=
-                    KeyStrings.Length == 2 &&
+                    KeyStrings.Length == 3 &&
                     KeyStrings[0]._Type == KeyString.Type.Type &&
-                    KeyStrings[1]._Type == KeyString.Type.Variable;
+                    KeyStrings[1]._Type == KeyString.Type.Variable &&
+                    KeyStrings[2]._Type == KeyString.Type.Semicolon;
         }
         private bool? _isDeclaration;
 
@@ -354,10 +535,11 @@ namespace CRECSharpInterpreter
         {
             get =>
                 _isDeclarationInitialisation ??=
-                    KeyStrings.Length >= 4 &&
+                    KeyStrings.Length >= 5 &&
                     KeyStrings[0]._Type == KeyString.Type.Type &&
                     KeyStrings[1]._Type == KeyString.Type.Variable &&
-                    KeyStrings[2]._Type == KeyString.Type.Equals;
+                    KeyStrings[2]._Type == KeyString.Type.Equals &&
+                    KeyStrings[KeyStrings.Length - 1]._Type == KeyString.Type.Semicolon;
         }
         private bool? _isDeclarationInitialisation;
 
@@ -365,9 +547,10 @@ namespace CRECSharpInterpreter
         {
             get =>
                 _isWriteVariable ??=
-                    KeyStrings.Length >= 3 &&
+                    KeyStrings.Length >= 4 &&
                     KeyStrings[0]._Type == KeyString.Type.Variable &&
-                    KeyStrings[1]._Type == KeyString.Type.Equals;
+                    KeyStrings[1]._Type == KeyString.Type.Equals &&
+                    KeyStrings[KeyStrings.Length - 1]._Type == KeyString.Type.Semicolon;
         }
         private bool? _isWriteVariable;
 
@@ -375,9 +558,10 @@ namespace CRECSharpInterpreter
         {
             get =>
                 _isWriteArrayElement ??=
-                    KeyStrings.Length >= 3 &&
+                    KeyStrings.Length >= 4 &&
                     KeyStrings[0]._Type == KeyString.Type.ArrayElement &&
-                    KeyStrings[1]._Type == KeyString.Type.Equals;
+                    KeyStrings[1]._Type == KeyString.Type.Equals &&
+                    KeyStrings[KeyStrings.Length - 1]._Type == KeyString.Type.Semicolon;
         }
         private bool? _isWriteArrayElement;
 
@@ -385,9 +569,10 @@ namespace CRECSharpInterpreter
         {
             get =>
                 _isWriteStringElement ??=
-                    KeyStrings.Length >= 3 &&
+                    KeyStrings.Length >= 4 &&
                     KeyStrings[0]._Type == KeyString.Type.StringElement &&
-                    KeyStrings[1]._Type == KeyString.Type.Equals;
+                    KeyStrings[1]._Type == KeyString.Type.Equals &&
+                    KeyStrings[KeyStrings.Length - 1]._Type == KeyString.Type.Semicolon;
         }
         private bool? _isWriteStringElement;
 
@@ -395,9 +580,10 @@ namespace CRECSharpInterpreter
         {
             get =>
                 _isWriteArrayStringElement ??=
-                    KeyStrings.Length >= 3 &&
+                    KeyStrings.Length >= 4 &&
                     KeyStrings[0]._Type == KeyString.Type.ArrayStringElement &&
-                    KeyStrings[1]._Type == KeyString.Type.Equals;
+                    KeyStrings[1]._Type == KeyString.Type.Equals &&
+                    KeyStrings[KeyStrings.Length - 1]._Type == KeyString.Type.Semicolon;
         }
         private bool? _isWriteArrayStringElement;
 

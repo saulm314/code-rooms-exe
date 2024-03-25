@@ -24,6 +24,8 @@ numbernumber = 17;
 
 char character = '\n';
 char character2 = 'a';
+char character3 = ';';
+char character4 = '}';
 
 double num;
 num = 5.3;
