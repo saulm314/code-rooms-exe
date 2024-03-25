@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace CRECSharpInterpreter
 {
@@ -45,7 +46,7 @@ namespace CRECSharpInterpreter
                     VerifyWriteArrayElementValid();
                     break;
                 case Type.IfSingleLine:
-                    SubLines = CreateSubLines(out Line header);
+                    SubLinesStr = GetSubLines(out Line header);
                     Header = header;
                     break;
                 case Type.If:
@@ -80,14 +81,22 @@ namespace CRECSharpInterpreter
 
         public Line? Header { get; init; }
 
-        public Line[]? SubLines { get; init; }
+        public string[]? SubLinesStr { get; init; }
+        public Line[]? SubLines { get; private set; }
 
         public Variable? Condition { get; init; }
 
         private void InitialiseRuntime()
         {
             string separator = Interpreter.SEPARATOR;
-            Console.WriteLine(Text.TrimStart() + '\n');
+            switch (_Type)
+            {
+                case Type.IfSingleLine:
+                    break;
+                default:
+                    Console.WriteLine(Text.TrimStart() + '\n');
+                    break;
+            }
             switch (_Type)
             {
                 case Type.DeclarationInitialisation:
@@ -96,6 +105,13 @@ namespace CRECSharpInterpreter
                     break;
                 case Type.WriteArrayElement:
                     PerformWriteArrayElement();
+                    break;
+                case Type.IfSingleLine:
+                    if ((bool)Header!.Condition!.Value!)
+                        CreateSubLines();
+                    return;
+                case Type.If:
+                    EvaluateIf();
                     break;
             }
             Console.WriteLine("Stack:");
@@ -118,6 +134,13 @@ namespace CRECSharpInterpreter
             }
             Console.WriteLine();
             Console.WriteLine(separator + separator + separator);
+        }
+
+        private bool EvaluateIf()
+        {
+            _Expression!.Compute();
+            Condition!.Value = _Expression.Value;
+            return (bool)Condition.Value!;
         }
 
         private void VerifyDeclarationValid()
@@ -164,10 +187,13 @@ namespace CRECSharpInterpreter
         {
             KeyString[] keyStrings = new KeyString[KeyStrings.Length - 1];
             Array.Copy(KeyStrings, 1, keyStrings, 0, keyStrings.Length);
-            return new(keyStrings);
+            Expression expression = new(keyStrings);
+            if (expression._VarType != VarType.@bool)
+                throw new LineException(this, "Expression on the header of an if/while statement must be a boolean!");
+            return expression;
         }
 
-        private Line[] CreateSubLines(out Line header)
+        private string[] GetSubLines(out Line header)
         {
             string? headerStr;
             string[] subLinesStr = _Type switch
@@ -176,10 +202,19 @@ namespace CRECSharpInterpreter
                 _ => throw new LineException(this, "Internal error")
             };
             header = new(headerStr);
-            Line[] subLines = new Line[subLinesStr.Length];
+            return subLinesStr;
+        }
+
+        private void CreateSubLines()
+        {
+            Line[] subLines = new Line[SubLinesStr!.Length];
             for (int i = 0; i < subLines.Length; i++)
-                subLines[i] = new(subLinesStr[i]);
-            return subLines;
+                subLines[i] = new(SubLinesStr[i]);
+        }
+
+        private void ProcessSubLinesIf()
+        {
+            
         }
 
         private void VerifyWriteVariableValid()
