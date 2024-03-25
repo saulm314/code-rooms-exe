@@ -1,31 +1,31 @@
 ﻿namespace CRECSharpInterpreter
 {
-    public class ArrayElement
+    public class StringElement
     {
-        public ArrayElement(Variable array, string stringInsideBraces)
+        public StringElement(Variable @string, string stringInsideBraces)
         {
-            Array = array;
+            String = @string;
             string[] indexKeyStringsAsStrings = KeyString.GetKeyStringsAsStrings(stringInsideBraces);
             KeyString[] indexKeyStrings = new KeyString[indexKeyStringsAsStrings.Length];
             for (int i = 0; i < indexKeyStrings.Length; i++)
                 indexKeyStrings[i] = new(indexKeyStringsAsStrings[i]);
             IndexExpression = new(indexKeyStrings);
             if (IndexExpression._VarType != VarType.@int)
-                throw new ArrayElementException(this, "Array index must be an integer");
+                throw new StringElementException(this, "String index must be an integer");
         }
 
-        public Variable Array { get; init; }
+        public Variable String { get; init; }
         public int Index { get; set; }
         public Expression IndexExpression { get; init; }
 
-        public class ArrayElementException : InterpreterException
+        public class StringElementException : InterpreterException
         {
-            public ArrayElementException(ArrayElement? arrayElement, string? message = null) : base(message)
+            public StringElementException(StringElement? stringElement, string? message = null) : base(message)
             {
-                this.arrayElement = arrayElement;
+                this.stringElement = stringElement;
             }
 
-            public ArrayElement? arrayElement;
+            public StringElement? stringElement;
         }
     }
 }

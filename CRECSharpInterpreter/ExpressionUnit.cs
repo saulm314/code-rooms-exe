@@ -33,6 +33,7 @@ namespace CRECSharpInterpreter
                 Type.ArrayLength =>         ComputeVarTypeArrayLength(),
                 Type.Bracket =>             ComputeVarTypeBracket(),
                 Type.StringLiteral =>       ComputeVarTypeStringLiteral(),
+                Type.StringElement =>       ComputeVarTypeStringElement(),
                 _ =>                        throw new ExpressionUnitException(this, "Unrecognised expression unit")
             };
         }
@@ -50,6 +51,7 @@ namespace CRECSharpInterpreter
                 case Type.ArrayLength:          ComputeArrayLength();           break;
                 case Type.Bracket:              ComputeBracket();               break;
                 case Type.StringLiteral:        ComputeStringLiteral();         break;
+                case Type.StringElement:        ComputeStringElement();         break;
                 default:                        throw new ExpressionUnitException(this,
                                                     $"Internal error; don't know how to compute expression of type \"{_Type}\"");
             }
@@ -79,6 +81,8 @@ namespace CRECSharpInterpreter
             }
             if (KeyStrings[0]._Type == KeyString.Type.ArrayElement && KeyStrings.Length == 1)
                 return Type.ArrayElement;
+            if (KeyStrings[0]._Type == KeyString.Type.StringElement && KeyStrings.Length == 1)
+                return Type.StringElement;
             if (KeyStrings[0]._Type == KeyString.Type.Null && KeyStrings.Length == 1)
                 return Type.Null;
             if (KeyStrings[0]._Type == KeyString.Type.ArrayLength && KeyStrings.Length == 1)
@@ -285,6 +289,28 @@ namespace CRECSharpInterpreter
             Value = heapIndex;
         }
 
+        private StringElement? stringElement;
+        private VarType? ComputeVarTypeStringElement()
+        {
+            stringElement = KeyStrings[0]._StringElement;
+            return VarType.@char;
+        }
+
+        private void ComputeStringElement()
+        {
+            stringElement!.IndexExpression.Compute();
+            stringElement.Index = (int)stringElement.IndexExpression.Value!;
+            int index = stringElement.Index;
+            Variable @string = stringElement.String;
+            if (@string.Value == null)
+                throw new ExpressionUnitException(this, $"String \"{@string.Name}\" has value null");
+            int heapIndex = (int)@string.Value;
+            int length = (int)Memory.Instance!.Heap[heapIndex]!.Value!;
+            if (index >= length)
+                throw new ExpressionUnitException(this, $"Index {index} out of range of string \"{@string.Name}\"");
+            Value = Memory.Instance.Heap.GetValue(heapIndex, index);
+        }
+
         public enum Type
         {
             Invalid,
@@ -296,7 +322,8 @@ namespace CRECSharpInterpreter
             Null,
             ArrayLength,
             Bracket,
-            StringLiteral
+            StringLiteral,
+            StringElement
         }
 
         public override string ToString()

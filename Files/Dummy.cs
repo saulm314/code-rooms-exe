@@ -8,6 +8,8 @@ bool stringComp2 = myString == myString3;
 string myString4 = null;
 string myString5 = myString4;
 
+char strElement = myString3[2];
+
 string[] stringArr = new string[5];
 string[] animals = new string[] { "Cat", "Dog", "Rabbit" };
 string animal = animals[1];
