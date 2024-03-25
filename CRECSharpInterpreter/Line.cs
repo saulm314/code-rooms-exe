@@ -93,11 +93,14 @@ namespace CRECSharpInterpreter
             }
             Console.WriteLine("Stack:");
             Console.WriteLine(separator + "\n");
-            foreach (Scope scope in Memory.Instance!.Stack)
+            Scope[] scopes = Memory.Instance!.Stack.ToArray();
+
+            for (int i = scopes.Length - 1; i >= 0; i--)
             {
+                Scope scope = scopes[i];
                 foreach (Variable variable in scope.DeclaredVariables)
                     Console.WriteLine(variable);
-                Console.WriteLine(separator);
+                Console.WriteLine(separator + "\n");
             }
             Console.WriteLine("\nHeap:\n");
             for (int i = 0; i < 10; i++)
