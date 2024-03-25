@@ -10,8 +10,9 @@ string myString5 = myString4;
 
 string[] stringArr = new string[5];
 string[] animals = new string[] { "Cat", "Dog", "Rabbit" };
-string animal = animals[0];
+string animal = animals[1];
 animals = null;
+animal = null;
 
 int[] dummy = new int[0];
 

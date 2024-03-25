@@ -219,6 +219,15 @@ namespace CRECSharpInterpreter
             if (index >= length)
                 throw new ExpressionUnitException(this, $"Index {index} out of range of array \"{array.Name}\"");
             Value = Memory.Instance.Heap.GetValue(heapIndex, index);
+
+            if (array._VarType!._Storage == VarType.Storage.Value)
+                return;
+            if (Value == null)
+                return;
+            // if it's a reference type with a non-null value then its value is the heap index
+            int innerHeapIndex = (int)Value;
+            Console.WriteLine("Hello");
+            Memory.Instance.Heap.IncrementReferenceCounter(innerHeapIndex);
         }
 
         private VarType? ComputeVarTypeNull()
