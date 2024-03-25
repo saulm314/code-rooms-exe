@@ -229,6 +229,15 @@ namespace CRECSharpInterpreter
 
         public static string[] GetKeyStringsAsStrings(string text)
         {
+            text = PutSpacesBetweenKeyStrings(text);
+            text = JoinRequiredKeyStringsTogether(text);
+            List<string> keyStrings = SeparateKeyStrings(text);
+            CombineCasts(keyStrings);
+            return keyStrings.ToArray();
+        }
+
+        private static string PutSpacesBetweenKeyStrings(string text)
+        {
             // ensure that every key string is surrounded by at least one space on either side
             foreach (string keyString in nonKeywordKeyStrings)
                 text = text.Replace(keyString, $" {keyString} ");
@@ -244,44 +253,8 @@ namespace CRECSharpInterpreter
             // so " <  = " becomes " <= "
             foreach (string keyString in nonKeywordKeyStringsContainingOtherKeyStrings)
                 text = text.Replace(keyString, $" {keyString.Replace(" ", string.Empty)} ");
-
-            text = RemoveWhiteSpaceSurroundingCharacter(text, '[', Direction.LeftRight);
-            text = RemoveWhiteSpaceSurroundingCharacter(text, ']', Direction.Left);
-            text = RemoveWhiteSpaceSurroundingCharacter(text, '.', Direction.LeftRight);
-            text = RemoveWhiteSpaceBetweenCharacters(text, '[', ']');
-
-            // remove all whitespace characters and separate everything else into arrays
-            IEnumerable<string> keyStringsEnumerable = text
-                .Split(default(char[]), StringSplitOptions.TrimEntries)
-                .Where(str => !string.IsNullOrWhiteSpace(str));
-            List<string> keyStrings = new();
-            foreach (string keyString in keyStringsEnumerable)
-                keyStrings.Add(keyString);
-
-            // combine bracket-type-bracket combinations into casts
-            int i = 1;
-            while (i < keyStrings.Count - 1)
-            {
-                string keyString = keyStrings[i];
-                VarType? varType = VarType.GetVarType(keyString);
-                if (varType == null)
-                {
-                    i++;
-                    continue;
-                }
-                string previousKeyString = keyStrings[i - 1];
-                string nextKeyString = keyStrings[i + 1];
-                if (previousKeyString != "(" || nextKeyString != ")")
-                {
-                    i++;
-                    continue;
-                }
-                keyStrings.RemoveAt(i);
-                keyStrings.RemoveAt(i);
-                keyStrings[i - 1] = $"({keyString})";
-            }
-
-            return keyStrings.ToArray();
+            
+            return text;
         }
 
         private static bool _transformed = false;
@@ -300,6 +273,15 @@ namespace CRECSharpInterpreter
                     nonKeywordKeyStringsContainingOtherKeyStrings[i] = newBigKeyString;
                 }
             }
+        }
+
+        private static string JoinRequiredKeyStringsTogether(string text)
+        {
+            text = RemoveWhiteSpaceSurroundingCharacter(text, '[', Direction.LeftRight);
+            text = RemoveWhiteSpaceSurroundingCharacter(text, ']', Direction.Left);
+            text = RemoveWhiteSpaceSurroundingCharacter(text, '.', Direction.LeftRight);
+            text = RemoveWhiteSpaceBetweenCharacters(text, '[', ']');
+            return text;
         }
 
         private static string RemoveWhiteSpaceSurroundingCharacter(string input, char character, Direction direction)
@@ -405,6 +387,44 @@ namespace CRECSharpInterpreter
                 else
                     break;
             return input;
+        }
+
+        private static List<string> SeparateKeyStrings(string text)
+        {
+            // remove all whitespace characters and separate everything else into arrays
+            IEnumerable<string> keyStringsEnumerable = text
+                .Split(default(char[]), StringSplitOptions.TrimEntries)
+                .Where(str => !string.IsNullOrWhiteSpace(str));
+            List<string> keyStrings = new();
+            foreach (string keyString in keyStringsEnumerable)
+                keyStrings.Add(keyString);
+            return keyStrings;
+        }
+
+        private static void CombineCasts(List<string> keyStrings)
+        {
+            // combine bracket-type-bracket combinations into casts
+            int i = 1;
+            while (i < keyStrings.Count - 1)
+            {
+                string keyString = keyStrings[i];
+                VarType? varType = VarType.GetVarType(keyString);
+                if (varType == null)
+                {
+                    i++;
+                    continue;
+                }
+                string previousKeyString = keyStrings[i - 1];
+                string nextKeyString = keyStrings[i + 1];
+                if (previousKeyString != "(" || nextKeyString != ")")
+                {
+                    i++;
+                    continue;
+                }
+                keyStrings.RemoveAt(i);
+                keyStrings.RemoveAt(i);
+                keyStrings[i - 1] = $"({keyString})";
+            }
         }
 
         private new Type GetType()
