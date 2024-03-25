@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using CRECSharpInterpreter.Collections.Generic;
 
 namespace CRECSharpInterpreter
 {
@@ -18,6 +20,8 @@ namespace CRECSharpInterpreter
             {
                 case Type.Invalid:
                     throw new LineException(this, $"Unrecognised operation in line:\n{Text}");
+                case Type.EmptyLine:
+                    break;
                 case Type.Declaration:
                     VerifyDeclarationValid();
                     DeclareVariable();
@@ -62,11 +66,84 @@ namespace CRECSharpInterpreter
         {
             text = RemoveMultiLineComments(text);
             text = RemoveSingleLineComments(text);
-            return
-                text
-                .Split(';', StringSplitOptions.RemoveEmptyEntries)
-                .Where(str => !string.IsNullOrWhiteSpace(str))
-                .ToArray();
+            List<int> semicolonIndexes = GetSemicolonIndexesFromText(text);
+            List<Pair<int, int>> quoteIndexPairs = GetQuoteIndexPairsFromText(text);
+            RemoveSemicolonIndexesWithinQuotes(semicolonIndexes, quoteIndexPairs);
+            return SplitTextBetweenIndexes(text, semicolonIndexes);
+        }
+
+        private static string[] SplitTextBetweenIndexes(string text, List<int> indexes)
+        {
+            if (indexes.Count == 0)
+                return new string[] { text };
+            List<string> splits = new();
+            string firstSplit = text[..indexes[0]];
+            splits.Add(firstSplit);
+            for (int i = 0; i < indexes.Count - 1; i++)
+            {
+                int currentIndex = indexes[i];
+                int nextIndex = indexes[i + 1];
+                string split = text[(currentIndex + 1)..nextIndex];
+                splits.Add(split);
+            }
+            string finalSplit = text[(indexes[indexes.Count - 1] + 1)..];
+            splits.Add(finalSplit);
+            return splits.ToArray();
+        }
+
+        private static void RemoveSemicolonIndexesWithinQuotes(List<int> semicolonIndexes, List<Pair<int, int>> quoteIndexPairs)
+        {
+            semicolonIndexes.RemoveAll(index => IsIndexBetweenAnyPairs(index, quoteIndexPairs));
+        }
+
+        private static bool IsIndexBetweenAnyPairs(int index, List<Pair<int, int>> pairs)
+        {
+            foreach (Pair<int, int> pair in pairs)
+                if (IsIndexBetweenPairIndexes(index, pair))
+                    return true;
+            return false;
+        }
+
+        private static bool IsIndexBetweenPairIndexes(int index, Pair<int, int> pair)
+        {
+            return pair.First < index && index < pair.Second;
+        }
+
+        private static List<Pair<int, int>> GetQuoteIndexPairsFromText(string text)
+        {
+            List<Pair<int, int>> pairs = new();
+            int index = 0;
+            while (index < text.Length)
+            {
+                int quoteIndex = text.IndexOf('"', index);
+                if (quoteIndex == -1)
+                    break;
+                int nextQuoteIndex = text.IndexOf('"', quoteIndex);
+                int nextNewlineIndex = text.IndexOf('\n', quoteIndex);
+                if (nextQuoteIndex == -1)
+                    throw new LineException(null, "Quote was never closed");
+                if (nextNewlineIndex != -1 && nextNewlineIndex <= nextQuoteIndex)
+                    throw new LineException(null, "Quote was not closed before newline character");
+                Pair<int, int> pair = new(quoteIndex, nextQuoteIndex);
+                pairs.Add(pair);
+                index = nextQuoteIndex + 1;
+            }
+            return pairs;
+        }
+
+        private static List<int> GetSemicolonIndexesFromText(string text)
+        {
+            List<int> semicolonIndexes = new();
+            int index = 0;
+            while (index < text.Length)
+            {
+                int semicolonIndex = text.IndexOf(';', index);
+                if (semicolonIndex == -1)
+                    break;
+                semicolonIndexes.Add(semicolonIndex);
+                index = semicolonIndex + 1;
+            }
+            return semicolonIndexes;
         }
 
         private static string RemoveMultiLineComments(string text)
@@ -246,12 +323,16 @@ namespace CRECSharpInterpreter
 
         private new Type GetType()
         {
+            if (IsEmptyLine)                    return Type.EmptyLine;
             if (IsDeclaration)                  return Type.Declaration;
             if (IsDeclarationInitialisation)    return Type.DeclarationInitialisation;
             if (IsWriteVariable)                return Type.WriteVariable;
             if (IsWriteArrayElement)            return Type.WriteArrayElement;
                                                 return Type.Invalid;
         }
+
+        private bool IsEmptyLine { get => _isEmptyLine ??= KeyStrings.Length == 0; }
+        private bool? _isEmptyLine;
 
         private bool IsDeclaration
         {
@@ -297,6 +378,7 @@ namespace CRECSharpInterpreter
         public enum Type
         {
             Invalid,
+            EmptyLine,
             Declaration,
             DeclarationInitialisation,
             WriteVariable,

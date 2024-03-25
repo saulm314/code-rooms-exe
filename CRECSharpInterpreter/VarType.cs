@@ -51,6 +51,7 @@ namespace CRECSharpInterpreter
         public static VarType @bool { get; } = new("bool", typeof(bool));
         public static VarType @char { get; } = new("char", typeof(char));
         public static VarType @double { get; } = new("double", typeof(double));
+        public static VarType @string { get; } = new("string", typeof(string));
 
         public static VarType? GetVarType(string varTypeAsString)
         {
