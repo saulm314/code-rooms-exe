@@ -48,21 +48,19 @@ namespace CRECSharpInterpreter
                 case Type.IfSingleLine:
                     SubLinesStr = GetSubLines(out Line header);
                     Header = header;
+                    SubLines = new Line[SubLinesStr.Length];
+                    if (Memory.Instance!._Mode == Mode.Compilation)
+                    {
+                        // these two lines cancel each other out
+                        // however in running them we verify that there are no compilation errors
+                        CreateSubLines();
+                        Memory.Instance.Stack.Pop();
+                    }
                     break;
                 case Type.If:
                     _Expression = CreateExpressionIfWhile();
                     Memory.Instance!.Stack.Push(new());
                     Condition = DeclareConditionVariable();
-                    break;
-            }
-
-            if (Memory.Instance!._Mode == Mode.Runtime)
-                InitialiseRuntime();
-
-            switch (_Type)
-            {
-                case Type.IfSingleLine:
-                    Memory.Instance.Stack.Pop();
                     break;
             }
         }
@@ -86,7 +84,8 @@ namespace CRECSharpInterpreter
 
         public Variable? Condition { get; init; }
 
-        private void InitialiseRuntime()
+        public bool Executed { get; private set; } = false;
+        public void Execute()
         {
             string separator = Interpreter.SEPARATOR;
             switch (_Type)
@@ -107,13 +106,15 @@ namespace CRECSharpInterpreter
                     PerformWriteArrayElement();
                     break;
                 case Type.IfSingleLine:
-                    if ((bool)Header!.Condition!.Value!)
-                        CreateSubLines();
+                    ExecuteIf();
+                    if (Executed)
+                        Memory.Instance!.Stack.Pop();
                     return;
                 case Type.If:
-                    EvaluateIf();
+                    EvaluateIfWhile();
                     break;
             }
+            Executed = true;
             Console.WriteLine("Stack:");
             Console.WriteLine(separator + "\n");
             Scope[] scopes = Memory.Instance!.Stack.ToArray();
@@ -136,11 +137,33 @@ namespace CRECSharpInterpreter
             Console.WriteLine(separator + separator + separator);
         }
 
-        private bool EvaluateIf()
+        private void EvaluateIfWhile()
         {
             _Expression!.Compute();
             Condition!.Value = _Expression.Value;
-            return (bool)Condition.Value!;
+        }
+
+        private void ExecuteIf()
+        {
+            if (!Header!.Executed)
+            {
+                Header.Execute();
+                if (!(bool)Header.Condition!.Value!)
+                    Executed = true;
+                return;
+            }
+            ExecuteNextSubLine();
+            if (subLinesExecuted == SubLines!.Length)
+                Executed = true;
+        }
+
+        private int subLinesExecuted = 0;
+        private void ExecuteNextSubLine()
+        {
+            SubLines![subLinesExecuted] = new(SubLinesStr![subLinesExecuted]);
+            SubLines![subLinesExecuted].Execute();
+            if (SubLines[subLinesExecuted].Executed)
+                subLinesExecuted++;
         }
 
         private void VerifyDeclarationValid()
@@ -207,9 +230,8 @@ namespace CRECSharpInterpreter
 
         private void CreateSubLines()
         {
-            Line[] subLines = new Line[SubLinesStr!.Length];
-            for (int i = 0; i < subLines.Length; i++)
-                subLines[i] = new(SubLinesStr[i]);
+            for (int i = 0; i < SubLines!.Length; i++)
+                SubLines[i] = new(SubLinesStr![i]);
         }
 
         private void ProcessSubLinesIf()

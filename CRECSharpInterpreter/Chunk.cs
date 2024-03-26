@@ -28,7 +28,11 @@ namespace CRECSharpInterpreter
         {
             if (linesDone >= linesStr.Length)
                 return false;
-            Lines[linesDone] = new(linesStr[linesDone]);
+            if (Lines[linesDone] == null)
+                Lines[linesDone] = new(linesStr[linesDone]);
+            Lines[linesDone].Execute();
+            if (!Lines[linesDone].Executed)
+                return true;
             linesDone++;
             return true;
         }
