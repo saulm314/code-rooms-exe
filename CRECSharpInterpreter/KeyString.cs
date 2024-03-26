@@ -353,6 +353,7 @@ namespace CRECSharpInterpreter
             if (IsIfKeyword)            return Type.IfKeyword;
             if (IsElseKeyword)          return Type.ElseKeyword;
             if (IsWhileKeyword)         return Type.WhileKeyword;
+            if (IsForKeyword)           return Type.ForKeyword;
                                         return Type.Invalid;
         }
 
@@ -365,7 +366,8 @@ namespace CRECSharpInterpreter
                 IsNull ||
                 IsIfKeyword ||
                 IsElseKeyword ||
-                IsWhileKeyword;
+                IsWhileKeyword ||
+                IsForKeyword;
         }
 
         private bool IsType { get => _isType ??= VarType.GetVarType(Text) != null; }
@@ -504,6 +506,9 @@ namespace CRECSharpInterpreter
         private bool IsWhileKeyword { get => _isWhileKeyword ??= Text == "while"; }
         private bool? _isWhileKeyword;
 
+        private bool IsForKeyword { get => _isForKeyword ??= Text == "for"; }
+        private bool? _isForKeyword;
+
         public enum Type
         {
             Invalid,
@@ -536,7 +541,8 @@ namespace CRECSharpInterpreter
             StringLength,
             IfKeyword,
             ElseKeyword,
-            WhileKeyword
+            WhileKeyword,
+            ForKeyword
         }
 
         public override string ToString() => Text;
