@@ -16,6 +16,31 @@ if (true) if (true) if (true) if (true);
 
 ;;;;;
 
+bool ifBracesTest = true;
+if (ifBracesTest) { }
+if (ifBracesTest) { ; }
+if (ifBracesTest)
+{
+    int digit1 = 3;
+    int digit2 = 1;
+    int digit3 = 4;
+    int[] pi = new int[] { digit1, digit2, digit3 };
+    if (true)
+        int digit4 = 1;
+    if (true)
+    {
+        int digit5 = 5;
+        int digit6 = 9;
+    }
+    if (false)
+        int digit7 = 2;
+}
+
+if (!ifBracesTest)
+{
+    int digit1 = 5;
+}
+
 // This is a comment.
 int number__ = 5;
 // this is another comment

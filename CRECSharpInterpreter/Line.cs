@@ -46,6 +46,7 @@ namespace CRECSharpInterpreter
                     VerifyWriteArrayElementValid();
                     break;
                 case Type.IfSingleLine:
+                case Type.IfMultiLine:
                     SubLinesStr = GetSubLines(out Line header);
                     Header = header;
                     SubLines = new Line[SubLinesStr.Length];
@@ -91,6 +92,7 @@ namespace CRECSharpInterpreter
             switch (_Type)
             {
                 case Type.IfSingleLine:
+                case Type.IfMultiLine:
                     break;
                 default:
                     Console.WriteLine(Text.TrimStart() + '\n');
@@ -106,6 +108,7 @@ namespace CRECSharpInterpreter
                     PerformWriteArrayElement();
                     break;
                 case Type.IfSingleLine:
+                case Type.IfMultiLine:
                     ExecuteIf();
                     if (Executed)
                         Memory.Instance!.Stack.Pop();
@@ -149,6 +152,8 @@ namespace CRECSharpInterpreter
             {
                 Header.Execute();
                 if (!(bool)Header.Condition!.Value!)
+                    Executed = true;
+                if (SubLines!.Length == 0)
                     Executed = true;
                 return;
             }
@@ -222,6 +227,7 @@ namespace CRECSharpInterpreter
             string[] subLinesStr = _Type switch
             {
                 Type.IfSingleLine => LineSeparator.GetSubLinesAsStringsIfSingleLine(Text, out headerStr),
+                Type.IfMultiLine => LineSeparator.GetSubLinesAsStringsIfMultiLine(Text, out headerStr),
                 _ => throw new LineException(this, "Internal error")
             };
             header = new(headerStr);
@@ -232,11 +238,6 @@ namespace CRECSharpInterpreter
         {
             for (int i = 0; i < SubLines!.Length; i++)
                 SubLines[i] = new(SubLinesStr![i]);
-        }
-
-        private void ProcessSubLinesIf()
-        {
-            
         }
 
         private void VerifyWriteVariableValid()
@@ -328,6 +329,7 @@ namespace CRECSharpInterpreter
             if (IsWriteStringElement)           return Type.WriteStringElement;
             if (IsWriteArrayStringElement)      return Type.WriteArrayStringElement;
             if (IsIfSingleLine)                 return Type.IfSingleLine;
+            if (IsIfMultiLine)                  return Type.IfMultiLine;
             if (IsIf)                           return Type.If;
                                                 return Type.Invalid;
         }
@@ -431,6 +433,19 @@ namespace CRECSharpInterpreter
         }
         private bool? _isIfSingleLine;
 
+        private bool IsIfMultiLine
+        {
+            get =>
+                _isIfMultiLine ??=
+                    KeyStrings.Length >= 6 &&
+                    KeyStrings[0]._Type == KeyString.Type.IfKeyword &&
+                    KeyStrings[1]._Type == KeyString.Type.OpenBracket &&
+                    Array.Exists(KeyStrings, keyString => keyString._Type == KeyString.Type.CloseBracket) &&
+                    Array.Exists(KeyStrings, keyString => keyString._Type == KeyString.Type.OpenCurlyBrace) &&
+                    KeyStrings[KeyStrings.Length - 1]._Type == KeyString.Type.CloseCurlyBrace;
+        }
+        private bool? _isIfMultiLine;
+
         public enum Type
         {
             Invalid,
@@ -442,7 +457,8 @@ namespace CRECSharpInterpreter
             WriteStringElement,
             WriteArrayStringElement,
             If,
-            IfSingleLine
+            IfSingleLine,
+            IfMultiLine
         }
 
         public class LineException : InterpreterException

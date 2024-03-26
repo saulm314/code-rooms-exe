@@ -1,5 +1,6 @@
 ﻿using CRECSharpInterpreter.Collections.Generic;
 using System.Collections.Generic;
+using System;
 
 namespace CRECSharpInterpreter
 {
@@ -27,6 +28,16 @@ namespace CRECSharpInterpreter
             List<Pair<int, int>> bracketIndexPairs = GetBracketIndexPairs(baseLine, quoteIndexPairs);
             header = baseLine[..(bracketIndexPairs[0].Second + 1)];
             string subText = baseLine[(bracketIndexPairs[0].Second + 1)..];
+            string[] subLines = GetLinesAsStrings(subText);
+            return subLines;
+        }
+
+        public static string[] GetSubLinesAsStringsIfMultiLine(string baseLine, out string header)
+        {
+            List<Pair<int, int>> quoteIndexPairs = GetQuoteIndexPairs(baseLine);
+            List<Pair<int, int>> bracketIndexPairs = GetBracketIndexPairs(baseLine, quoteIndexPairs);
+            header = baseLine[..(bracketIndexPairs[0].Second + 1)];
+            string subText = baseLine[(bracketIndexPairs[1].First + 1)..(baseLine.Length - 1)];
             string[] subLines = GetLinesAsStrings(subText);
             return subLines;
         }
@@ -59,7 +70,9 @@ namespace CRECSharpInterpreter
         private static string[] SplitTextBetweenIndexesInclusive(string text, List<int> indexes)
         {
             if (indexes.Count == 0)
-                return new string[] { text };
+                return string.IsNullOrWhiteSpace(text) ?
+                    Array.Empty<string>() :
+                    new string[] { text };
             List<string> splits = new();
             string firstSplit = text[..(indexes[0] + 1)];
             splits.Add(firstSplit);
@@ -84,6 +97,8 @@ namespace CRECSharpInterpreter
         private static bool IsIndexBeforeElse(string text, int index)
         {
             int firstNonWhiteSpaceIndexAfterIndex = GetFirstNonWhiteSpaceIndexAfterIndex(text, index);
+            if (firstNonWhiteSpaceIndexAfterIndex == -1)
+                return false;
             if (index >= text.Length - 3)
                 return false;
             string firstFourCharacters = text[firstNonWhiteSpaceIndexAfterIndex..(firstNonWhiteSpaceIndexAfterIndex + 4)];
