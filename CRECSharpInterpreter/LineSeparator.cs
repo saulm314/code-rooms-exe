@@ -32,14 +32,66 @@ namespace CRECSharpInterpreter
             return subLines;
         }
 
+        public static string[] GetSubLinesAsStringsElseSingleLine(string baseLine, out string header)
+        {
+            header = "else";
+            int indexAfterElse = baseLine.IndexOf("else") + 4;
+            string subText = baseLine[indexAfterElse..];
+            string[] subLines = GetLinesAsStrings(subText);
+            return subLines;
+        }
+
         public static string[] GetSubLinesAsStringsIfMultiLine(string baseLine, out string header)
         {
+            baseLine = baseLine.TrimEnd();
             List<Pair<int, int>> quoteIndexPairs = GetQuoteIndexPairs(baseLine);
             List<Pair<int, int>> bracketIndexPairs = GetBracketIndexPairs(baseLine, quoteIndexPairs);
+            if (bracketIndexPairs.Count < 2)
+                throw new InterpreterException("A bracket pair and curly brace pair expected");
             header = baseLine[..(bracketIndexPairs[0].Second + 1)];
             string subText = baseLine[(bracketIndexPairs[1].First + 1)..(baseLine.Length - 1)];
             string[] subLines = GetLinesAsStrings(subText);
             return subLines;
+        }
+
+        public static string[] GetSubLinesAsStringsElseMultiLine(string baseLine, out string header)
+        {
+            baseLine = baseLine.TrimEnd();
+            header = "else";
+            List<Pair<int, int>> quoteIndexPairs = GetQuoteIndexPairs(baseLine);
+            List<Pair<int, int>> bracketIndexPairs = GetBracketIndexPairs(baseLine, quoteIndexPairs);
+            if (bracketIndexPairs.Count < 1)
+                throw new InterpreterException("A curly brace pair expected");
+            string subText = baseLine[(bracketIndexPairs[0].First + 1)..(baseLine.Length - 1)];
+            string[] subLines = GetLinesAsStrings(subText);
+            return subLines;
+        }
+
+        public static string[] GetSubLinesAsStringsIfElseIf(string baseLine, out string header)
+        {
+            int elseIndex = baseLine.IndexOf("else");
+            string baseLineBeforeElse = baseLine[..elseIndex];
+            List<Pair<int, int>> quoteIndexPairs = GetQuoteIndexPairs(baseLineBeforeElse);
+            List<Pair<int, int>> bracketIndexPairs = GetBracketIndexPairs(baseLineBeforeElse, quoteIndexPairs);
+            int firstNonWhiteSpaceIndexAfterCloseBracket = GetFirstNonWhiteSpaceIndexAfterIndex(baseLineBeforeElse, bracketIndexPairs[0].Second);
+            if (firstNonWhiteSpaceIndexAfterCloseBracket == -1)
+                throw new InterpreterException("Expecting statement after condition");
+            if (baseLineBeforeElse[firstNonWhiteSpaceIndexAfterCloseBracket] == '{')
+                return GetSubLinesAsStringsIfMultiLine(baseLineBeforeElse, out header);
+            return GetSubLinesAsStringsIfSingleLine(baseLineBeforeElse, out header);
+        }
+
+        public static string[] GetSubLinesAsStringsIfElseElse(string baseLine, out string header)
+        {
+            int elseIndex = baseLine.IndexOf("else");
+            string baseLineFromElse = baseLine[elseIndex..];
+            int lastElseIndex = 3;
+            int firstNonWhiteSpaceIndexAfterElse = GetFirstNonWhiteSpaceIndexAfterIndex(baseLineFromElse, lastElseIndex);
+            if (firstNonWhiteSpaceIndexAfterElse == -1)
+                throw new InterpreterException("Expecting statement after else keyword");
+            if (baseLineFromElse[firstNonWhiteSpaceIndexAfterElse] == '{')
+                return GetSubLinesAsStringsElseMultiLine(baseLineFromElse, out header);
+            return GetSubLinesAsStringsElseSingleLine(baseLineFromElse, out header);
         }
 
         private static string RemoveComments(string text)

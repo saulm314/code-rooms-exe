@@ -351,6 +351,7 @@ namespace CRECSharpInterpreter
             if (IsSemicolon)            return Type.Semicolon;
             if (IsStringLength)         return Type.StringLength;
             if (IsIfKeyword)            return Type.IfKeyword;
+            if (IsElseKeyword)          return Type.ElseKeyword;
                                         return Type.Invalid;
         }
 
@@ -361,7 +362,8 @@ namespace CRECSharpInterpreter
                 IsBoolean ||
                 IsNewKeyword ||
                 IsNull ||
-                IsIfKeyword;
+                IsIfKeyword ||
+                IsElseKeyword;
         }
 
         private bool IsType { get => _isType ??= VarType.GetVarType(Text) != null; }
@@ -494,6 +496,9 @@ namespace CRECSharpInterpreter
         private bool IsIfKeyword { get => _isIfKeyword ??= Text == "if"; }
         private bool? _isIfKeyword;
 
+        private bool IsElseKeyword { get => _isElseKeyword ??= Text == "else"; }
+        private bool? _isElseKeyword;
+
         public enum Type
         {
             Invalid,
@@ -524,7 +529,8 @@ namespace CRECSharpInterpreter
             ArrayStringElement,
             Semicolon,
             StringLength,
-            IfKeyword
+            IfKeyword,
+            ElseKeyword
         }
 
         public override string ToString() => Text;

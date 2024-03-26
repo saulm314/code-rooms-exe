@@ -5,6 +5,62 @@ _number = /*multi-line comment*/secondNumber;
 /* multi-line comment */
 secondNumber=_number;
 
+
+if (false)
+    string myString = "false";
+else if (false)
+    string myString = "false again";
+else if (false)
+    string myString = "false false false";
+else if (true)
+    string myString = "finally true";
+else
+    string myString = "all were false";
+
+//______________________________
+if (1 < 2)
+    int myInt = 0;
+else
+    int myInt = 1;
+
+if (2 < 1)
+    int myInt = 0;
+else
+    int myInt = 1;
+
+if (true)
+{
+    int myInt = 0;
+}
+else int myInt = 1;
+
+if (false)
+{
+    int myInt = 0;
+}
+else int myInt = 1;
+
+if (true)
+{
+    int myInt = 0;
+}
+else
+{
+    int myInt = 1;
+}
+
+if (false)
+{
+    int myInt = 0;
+}
+else
+{
+    int myInt = 1;
+}
+
+if (true) { } else { }
+if (false) { } else { }
+//_______________
 if (3 < 5)
     if (true || false)
         double pi = 3.14;
