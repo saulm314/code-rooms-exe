@@ -5,9 +5,16 @@ _number = /*multi-line comment*/secondNumber;
 /* multi-line comment */
 secondNumber=_number;
 
+if (3 < 5)
+    if (true || false)
+        double pi = 3.14;
+
 if (false)
-    if (true)
-        ;
+    if (true);
+
+if (true) if (true) if (true) if (true);
+
+;;;;;
 
 // This is a comment.
 int number__ = 5;

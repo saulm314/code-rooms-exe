@@ -160,7 +160,7 @@ namespace CRECSharpInterpreter
         private int subLinesExecuted = 0;
         private void ExecuteNextSubLine()
         {
-            SubLines![subLinesExecuted] = new(SubLinesStr![subLinesExecuted]);
+            SubLines![subLinesExecuted] ??= new(SubLinesStr![subLinesExecuted]);
             SubLines![subLinesExecuted].Execute();
             if (SubLines[subLinesExecuted].Executed)
                 subLinesExecuted++;
