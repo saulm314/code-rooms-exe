@@ -22,6 +22,25 @@ namespace CRECSharpInterpreter
             return lines;
         }
 
+        public static string GetForInitialiserAsString(string baseLine)
+        {
+            List<Pair<int, int>> quoteIndexPairs = GetQuoteIndexPairs(baseLine);
+            List<Pair<int, int>> bracketIndexPairs = GetBracketIndexPairs(baseLine, quoteIndexPairs);
+            int semicolonIndex = baseLine.IndexOf(';');
+            string initialiser = baseLine[(bracketIndexPairs[0].First + 1)..(semicolonIndex + 1)];
+            return initialiser;
+        }
+
+        public static string GetForIteratorAsString(string baseLine)
+        {
+            List<Pair<int, int>> quoteIndexPairs = GetQuoteIndexPairs(baseLine);
+            List<Pair<int, int>> bracketIndexPairs = GetBracketIndexPairs(baseLine, quoteIndexPairs);
+            int semicolonIndex = baseLine.IndexOf(';');
+            int secondSemicolonIndex = baseLine.IndexOf(';', semicolonIndex + 1);
+            string iterator = baseLine[(secondSemicolonIndex + 1)..bracketIndexPairs[0].Second] + ";";
+            return iterator;
+        }
+
         public static string[] GetSubLinesAsStringsIfSingleLine(string baseLine, out string header)
         {
             List<Pair<int, int>> quoteIndexPairs = GetQuoteIndexPairs(baseLine);

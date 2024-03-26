@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace CRECSharpInterpreter
 {
@@ -7,10 +8,7 @@ namespace CRECSharpInterpreter
         public Line(string text)
         {
             Text = text;
-            string[] keyStringsStr = KeyStringSeparator.GetKeyStringsAsStrings(Text);
-            KeyStrings = new KeyString[keyStringsStr.Length];
-            for (int i = 0; i < KeyStrings.Length; i++)
-                KeyStrings[i] = new(keyStringsStr[i]);
+            KeyStrings = GenerateKeyStrings();
 
             _Type = GetType();
             VerifyKeyStrings();
@@ -47,7 +45,7 @@ namespace CRECSharpInterpreter
                     break;
                 case Type.IfSingleLine:
                 case Type.IfMultiLine:
-                    SubLinesStr = GetSubLinesIfWhile(out Line header);
+                    SubLinesStr = GetSubLinesIfWhileFor(out Line header);
                     Header = header;
                     Header.Parent = this;
                     SubLines = new Line[SubLinesStr.Length];
@@ -61,7 +59,7 @@ namespace CRECSharpInterpreter
                     break;
                 case Type.WhileSingleLine:
                 case Type.WhileMultiLine:
-                    SubLinesStr = GetSubLinesIfWhile(out Line headerWhile);
+                    SubLinesStr = GetSubLinesIfWhileFor(out Line headerWhile);
                     Header = headerWhile;
                     Header.Parent = this;
                     SubLines = new Line[SubLinesStr.Length];
@@ -71,8 +69,21 @@ namespace CRECSharpInterpreter
                         Memory.Instance.PopLoopFromStack();
                     }
                     break;
+                case Type.ForSingleLine:
+                case Type.ForMultiLine:
+                    SubLinesStr = GetSubLinesIfWhileFor(out Line headerFor);
+                    Header = headerFor;
+                    Header.Parent = this;
+                    SubLines = new Line[SubLinesStr.Length];
+                    if (Memory.Instance!._Mode == Mode.Compilation)
+                    {
+                        CreateSubLines();
+                        Memory.Instance.PopLoopFromStack();
+                        Memory.Instance.PopFromStack();
+                    }
+                    break;
                 case Type.IfElse:
-                    SubLinesStr = GetSubLinesIfWhile(out Line _header);
+                    SubLinesStr = GetSubLinesIfWhileFor(out Line _header);
                     Header = _header;
                     Header.Parent = this;
                     SubLines = new Line[SubLinesStr.Length];
@@ -101,6 +112,16 @@ namespace CRECSharpInterpreter
                     Memory.Instance!.PushLoopToStack();
                     Condition = DeclareConditionVariable();
                     break;
+                case Type.For:
+                    Memory.Instance!.PushToStack();
+                    Initialiser = CreateInitialiser();
+                    Initialiser.Parent = this;
+                    Memory.Instance.PushLoopToStack();
+                    _Expression = CreateExpressionFor();
+                    Iterator = CreateIterator();
+                    Iterator.Parent = this;
+                    Condition = DeclareConditionVariable();
+                    break;
                 case Type.Else:
                     // at runtime else will use the same scope as otherwise if would have used
                     // but at compile time we need to check the two scopes separately
@@ -126,6 +147,9 @@ namespace CRECSharpInterpreter
                 Type.WhileSingleLine => true,
                 Type.WhileMultiLine => true,
                 Type.IfElse => true,
+                Type.ForSingleLine => true,
+                Type.ForMultiLine => true,
+                Type.For => true,
                 _ => false
             };
             // if it has sublines then let the sublines determine the exact keystrings
@@ -136,9 +160,18 @@ namespace CRECSharpInterpreter
                     throw new KeyString.KeyStringException(keyString, $"Unrecognised key string: {Text}");
         }
 
+        private KeyString[] GenerateKeyStrings()
+        {
+            string[] keyStringsStr = KeyStringSeparator.GetKeyStringsAsStrings(Text);
+            KeyString[] keyStrings = new KeyString[keyStringsStr.Length];
+            for (int i = 0; i < keyStrings.Length; i++)
+                keyStrings[i] = new(keyStringsStr[i]);
+            return keyStrings;
+        }
+
         public string Text { get; init; }
 
-        public KeyString[] KeyStrings { get; init; }
+        public KeyString[] KeyStrings { get; private set; }
 
         public Type _Type { get; init; }
 
@@ -146,7 +179,9 @@ namespace CRECSharpInterpreter
 
         public ArrayElement? ElementToWrite { get; init; }
 
+        public Line? Initialiser { get; init; }
         public Expression? _Expression { get; init; }
+        public Line? Iterator { get; init; }
 
         public Line? Header { get; init; }
         public Line? Header2 { get; init; }
@@ -174,8 +209,12 @@ namespace CRECSharpInterpreter
                 case Type.IfElse:
                 case Type.WhileSingleLine:
                 case Type.WhileMultiLine:
+                case Type.ForSingleLine:
+                case Type.ForMultiLine:
                     break;
                 default:
+                    if (Parent?._Type == Type.For)
+                        break;
                     Console.WriteLine(Text.TrimStart() + '\n');
                     break;
             }
@@ -203,11 +242,31 @@ namespace CRECSharpInterpreter
                     {
                         continued = false;
                         ContinueWhile();
+                        return;
                     }
                     if (broken)
                         return;
                     if (Executed)
                         Memory.Instance!.PopLoopFromStack();
+                    return;
+                case Type.ForSingleLine:
+                case Type.ForMultiLine:
+                    ExecuteFor();
+                    if (continued)
+                    {
+                        continued = false;
+                        ContinueFor();
+                        return;
+                    }
+                    if (broken)
+                    {
+                        return;
+                    }
+                    if (Executed)
+                    {
+                        Memory.Instance!.PopLoopFromStack();
+                        Memory.Instance.PopFromStack();
+                    }
                     return;
                 case Type.IfElse:
                     ExecuteIfElse();
@@ -220,6 +279,9 @@ namespace CRECSharpInterpreter
                 case Type.While:
                     EvaluateIfWhile();
                     break;
+                case Type.For:
+                    EvaluateFor();
+                    break;
                 case Type.Else:
                     break;
                 case Type.Break:
@@ -230,6 +292,8 @@ namespace CRECSharpInterpreter
                     break;
             }
             Executed = true;
+            if (Parent?._Type == Type.For)
+                return;
             Console.WriteLine("Stack:");
             Console.WriteLine(separator + "\n");
             Scope[] scopes = Memory.Instance!.Stack.ToArray();
@@ -258,6 +322,18 @@ namespace CRECSharpInterpreter
             Condition!.Value = _Expression.Value;
         }
 
+        private void EvaluateFor()
+        {
+            if (!Initialiser!.Executed)
+            {
+                Initialiser.Execute();
+                if (ToReturn)
+                    return;
+            }
+            _Expression!.Compute();
+            Condition!.Value = _Expression.Value;
+        }
+
         private void ExecuteBreak()
         {
             Executed = true;
@@ -267,7 +343,9 @@ namespace CRECSharpInterpreter
             (
                 !(
                     parent._Type == Type.WhileSingleLine ||
-                    parent._Type == Type.WhileMultiLine
+                    parent._Type == Type.WhileMultiLine ||
+                    parent._Type == Type.ForSingleLine ||
+                    parent._Type == Type.ForMultiLine
                 )
             )
             {
@@ -278,6 +356,15 @@ namespace CRECSharpInterpreter
             parent.Executed = true;
             parent.broken = true;
             Memory.Instance!.PopLoopFromStack();
+            switch (parent._Type)
+            {
+                case Type.ForSingleLine:
+                case Type.ForMultiLine:
+                    Memory.Instance.PopFromStack();
+                    break;
+                default:
+                    break;
+            }
         }
 
         private void ExecuteContinue()
@@ -289,7 +376,9 @@ namespace CRECSharpInterpreter
             (
                 !(
                     parent._Type == Type.WhileSingleLine ||
-                    parent._Type == Type.WhileMultiLine
+                    parent._Type == Type.WhileMultiLine ||
+                    parent._Type == Type.ForSingleLine ||
+                    parent._Type == Type.ForMultiLine
                 )
             )
             {
@@ -348,12 +437,52 @@ namespace CRECSharpInterpreter
             }
         }
 
+        private void ExecuteFor()
+        {
+            if (!Header!.Executed)
+            {
+                Header.Execute();
+                if (ToReturn)
+                    return;
+                if (!(bool)Header.Condition!.Value!)
+                    Executed = true;
+                if (SubLines!.Length == 0)
+                {
+                    Header.Iterator!.Execute();
+                    if (ToReturn)
+                        return;
+                    Header.Executed = false;
+                }
+                return;
+            }
+            ExecuteNextSubLine();
+            if (ToReturn)
+                return;
+            if (subLinesExecuted == SubLines!.Length)
+            {
+                continued = true;
+                Memory.Instance!.PopLoopFromStack();
+            }
+        }
+
         private void ContinueWhile()
         {
             Header!.Executed = false;
             subLinesExecuted = 0;
             Array.Clear(SubLines!);
             Memory.Instance!.PushLoopToStack();
+            Header.Condition = Header.DeclareConditionVariable();
+        }
+
+        private void ContinueFor()
+        {
+            Header!.Executed = false;
+            subLinesExecuted = 0;
+            Array.Clear(SubLines!);
+            Memory.Instance!.PushLoopToStack();
+            Header.Iterator!.Execute();
+            if (ToReturn)
+                return;
             Header.Condition = Header.DeclareConditionVariable();
         }
 
@@ -442,6 +571,40 @@ namespace CRECSharpInterpreter
             return condition;
         }
 
+        private Line CreateInitialiser()
+        {
+            string initialiserStr = LineSeparator.GetForInitialiserAsString(Text);
+            Line initialiser = new(initialiserStr);
+            switch (initialiser._Type)
+            {
+                case Type.DeclarationInitialisation:
+                case Type.WriteVariable:
+                case Type.WriteArrayElement:
+                case Type.EmptyLine:
+                    break;
+                default:
+                    throw new LineException(this, "Invalid for loop initialiser");
+            }
+            return initialiser;
+        }
+
+        private Line CreateIterator()
+        {
+            string iteratorStr = LineSeparator.GetForIteratorAsString(Text);
+            Line iterator = new(iteratorStr);
+            switch (iterator._Type)
+            {
+                case Type.DeclarationInitialisation:
+                case Type.WriteVariable:
+                case Type.WriteArrayElement:
+                case Type.EmptyLine:
+                    break;
+                default:
+                    throw new LineException(this, "Invalid for loop iterator");
+            }
+            return iterator;
+        }
+
         private Expression CreateExpression()
         {
             int expressionOffset = _Type switch
@@ -467,7 +630,23 @@ namespace CRECSharpInterpreter
             return expression;
         }
 
-        private string[] GetSubLinesIfWhile(out Line header)
+        private Expression CreateExpressionFor()
+        {
+            KeyStrings = GenerateKeyStrings();
+            int firstSemicolonIndex = Array.FindIndex(KeyStrings, keyString => keyString._Type == KeyString.Type.Semicolon);
+            int secondSemicolonIndex = Array.FindIndex(KeyStrings, firstSemicolonIndex + 1, keyString => keyString._Type == KeyString.Type.Semicolon);
+            KeyString[] keyStrings = new KeyString[secondSemicolonIndex - firstSemicolonIndex - 1];
+            Array.Copy(KeyStrings, firstSemicolonIndex + 1, keyStrings, 0, keyStrings.Length);
+            Expression expression =
+                keyStrings.Length != 0 ?
+                new(keyStrings) :
+                new(new KeyString[] { new KeyString("true") });
+            if (expression._VarType != VarType.@bool)
+                throw new LineException(this, "For loop condition must be a boolean!");
+            return expression;
+        }
+
+        private string[] GetSubLinesIfWhileFor(out Line header)
         {
             string? headerStr;
             string[] subLinesStr = _Type switch
@@ -477,6 +656,8 @@ namespace CRECSharpInterpreter
                 Type.IfElse => LineSeparator.GetSubLinesAsStringsIfElseIf(Text, out headerStr),
                 Type.WhileSingleLine => LineSeparator.GetSubLinesAsStringsIfSingleLine(Text, out headerStr),
                 Type.WhileMultiLine => LineSeparator.GetSubLinesAsStringsIfMultiLine(Text, out headerStr),
+                Type.ForSingleLine => LineSeparator.GetSubLinesAsStringsIfSingleLine(Text, out headerStr),
+                Type.ForMultiLine => LineSeparator.GetSubLinesAsStringsIfMultiLine(Text, out headerStr),
                 _ => throw new LineException(this, "Internal error")
             };
             header = new(headerStr);
@@ -606,6 +787,9 @@ namespace CRECSharpInterpreter
             if (IsWhileMultiLine)               return Type.WhileMultiLine;
             if (IsBreak)                        return Type.Break;
             if (IsContinue)                     return Type.Continue;
+            if (IsFor)                          return Type.For;
+            if (IsForSingleLine)                return Type.ForSingleLine;
+            if (IsForMultiLine)                 return Type.ForMultiLine;
                                                 return Type.Invalid;
         }
 
@@ -800,6 +984,43 @@ namespace CRECSharpInterpreter
         }
         private bool? _isContinue;
 
+        private bool IsFor
+        {
+            get =>
+                _isFor ??=
+                    KeyStrings.Length >= 5 &&
+                    KeyStrings[0]._Type == KeyString.Type.ForKeyword &&
+                    KeyStrings[1]._Type == KeyString.Type.OpenBracket &&
+                    Array.FindAll(KeyStrings, keyString => keyString._Type == KeyString.Type.Semicolon).Length >= 2 &&
+                    KeyStrings[KeyStrings.Length - 1]._Type == KeyString.Type.CloseBracket;
+        }
+        private bool? _isFor;
+
+        private bool IsForSingleLine
+        {
+            get =>
+                _isForSingleLine ??=
+                    KeyStrings.Length >= 6 &&
+                    KeyStrings[0]._Type == KeyString.Type.ForKeyword &&
+                    KeyStrings[1]._Type == KeyString.Type.OpenBracket &&
+                    Array.FindAll(KeyStrings, keyString => keyString._Type == KeyString.Type.Semicolon).Length >= 2 &&
+                    KeyStrings[KeyStrings.Length - 1]._Type == KeyString.Type.Semicolon;
+        }
+        private bool? _isForSingleLine;
+
+        private bool IsForMultiLine
+        {
+            get =>
+                _isForMultiLine ??=
+                    KeyStrings.Length >= 7 &&
+                    KeyStrings[0]._Type == KeyString.Type.ForKeyword &&
+                    KeyStrings[1]._Type == KeyString.Type.OpenBracket &&
+                    Array.FindAll(KeyStrings, keyString => keyString._Type == KeyString.Type.Semicolon).Length >= 2 &&
+                    Array.Exists(KeyStrings, keyString => keyString._Type == KeyString.Type.OpenCurlyBrace) &&
+                    KeyStrings[KeyStrings.Length - 1]._Type == KeyString.Type.CloseCurlyBrace;
+        }
+        private bool? _isForMultiLine;
+
         public enum Type
         {
             Invalid,
@@ -818,6 +1039,9 @@ namespace CRECSharpInterpreter
             While,
             WhileSingleLine,
             WhileMultiLine,
+            For,
+            ForSingleLine,
+            ForMultiLine,
             Break,
             Continue
         }

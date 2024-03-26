@@ -8,7 +8,14 @@ namespace CRECSharpInterpreter
         public KeyString(string text)
         {
             Text = text;
-            _Type = GetType();
+            try
+            {
+                _Type = GetType();
+            }
+            catch (InterpreterException)
+            {
+                _Type = Type.Invalid;
+            }
 
             VarType varType;
             switch (_Type)

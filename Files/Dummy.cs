@@ -5,6 +5,46 @@ _number = /*multi-line comment*/secondNumber;
 /* multi-line comment */
 secondNumber=_number;
 
+char[] helloChars = new char[] { 'h', 'e', 'l', 'l', 'o' };
+char[] helloCharsCopy = new char[helloChars.Length];
+for (int i = 0; i < helloChars.Length; i = i + 1)
+    helloCharsCopy[i] = helloChars[i];
+
+bool arraysAreEqual = true;
+while (true)
+{
+    if (helloChars.Length != helloCharsCopy.Length)
+    {
+        arraysAreEqual = false;
+        break;
+    }
+    for (int i = 0; i < helloChars.Length; i = i + 1)
+    {
+        if (helloChars[i] != helloCharsCopy[i])
+        {
+            arraysAreEqual = false;
+            break;
+        }
+    }
+    break;
+}
+
+char[] helloBackwards = new char[helloChars.Length];
+for (int i = 0; i < helloChars.Length; i = i + 1)
+    helloBackwards[i] = helloChars[helloChars.Length - i - 1];
+
+for (int i = 0;; i = i + 1)
+{
+    if (helloChars[i] == 'o')
+        break;
+    if (helloChars[i] == 'l')
+        continue;
+    while (true)
+        break;
+}
+
+//__________________________________________
+
 bool breakTest = true;
 while (breakTest)
     break;
