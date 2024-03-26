@@ -14,7 +14,11 @@ namespace CRECSharpInterpreter
             switch (_Type)
             {
                 case Type.Invalid:
-                    throw new KeyStringException(this, $"Unrecognised key string: {Text}");
+                    // may be invalid if a variable hasn't been declared yet because it is part of a sub-line
+                    // in that case, the sub-line will create a copy of the keystring later
+                    // finally, if the keystring is still invalid, then the VerifyKeyStrings() method in the Line class
+                    // will throw an exception
+                    break;
                 case Type.Type:
                     if (!Text.EndsWith("[]"))
                         break;
@@ -354,6 +358,8 @@ namespace CRECSharpInterpreter
             if (IsElseKeyword)          return Type.ElseKeyword;
             if (IsWhileKeyword)         return Type.WhileKeyword;
             if (IsForKeyword)           return Type.ForKeyword;
+            if (IsBreakKeyword)         return Type.BreakKeyword;
+            if (IsContinueKeyword)      return Type.ContinueKeyword;
                                         return Type.Invalid;
         }
 
@@ -367,7 +373,9 @@ namespace CRECSharpInterpreter
                 IsIfKeyword ||
                 IsElseKeyword ||
                 IsWhileKeyword ||
-                IsForKeyword;
+                IsForKeyword ||
+                IsBreakKeyword ||
+                IsContinueKeyword;
         }
 
         private bool IsType { get => _isType ??= VarType.GetVarType(Text) != null; }
@@ -506,6 +514,12 @@ namespace CRECSharpInterpreter
         private bool IsWhileKeyword { get => _isWhileKeyword ??= Text == "while"; }
         private bool? _isWhileKeyword;
 
+        private bool IsBreakKeyword { get => _isBreakKeyword ??= Text == "break"; }
+        private bool? _isBreakKeyword;
+
+        private bool IsContinueKeyword { get => _isContinueKeyword ??= Text == "continue"; }
+        private bool? _isContinueKeyword;
+
         private bool IsForKeyword { get => _isForKeyword ??= Text == "for"; }
         private bool? _isForKeyword;
 
@@ -542,6 +556,8 @@ namespace CRECSharpInterpreter
             IfKeyword,
             ElseKeyword,
             WhileKeyword,
+            BreakKeyword,
+            ContinueKeyword,
             ForKeyword
         }
 

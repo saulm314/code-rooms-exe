@@ -13,6 +13,7 @@ namespace CRECSharpInterpreter
                 KeyStrings[i] = new(keyStringsStr[i]);
 
             _Type = GetType();
+            VerifyKeyStrings();
             switch (_Type)
             {
                 case Type.Invalid:
@@ -46,10 +47,9 @@ namespace CRECSharpInterpreter
                     break;
                 case Type.IfSingleLine:
                 case Type.IfMultiLine:
-                case Type.WhileSingleLine:
-                case Type.WhileMultiLine:
                     SubLinesStr = GetSubLinesIfWhile(out Line header);
                     Header = header;
+                    Header.Parent = this;
                     SubLines = new Line[SubLinesStr.Length];
                     if (Memory.Instance!._Mode == Mode.Compilation)
                     {
@@ -59,9 +59,22 @@ namespace CRECSharpInterpreter
                         Memory.Instance.PopFromStack();
                     }
                     break;
+                case Type.WhileSingleLine:
+                case Type.WhileMultiLine:
+                    SubLinesStr = GetSubLinesIfWhile(out Line headerWhile);
+                    Header = headerWhile;
+                    Header.Parent = this;
+                    SubLines = new Line[SubLinesStr.Length];
+                    if (Memory.Instance!._Mode == Mode.Compilation)
+                    {
+                        CreateSubLines();
+                        Memory.Instance.PopLoopFromStack();
+                    }
+                    break;
                 case Type.IfElse:
                     SubLinesStr = GetSubLinesIfWhile(out Line _header);
                     Header = _header;
+                    Header.Parent = this;
                     SubLines = new Line[SubLinesStr.Length];
                     if (Memory.Instance!._Mode == Mode.Compilation)
                     {
@@ -70,6 +83,7 @@ namespace CRECSharpInterpreter
                     }
                     SubLinesStr2 = GetSubLinesElse(out Line _header2);
                     Header2 = _header2;
+                    Header2.Parent = this;
                     SubLines2 = new Line[SubLinesStr2.Length];
                     if (Memory.Instance._Mode == Mode.Compilation)
                     {
@@ -78,9 +92,13 @@ namespace CRECSharpInterpreter
                     }
                     break;
                 case Type.If:
-                case Type.While:
                     _Expression = CreateExpressionIfWhile();
                     Memory.Instance!.PushToStack();
+                    Condition = DeclareConditionVariable();
+                    break;
+                case Type.While:
+                    _Expression = CreateExpressionIfWhile();
+                    Memory.Instance!.PushLoopToStack();
                     Condition = DeclareConditionVariable();
                     break;
                 case Type.Else:
@@ -90,7 +108,32 @@ namespace CRECSharpInterpreter
                     if (Memory.Instance!._Mode == Mode.Compilation)
                         Memory.Instance.PushToStack();
                     break;
+                case Type.Break:
+                    Memory.Instance!.VerifyPopLoopValid();
+                    break;
+                case Type.Continue:
+                    Memory.Instance!.VerifyPopLoopValid();
+                    break;
             }
+        }
+
+        private void VerifyKeyStrings()
+        {
+            bool hasSubLines = _Type switch
+            {
+                Type.IfSingleLine => true,
+                Type.IfMultiLine => true,
+                Type.WhileSingleLine => true,
+                Type.WhileMultiLine => true,
+                Type.IfElse => true,
+                _ => false
+            };
+            // if it has sublines then let the sublines determine the exact keystrings
+            if (hasSubLines)
+                return;
+            foreach (KeyString keyString in KeyStrings)
+                if (keyString._Type == KeyString.Type.Invalid)
+                    throw new KeyString.KeyStringException(keyString, $"Unrecognised key string: {Text}");
         }
 
         public string Text { get; init; }
@@ -115,7 +158,12 @@ namespace CRECSharpInterpreter
 
         public Variable? Condition { get; private set; }
 
+        public Line? Parent { get; private set; }
+
         public bool Executed { get; private set; } = false;
+        private bool continued = false;
+        private bool broken = false;
+        private bool ToReturn { get => Executed || continued || broken; }
         public void Execute()
         {
             string separator = Interpreter.SEPARATOR;
@@ -143,17 +191,28 @@ namespace CRECSharpInterpreter
                 case Type.IfSingleLine:
                 case Type.IfMultiLine:
                     ExecuteIf();
+                    if (continued || broken)
+                        return;
                     if (Executed)
                         Memory.Instance!.PopFromStack();
                     return;
                 case Type.WhileSingleLine:
                 case Type.WhileMultiLine:
                     ExecuteWhile();
+                    if (continued)
+                    {
+                        continued = false;
+                        ContinueWhile();
+                    }
+                    if (broken)
+                        return;
                     if (Executed)
-                        Memory.Instance!.PopFromStack();
+                        Memory.Instance!.PopLoopFromStack();
                     return;
                 case Type.IfElse:
                     ExecuteIfElse();
+                    if (continued || broken)
+                        return;
                     if (Executed)
                         Memory.Instance!.PopFromStack();
                     return;
@@ -162,6 +221,12 @@ namespace CRECSharpInterpreter
                     EvaluateIfWhile();
                     break;
                 case Type.Else:
+                    break;
+                case Type.Break:
+                    ExecuteBreak();
+                    break;
+                case Type.Continue:
+                    ExecuteContinue();
                     break;
             }
             Executed = true;
@@ -193,11 +258,60 @@ namespace CRECSharpInterpreter
             Condition!.Value = _Expression.Value;
         }
 
+        private void ExecuteBreak()
+        {
+            Executed = true;
+            broken = true;
+            Line parent = Parent!;
+            while
+            (
+                !(
+                    parent._Type == Type.WhileSingleLine ||
+                    parent._Type == Type.WhileMultiLine
+                )
+            )
+            {
+                parent.Executed = true;
+                parent.broken = true;
+                parent = parent.Parent!;
+            }
+            parent.Executed = true;
+            parent.broken = true;
+            Memory.Instance!.PopLoopFromStack();
+        }
+
+        private void ExecuteContinue()
+        {
+            Executed = true;
+            continued = true;
+            Line parent = Parent!;
+            while
+            (
+                !(
+                    parent._Type == Type.WhileSingleLine ||
+                    parent._Type == Type.WhileMultiLine
+                )
+            )
+            {
+                parent.Executed = true;
+                parent.continued = true;
+                parent = parent.Parent!;
+            }
+            parent.continued = true;
+            Memory.Instance!.PopLoopFromStack();
+        }
+
         private void ExecuteIf()
         {
             if (!Header!.Executed)
             {
                 Header.Execute();
+                // any time we call any execute method, we need to check
+                // if the current line has executed or continued and return if so
+                // this is to ensure that the code flows back to the last loop execution
+                // in the event that a break or continue statement is used
+                if (ToReturn)
+                    return;
                 if (!(bool)Header.Condition!.Value!)
                     Executed = true;
                 if (SubLines!.Length == 0)
@@ -205,6 +319,8 @@ namespace CRECSharpInterpreter
                 return;
             }
             ExecuteNextSubLine();
+            if (ToReturn)
+                return;
             if (subLinesExecuted == SubLines!.Length)
                 Executed = true;
         }
@@ -214,6 +330,8 @@ namespace CRECSharpInterpreter
             if (!Header!.Executed)
             {
                 Header.Execute();
+                if (ToReturn)
+                    return;
                 if (!(bool)Header.Condition!.Value!)
                     Executed = true;
                 if (SubLines!.Length == 0)
@@ -221,15 +339,22 @@ namespace CRECSharpInterpreter
                 return;
             }
             ExecuteNextSubLine();
+            if (ToReturn)
+                return;
             if (subLinesExecuted == SubLines!.Length)
             {
-                Header.Executed = false;
-                subLinesExecuted = 0;
-                Array.Clear(SubLines);
-                Memory.Instance!.PopFromStack();
-                Memory.Instance.PushToStack();
-                Header.Condition = Header.DeclareConditionVariable();
+                continued = true;
+                Memory.Instance!.PopLoopFromStack();
             }
+        }
+
+        private void ContinueWhile()
+        {
+            Header!.Executed = false;
+            subLinesExecuted = 0;
+            Array.Clear(SubLines!);
+            Memory.Instance!.PushLoopToStack();
+            Header.Condition = Header.DeclareConditionVariable();
         }
 
         private void ExecuteIfElse()
@@ -237,6 +362,8 @@ namespace CRECSharpInterpreter
             if (!Header!.Executed)
             {
                 Header.Execute();
+                if (ToReturn)
+                    return;
                 if ((bool)Header.Condition!.Value! && SubLines!.Length == 0)
                     Executed = true;
                 return;
@@ -244,6 +371,8 @@ namespace CRECSharpInterpreter
             if ((bool)Header.Condition!.Value!)
             {
                 ExecuteNextSubLine();
+                if (ToReturn)
+                    return;
                 if (subLinesExecuted == SubLines!.Length)
                     Executed = true;
                 return;
@@ -251,11 +380,15 @@ namespace CRECSharpInterpreter
             if (!Header2!.Executed)
             {
                 Header2.Execute();
+                if (ToReturn)
+                    return;
                 if (!(bool)Header.Condition!.Value! && SubLines2!.Length == 0)
                     Executed = true;
                 return;
             }
             ExecuteNextSubLine2();
+            if (ToReturn)
+                return;
             if (subLinesExecuted2 == SubLines2!.Length)
                 Executed = true;
         }
@@ -264,7 +397,10 @@ namespace CRECSharpInterpreter
         private void ExecuteNextSubLine()
         {
             SubLines![subLinesExecuted] ??= new(SubLinesStr![subLinesExecuted]);
-            SubLines![subLinesExecuted].Execute();
+            SubLines[subLinesExecuted].Parent = this;
+            SubLines[subLinesExecuted].Execute();
+            if (ToReturn)
+                return;
             if (SubLines[subLinesExecuted].Executed)
                 subLinesExecuted++;
         }
@@ -273,7 +409,10 @@ namespace CRECSharpInterpreter
         private void ExecuteNextSubLine2()
         {
             SubLines2![subLinesExecuted2] ??= new(SubLinesStr2![subLinesExecuted2]);
-            SubLines2![subLinesExecuted2].Execute();
+            SubLines2[subLinesExecuted2].Parent = this;
+            SubLines2[subLinesExecuted2].Execute();
+            if (ToReturn)
+                return;
             if (SubLines2[subLinesExecuted2].Executed)
                 subLinesExecuted2++;
         }
@@ -354,13 +493,19 @@ namespace CRECSharpInterpreter
         private void CreateSubLines()
         {
             for (int i = 0; i < SubLines!.Length; i++)
+            {
                 SubLines[i] = new(SubLinesStr![i]);
+                SubLines[i].Parent = this;
+            }
         }
 
         private void CreateSubLines2()
         {
             for (int i = 0; i < SubLines2!.Length; i++)
+            {
                 SubLines2[i] = new(SubLinesStr2![i]);
+                SubLines2[i].Parent = this;
+            }
         }
 
         private void VerifyWriteVariableValid()
@@ -459,6 +604,8 @@ namespace CRECSharpInterpreter
             if (IsWhile)                        return Type.While;
             if (IsWhileSingleLine)              return Type.WhileSingleLine;
             if (IsWhileMultiLine)               return Type.WhileMultiLine;
+            if (IsBreak)                        return Type.Break;
+            if (IsContinue)                     return Type.Continue;
                                                 return Type.Invalid;
         }
 
@@ -633,6 +780,26 @@ namespace CRECSharpInterpreter
         }
         private bool? _isIfElse;
 
+        private bool IsBreak
+        {
+            get =>
+                _isBreak ??=
+                    KeyStrings.Length == 2 &&
+                    KeyStrings[0]._Type == KeyString.Type.BreakKeyword &&
+                    KeyStrings[1]._Type == KeyString.Type.Semicolon;
+        }
+        private bool? _isBreak;
+
+        private bool IsContinue
+        {
+            get =>
+                _isContinue ??=
+                    KeyStrings.Length == 2 &&
+                    KeyStrings[0]._Type == KeyString.Type.ContinueKeyword &&
+                    KeyStrings[1]._Type == KeyString.Type.Semicolon;
+        }
+        private bool? _isContinue;
+
         public enum Type
         {
             Invalid,
@@ -650,7 +817,9 @@ namespace CRECSharpInterpreter
             IfElse,
             While,
             WhileSingleLine,
-            WhileMultiLine
+            WhileMultiLine,
+            Break,
+            Continue
         }
 
         public class LineException : InterpreterException

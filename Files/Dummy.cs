@@ -5,6 +5,46 @@ _number = /*multi-line comment*/secondNumber;
 /* multi-line comment */
 secondNumber=_number;
 
+bool breakTest = true;
+while (breakTest)
+    break;
+
+int continueTest = 3;
+while (continueTest > 0)
+{
+    int decrement = 1;
+    continueTest = continueTest - decrement;
+    continue;
+    continueTest = continueTest + decrement;
+}
+
+int toInitialise;
+int anInt = 5;
+while (true)
+{
+    int someInt = anInt;
+    if (someInt > 7)
+    {
+        int[] ints = new int[] { someInt, 1 };
+        int second = ints[1];
+        if (second >= 1)
+        {
+            if (someInt == 8)
+            {
+                anInt = anInt + 1;
+                continue;
+            }
+            toInitialise = 5;
+            break;
+        }
+    }
+    someInt = someInt + 1;
+    anInt = someInt;
+}
+
+
+//_________________________________
+
 bool whileTest = true;
 while (whileTest)
     whileTest = false;

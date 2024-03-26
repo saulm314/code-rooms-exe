@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace CRECSharpInterpreter
 {
@@ -12,6 +13,8 @@ namespace CRECSharpInterpreter
         }
 
         public static Memory? Instance { get; private set; }
+
+        public Stack<int> ActiveLoops { get; } = new();
 
         public Stack<Scope> Stack { get; } = new();
         public Heap Heap { get; } = new();
@@ -34,6 +37,35 @@ namespace CRECSharpInterpreter
                 int heapIndex = (int)variable.Value;
                 Heap.DecrementReferenceCounter(heapIndex);
             }
+        }
+
+        public void PushLoopToStack()
+        {
+            ActiveLoops.Push(Stack.Count);
+            PushToStack();
+        }
+
+        public void PopLoopFromStack()
+        {
+            int desiredStackCount;
+            try
+            {
+                desiredStackCount = ActiveLoops.Pop();
+            }
+            catch (InvalidOperationException)
+            {
+                throw new MemoryException(this, "No loop to break from");
+            }
+            if (Stack.Count <= desiredStackCount)
+                throw new MemoryException(this, "Internal error");
+            while (Stack.Count > desiredStackCount)
+                PopFromStack();
+        }
+
+        public void VerifyPopLoopValid()
+        {
+            if (ActiveLoops.Count == 0)
+                throw new MemoryException(this, "No loop to break from");
         }
 
         public IEnumerable<Variable> GetDeclaredVariables()
