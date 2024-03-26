@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace CRECSharpInterpreter
 {
@@ -55,12 +54,12 @@ namespace CRECSharpInterpreter
                         // these two lines cancel each other out
                         // however in running them we verify that there are no compilation errors
                         CreateSubLines();
-                        Memory.Instance.Stack.Pop();
+                        Memory.Instance.PopFromStack();
                     }
                     break;
                 case Type.If:
                     _Expression = CreateExpressionIfWhile();
-                    Memory.Instance!.Stack.Push(new());
+                    Memory.Instance!.PushToStack();
                     Condition = DeclareConditionVariable();
                     break;
             }
@@ -111,7 +110,7 @@ namespace CRECSharpInterpreter
                 case Type.IfMultiLine:
                     ExecuteIf();
                     if (Executed)
-                        Memory.Instance!.Stack.Pop();
+                        Memory.Instance!.PopFromStack();
                     return;
                 case Type.If:
                     EvaluateIfWhile();

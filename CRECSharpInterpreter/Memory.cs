@@ -16,6 +16,26 @@ namespace CRECSharpInterpreter
         public Stack<Scope> Stack { get; } = new();
         public Heap Heap { get; } = new();
 
+        public void PushToStack()
+        {
+            Stack.Push(new());
+        }
+
+        public void PopFromStack()
+        {
+            Scope scope = Stack.Pop();
+            foreach (Variable variable in scope.DeclaredVariables)
+            {
+                if (variable._VarType!._Storage == VarType.Storage.Value)
+                    continue;
+                if (variable.Value == null)
+                    continue;
+                // is non-null reference type
+                int heapIndex = (int)variable.Value;
+                Heap.DecrementReferenceCounter(heapIndex);
+            }
+        }
+
         public IEnumerable<Variable> GetDeclaredVariables()
         {
             foreach (Scope scope in Stack)
