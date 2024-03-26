@@ -46,6 +46,8 @@ namespace CRECSharpInterpreter
                     break;
                 case Type.IfSingleLine:
                 case Type.IfMultiLine:
+                case Type.WhileSingleLine:
+                case Type.WhileMultiLine:
                     SubLinesStr = GetSubLinesIfWhile(out Line header);
                     Header = header;
                     SubLines = new Line[SubLinesStr.Length];
@@ -76,6 +78,7 @@ namespace CRECSharpInterpreter
                     }
                     break;
                 case Type.If:
+                case Type.While:
                     _Expression = CreateExpressionIfWhile();
                     Memory.Instance!.PushToStack();
                     Condition = DeclareConditionVariable();
@@ -110,7 +113,7 @@ namespace CRECSharpInterpreter
         public string[]? SubLinesStr2 { get; init; }
         public Line[]? SubLines2 { get; private set; }
 
-        public Variable? Condition { get; init; }
+        public Variable? Condition { get; private set; }
 
         public bool Executed { get; private set; } = false;
         public void Execute()
@@ -121,6 +124,8 @@ namespace CRECSharpInterpreter
                 case Type.IfSingleLine:
                 case Type.IfMultiLine:
                 case Type.IfElse:
+                case Type.WhileSingleLine:
+                case Type.WhileMultiLine:
                     break;
                 default:
                     Console.WriteLine(Text.TrimStart() + '\n');
@@ -141,12 +146,19 @@ namespace CRECSharpInterpreter
                     if (Executed)
                         Memory.Instance!.PopFromStack();
                     return;
+                case Type.WhileSingleLine:
+                case Type.WhileMultiLine:
+                    ExecuteWhile();
+                    if (Executed)
+                        Memory.Instance!.PopFromStack();
+                    return;
                 case Type.IfElse:
                     ExecuteIfElse();
                     if (Executed)
                         Memory.Instance!.PopFromStack();
                     return;
                 case Type.If:
+                case Type.While:
                     EvaluateIfWhile();
                     break;
                 case Type.Else:
@@ -195,6 +207,29 @@ namespace CRECSharpInterpreter
             ExecuteNextSubLine();
             if (subLinesExecuted == SubLines!.Length)
                 Executed = true;
+        }
+
+        private void ExecuteWhile()
+        {
+            if (!Header!.Executed)
+            {
+                Header.Execute();
+                if (!(bool)Header.Condition!.Value!)
+                    Executed = true;
+                if (SubLines!.Length == 0)
+                    Header.Executed = false;
+                return;
+            }
+            ExecuteNextSubLine();
+            if (subLinesExecuted == SubLines!.Length)
+            {
+                Header.Executed = false;
+                subLinesExecuted = 0;
+                Array.Clear(SubLines);
+                Memory.Instance!.PopFromStack();
+                Memory.Instance.PushToStack();
+                Header.Condition = Header.DeclareConditionVariable();
+            }
         }
 
         private void ExecuteIfElse()
@@ -301,6 +336,8 @@ namespace CRECSharpInterpreter
                 Type.IfSingleLine => LineSeparator.GetSubLinesAsStringsIfSingleLine(Text, out headerStr),
                 Type.IfMultiLine => LineSeparator.GetSubLinesAsStringsIfMultiLine(Text, out headerStr),
                 Type.IfElse => LineSeparator.GetSubLinesAsStringsIfElseIf(Text, out headerStr),
+                Type.WhileSingleLine => LineSeparator.GetSubLinesAsStringsIfSingleLine(Text, out headerStr),
+                Type.WhileMultiLine => LineSeparator.GetSubLinesAsStringsIfMultiLine(Text, out headerStr),
                 _ => throw new LineException(this, "Internal error")
             };
             header = new(headerStr);
@@ -419,6 +456,9 @@ namespace CRECSharpInterpreter
             if (IsIf)                           return Type.If;
             if (IsElse)                         return Type.Else;
             if (IsIfElse)                       return Type.IfElse;
+            if (IsWhile)                        return Type.While;
+            if (IsWhileSingleLine)              return Type.WhileSingleLine;
+            if (IsWhileMultiLine)               return Type.WhileMultiLine;
                                                 return Type.Invalid;
         }
 
@@ -509,6 +549,17 @@ namespace CRECSharpInterpreter
         }
         private bool? _isIf;
 
+        private bool IsWhile
+        {
+            get =>
+                _isWhile ??=
+                    KeyStrings.Length >= 4 &&
+                    KeyStrings[0]._Type == KeyString.Type.WhileKeyword &&
+                    KeyStrings[1]._Type == KeyString.Type.OpenBracket &&
+                    KeyStrings[KeyStrings.Length - 1]._Type == KeyString.Type.CloseBracket;
+        }
+        private bool? _isWhile;
+
         private bool IsElse
         {
             get =>
@@ -531,6 +582,18 @@ namespace CRECSharpInterpreter
         }
         private bool? _isIfSingleLine;
 
+        private bool IsWhileSingleLine
+        {
+            get =>
+                _isWhileSingleLine ??=
+                    KeyStrings.Length >= 5 &&
+                    KeyStrings[0]._Type == KeyString.Type.WhileKeyword &&
+                    KeyStrings[1]._Type == KeyString.Type.OpenBracket &&
+                    Array.Exists(KeyStrings, keyString => keyString._Type == KeyString.Type.CloseBracket) &&
+                    KeyStrings[KeyStrings.Length - 1]._Type == KeyString.Type.Semicolon;
+        }
+        private bool? _isWhileSingleLine;
+
         private bool IsIfMultiLine
         {
             get =>
@@ -544,6 +607,19 @@ namespace CRECSharpInterpreter
                     !Array.Exists(KeyStrings, keyString => keyString._Type == KeyString.Type.ElseKeyword);
         }
         private bool? _isIfMultiLine;
+
+        private bool IsWhileMultiLine
+        {
+            get =>
+                _isWhileMultiLine ??=
+                    KeyStrings.Length >= 6 &&
+                    KeyStrings[0]._Type == KeyString.Type.WhileKeyword &&
+                    KeyStrings[1]._Type == KeyString.Type.OpenBracket &&
+                    Array.Exists(KeyStrings, keyString => keyString._Type == KeyString.Type.CloseBracket) &&
+                    Array.Exists(KeyStrings, keyString => keyString._Type == KeyString.Type.OpenCurlyBrace) &&
+                    KeyStrings[KeyStrings.Length - 1]._Type == KeyString.Type.CloseCurlyBrace;
+        }
+        private bool? _isWhileMultiLine;
 
         private bool IsIfElse
         {
@@ -571,7 +647,10 @@ namespace CRECSharpInterpreter
             Else,
             IfSingleLine,
             IfMultiLine,
-            IfElse
+            IfElse,
+            While,
+            WhileSingleLine,
+            WhileMultiLine
         }
 
         public class LineException : InterpreterException

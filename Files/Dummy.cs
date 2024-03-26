@@ -5,6 +5,25 @@ _number = /*multi-line comment*/secondNumber;
 /* multi-line comment */
 secondNumber=_number;
 
+bool whileTest = true;
+while (whileTest)
+    whileTest = false;
+
+int whileTest2 = 4;
+while (whileTest2 > 0)
+    whileTest2 = whileTest2 - 1;
+
+int[] copyArray = new int[] { 1, 2, 3 };
+int[] pasteArray = new int[copyArray.Length];
+int i = 0;
+while (i < copyArray.Length)
+{
+    pasteArray[i] = copyArray[i];
+    i = i + 1;
+}
+
+
+//______________________________________
 
 if (false)
     string myString = "false";
