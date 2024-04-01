@@ -65,6 +65,7 @@ namespace CRECSharpInterpreter
             text = JoinRequiredKeyStringsTogether(text);
             List<string> keyStrings = SeparateKeyStrings(text);
             CombineCasts(keyStrings);
+            CombineEmptyBrackets(keyStrings);
             return keyStrings;
         }
 
@@ -278,6 +279,23 @@ namespace CRECSharpInterpreter
                 keyStrings.RemoveAt(i);
                 keyStrings.RemoveAt(i);
                 keyStrings[i - 1] = $"({keyString})";
+            }
+        }
+
+        private static void CombineEmptyBrackets(List<string> keyStrings)
+        {
+            // combine keyString-openBracket-closeBracket into one keystring
+            int i = 1;
+            while (i < keyStrings.Count - 1)
+            {
+                if (!(keyStrings[i] == "(" && keyStrings[i + 1] == ")"))
+                {
+                    i++;
+                    continue;
+                }
+                keyStrings.RemoveAt(i);
+                keyStrings.RemoveAt(i);
+                keyStrings[i - 1] = keyStrings[i - 1] + "()";
             }
         }
     }
