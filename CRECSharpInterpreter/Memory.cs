@@ -5,11 +5,10 @@ namespace CRECSharpInterpreter
 {
     public class Memory
     {
-        public Memory(Mode mode, Syntax syntax)
+        public Memory(Mode mode)
         {
             Instance = this;
             _Mode = mode;
-            _Syntax = syntax;
             Stack.Push(new());
         }
 
@@ -99,8 +98,6 @@ namespace CRECSharpInterpreter
         }
 
         public Mode _Mode { get; }
-
-        public Syntax _Syntax { get; }
 
         public class MemoryException : InterpreterException
         {
