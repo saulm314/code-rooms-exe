@@ -5,14 +5,14 @@ namespace CRECSharpInterpreter
 {
     public class Chunk
     {
-        public Chunk(string text, Mode mode)
+        public Chunk(string text, Mode mode, Syntax syntax)
         {
             Text = text;
 
             linesStr = LineSeparator.GetLinesAsStrings(Text);
             Lines = new Line[linesStr.Length];
 
-            _ = new Memory(mode);
+            _ = new Memory(mode, syntax);
 
             if (Memory.Instance!._Mode == Mode.Compilation)
                 for (int i = 0; i < Lines.Length; i++)
