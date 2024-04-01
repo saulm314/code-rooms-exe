@@ -7,7 +7,13 @@ namespace CRECSharpInterpreter
     {
         static void Main(string[] args)
         {
-            StreamReader streamReader = new(@"..\..\..\..\Files\Dummy.cs");
+            string fileName = SyntaxEnvironment._Syntax switch
+            {
+                Syntax.CSharp => "Dummy.cs",
+                Syntax.Java => "Dummy.java",
+                _ => throw new Exception("internal error")
+            };
+            StreamReader streamReader = new(@$"..\..\..\..\Files\{fileName}");
             string dummyText = streamReader.ReadToEnd();
             try
             {

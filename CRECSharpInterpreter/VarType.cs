@@ -20,7 +20,8 @@ namespace CRECSharpInterpreter
             get => Name switch
                 {
                     "int" => default(int),
-                    "bool" => default(bool),
+                    "bool" when SyntaxEnvironment._Syntax == Syntax.CSharp => default(bool),
+                    "boolean" when SyntaxEnvironment._Syntax == Syntax.Java => default(bool),
                     "char" => default(char),
                     "double" => default(double),
                     _ => null
