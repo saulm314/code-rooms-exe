@@ -226,6 +226,17 @@ namespace CRECSharpInterpreter
         private bool ToReturn { get => Executed || continued || broken; }
         public void Execute()
         {
+            try
+            {
+                _Execute();
+            }
+            catch (Exception e) when (e is not LineException)
+            {
+                throw LineException.New(this, null, e);
+            }
+        }
+        private void _Execute()
+        {
             string separator = Interpreter.SEPARATOR;
             switch (_Type)
             {
