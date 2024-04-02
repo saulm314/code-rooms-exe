@@ -7,6 +7,7 @@ namespace CRECSharpInterpreter
         public Line(string text, ushort lineNumber)
         {
             Text = text;
+            ReducedText = LineSeparator.Trim(LineNumberUtils.RemoveSeparators(Text));
             LineNumber = lineNumber;
             KeyStrings = GenerateKeyStrings();
 
@@ -15,7 +16,7 @@ namespace CRECSharpInterpreter
             switch (_Type)
             {
                 case Type.Invalid:
-                    throw new LineException(this, $"Unrecognised operation in line:\n{Text}");
+                    throw new LineException(this, $"Unrecognised operation in line:\n{ReducedText}");
                 case Type.WriteStringElement:
                 case Type.WriteArrayStringElement:
                     throw new LineException(this, "Cannot write to an element of a string because strings are immutable");
@@ -180,7 +181,7 @@ namespace CRECSharpInterpreter
 
         private KeyString[] GenerateKeyStrings()
         {
-            string[] keyStringsStr = KeyStringSeparator.GetKeyStringsAsStrings(Text);
+            string[] keyStringsStr = KeyStringSeparator.GetKeyStringsAsStrings(ReducedText);
             KeyString[] keyStrings = new KeyString[keyStringsStr.Length];
             for (int i = 0; i < keyStrings.Length; i++)
                 keyStrings[i] = new(keyStringsStr[i]);
@@ -188,6 +189,7 @@ namespace CRECSharpInterpreter
         }
 
         public string Text { get; init; }
+        public string ReducedText { get; init; }
 
         public ushort LineNumber { get; init; }
 
@@ -237,7 +239,7 @@ namespace CRECSharpInterpreter
                 default:
                     if (Parent?._Type == Type.For)
                         break;
-                    Console.WriteLine(LineSeparator.Trim(LineNumberUtils.RemoveSeparators(Text)) + '\n');
+                    Console.WriteLine(ReducedText + '\n');
                     break;
             }
             switch (_Type)

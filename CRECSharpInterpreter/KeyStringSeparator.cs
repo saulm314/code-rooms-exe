@@ -61,7 +61,6 @@ namespace CRECSharpInterpreter
 
         private static List<string> GetKeyStringsFromQuoteFreeText(string text)
         {
-            text = LineNumberUtils.RemoveSeparators(text);
             text = PutSpacesBetweenKeyStrings(text);
             text = JoinRequiredKeyStringsTogether(text);
             List<string> keyStrings = SeparateKeyStrings(text);
