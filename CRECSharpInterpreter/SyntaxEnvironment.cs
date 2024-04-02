@@ -2,6 +2,6 @@
 {
     public static class SyntaxEnvironment
     {
-        public static Syntax _Syntax { get; } = Syntax.Java;
+        public static Syntax _Syntax { get; set; } = Syntax.CSharp;
     }
 }
