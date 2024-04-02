@@ -5,14 +5,15 @@ namespace CRECSharpInterpreter
 {
     public static class LineNumberUtils
     {
-        public const char separator = '\u001E';
+        public const char SEPARATOR = '\u001E';
+        public const int SEPARATOR_LENGTH = 5;
 
         public static string AddNewlineSeparators(string text)
         {
             ushort currentLine = 1;
             text = text.Insert(0, GetSeparator(currentLine));
             currentLine++;
-            int index = 5;
+            int index = SEPARATOR_LENGTH;
             while (index < text.Length)
             {
                 if (text[index] != '\n')
@@ -22,7 +23,7 @@ namespace CRECSharpInterpreter
                 }
                 text = text.Insert(index + 1, GetSeparator(currentLine));
                 currentLine++;
-                index += 6;
+                index += SEPARATOR_LENGTH;
             }
             return text;
         }
@@ -39,7 +40,7 @@ namespace CRECSharpInterpreter
         private static string GetSeparator(ushort lineNumber)
         {
             string lineNumberStr = GetNumberAsHexString(lineNumber);
-            return separator + lineNumberStr;
+            return SEPARATOR + lineNumberStr;
         }
 
         public static ushort[] GetLineNumbers(string text)
@@ -48,22 +49,37 @@ namespace CRECSharpInterpreter
             int index = 0;
             while (index < text.Length)
             {
-                if (text[index] != separator)
+                if (text[index] != SEPARATOR)
                 {
                     index++;
                     continue;
                 }
-                string lineNumberStr = text[(index + 1)..(index + 5)];
+                string lineNumberStr = text[(index + 1)..(index + SEPARATOR_LENGTH)];
                 ushort lineNumber = GetNumber(lineNumberStr);
                 lineNumbers.Add(lineNumber);
-                index += 6;
+                index += SEPARATOR_LENGTH;
             }
             return lineNumbers.ToArray();
         }
 
+        public static string RemoveSeparators(string text)
+        {
+            int index = 0;
+            while (index < text.Length)
+            {
+                if (text[index] != SEPARATOR)
+                {
+                    index++;
+                    continue;
+                }
+                text = text.Remove(index, SEPARATOR_LENGTH);
+            }
+            return text;
+        }
+
         private static ushort GetNumber(string hexNumberStr)
         {
-            if (hexNumberStr.Length != 4)
+            if (hexNumberStr.Length != SEPARATOR_LENGTH - 1)
                 throw new InterpreterException("Internal error");
             ushort hexNumber = ushort.Parse(hexNumberStr, NumberStyles.HexNumber);
             return hexNumber;

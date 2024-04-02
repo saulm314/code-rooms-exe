@@ -150,7 +150,7 @@ namespace CRECSharpInterpreter
                 return;
             foreach (KeyString keyString in KeyStrings)
                 if (keyString._Type == KeyString.Type.Invalid)
-                    throw new KeyString.KeyStringException(keyString, $"Unrecognised key string: {Text}");
+                    throw new KeyString.KeyStringException(keyString, $"Unrecognised key string: {keyString.Text}");
         }
 
         private void IncrementLineCounter()
@@ -237,7 +237,7 @@ namespace CRECSharpInterpreter
                 default:
                     if (Parent?._Type == Type.For)
                         break;
-                    Console.WriteLine(Text.TrimStart() + '\n');
+                    Console.WriteLine(LineSeparator.Trim(LineNumberUtils.RemoveSeparators(Text)) + '\n');
                     break;
             }
             switch (_Type)

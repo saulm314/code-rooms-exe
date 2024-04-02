@@ -85,7 +85,7 @@ namespace CRECSharpInterpreter
 
         public static string[] GetSubLinesAsStringsIfMultiLine(string baseLine, out string header, ushort startLineNumber, out ushort[] lineNumbers)
         {
-            baseLine = baseLine.TrimEnd();
+            baseLine = TrimEnd(baseLine);
             List<Pair<int, int>> quoteIndexPairs = GetQuoteIndexPairs(baseLine);
             List<Pair<int, int>> bracketIndexPairs = GetBracketIndexPairs(baseLine, quoteIndexPairs);
             if (bracketIndexPairs.Count < 2)
@@ -98,7 +98,7 @@ namespace CRECSharpInterpreter
 
         public static string[] GetSubLinesAsStringsElseMultiLine(string baseLine, out string header, ushort startLineNumber, out ushort[] lineNumbers)
         {
-            baseLine = baseLine.TrimEnd();
+            baseLine = TrimEnd(baseLine);
             header = "else";
             List<Pair<int, int>> quoteIndexPairs = GetQuoteIndexPairs(baseLine);
             List<Pair<int, int>> bracketIndexPairs = GetBracketIndexPairs(baseLine, quoteIndexPairs);
@@ -164,7 +164,7 @@ namespace CRECSharpInterpreter
         private static string[] SplitTextBetweenIndexesInclusive(string text, List<int> indexes)
         {
             if (indexes.Count == 0)
-                return string.IsNullOrWhiteSpace(text) ?
+                return IsWhiteSpaceOrSeparator(text) ?
                     Array.Empty<string>() :
                     new string[] { text };
             List<string> splits = new();
@@ -179,8 +179,16 @@ namespace CRECSharpInterpreter
             }
             string finalSplit = text[(indexes[indexes.Count - 1] + 1)..];
             splits.Add(finalSplit);
-            splits.RemoveAll(str => string.IsNullOrWhiteSpace(str));
+            splits.RemoveAll(str => IsWhiteSpaceOrSeparator(str));
             return splits.ToArray();
+        }
+
+        private static bool IsWhiteSpaceOrSeparator(string text)
+        {
+            bool _is =
+                string.IsNullOrWhiteSpace(text) ||
+                Trim(text).Length == 0;
+            return _is;
         }
 
         private static void RemoveIndexesFollowedByElse(string text, List<int> indexes)
@@ -200,12 +208,22 @@ namespace CRECSharpInterpreter
                 return true;
             return false;
         }
-
+        
+        // we consider the separator and the 4 characters after to be whitespace
         private static int GetFirstNonWhiteSpaceIndexAfterIndex(string text, int index)
         {
-            for (int i = index + 1; i < text.Length; i++)
+            int i = index + 1;
+            while (i < text.Length)
+            {
+                if (text[i] == LineNumberUtils.SEPARATOR)
+                {
+                    i += LineNumberUtils.SEPARATOR_LENGTH;
+                    continue;
+                }
                 if (!char.IsWhiteSpace(text[i]))
                     return i;
+                i++;
+            }
             return -1;
         }
 
@@ -257,11 +275,23 @@ namespace CRECSharpInterpreter
             return false;
         }
 
+        // we take the separator and associated characters to be whitespace
         private static int GetLastNonWhiteSpaceIndexBeforeIndex(string text, int index)
         {
-            for (int i = index - 1; i >= 0; i--)
-                if (!char.IsWhiteSpace(text[i]))
+            int i = index - 1;
+            while (i >= 0)
+            {
+                if (char.IsWhiteSpace(text[i]))
+                {
+                    i--;
+                    continue;
+                }
+                if (i < LineNumberUtils.SEPARATOR_LENGTH - 2)
                     return i;
+                if (text[i - LineNumberUtils.SEPARATOR_LENGTH + 1] != LineNumberUtils.SEPARATOR)
+                    return i;
+                i -= LineNumberUtils.SEPARATOR_LENGTH;
+            }
             return -1;
         }
 
@@ -412,6 +442,35 @@ namespace CRECSharpInterpreter
                 text = text.Remove(commentStartIndex, nextNewlineIndex - commentStartIndex);
                 commentStartIndex = text.IndexOf("//");
             }
+            return text;
+        }
+
+        public static string TrimStart(string text)
+        {
+            text = text.TrimStart();
+            if (text.Length == 0)
+                return text;
+            if (text[0] != LineNumberUtils.SEPARATOR)
+                return text;
+            text = text.Remove(0, LineNumberUtils.SEPARATOR_LENGTH);
+            return TrimStart(text);
+        }
+
+        public static string TrimEnd(string text)
+        {
+            text = text.TrimEnd();
+            if (text.Length < LineNumberUtils.SEPARATOR_LENGTH)
+                return text;
+            if (text[text.Length - LineNumberUtils.SEPARATOR_LENGTH] != LineNumberUtils.SEPARATOR)
+                return text;
+            text = text.Remove(text.Length - LineNumberUtils.SEPARATOR_LENGTH, LineNumberUtils.SEPARATOR_LENGTH);
+            return TrimEnd(text);
+        }
+
+        public static string Trim(string text)
+        {
+            text = TrimStart(text);
+            text = TrimEnd(text);
             return text;
         }
     }
