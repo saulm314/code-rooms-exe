@@ -20,7 +20,8 @@ namespace CRECSharpInterpreter
             get => Name switch
                 {
                     "int" => default(int),
-                    "bool" => default(bool),
+                    "bool" when SyntaxEnvironment._Syntax == Syntax.CSharp => default(bool),
+                    "boolean" when SyntaxEnvironment._Syntax == Syntax.Java => default(bool),
                     "char" => default(char),
                     "double" => default(double),
                     _ => null
@@ -47,11 +48,25 @@ namespace CRECSharpInterpreter
         //      else a runtime error will occur during static construction
         public static List<VarType> VarTypes { get; } = new();
 
+        private static string boolName = SyntaxEnvironment._Syntax switch
+            {
+                Syntax.CSharp => "bool",
+                Syntax.Java => "boolean",
+                _ => throw new VarTypeException(null, "internal error")
+            };
+
+        private static string stringName = SyntaxEnvironment._Syntax switch
+            {
+                Syntax.CSharp => "string",
+                Syntax.Java => "String",
+                _ => throw new VarTypeException(null, "internal error")
+            };
+
         public static VarType @int { get; } = new("int", typeof(int));
-        public static VarType @bool { get; } = new("bool", typeof(bool));
+        public static VarType @bool { get; } = new(boolName, typeof(bool));
         public static VarType @char { get; } = new("char", typeof(char));
         public static VarType @double { get; } = new("double", typeof(double));
-        public static VarType @string { get; } = new("string", typeof(string));
+        public static VarType @string { get; } = new(stringName, typeof(string));
 
         public static VarType? GetVarType(string varTypeAsString)
         {

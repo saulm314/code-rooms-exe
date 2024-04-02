@@ -88,13 +88,25 @@ namespace CRECSharpInterpreter
                     SubKeyStrings = new KeyString[3];
                     SubKeyStrings[0] = new(_ArrayLength!.Array.Name!);
                     SubKeyStrings[1] = new(".");
-                    SubKeyStrings[2] = new("Length");
+                    string arrayLengthKeyString = SyntaxEnvironment._Syntax switch
+                    {
+                        Syntax.CSharp => "Length",
+                        Syntax.Java => "length()",
+                        _ => throw new KeyStringException(this, "internal error")
+                    };
+                    SubKeyStrings[2] = new(arrayLengthKeyString);
                     break;
                 case Type.StringLength:
                     SubKeyStrings = new KeyString[3];
                     SubKeyStrings[0] = new(_StringLength!.String.Name!);
                     SubKeyStrings[1] = new(".");
-                    SubKeyStrings[2] = new("Length");
+                    string stringLengthKeyString = SyntaxEnvironment._Syntax switch
+                    {
+                        Syntax.CSharp => "Length",
+                        Syntax.Java => "length()",
+                        _ => throw new KeyStringException(this, "internal error")
+                    };
+                    SubKeyStrings[2] = new(stringLengthKeyString);
                     break;
                 case Type.Operator:
                     _Operator = Operator.GetOperator(Text);
@@ -292,8 +304,17 @@ namespace CRECSharpInterpreter
             if (variable._VarType != VarType.@string)
                 return null;
             string stringAfterDot = Text[(dotIndex + 1)..];
-            if (stringAfterDot != "Length")
-                return null;
+            switch (SyntaxEnvironment._Syntax)
+            {
+                case Syntax.CSharp:
+                    if (stringAfterDot != "Length")
+                        return null;
+                    break;
+                case Syntax.Java:
+                    if (stringAfterDot != "length()")
+                        return null;
+                    break;
+            }
             StringLength stringLength = new(variable);
             stringLengthIsNull = false;
             return stringLength;
@@ -320,8 +341,17 @@ namespace CRECSharpInterpreter
             if (!variable._VarType!.IsArray)
                 return null;
             string stringAfterDot = Text[(dotIndex + 1)..];
-            if (stringAfterDot != "Length")
-                return null;
+            switch (SyntaxEnvironment._Syntax)
+            {
+                case Syntax.CSharp:
+                    if (stringAfterDot != "Length")
+                        return null;
+                    break;
+                case Syntax.Java:
+                    if (stringAfterDot != "length()")
+                        return null;
+                    break;
+            }
             ArrayLength arrayLength = new(variable);
             arrayLengthIsNull = false;
             return arrayLength;
@@ -482,7 +512,17 @@ namespace CRECSharpInterpreter
         private bool IsDot { get => _isDot ??= Text == "."; }
         private bool? _isDot;
 
-        private bool IsLengthProperty { get => _isLengthProperty ??= Text == "Length"; }
+        private bool IsLengthProperty
+        {
+            get =>
+                _isLengthProperty ??=
+                    Text == SyntaxEnvironment._Syntax switch
+                        {
+                            Syntax.CSharp => "Length",
+                            Syntax.Java => "length()",
+                            _ => throw new KeyStringException(this, "internal error")
+                        };
+        }
         private bool? _isLengthProperty;
 
         private bool IsOperator { get => _isOperator ??= Operator.GetOperator(Text) != null; }
