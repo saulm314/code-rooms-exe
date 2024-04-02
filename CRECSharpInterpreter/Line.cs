@@ -162,13 +162,6 @@ namespace CRECSharpInterpreter
                     throw new KeyString.KeyStringException(keyString, $"Unrecognised key string: {keyString.Text}");
         }
 
-        private void IncrementLineCounter()
-        {
-            if (HasSubLines)
-                return;
-
-        }
-
         private bool HasSubLines
         {
             get =>
