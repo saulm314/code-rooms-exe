@@ -9,138 +9,146 @@ namespace CRECSharpInterpreter
             Text = text;
             ReducedText = LineSeparator.Trim(LineNumberUtils.RemoveSeparators(Text));
             LineNumber = lineNumber;
-            KeyStrings = GenerateKeyStrings();
 
-            _Type = GetType();
-            VerifyKeyStrings();
-            switch (_Type)
+            try
             {
-                case Type.Invalid:
-                    throw new LineException(this, $"Unrecognised operation in line:\n{ReducedText}");
-                case Type.WriteStringElement:
-                case Type.WriteArrayStringElement:
-                    throw new LineException(this, "Cannot write to an element of a string because strings are immutable");
-                case Type.EmptyLine:
-                    break;
-                case Type.Declaration:
-                    VerifyDeclarationValid();
-                    DeclareVariable();
-                    break;
-                case Type.DeclarationInitialisation:
-                    VerifyDeclarationValid();
-                    _Expression = CreateExpression(); // must be done before declaring variable to ensure no self-references
-                    VarToWrite = DeclareVariable();
-                    VerifyWriteVariableValid();
-                    VarToWrite.Initialised = true;
-                    break;
-                case Type.WriteVariable:
-                    _Expression = CreateExpression();
-                    VarToWrite = GetVarToWrite_NoDeclaration();
-                    VerifyWriteVariableValid();
-                    VarToWrite.Initialised = true;
-                    break;
-                case Type.WriteArrayElement:
-                    _Expression = CreateExpression();
-                    ElementToWrite = GetElementToWrite();
-                    VerifyWriteArrayElementValid();
-                    break;
-                case Type.IfSingleLine:
-                case Type.IfMultiLine:
-                    SubLinesStr = GetSubLinesIfWhileFor(out Line header, out ushort[] subLineNumbers);
-                    Header = header;
-                    Header.Parent = this;
-                    SubLines = new Line[SubLinesStr.Length];
-                    SubLineNumbers = subLineNumbers;
-                    if (Memory.Instance!._Mode == Mode.Compilation)
-                    {
-                        // these two lines cancel each other out
-                        // however in running them we verify that there are no compilation errors
-                        CreateSubLines();
-                        Memory.Instance.PopFromStack();
-                    }
-                    break;
-                case Type.WhileSingleLine:
-                case Type.WhileMultiLine:
-                    SubLinesStr = GetSubLinesIfWhileFor(out Line headerWhile, out ushort[] subLineNumbersWhile);
-                    Header = headerWhile;
-                    Header.Parent = this;
-                    SubLines = new Line[SubLinesStr.Length];
-                    SubLineNumbers = subLineNumbersWhile;
-                    if (Memory.Instance!._Mode == Mode.Compilation)
-                    {
-                        CreateSubLines();
-                        Memory.Instance.PopLoopFromStack();
-                    }
-                    break;
-                case Type.ForSingleLine:
-                case Type.ForMultiLine:
-                    SubLinesStr = GetSubLinesIfWhileFor(out Line headerFor, out ushort[] subLineNumbersFor);
-                    Header = headerFor;
-                    Header.Parent = this;
-                    SubLines = new Line[SubLinesStr.Length];
-                    SubLineNumbers = subLineNumbersFor;
-                    if (Memory.Instance!._Mode == Mode.Compilation)
-                    {
-                        CreateSubLines();
-                        Memory.Instance.PopLoopFromStack();
-                        Memory.Instance.PopFromStack();
-                    }
-                    break;
-                case Type.IfElse:
-                    SubLinesStr = GetSubLinesIfWhileFor(out Line _header, out ushort[] _subLineNumbers);
-                    Header = _header;
-                    Header.Parent = this;
-                    SubLines = new Line[SubLinesStr.Length];
-                    SubLineNumbers = _subLineNumbers;
-                    if (Memory.Instance!._Mode == Mode.Compilation)
-                    {
-                        CreateSubLines();
-                        Memory.Instance.PopFromStack();
-                    }
-                    SubLinesStr2 = GetSubLinesElse(out Line _header2, out ushort[] _subLineNumbers2);
-                    Header2 = _header2;
-                    Header2.Parent = this;
-                    SubLines2 = new Line[SubLinesStr2.Length];
-                    SubLineNumbers2 = _subLineNumbers2;
-                    if (Memory.Instance._Mode == Mode.Compilation)
-                    {
-                        CreateSubLines2();
-                        Memory.Instance.PopFromStack();
-                    }
-                    break;
-                case Type.If:
-                    _Expression = CreateExpressionIfWhile();
-                    Memory.Instance!.PushToStack();
-                    Condition = DeclareConditionVariable();
-                    break;
-                case Type.While:
-                    _Expression = CreateExpressionIfWhile();
-                    Memory.Instance!.PushLoopToStack();
-                    Condition = DeclareConditionVariable();
-                    break;
-                case Type.For:
-                    Memory.Instance!.PushToStack();
-                    Initialiser = CreateInitialiser();
-                    Initialiser.Parent = this;
-                    Memory.Instance.PushLoopToStack();
-                    _Expression = CreateExpressionFor();
-                    Iterator = CreateIterator();
-                    Iterator.Parent = this;
-                    Condition = DeclareConditionVariable();
-                    break;
-                case Type.Else:
-                    // at runtime else will use the same scope as otherwise if would have used
-                    // but at compile time we need to check the two scopes separately
-                    // so we create a temporary scope
-                    if (Memory.Instance!._Mode == Mode.Compilation)
-                        Memory.Instance.PushToStack();
-                    break;
-                case Type.Break:
-                    Memory.Instance!.VerifyPopLoopValid();
-                    break;
-                case Type.Continue:
-                    Memory.Instance!.VerifyPopLoopValid();
-                    break;
+                KeyStrings = GenerateKeyStrings();
+
+                _Type = GetType();
+                VerifyKeyStrings();
+                switch (_Type)
+                {
+                    case Type.Invalid:
+                        throw LineException.New(this, $"Unrecognised operation in line:\n{ReducedText}");
+                    case Type.WriteStringElement:
+                    case Type.WriteArrayStringElement:
+                        throw LineException.New(this, "Cannot write to an element of a string because strings are immutable");
+                    case Type.EmptyLine:
+                        break;
+                    case Type.Declaration:
+                        VerifyDeclarationValid();
+                        DeclareVariable();
+                        break;
+                    case Type.DeclarationInitialisation:
+                        VerifyDeclarationValid();
+                        _Expression = CreateExpression(); // must be done before declaring variable to ensure no self-references
+                        VarToWrite = DeclareVariable();
+                        VerifyWriteVariableValid();
+                        VarToWrite.Initialised = true;
+                        break;
+                    case Type.WriteVariable:
+                        _Expression = CreateExpression();
+                        VarToWrite = GetVarToWrite_NoDeclaration();
+                        VerifyWriteVariableValid();
+                        VarToWrite.Initialised = true;
+                        break;
+                    case Type.WriteArrayElement:
+                        _Expression = CreateExpression();
+                        ElementToWrite = GetElementToWrite();
+                        VerifyWriteArrayElementValid();
+                        break;
+                    case Type.IfSingleLine:
+                    case Type.IfMultiLine:
+                        SubLinesStr = GetSubLinesIfWhileFor(out Line header, out ushort[] subLineNumbers);
+                        Header = header;
+                        Header.Parent = this;
+                        SubLines = new Line[SubLinesStr.Length];
+                        SubLineNumbers = subLineNumbers;
+                        if (Memory.Instance!._Mode == Mode.Compilation)
+                        {
+                            // these two lines cancel each other out
+                            // however in running them we verify that there are no compilation errors
+                            CreateSubLines();
+                            Memory.Instance.PopFromStack();
+                        }
+                        break;
+                    case Type.WhileSingleLine:
+                    case Type.WhileMultiLine:
+                        SubLinesStr = GetSubLinesIfWhileFor(out Line headerWhile, out ushort[] subLineNumbersWhile);
+                        Header = headerWhile;
+                        Header.Parent = this;
+                        SubLines = new Line[SubLinesStr.Length];
+                        SubLineNumbers = subLineNumbersWhile;
+                        if (Memory.Instance!._Mode == Mode.Compilation)
+                        {
+                            CreateSubLines();
+                            Memory.Instance.PopLoopFromStack();
+                        }
+                        break;
+                    case Type.ForSingleLine:
+                    case Type.ForMultiLine:
+                        SubLinesStr = GetSubLinesIfWhileFor(out Line headerFor, out ushort[] subLineNumbersFor);
+                        Header = headerFor;
+                        Header.Parent = this;
+                        SubLines = new Line[SubLinesStr.Length];
+                        SubLineNumbers = subLineNumbersFor;
+                        if (Memory.Instance!._Mode == Mode.Compilation)
+                        {
+                            CreateSubLines();
+                            Memory.Instance.PopLoopFromStack();
+                            Memory.Instance.PopFromStack();
+                        }
+                        break;
+                    case Type.IfElse:
+                        SubLinesStr = GetSubLinesIfWhileFor(out Line _header, out ushort[] _subLineNumbers);
+                        Header = _header;
+                        Header.Parent = this;
+                        SubLines = new Line[SubLinesStr.Length];
+                        SubLineNumbers = _subLineNumbers;
+                        if (Memory.Instance!._Mode == Mode.Compilation)
+                        {
+                            CreateSubLines();
+                            Memory.Instance.PopFromStack();
+                        }
+                        SubLinesStr2 = GetSubLinesElse(out Line _header2, out ushort[] _subLineNumbers2);
+                        Header2 = _header2;
+                        Header2.Parent = this;
+                        SubLines2 = new Line[SubLinesStr2.Length];
+                        SubLineNumbers2 = _subLineNumbers2;
+                        if (Memory.Instance._Mode == Mode.Compilation)
+                        {
+                            CreateSubLines2();
+                            Memory.Instance.PopFromStack();
+                        }
+                        break;
+                    case Type.If:
+                        _Expression = CreateExpressionIfWhile();
+                        Memory.Instance!.PushToStack();
+                        Condition = DeclareConditionVariable();
+                        break;
+                    case Type.While:
+                        _Expression = CreateExpressionIfWhile();
+                        Memory.Instance!.PushLoopToStack();
+                        Condition = DeclareConditionVariable();
+                        break;
+                    case Type.For:
+                        Memory.Instance!.PushToStack();
+                        Initialiser = CreateInitialiser();
+                        Initialiser.Parent = this;
+                        Memory.Instance.PushLoopToStack();
+                        _Expression = CreateExpressionFor();
+                        Iterator = CreateIterator();
+                        Iterator.Parent = this;
+                        Condition = DeclareConditionVariable();
+                        break;
+                    case Type.Else:
+                        // at runtime else will use the same scope as otherwise if would have used
+                        // but at compile time we need to check the two scopes separately
+                        // so we create a temporary scope
+                        if (Memory.Instance!._Mode == Mode.Compilation)
+                            Memory.Instance.PushToStack();
+                        break;
+                    case Type.Break:
+                        Memory.Instance!.VerifyPopLoopValid();
+                        break;
+                    case Type.Continue:
+                        Memory.Instance!.VerifyPopLoopValid();
+                        break;
+                }
+            }
+            catch (Exception e) when (e is not LineException)
+            {
+                throw LineException.New(this, null, e);
             }
         }
 
@@ -574,7 +582,7 @@ namespace CRECSharpInterpreter
         {
             string varName = KeyStrings[1].Text;
             if (Memory.Instance!.IsDeclared(varName))
-                throw new LineException(this, $"Variable {varName} has already been declared");
+                throw LineException.New(this, $"Variable {varName} has already been declared");
         }
 
         private Variable DeclareVariable()
@@ -607,7 +615,7 @@ namespace CRECSharpInterpreter
                 case Type.EmptyLine:
                     break;
                 default:
-                    throw new LineException(this, "Invalid for loop initialiser");
+                    throw LineException.New(this, "Invalid for loop initialiser");
             }
             return initialiser;
         }
@@ -624,7 +632,7 @@ namespace CRECSharpInterpreter
                 case Type.EmptyLine:
                     break;
                 default:
-                    throw new LineException(this, "Invalid for loop iterator");
+                    throw LineException.New(this, "Invalid for loop iterator");
             }
             return iterator;
         }
@@ -636,7 +644,7 @@ namespace CRECSharpInterpreter
                 Type.DeclarationInitialisation => 3,
                 Type.WriteVariable => 2,
                 Type.WriteArrayElement => 2,
-                _ => throw new LineException(this, "internal error")
+                _ => throw LineException.New(this, "internal error")
             };
             KeyString[] expressionKeyStrings = new KeyString[KeyStrings.Length - expressionOffset - 1];
             // not copying the final semicolon
@@ -650,7 +658,7 @@ namespace CRECSharpInterpreter
             Array.Copy(KeyStrings, 1, keyStrings, 0, keyStrings.Length);
             Expression expression = new(keyStrings);
             if (expression._VarType != VarType.@bool)
-                throw new LineException(this, "Expression on the header of an if/while statement must be a boolean!");
+                throw LineException.New(this, "Expression on the header of an if/while statement must be a boolean!");
             return expression;
         }
 
@@ -666,7 +674,7 @@ namespace CRECSharpInterpreter
                 new(keyStrings) :
                 new(new KeyString[] { new KeyString("true") });
             if (expression._VarType != VarType.@bool)
-                throw new LineException(this, "For loop condition must be a boolean!");
+                throw LineException.New(this, "For loop condition must be a boolean!");
             return expression;
         }
 
@@ -682,7 +690,7 @@ namespace CRECSharpInterpreter
                 Type.WhileMultiLine => LineSeparator.GetSubLinesAsStringsIfMultiLine(Text, out headerStr, LineNumber, out subLineNumbers),
                 Type.ForSingleLine => LineSeparator.GetSubLinesAsStringsIfSingleLine(Text, out headerStr, LineNumber, out subLineNumbers),
                 Type.ForMultiLine => LineSeparator.GetSubLinesAsStringsIfMultiLine(Text, out headerStr, LineNumber, out subLineNumbers),
-                _ => throw new LineException(this, "Internal error")
+                _ => throw LineException.New(this, "Internal error")
             };
             header = new(headerStr, LineNumber);
             return subLinesStr;
@@ -719,11 +727,11 @@ namespace CRECSharpInterpreter
             {
                 if (VarToWrite!._VarType!.DefaultValue == null)
                     return;
-                throw new LineException(this,
+                throw LineException.New(this,
                     $"Cannot write null to the value type variable \"{VarToWrite.Name}\"");
             }
             if (VarToWrite!._VarType != _Expression._VarType)
-                throw new LineException(this,
+                throw LineException.New(this,
                     $"Cannot write expression of type {_Expression._VarType} to variable {VarToWrite.Name} of type {VarToWrite._VarType}");
         }
 
@@ -733,11 +741,11 @@ namespace CRECSharpInterpreter
             {
                 if (ElementToWrite!.Array._VarType!.Unarray!.DefaultValue == null)
                     return;
-                throw new LineException(this,
+                throw LineException.New(this,
                     $"Cannot write null to a value type element of array \"{ElementToWrite.Array.Name}\"");
             }
             if (ElementToWrite!.Array._VarType!.Unarray != _Expression._VarType)
-                throw new LineException(this,
+                throw LineException.New(this,
                     $"Cannot write expression of type {_Expression._VarType} to element of array " +
                     $"{ElementToWrite.Array.Name} of type {ElementToWrite.Array._VarType.Unarray}");
         }
@@ -746,7 +754,7 @@ namespace CRECSharpInterpreter
         {
             Variable? varToWrite = Memory.Instance!.GetVariable(KeyStrings[0].Text);
             if (varToWrite == null)
-                throw new LineException(this, $"Variable {KeyStrings[0].Text} hasn't been declared");
+                throw LineException.New(this, $"Variable {KeyStrings[0].Text} hasn't been declared");
             return varToWrite;
         }
 
@@ -773,7 +781,7 @@ namespace CRECSharpInterpreter
         private void PerformWriteArrayElement()
         {
             if (ElementToWrite!.Array.Value == null)
-                throw new LineException(this, $"Array \"{ElementToWrite.Array.Name}\" has value null");
+                throw LineException.New(this, $"Array \"{ElementToWrite.Array.Name}\" has value null");
             int heapIndex = (int)ElementToWrite.Array.Value;
             ElementToWrite.IndexExpression.Compute();
             ElementToWrite.Index = (int)ElementToWrite.IndexExpression.Value!;
@@ -1072,12 +1080,23 @@ namespace CRECSharpInterpreter
 
         public class LineException : InterpreterException
         {
-            public LineException(Line? line, string? message = null) : base(message)
+            private LineException(Line? line, string? message = null) : base(message)
             {
                 this.line = line;
             }
 
             public Line? line;
+
+            public static LineException New(Line? line, string? message = null, Exception? e = null)
+            {
+                System.Type exceptionType = e?.GetType() ?? typeof(LineException);
+                string exceptionName = exceptionType.Name;
+                string concatMessage = string.Empty;
+                concatMessage += message is not null ? message + "\n" : string.Empty;
+                concatMessage += e?.Message is not null ? e.Message : string.Empty;
+                string _message = $"{exceptionName} at line {line?.LineNumber}:\n{concatMessage}";
+                return new LineException(line, _message);
+            }
         }
     }
 }
