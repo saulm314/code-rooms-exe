@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace CRECSharpInterpreter
 {
     public class Line
     {
-        public Line(string text)
+        public Line(string text, ushort lineNumber)
         {
             Text = text;
+            LineNumber = lineNumber;
             KeyStrings = GenerateKeyStrings();
 
             _Type = GetType();
@@ -45,10 +45,11 @@ namespace CRECSharpInterpreter
                     break;
                 case Type.IfSingleLine:
                 case Type.IfMultiLine:
-                    SubLinesStr = GetSubLinesIfWhileFor(out Line header);
+                    SubLinesStr = GetSubLinesIfWhileFor(out Line header, out ushort[] subLineNumbers);
                     Header = header;
                     Header.Parent = this;
                     SubLines = new Line[SubLinesStr.Length];
+                    SubLineNumbers = subLineNumbers;
                     if (Memory.Instance!._Mode == Mode.Compilation)
                     {
                         // these two lines cancel each other out
@@ -59,10 +60,11 @@ namespace CRECSharpInterpreter
                     break;
                 case Type.WhileSingleLine:
                 case Type.WhileMultiLine:
-                    SubLinesStr = GetSubLinesIfWhileFor(out Line headerWhile);
+                    SubLinesStr = GetSubLinesIfWhileFor(out Line headerWhile, out ushort[] subLineNumbersWhile);
                     Header = headerWhile;
                     Header.Parent = this;
                     SubLines = new Line[SubLinesStr.Length];
+                    SubLineNumbers = subLineNumbersWhile;
                     if (Memory.Instance!._Mode == Mode.Compilation)
                     {
                         CreateSubLines();
@@ -71,10 +73,11 @@ namespace CRECSharpInterpreter
                     break;
                 case Type.ForSingleLine:
                 case Type.ForMultiLine:
-                    SubLinesStr = GetSubLinesIfWhileFor(out Line headerFor);
+                    SubLinesStr = GetSubLinesIfWhileFor(out Line headerFor, out ushort[] subLineNumbersFor);
                     Header = headerFor;
                     Header.Parent = this;
                     SubLines = new Line[SubLinesStr.Length];
+                    SubLineNumbers = subLineNumbersFor;
                     if (Memory.Instance!._Mode == Mode.Compilation)
                     {
                         CreateSubLines();
@@ -83,19 +86,21 @@ namespace CRECSharpInterpreter
                     }
                     break;
                 case Type.IfElse:
-                    SubLinesStr = GetSubLinesIfWhileFor(out Line _header);
+                    SubLinesStr = GetSubLinesIfWhileFor(out Line _header, out ushort[] _subLineNumbers);
                     Header = _header;
                     Header.Parent = this;
                     SubLines = new Line[SubLinesStr.Length];
+                    SubLineNumbers = _subLineNumbers;
                     if (Memory.Instance!._Mode == Mode.Compilation)
                     {
                         CreateSubLines();
                         Memory.Instance.PopFromStack();
                     }
-                    SubLinesStr2 = GetSubLinesElse(out Line _header2);
+                    SubLinesStr2 = GetSubLinesElse(out Line _header2, out ushort[] _subLineNumbers2);
                     Header2 = _header2;
                     Header2.Parent = this;
                     SubLines2 = new Line[SubLinesStr2.Length];
+                    SubLineNumbers2 = _subLineNumbers2;
                     if (Memory.Instance._Mode == Mode.Compilation)
                     {
                         CreateSubLines2();
@@ -140,25 +145,38 @@ namespace CRECSharpInterpreter
 
         private void VerifyKeyStrings()
         {
-            bool hasSubLines = _Type switch
-            {
-                Type.IfSingleLine => true,
-                Type.IfMultiLine => true,
-                Type.WhileSingleLine => true,
-                Type.WhileMultiLine => true,
-                Type.IfElse => true,
-                Type.ForSingleLine => true,
-                Type.ForMultiLine => true,
-                Type.For => true,
-                _ => false
-            };
             // if it has sublines then let the sublines determine the exact keystrings
-            if (hasSubLines)
+            if (HasSubLines)
                 return;
             foreach (KeyString keyString in KeyStrings)
                 if (keyString._Type == KeyString.Type.Invalid)
                     throw new KeyString.KeyStringException(keyString, $"Unrecognised key string: {Text}");
         }
+
+        private void IncrementLineCounter()
+        {
+            if (HasSubLines)
+                return;
+
+        }
+
+        private bool HasSubLines
+        {
+            get =>
+                _hasSubLines ??= _Type switch
+                    {
+                        Type.IfSingleLine => true,
+                        Type.IfMultiLine => true,
+                        Type.WhileSingleLine => true,
+                        Type.WhileMultiLine => true,
+                        Type.IfElse => true,
+                        Type.ForSingleLine => true,
+                        Type.ForMultiLine => true,
+                        Type.For => true,
+                        _ => false
+                    };
+        }
+        private bool? _hasSubLines;
 
         private KeyString[] GenerateKeyStrings()
         {
@@ -170,6 +188,8 @@ namespace CRECSharpInterpreter
         }
 
         public string Text { get; init; }
+
+        public ushort LineNumber { get; init; }
 
         public KeyString[] KeyStrings { get; private set; }
 
@@ -187,8 +207,10 @@ namespace CRECSharpInterpreter
         public Line? Header2 { get; init; }
 
         public string[]? SubLinesStr { get; init; }
+        public ushort[]? SubLineNumbers { get; init; }
         public Line[]? SubLines { get; private set; }
         public string[]? SubLinesStr2 { get; init; }
+        public ushort[]? SubLineNumbers2 { get; init; }
         public Line[]? SubLines2 { get; private set; }
 
         public Variable? Condition { get; private set; }
@@ -525,7 +547,7 @@ namespace CRECSharpInterpreter
         private int subLinesExecuted = 0;
         private void ExecuteNextSubLine()
         {
-            SubLines![subLinesExecuted] ??= new(SubLinesStr![subLinesExecuted]);
+            SubLines![subLinesExecuted] ??= new(SubLinesStr![subLinesExecuted], SubLineNumbers![subLinesExecuted]);
             SubLines[subLinesExecuted].Parent = this;
             SubLines[subLinesExecuted].Execute();
             if (ToReturn)
@@ -537,7 +559,7 @@ namespace CRECSharpInterpreter
         private int subLinesExecuted2 = 0;
         private void ExecuteNextSubLine2()
         {
-            SubLines2![subLinesExecuted2] ??= new(SubLinesStr2![subLinesExecuted2]);
+            SubLines2![subLinesExecuted2] ??= new(SubLinesStr2![subLinesExecuted2], SubLineNumbers2![subLinesExecuted2]);
             SubLines2[subLinesExecuted2].Parent = this;
             SubLines2[subLinesExecuted2].Execute();
             if (ToReturn)
@@ -574,7 +596,7 @@ namespace CRECSharpInterpreter
         private Line CreateInitialiser()
         {
             string initialiserStr = LineSeparator.GetForInitialiserAsString(Text);
-            Line initialiser = new(initialiserStr);
+            Line initialiser = new(initialiserStr, LineNumber);
             switch (initialiser._Type)
             {
                 case Type.DeclarationInitialisation:
@@ -591,7 +613,7 @@ namespace CRECSharpInterpreter
         private Line CreateIterator()
         {
             string iteratorStr = LineSeparator.GetForIteratorAsString(Text);
-            Line iterator = new(iteratorStr);
+            Line iterator = new(iteratorStr, LineNumber);
             switch (iterator._Type)
             {
                 case Type.DeclarationInitialisation:
@@ -646,28 +668,28 @@ namespace CRECSharpInterpreter
             return expression;
         }
 
-        private string[] GetSubLinesIfWhileFor(out Line header)
+        private string[] GetSubLinesIfWhileFor(out Line header, out ushort[] subLineNumbers)
         {
             string? headerStr;
             string[] subLinesStr = _Type switch
             {
-                Type.IfSingleLine => LineSeparator.GetSubLinesAsStringsIfSingleLine(Text, out headerStr),
-                Type.IfMultiLine => LineSeparator.GetSubLinesAsStringsIfMultiLine(Text, out headerStr),
-                Type.IfElse => LineSeparator.GetSubLinesAsStringsIfElseIf(Text, out headerStr),
-                Type.WhileSingleLine => LineSeparator.GetSubLinesAsStringsIfSingleLine(Text, out headerStr),
-                Type.WhileMultiLine => LineSeparator.GetSubLinesAsStringsIfMultiLine(Text, out headerStr),
-                Type.ForSingleLine => LineSeparator.GetSubLinesAsStringsIfSingleLine(Text, out headerStr),
-                Type.ForMultiLine => LineSeparator.GetSubLinesAsStringsIfMultiLine(Text, out headerStr),
+                Type.IfSingleLine => LineSeparator.GetSubLinesAsStringsIfSingleLine(Text, out headerStr, LineNumber, out subLineNumbers),
+                Type.IfMultiLine => LineSeparator.GetSubLinesAsStringsIfMultiLine(Text, out headerStr, LineNumber, out subLineNumbers),
+                Type.IfElse => LineSeparator.GetSubLinesAsStringsIfElseIf(Text, out headerStr, LineNumber, out subLineNumbers),
+                Type.WhileSingleLine => LineSeparator.GetSubLinesAsStringsIfSingleLine(Text, out headerStr, LineNumber, out subLineNumbers),
+                Type.WhileMultiLine => LineSeparator.GetSubLinesAsStringsIfMultiLine(Text, out headerStr, LineNumber, out subLineNumbers),
+                Type.ForSingleLine => LineSeparator.GetSubLinesAsStringsIfSingleLine(Text, out headerStr, LineNumber, out subLineNumbers),
+                Type.ForMultiLine => LineSeparator.GetSubLinesAsStringsIfMultiLine(Text, out headerStr, LineNumber, out subLineNumbers),
                 _ => throw new LineException(this, "Internal error")
             };
-            header = new(headerStr);
+            header = new(headerStr, LineNumber);
             return subLinesStr;
         }
 
-        private string[] GetSubLinesElse(out Line header)
+        private string[] GetSubLinesElse(out Line header, out ushort[] subLineNumbers)
         {
-            string[] subLinesStr = LineSeparator.GetSubLinesAsStringsIfElseElse(Text, out string? headerStr);
-            header = new(headerStr);
+            string[] subLinesStr = LineSeparator.GetSubLinesAsStringsIfElseElse(Text, out string? headerStr, LineNumber, out subLineNumbers);
+            header = new(headerStr, LineNumber);
             return subLinesStr;
         }
 
@@ -675,7 +697,7 @@ namespace CRECSharpInterpreter
         {
             for (int i = 0; i < SubLines!.Length; i++)
             {
-                SubLines[i] = new(SubLinesStr![i]);
+                SubLines[i] = new(SubLinesStr![i], SubLineNumbers![i]);
                 SubLines[i].Parent = this;
             }
         }
@@ -684,7 +706,7 @@ namespace CRECSharpInterpreter
         {
             for (int i = 0; i < SubLines2!.Length; i++)
             {
-                SubLines2[i] = new(SubLinesStr2![i]);
+                SubLines2[i] = new(SubLinesStr2![i], SubLineNumbers2![i]);
                 SubLines2[i].Parent = this;
             }
         }
