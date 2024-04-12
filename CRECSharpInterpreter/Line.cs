@@ -148,6 +148,7 @@ namespace CRECSharpInterpreter
             }
             catch (Exception e) when (e is not LineException)
             {
+                //Console.WriteLine(e);
                 throw LineException.New(this, null, e);
             }
         }

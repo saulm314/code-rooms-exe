@@ -43,6 +43,10 @@ for (int i = 0;; i = i + 1)
         break;
 }
 
+string helloString = new string(helloChars);
+helloChars = null;
+helloString = null;
+
 //__________________________________________
 
 bool breakTest = true;

@@ -36,6 +36,7 @@ namespace CRECSharpInterpreter
                 Type.StringElement =>       ComputeVarTypeStringElement(),
                 Type.ArrayStringElement =>  ComputeVarTypeArrayStringElement(),
                 Type.StringLength =>        ComputeVarTypeStringLength(),
+                Type.StringConstruction =>  ComputeVarTypeStringConstruction(),
                 _ =>                        throw new ExpressionUnitException(this, "Unrecognised expression unit")
             };
         }
@@ -56,6 +57,7 @@ namespace CRECSharpInterpreter
                 case Type.StringElement:        ComputeStringElement();         break;
                 case Type.ArrayStringElement:   ComputeArrayStringElement();    break;
                 case Type.StringLength:         ComputeStringLength();          break;
+                case Type.StringConstruction:   ComputeStringConstruction();    break;
                 default:                        throw new ExpressionUnitException(this,
                                                     $"Internal error; don't know how to compute expression of type \"{_Type}\"");
             }
@@ -82,6 +84,15 @@ namespace CRECSharpInterpreter
                     KeyStrings.Length >= 4
                 )
                     return Type.ArrayLiteral;
+                if
+                (
+                    KeyStrings[1]._Type == KeyString.Type.Type &&
+                    VarType.GetVarType(KeyStrings[1].Text) == VarType.@string &&
+                    KeyStrings[2]._Type == KeyString.Type.OpenBracket &&
+                    KeyStrings[KeyStrings.Length - 1]._Type == KeyString.Type.CloseBracket &&
+                    KeyStrings.Length >= 5
+                )
+                    return Type.StringConstruction;
             }
             if (KeyStrings[0]._Type == KeyString.Type.ArrayElement && KeyStrings.Length == 1)
                 return Type.ArrayElement;
@@ -290,6 +301,39 @@ namespace CRECSharpInterpreter
             Value = bracketExpression.Value;
         }
 
+        private StringConstruction? stringConstruction;
+        private VarType? ComputeVarTypeStringConstruction()
+        {
+            KeyString[] charArrayKeyStrings = new KeyString[KeyStrings.Length - 4];
+            Array.Copy(KeyStrings, 3, charArrayKeyStrings, 0, charArrayKeyStrings.Length);
+            stringConstruction = new(charArrayKeyStrings);
+            return VarType.@string;
+        }
+
+        private void ComputeStringConstruction()
+        {
+            stringConstruction!.CharArrayExpression.Compute();
+            stringConstruction.CharArrayReference = stringConstruction.CharArrayExpression.Value as int?;
+            if (stringConstruction.CharArrayReference == null)
+                throw new ExpressionUnitException(this, "Cannot create string from a null character array");
+            int charArrayHeapIndex = (int)stringConstruction.CharArrayReference;
+
+            // when we inserted the char array into the constructor,
+            //      we strictly speaking added a reference to the char array (albeit a temporary one)
+            // here we decrement the reference counter to ensure the char array gets garbage collected appropriately
+            Memory.Instance!.Heap.DecrementReferenceCounter(charArrayHeapIndex);
+
+            int length = Memory.Instance.Heap.GetLength(charArrayHeapIndex);
+            Variable[] variablesToAllocate = new Variable[length];
+            for (int i = 0; i < variablesToAllocate.Length; i++)
+            {
+                variablesToAllocate[i] = new(VarType.@char);
+                variablesToAllocate[i].Value = (char)Memory.Instance.Heap.GetValue(charArrayHeapIndex, i)!;
+            }
+            int heapIndex = Memory.Instance.Heap.Allocate(length, variablesToAllocate);
+            Value = heapIndex;
+        }
+
         private StringLiteral? stringLiteral;
         private VarType? ComputeVarTypeStringLiteral()
         {
@@ -377,7 +421,8 @@ namespace CRECSharpInterpreter
             StringLiteral,
             StringElement,
             ArrayStringElement,
-            StringLength
+            StringLength,
+            StringConstruction
         }
 
         public override string ToString()
