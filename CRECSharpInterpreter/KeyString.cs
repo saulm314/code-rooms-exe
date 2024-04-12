@@ -91,7 +91,7 @@ namespace CRECSharpInterpreter
                     string arrayLengthKeyString = SyntaxEnvironment._Syntax switch
                     {
                         Syntax.CSharp => "Length",
-                        Syntax.Java => "length()",
+                        Syntax.Java => "length",
                         _ => throw new KeyStringException(this, "internal error")
                     };
                     SubKeyStrings[2] = new(arrayLengthKeyString);
@@ -348,7 +348,7 @@ namespace CRECSharpInterpreter
                         return null;
                     break;
                 case Syntax.Java:
-                    if (stringAfterDot != "length()")
+                    if (stringAfterDot != "length")
                         return null;
                     break;
             }
@@ -516,11 +516,12 @@ namespace CRECSharpInterpreter
         {
             get =>
                 _isLengthProperty ??=
-                    Text == SyntaxEnvironment._Syntax switch
+                    (Text, SyntaxEnvironment._Syntax) switch
                         {
-                            Syntax.CSharp => "Length",
-                            Syntax.Java => "length()",
-                            _ => throw new KeyStringException(this, "internal error")
+                            ("Length", Syntax.CSharp) => true,
+                            ("length", Syntax.Java) => true,
+                            ("length()", Syntax.Java) => true,
+                            _ => false
                         };
         }
         private bool? _isLengthProperty;
