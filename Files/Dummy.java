@@ -6,19 +6,19 @@ _number = /*multi-line comment*/secondNumber;
 secondNumber=_number;
 
 char[] helloChars = new char[] { 'h', 'e', 'l', 'l', 'o' };
-char[] helloCharsCopy = new char[helloChars.length()];
-for (int i = 0; i < helloChars.length(); i = i + 1)
+char[] helloCharsCopy = new char[helloChars.length];
+for (int i = 0; i < helloChars.length; i = i + 1)
     helloCharsCopy[i] = helloChars[i];
 
 boolean arraysAreEqual = true;
 while (true)
 {
-    if (helloChars.length() != helloCharsCopy.length())
+    if (helloChars.length != helloCharsCopy.length)
     {
         arraysAreEqual = false;
         break;
     }
-    for (int i = 0; i < helloChars.length(); i = i + 1)
+    for (int i = 0; i < helloChars.length; i = i + 1)
     {
         if (helloChars[i] != helloCharsCopy[i])
         {
@@ -29,9 +29,9 @@ while (true)
     break;
 }
 
-char[] helloBackwards = new char[helloChars.length()];
-for (int i = 0; i < helloChars.length(); i = i + 1)
-    helloBackwards[i] = helloChars[helloChars.length() - i - 1];
+char[] helloBackwards = new char[helloChars.length];
+for (int i = 0; i < helloChars.length; i = i + 1)
+    helloBackwards[i] = helloChars[helloChars.length - i - 1];
 
 for (int i = 0;; i = i + 1)
 {
@@ -94,9 +94,9 @@ while (whileTest2 > 0)
     whileTest2 = whileTest2 - 1;
 
 int[] copyArray = new int[] { 1, 2, 3 };
-int[] pasteArray = new int[copyArray.length()];
+int[] pasteArray = new int[copyArray.length];
 int i = 0;
-while (i < copyArray.length())
+while (i < copyArray.length)
 {
     pasteArray[i] = copyArray[i];
     i = i + 1;
@@ -262,8 +262,8 @@ double[] doubleArray3 = new double[] { };
 int[] test = null;
 int[] arrayarray = test;
 
-int newInt = boolArray.length();
-boolean[] boolArrayCopy = new boolean[boolArray.length()];
+int newInt = boolArray.length;
+boolean[] boolArrayCopy = new boolean[boolArray.length];
 boolArrayCopy[0] = boolArray[0];
 boolArrayCopy[1] = boolArray[1];
 boolArrayCopy[2] = boolArray[2];
