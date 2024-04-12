@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34622.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CRECSharpInterpreter", "CRECSharpInterpreter\CRECSharpInterpreter.csproj", "{5AC041C7-3D0A-4D04-97E1-F1264F39011C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CRECSharpInterpreter", "CRECSharpInterpreter\CRECSharpInterpreter.csproj", "{5AC041C7-3D0A-4D04-97E1-F1264F39011C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeRoomsExe", "CodeRoomsExe\CodeRoomsExe.csproj", "{D3FC02AD-D54E-4126-85B3-636A22E0B7C9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeRoomsExe.Desktop", "CodeRoomsExe.Desktop\CodeRoomsExe.Desktop.csproj", "{77DE18F9-1930-482A-8E6D-0561327A1AD9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{5AC041C7-3D0A-4D04-97E1-F1264F39011C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5AC041C7-3D0A-4D04-97E1-F1264F39011C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5AC041C7-3D0A-4D04-97E1-F1264F39011C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3FC02AD-D54E-4126-85B3-636A22E0B7C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3FC02AD-D54E-4126-85B3-636A22E0B7C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3FC02AD-D54E-4126-85B3-636A22E0B7C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3FC02AD-D54E-4126-85B3-636A22E0B7C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77DE18F9-1930-482A-8E6D-0561327A1AD9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77DE18F9-1930-482A-8E6D-0561327A1AD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77DE18F9-1930-482A-8E6D-0561327A1AD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77DE18F9-1930-482A-8E6D-0561327A1AD9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
