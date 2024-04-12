@@ -9,21 +9,21 @@ namespace CRECSharpInterpreter
         {
             Text = LineNumberUtils.AddNewlineSeparators(text);
 
-            linesStr = LineSeparator.GetLinesAsStrings(Text, 0, out ushort[] lineNumbers);
+            linesStr = LineSeparator.GetLinesAsStrings(Text, 0, out LineNumberInfo[] lineNumberInfos);
             Lines = new Line[linesStr.Length];
-            LineNumbers = lineNumbers;
+            LineNumberInfos = lineNumberInfos;
 
             _ = new Memory(mode);
 
             if (Memory.Instance!._Mode == Mode.Compilation)
                 for (int i = 0; i < Lines.Length; i++)
-                    Lines[i] = new(linesStr[i], LineNumbers[i]);
+                    Lines[i] = new(linesStr[i], LineNumberInfos[i]);
         }
 
         public string Text { get; init; }
 
         public Line[] Lines { get; init; }
-        public ushort[] LineNumbers { get; init; }
+        public LineNumberInfo[] LineNumberInfos { get; init; }
 
         private int linesDone = 0;
         public bool RunNextLine()
@@ -31,7 +31,7 @@ namespace CRECSharpInterpreter
             if (linesDone >= linesStr.Length)
                 return false;
             if (Lines[linesDone] == null)
-                Lines[linesDone] = new(linesStr[linesDone], LineNumbers[linesDone]);
+                Lines[linesDone] = new(linesStr[linesDone], LineNumberInfos[linesDone]);
             Lines[linesDone].Execute();
             if (!Lines[linesDone].Executed)
                 return true;

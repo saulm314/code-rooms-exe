@@ -6,7 +6,7 @@ namespace CRECSharpInterpreter
 {
     public static class LineSeparator
     {
-        public static string[] GetLinesAsStrings(string text, ushort startLineNumber, out ushort[] lineNumbers)
+        public static string[] GetLinesAsStrings(string text, ushort startLineNumber, out LineNumberInfo[] lineNumberInfos)
         {
             text = RemoveComments(text);
 
@@ -20,28 +20,29 @@ namespace CRECSharpInterpreter
 
             string[] lines = SplitTextBetweenIndexesInclusive(text, lineEndIndexes);
 
-            GetLineNumbers(lines, startLineNumber, out lineNumbers);
+            GetLineNumbers(lines, startLineNumber, out lineNumberInfos);
 
             return lines;
         }
 
-        private static void GetLineNumbers(string[] lines, ushort startLineNumber, out ushort[] lineNumbers)
+        private static void GetLineNumbers(string[] lines, ushort startLineNumber, out LineNumberInfo[] lineNumberInfos)
         {
-            lineNumbers = new ushort[lines.Length];
+            lineNumberInfos = new LineNumberInfo[lines.Length];
             for (int i = 0; i < lines.Length; i++)
             {
-                ushort[] _lineNumbers = LineNumberUtils.GetLineNumbers(lines[i]);
+                ushort[] _lineNumbers = LineNumberUtils.GetLineNumbers(lines[i], out ushort actualLineNumber);
                 if (_lineNumbers.Length > 0)
                 {
-                    lineNumbers[i] = _lineNumbers[0];
+                    lineNumberInfos[i] = new(_lineNumbers[0], actualLineNumber, _lineNumbers[^1]);
                     continue;
                 }
                 if (i > 0)
                 {
-                    lineNumbers[i] = lineNumbers[i - 1];
+                    ushort previousLineNumber = lineNumberInfos[i - 1].EndLineNumber;
+                    lineNumberInfos[i] = new(previousLineNumber, previousLineNumber, previousLineNumber);
                     continue;
                 }
-                lineNumbers[i] = startLineNumber;
+                lineNumberInfos[i] = new(startLineNumber, startLineNumber, startLineNumber);
             }
         }
 
@@ -64,52 +65,57 @@ namespace CRECSharpInterpreter
             return iterator;
         }
 
-        public static string[] GetSubLinesAsStringsIfSingleLine(string baseLine, out string header, ushort startLineNumber, out ushort[] lineNumbers)
+        public static string[] GetSubLinesAsStringsIfSingleLine(string baseLine, out string header, ushort startLineNumber,
+                                                                out LineNumberInfo[] lineNumberInfos)
         {
             List<Pair<int, int>> quoteIndexPairs = GetQuoteIndexPairs(baseLine);
             List<Pair<int, int>> bracketIndexPairs = GetBracketIndexPairs(baseLine, quoteIndexPairs);
             header = baseLine[..(bracketIndexPairs[0].Second + 1)];
             string subText = baseLine[(bracketIndexPairs[0].Second + 1)..];
-            string[] subLines = GetLinesAsStrings(subText, startLineNumber, out lineNumbers);
+            string[] subLines = GetLinesAsStrings(subText, startLineNumber, out lineNumberInfos);
             return subLines;
         }
 
-        public static string[] GetSubLinesAsStringsElseSingleLine(string baseLine, out string header, ushort startLineNumber, out ushort[] lineNumbers)
+        public static string[] GetSubLinesAsStringsElseSingleLine(string baseLine, out string header, ushort startLineNumber,
+                                                                    out LineNumberInfo[] lineNumberInfos)
         {
             header = "else";
             int indexAfterElse = baseLine.IndexOf("else") + 4;
             string subText = baseLine[indexAfterElse..];
-            string[] subLines = GetLinesAsStrings(subText, startLineNumber, out lineNumbers);
+            string[] subLines = GetLinesAsStrings(subText, startLineNumber, out lineNumberInfos);
             return subLines;
         }
 
-        public static string[] GetSubLinesAsStringsIfMultiLine(string baseLine, out string header, ushort startLineNumber, out ushort[] lineNumbers)
+        public static string[] GetSubLinesAsStringsIfMultiLine(string baseLine, out string header, ushort startLineNumber,
+                                                                out LineNumberInfo[] lineNumberInfos)
         {
-            baseLine = TrimEnd(baseLine);
+            baseLine = LineNumberUtils.TrimEnd(baseLine);
             List<Pair<int, int>> quoteIndexPairs = GetQuoteIndexPairs(baseLine);
             List<Pair<int, int>> bracketIndexPairs = GetBracketIndexPairs(baseLine, quoteIndexPairs);
             if (bracketIndexPairs.Count < 2)
                 throw new InterpreterException("A bracket pair and curly brace pair expected");
             header = baseLine[..(bracketIndexPairs[0].Second + 1)];
             string subText = baseLine[(bracketIndexPairs[1].First + 1)..(baseLine.Length - 1)];
-            string[] subLines = GetLinesAsStrings(subText, startLineNumber, out lineNumbers);
+            string[] subLines = GetLinesAsStrings(subText, startLineNumber, out lineNumberInfos);
             return subLines;
         }
 
-        public static string[] GetSubLinesAsStringsElseMultiLine(string baseLine, out string header, ushort startLineNumber, out ushort[] lineNumbers)
+        public static string[] GetSubLinesAsStringsElseMultiLine(string baseLine, out string header, ushort startLineNumber,
+                                                                    out LineNumberInfo[] lineNumberInfos)
         {
-            baseLine = TrimEnd(baseLine);
+            baseLine = LineNumberUtils.TrimEnd(baseLine);
             header = "else";
             List<Pair<int, int>> quoteIndexPairs = GetQuoteIndexPairs(baseLine);
             List<Pair<int, int>> bracketIndexPairs = GetBracketIndexPairs(baseLine, quoteIndexPairs);
             if (bracketIndexPairs.Count < 1)
                 throw new InterpreterException("A curly brace pair expected");
             string subText = baseLine[(bracketIndexPairs[0].First + 1)..(baseLine.Length - 1)];
-            string[] subLines = GetLinesAsStrings(subText, startLineNumber, out lineNumbers);
+            string[] subLines = GetLinesAsStrings(subText, startLineNumber, out lineNumberInfos);
             return subLines;
         }
 
-        public static string[] GetSubLinesAsStringsIfElseIf(string baseLine, out string header, ushort startLineNumber, out ushort[] lineNumbers)
+        public static string[] GetSubLinesAsStringsIfElseIf(string baseLine, out string header, ushort startLineNumber,
+                                                            out LineNumberInfo[] lineNumberInfos)
         {
             int elseIndex = baseLine.IndexOf("else");
             string baseLineBeforeElse = baseLine[..elseIndex];
@@ -119,11 +125,12 @@ namespace CRECSharpInterpreter
             if (firstNonWhiteSpaceIndexAfterCloseBracket == -1)
                 throw new InterpreterException("Expecting statement after condition");
             if (baseLineBeforeElse[firstNonWhiteSpaceIndexAfterCloseBracket] == '{')
-                return GetSubLinesAsStringsIfMultiLine(baseLineBeforeElse, out header, startLineNumber, out lineNumbers);
-            return GetSubLinesAsStringsIfSingleLine(baseLineBeforeElse, out header, startLineNumber, out lineNumbers);
+                return GetSubLinesAsStringsIfMultiLine(baseLineBeforeElse, out header, startLineNumber, out lineNumberInfos);
+            return GetSubLinesAsStringsIfSingleLine(baseLineBeforeElse, out header, startLineNumber, out lineNumberInfos);
         }
 
-        public static string[] GetSubLinesAsStringsIfElseElse(string baseLine, out string header, ushort startLineNumber, out ushort[] lineNumbers)
+        public static string[] GetSubLinesAsStringsIfElseElse(string baseLine, out string header, ushort startLineNumber,
+                                                                out LineNumberInfo[] lineNumberInfos)
         {
             int elseIndex = baseLine.IndexOf("else");
             string baseLineFromElse = baseLine[elseIndex..];
@@ -132,8 +139,8 @@ namespace CRECSharpInterpreter
             if (firstNonWhiteSpaceIndexAfterElse == -1)
                 throw new InterpreterException("Expecting statement after else keyword");
             if (baseLineFromElse[firstNonWhiteSpaceIndexAfterElse] == '{')
-                return GetSubLinesAsStringsElseMultiLine(baseLineFromElse, out header, startLineNumber, out lineNumbers);
-            return GetSubLinesAsStringsElseSingleLine(baseLineFromElse, out header, startLineNumber, out lineNumbers);
+                return GetSubLinesAsStringsElseMultiLine(baseLineFromElse, out header, startLineNumber, out lineNumberInfos);
+            return GetSubLinesAsStringsElseSingleLine(baseLineFromElse, out header, startLineNumber, out lineNumberInfos);
         }
 
         private static string RemoveComments(string text)
@@ -187,7 +194,7 @@ namespace CRECSharpInterpreter
         {
             bool _is =
                 string.IsNullOrWhiteSpace(text) ||
-                Trim(text).Length == 0;
+                LineNumberUtils.Trim(text).Length == 0;
             return _is;
         }
 
@@ -210,7 +217,7 @@ namespace CRECSharpInterpreter
         }
         
         // we consider the separator and the 4 characters after to be whitespace
-        private static int GetFirstNonWhiteSpaceIndexAfterIndex(string text, int index)
+        public static int GetFirstNonWhiteSpaceIndexAfterIndex(string text, int index)
         {
             int i = index + 1;
             while (i < text.Length)
@@ -276,7 +283,7 @@ namespace CRECSharpInterpreter
         }
 
         // we take the separator and associated characters to be whitespace
-        private static int GetLastNonWhiteSpaceIndexBeforeIndex(string text, int index)
+        public static int GetLastNonWhiteSpaceIndexBeforeIndex(string text, int index)
         {
             int i = index - 1;
             while (i >= 0)
@@ -442,35 +449,6 @@ namespace CRECSharpInterpreter
                 text = text.Remove(commentStartIndex, nextNewlineIndex - commentStartIndex);
                 commentStartIndex = text.IndexOf("//");
             }
-            return text;
-        }
-
-        public static string TrimStart(string text)
-        {
-            text = text.TrimStart();
-            if (text.Length == 0)
-                return text;
-            if (text[0] != LineNumberUtils.SEPARATOR)
-                return text;
-            text = text.Remove(0, LineNumberUtils.SEPARATOR_LENGTH);
-            return TrimStart(text);
-        }
-
-        public static string TrimEnd(string text)
-        {
-            text = text.TrimEnd();
-            if (text.Length < LineNumberUtils.SEPARATOR_LENGTH)
-                return text;
-            if (text[text.Length - LineNumberUtils.SEPARATOR_LENGTH] != LineNumberUtils.SEPARATOR)
-                return text;
-            text = text.Remove(text.Length - LineNumberUtils.SEPARATOR_LENGTH, LineNumberUtils.SEPARATOR_LENGTH);
-            return TrimEnd(text);
-        }
-
-        public static string Trim(string text)
-        {
-            text = TrimStart(text);
-            text = TrimEnd(text);
             return text;
         }
     }
