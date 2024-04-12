@@ -85,7 +85,7 @@ namespace CRECSharpInterpreter
 
         public static string[] GetSubLinesAsStringsIfMultiLine(string baseLine, out string header, ushort startLineNumber, out ushort[] lineNumbers)
         {
-            baseLine = TrimEnd(baseLine);
+            baseLine = LineNumberUtils.TrimEnd(baseLine);
             List<Pair<int, int>> quoteIndexPairs = GetQuoteIndexPairs(baseLine);
             List<Pair<int, int>> bracketIndexPairs = GetBracketIndexPairs(baseLine, quoteIndexPairs);
             if (bracketIndexPairs.Count < 2)
@@ -98,7 +98,7 @@ namespace CRECSharpInterpreter
 
         public static string[] GetSubLinesAsStringsElseMultiLine(string baseLine, out string header, ushort startLineNumber, out ushort[] lineNumbers)
         {
-            baseLine = TrimEnd(baseLine);
+            baseLine = LineNumberUtils.TrimEnd(baseLine);
             header = "else";
             List<Pair<int, int>> quoteIndexPairs = GetQuoteIndexPairs(baseLine);
             List<Pair<int, int>> bracketIndexPairs = GetBracketIndexPairs(baseLine, quoteIndexPairs);
@@ -187,7 +187,7 @@ namespace CRECSharpInterpreter
         {
             bool _is =
                 string.IsNullOrWhiteSpace(text) ||
-                Trim(text).Length == 0;
+                LineNumberUtils.Trim(text).Length == 0;
             return _is;
         }
 
@@ -442,35 +442,6 @@ namespace CRECSharpInterpreter
                 text = text.Remove(commentStartIndex, nextNewlineIndex - commentStartIndex);
                 commentStartIndex = text.IndexOf("//");
             }
-            return text;
-        }
-
-        public static string TrimStart(string text)
-        {
-            text = text.TrimStart();
-            if (text.Length == 0)
-                return text;
-            if (text[0] != LineNumberUtils.SEPARATOR)
-                return text;
-            text = text.Remove(0, LineNumberUtils.SEPARATOR_LENGTH);
-            return TrimStart(text);
-        }
-
-        public static string TrimEnd(string text)
-        {
-            text = text.TrimEnd();
-            if (text.Length < LineNumberUtils.SEPARATOR_LENGTH)
-                return text;
-            if (text[text.Length - LineNumberUtils.SEPARATOR_LENGTH] != LineNumberUtils.SEPARATOR)
-                return text;
-            text = text.Remove(text.Length - LineNumberUtils.SEPARATOR_LENGTH, LineNumberUtils.SEPARATOR_LENGTH);
-            return TrimEnd(text);
-        }
-
-        public static string Trim(string text)
-        {
-            text = TrimStart(text);
-            text = TrimEnd(text);
             return text;
         }
     }

@@ -7,7 +7,7 @@ namespace CRECSharpInterpreter
         public Line(string text, ushort lineNumber)
         {
             Text = text;
-            ReducedText = LineSeparator.Trim(LineNumberUtils.RemoveSeparators(Text));
+            ReducedText = LineNumberUtils.Trim(LineNumberUtils.RemoveSeparators(Text));
             LineNumber = lineNumber;
 
             try

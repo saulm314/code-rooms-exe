@@ -84,5 +84,34 @@ namespace CRECSharpInterpreter
             ushort hexNumber = ushort.Parse(hexNumberStr, NumberStyles.HexNumber);
             return hexNumber;
         }
+
+        public static string TrimStart(string text)
+        {
+            text = text.TrimStart();
+            if (text.Length == 0)
+                return text;
+            if (text[0] != SEPARATOR)
+                return text;
+            text = text.Remove(0, SEPARATOR_LENGTH);
+            return TrimStart(text);
+        }
+
+        public static string TrimEnd(string text)
+        {
+            text = text.TrimEnd();
+            if (text.Length < SEPARATOR_LENGTH)
+                return text;
+            if (text[text.Length - SEPARATOR_LENGTH] != SEPARATOR)
+                return text;
+            text = text.Remove(text.Length - SEPARATOR_LENGTH, SEPARATOR_LENGTH);
+            return TrimEnd(text);
+        }
+
+        public static string Trim(string text)
+        {
+            text = TrimStart(text);
+            text = TrimEnd(text);
+            return text;
+        }
     }
 }
