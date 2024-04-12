@@ -71,7 +71,7 @@ namespace CRECSharpInterpreter
 
         private static AltListLockLock1<string, string> GetAlternatingNonQuoteQuotes(string text)
         {
-            List<Pair<int, int>> quoteIndexPairs = LineSeparator.GetQuoteIndexPairs(text);
+            List<Pair<int, int>> quoteIndexPairs = StatementSeparator.GetQuoteIndexPairs(text);
             if (quoteIndexPairs.Count == 0)
                 return new(text);
             AltListLockLock1<string, string> altNonQuoteQuotes;

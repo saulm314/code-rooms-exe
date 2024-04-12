@@ -45,20 +45,20 @@ namespace CRECSharpInterpreter
 
         // if line number array is empty, then actualLineNumber cannot be determined
         //      and is returned as ushort.MaxValue
-        public static ushort[] GetLineNumbers(string line, out ushort actualLineNumber)
+        public static ushort[] GetLineNumbers(string statement, out ushort actualLineNumber)
         {
             List<ushort> lineNumbers = new();
-            int firstNonWhiteSpaceIndex = LineSeparator.GetFirstNonWhiteSpaceIndexAfterIndex(line, -1);
+            int firstNonWhiteSpaceIndex = StatementSeparator.GetFirstNonWhiteSpaceIndexAfterIndex(statement, -1);
             actualLineNumber = ushort.MaxValue;
             int index = 0;
-            while (index < line.Length)
+            while (index < statement.Length)
             {
-                if (line[index] != SEPARATOR)
+                if (statement[index] != SEPARATOR)
                 {
                     index++;
                     continue;
                 }
-                string lineNumberStr = line[(index + 1)..(index + SEPARATOR_LENGTH)];
+                string lineNumberStr = statement[(index + 1)..(index + SEPARATOR_LENGTH)];
                 ushort lineNumber = GetNumber(lineNumberStr);
                 lineNumbers.Add(lineNumber);
                 if (index < firstNonWhiteSpaceIndex)

@@ -4,9 +4,9 @@ using System;
 
 namespace CRECSharpInterpreter
 {
-    public static class LineSeparator
+    public static class StatementSeparator
     {
-        public static string[] GetLinesAsStrings(string text, ushort startLineNumber, out LineNumberInfo[] lineNumberInfos)
+        public static string[] GetStatementsAsStrings(string text, ushort startLineNumber, out LineNumberInfo[] lineNumberInfos)
         {
             text = RemoveComments(text);
 
@@ -16,21 +16,21 @@ namespace CRECSharpInterpreter
             List<int> semicolonIndexes = GetRelevantSemicolonIndexes(text, quoteIndexPairs, bracketIndexPairs);
             List<int> closeCurlyBraceIndexes = GetRelevantCloseBraceIndexes(text, bracketIndexPairs);
 
-            List<int> lineEndIndexes = CombineListsAndSort(semicolonIndexes, closeCurlyBraceIndexes);
+            List<int> statementEndIndexes = CombineListsAndSort(semicolonIndexes, closeCurlyBraceIndexes);
 
-            string[] lines = SplitTextBetweenIndexesInclusive(text, lineEndIndexes);
+            string[] statements = SplitTextBetweenIndexesInclusive(text, statementEndIndexes);
 
-            GetLineNumbers(lines, startLineNumber, out lineNumberInfos);
+            GetLineNumbers(statements, startLineNumber, out lineNumberInfos);
 
-            return lines;
+            return statements;
         }
 
-        private static void GetLineNumbers(string[] lines, ushort startLineNumber, out LineNumberInfo[] lineNumberInfos)
+        private static void GetLineNumbers(string[] statements, ushort startLineNumber, out LineNumberInfo[] lineNumberInfos)
         {
-            lineNumberInfos = new LineNumberInfo[lines.Length];
-            for (int i = 0; i < lines.Length; i++)
+            lineNumberInfos = new LineNumberInfo[statements.Length];
+            for (int i = 0; i < statements.Length; i++)
             {
-                ushort[] _lineNumbers = LineNumberUtils.GetLineNumbers(lines[i], out ushort actualLineNumber);
+                ushort[] _lineNumbers = LineNumberUtils.GetLineNumbers(statements[i], out ushort actualLineNumber);
                 if (_lineNumbers.Length > 0)
                 {
                     lineNumberInfos[i] = new(_lineNumbers[0], actualLineNumber, _lineNumbers[^1]);
@@ -46,101 +46,101 @@ namespace CRECSharpInterpreter
             }
         }
 
-        public static string GetForInitialiserAsString(string baseLine)
+        public static string GetForInitialiserAsString(string baseStatement)
         {
-            List<Pair<int, int>> quoteIndexPairs = GetQuoteIndexPairs(baseLine);
-            List<Pair<int, int>> bracketIndexPairs = GetBracketIndexPairs(baseLine, quoteIndexPairs);
-            int semicolonIndex = baseLine.IndexOf(';');
-            string initialiser = baseLine[(bracketIndexPairs[0].First + 1)..(semicolonIndex + 1)];
+            List<Pair<int, int>> quoteIndexPairs = GetQuoteIndexPairs(baseStatement);
+            List<Pair<int, int>> bracketIndexPairs = GetBracketIndexPairs(baseStatement, quoteIndexPairs);
+            int semicolonIndex = baseStatement.IndexOf(';');
+            string initialiser = baseStatement[(bracketIndexPairs[0].First + 1)..(semicolonIndex + 1)];
             return initialiser;
         }
 
-        public static string GetForIteratorAsString(string baseLine)
+        public static string GetForIteratorAsString(string baseStatement)
         {
-            List<Pair<int, int>> quoteIndexPairs = GetQuoteIndexPairs(baseLine);
-            List<Pair<int, int>> bracketIndexPairs = GetBracketIndexPairs(baseLine, quoteIndexPairs);
-            int semicolonIndex = baseLine.IndexOf(';');
-            int secondSemicolonIndex = baseLine.IndexOf(';', semicolonIndex + 1);
-            string iterator = baseLine[(secondSemicolonIndex + 1)..bracketIndexPairs[0].Second] + ";";
+            List<Pair<int, int>> quoteIndexPairs = GetQuoteIndexPairs(baseStatement);
+            List<Pair<int, int>> bracketIndexPairs = GetBracketIndexPairs(baseStatement, quoteIndexPairs);
+            int semicolonIndex = baseStatement.IndexOf(';');
+            int secondSemicolonIndex = baseStatement.IndexOf(';', semicolonIndex + 1);
+            string iterator = baseStatement[(secondSemicolonIndex + 1)..bracketIndexPairs[0].Second] + ";";
             return iterator;
         }
 
-        public static string[] GetSubLinesAsStringsIfSingleLine(string baseLine, out string header, ushort startLineNumber,
-                                                                out LineNumberInfo[] lineNumberInfos)
+        public static string[] GetSubStatementsAsStringsIfSingleStatement(string baseStatement, out string header, ushort startLineNumber,
+                                                                            out LineNumberInfo[] lineNumberInfos)
         {
-            List<Pair<int, int>> quoteIndexPairs = GetQuoteIndexPairs(baseLine);
-            List<Pair<int, int>> bracketIndexPairs = GetBracketIndexPairs(baseLine, quoteIndexPairs);
-            header = baseLine[..(bracketIndexPairs[0].Second + 1)];
-            string subText = baseLine[(bracketIndexPairs[0].Second + 1)..];
-            string[] subLines = GetLinesAsStrings(subText, startLineNumber, out lineNumberInfos);
-            return subLines;
+            List<Pair<int, int>> quoteIndexPairs = GetQuoteIndexPairs(baseStatement);
+            List<Pair<int, int>> bracketIndexPairs = GetBracketIndexPairs(baseStatement, quoteIndexPairs);
+            header = baseStatement[..(bracketIndexPairs[0].Second + 1)];
+            string subText = baseStatement[(bracketIndexPairs[0].Second + 1)..];
+            string[] subStatements = GetStatementsAsStrings(subText, startLineNumber, out lineNumberInfos);
+            return subStatements;
         }
 
-        public static string[] GetSubLinesAsStringsElseSingleLine(string baseLine, out string header, ushort startLineNumber,
-                                                                    out LineNumberInfo[] lineNumberInfos)
+        public static string[] GetSubStatementsAsStringsElseSingleStatement(string baseStatement, out string header, ushort startLineNumber,
+                                                                            out LineNumberInfo[] lineNumberInfos)
         {
             header = "else";
-            int indexAfterElse = baseLine.IndexOf("else") + 4;
-            string subText = baseLine[indexAfterElse..];
-            string[] subLines = GetLinesAsStrings(subText, startLineNumber, out lineNumberInfos);
-            return subLines;
+            int indexAfterElse = baseStatement.IndexOf("else") + 4;
+            string subText = baseStatement[indexAfterElse..];
+            string[] subStatements = GetStatementsAsStrings(subText, startLineNumber, out lineNumberInfos);
+            return subStatements;
         }
 
-        public static string[] GetSubLinesAsStringsIfMultiLine(string baseLine, out string header, ushort startLineNumber,
-                                                                out LineNumberInfo[] lineNumberInfos)
+        public static string[] GetSubStatementsAsStringsIfMultiStatement(string baseStatement, out string header, ushort startLineNumber,
+                                                                            out LineNumberInfo[] lineNumberInfos)
         {
-            baseLine = LineNumberUtils.TrimEnd(baseLine);
-            List<Pair<int, int>> quoteIndexPairs = GetQuoteIndexPairs(baseLine);
-            List<Pair<int, int>> bracketIndexPairs = GetBracketIndexPairs(baseLine, quoteIndexPairs);
+            baseStatement = LineNumberUtils.TrimEnd(baseStatement);
+            List<Pair<int, int>> quoteIndexPairs = GetQuoteIndexPairs(baseStatement);
+            List<Pair<int, int>> bracketIndexPairs = GetBracketIndexPairs(baseStatement, quoteIndexPairs);
             if (bracketIndexPairs.Count < 2)
                 throw new InterpreterException("A bracket pair and curly brace pair expected");
-            header = baseLine[..(bracketIndexPairs[0].Second + 1)];
-            string subText = baseLine[(bracketIndexPairs[1].First + 1)..(baseLine.Length - 1)];
-            string[] subLines = GetLinesAsStrings(subText, startLineNumber, out lineNumberInfos);
-            return subLines;
+            header = baseStatement[..(bracketIndexPairs[0].Second + 1)];
+            string subText = baseStatement[(bracketIndexPairs[1].First + 1)..(baseStatement.Length - 1)];
+            string[] subStatements = GetStatementsAsStrings(subText, startLineNumber, out lineNumberInfos);
+            return subStatements;
         }
 
-        public static string[] GetSubLinesAsStringsElseMultiLine(string baseLine, out string header, ushort startLineNumber,
-                                                                    out LineNumberInfo[] lineNumberInfos)
+        public static string[] GetSubStatementsAsStringsElseMultiStatement(string baseStatement, out string header, ushort startLineNumber,
+                                                                            out LineNumberInfo[] lineNumberInfos)
         {
-            baseLine = LineNumberUtils.TrimEnd(baseLine);
+            baseStatement = LineNumberUtils.TrimEnd(baseStatement);
             header = "else";
-            List<Pair<int, int>> quoteIndexPairs = GetQuoteIndexPairs(baseLine);
-            List<Pair<int, int>> bracketIndexPairs = GetBracketIndexPairs(baseLine, quoteIndexPairs);
+            List<Pair<int, int>> quoteIndexPairs = GetQuoteIndexPairs(baseStatement);
+            List<Pair<int, int>> bracketIndexPairs = GetBracketIndexPairs(baseStatement, quoteIndexPairs);
             if (bracketIndexPairs.Count < 1)
                 throw new InterpreterException("A curly brace pair expected");
-            string subText = baseLine[(bracketIndexPairs[0].First + 1)..(baseLine.Length - 1)];
-            string[] subLines = GetLinesAsStrings(subText, startLineNumber, out lineNumberInfos);
-            return subLines;
+            string subText = baseStatement[(bracketIndexPairs[0].First + 1)..(baseStatement.Length - 1)];
+            string[] subStatements = GetStatementsAsStrings(subText, startLineNumber, out lineNumberInfos);
+            return subStatements;
         }
 
-        public static string[] GetSubLinesAsStringsIfElseIf(string baseLine, out string header, ushort startLineNumber,
-                                                            out LineNumberInfo[] lineNumberInfos)
+        public static string[] GetSubStatementsAsStringsIfElseIf(string baseStatement, out string header, ushort startLineNumber,
+                                                                    out LineNumberInfo[] lineNumberInfos)
         {
-            int elseIndex = baseLine.IndexOf("else");
-            string baseLineBeforeElse = baseLine[..elseIndex];
-            List<Pair<int, int>> quoteIndexPairs = GetQuoteIndexPairs(baseLineBeforeElse);
-            List<Pair<int, int>> bracketIndexPairs = GetBracketIndexPairs(baseLineBeforeElse, quoteIndexPairs);
-            int firstNonWhiteSpaceIndexAfterCloseBracket = GetFirstNonWhiteSpaceIndexAfterIndex(baseLineBeforeElse, bracketIndexPairs[0].Second);
+            int elseIndex = baseStatement.IndexOf("else");
+            string baseStatementBeforeElse = baseStatement[..elseIndex];
+            List<Pair<int, int>> quoteIndexPairs = GetQuoteIndexPairs(baseStatementBeforeElse);
+            List<Pair<int, int>> bracketIndexPairs = GetBracketIndexPairs(baseStatementBeforeElse, quoteIndexPairs);
+            int firstNonWhiteSpaceIndexAfterCloseBracket = GetFirstNonWhiteSpaceIndexAfterIndex(baseStatementBeforeElse, bracketIndexPairs[0].Second);
             if (firstNonWhiteSpaceIndexAfterCloseBracket == -1)
                 throw new InterpreterException("Expecting statement after condition");
-            if (baseLineBeforeElse[firstNonWhiteSpaceIndexAfterCloseBracket] == '{')
-                return GetSubLinesAsStringsIfMultiLine(baseLineBeforeElse, out header, startLineNumber, out lineNumberInfos);
-            return GetSubLinesAsStringsIfSingleLine(baseLineBeforeElse, out header, startLineNumber, out lineNumberInfos);
+            if (baseStatementBeforeElse[firstNonWhiteSpaceIndexAfterCloseBracket] == '{')
+                return GetSubStatementsAsStringsIfMultiStatement(baseStatementBeforeElse, out header, startLineNumber, out lineNumberInfos);
+            return GetSubStatementsAsStringsIfSingleStatement(baseStatementBeforeElse, out header, startLineNumber, out lineNumberInfos);
         }
 
-        public static string[] GetSubLinesAsStringsIfElseElse(string baseLine, out string header, ushort startLineNumber,
-                                                                out LineNumberInfo[] lineNumberInfos)
+        public static string[] GetSubStatementsAsStringsIfElseElse(string baseStatement, out string header, ushort startLineNumber,
+                                                                    out LineNumberInfo[] lineNumberInfos)
         {
-            int elseIndex = baseLine.IndexOf("else");
-            string baseLineFromElse = baseLine[elseIndex..];
+            int elseIndex = baseStatement.IndexOf("else");
+            string baseStatementFromElse = baseStatement[elseIndex..];
             int lastElseIndex = 3;
-            int firstNonWhiteSpaceIndexAfterElse = GetFirstNonWhiteSpaceIndexAfterIndex(baseLineFromElse, lastElseIndex);
+            int firstNonWhiteSpaceIndexAfterElse = GetFirstNonWhiteSpaceIndexAfterIndex(baseStatementFromElse, lastElseIndex);
             if (firstNonWhiteSpaceIndexAfterElse == -1)
                 throw new InterpreterException("Expecting statement after else keyword");
-            if (baseLineFromElse[firstNonWhiteSpaceIndexAfterElse] == '{')
-                return GetSubLinesAsStringsElseMultiLine(baseLineFromElse, out header, startLineNumber, out lineNumberInfos);
-            return GetSubLinesAsStringsElseSingleLine(baseLineFromElse, out header, startLineNumber, out lineNumberInfos);
+            if (baseStatementFromElse[firstNonWhiteSpaceIndexAfterElse] == '{')
+                return GetSubStatementsAsStringsElseMultiStatement(baseStatementFromElse, out header, startLineNumber, out lineNumberInfos);
+            return GetSubStatementsAsStringsElseSingleStatement(baseStatementFromElse, out header, startLineNumber, out lineNumberInfos);
         }
 
         private static string RemoveComments(string text)
@@ -252,11 +252,11 @@ namespace CRECSharpInterpreter
             return pair.First < index && index < pair.Second;
         }
 
-        // relevant means close curly braces '}' that denote a line end
-        // for example:     if (something) { something; }   the '}' here denotes a line end
-        // example:     for (int i = 0; i < length; i++) { something; }     the '}' here denotes a line end
-        // example:     if (something) { something; } else { something; }       only the second '}' denotes a line end
-        // example:     int[] array = new int[] { 5, 3 };       the '}' does *not* denote a line end
+        // relevant means close curly braces '}' that denote a statement end
+        // for example:     if (something) { something; }   the '}' here denotes a statement end
+        // example:     for (int i = 0; i < length; i++) { something; }     the '}' here denotes a statement end
+        // example:     if (something) { something; } else { something; }       only the second '}' denotes a statement end
+        // example:     int[] array = new int[] { 5, 3 };       the '}' does *not* denote a statement end
         private static List<int> GetRelevantCloseBraceIndexes(string text, List<Pair<int, int>> bracketIndexPairs)
         {
             List<int> closeCurlyBraceIndexes = new();

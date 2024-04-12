@@ -21,9 +21,9 @@ namespace CRECSharpInterpreter
             switch (_Type)
             {
                 case Type.Invalid:
-                    // may be invalid if a variable hasn't been declared yet because it is part of a sub-line
-                    // in that case, the sub-line will create a copy of the keystring later
-                    // finally, if the keystring is still invalid, then the VerifyKeyStrings() method in the Line class
+                    // may be invalid if a variable hasn't been declared yet because it is part of a sub-statement
+                    // in that case, the sub-statement will create a copy of the keystring later
+                    // finally, if the keystring is still invalid, then the VerifyKeyStrings() method in the Statement class
                     // will throw an exception
                     break;
                 case Type.Type:

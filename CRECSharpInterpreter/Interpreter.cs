@@ -12,7 +12,7 @@ namespace CRECSharpInterpreter
             Console.WriteLine(SEPARATOR + "\n");
 
             chunk = new(text, Mode.Runtime);
-            while (chunk.RunNextLine())
+            while (chunk.RunNextStatement())
             {
                 Console.ReadLine();
             }
@@ -22,20 +22,5 @@ namespace CRECSharpInterpreter
         public Chunk chunk;
 
         public const string SEPARATOR = "____________________________________________";
-
-        /*
-        Possible lines:
-            * int number;               declaration
-            * int number = 0;           declaration + initialisation
-            * number = 0;               initialisation
-            * number = 0;               write
-            * number = otherNumber;     read
-        
-        Supported data types:
-            * int
-            * bool
-            * char
-            * double
-        */
     }
 }

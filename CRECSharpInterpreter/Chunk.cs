@@ -9,37 +9,37 @@ namespace CRECSharpInterpreter
         {
             Text = LineNumberUtils.AddNewlineSeparators(text);
 
-            linesStr = LineSeparator.GetLinesAsStrings(Text, 0, out LineNumberInfo[] lineNumberInfos);
-            Lines = new Line[linesStr.Length];
+            statementsStr = StatementSeparator.GetStatementsAsStrings(Text, 0, out LineNumberInfo[] lineNumberInfos);
+            Statements = new Statement[statementsStr.Length];
             LineNumberInfos = lineNumberInfos;
 
             _ = new Memory(mode);
 
             if (Memory.Instance!._Mode == Mode.Compilation)
-                for (int i = 0; i < Lines.Length; i++)
-                    Lines[i] = new(linesStr[i], LineNumberInfos[i]);
+                for (int i = 0; i < Statements.Length; i++)
+                    Statements[i] = new(statementsStr[i], LineNumberInfos[i]);
         }
 
         public string Text { get; init; }
 
-        public Line[] Lines { get; init; }
+        public Statement[] Statements { get; init; }
         public LineNumberInfo[] LineNumberInfos { get; init; }
 
-        private int linesDone = 0;
-        public bool RunNextLine()
+        private int statementsDone = 0;
+        public bool RunNextStatement()
         {
-            if (linesDone >= linesStr.Length)
+            if (statementsDone >= statementsStr.Length)
                 return false;
-            if (Lines[linesDone] == null)
-                Lines[linesDone] = new(linesStr[linesDone], LineNumberInfos[linesDone]);
-            Lines[linesDone].Execute();
-            if (!Lines[linesDone].Executed)
+            if (Statements[statementsDone] == null)
+                Statements[statementsDone] = new(statementsStr[statementsDone], LineNumberInfos[statementsDone]);
+            Statements[statementsDone].Execute();
+            if (!Statements[statementsDone].Executed)
                 return true;
-            linesDone++;
+            statementsDone++;
             return true;
         }
 
-        private string[] linesStr;
+        private string[] statementsStr;
 
         public class ChunkException : InterpreterException
         {
