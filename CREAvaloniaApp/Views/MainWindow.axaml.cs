@@ -12,13 +12,10 @@ public partial class MainWindow : Window
         SetBackground();
     }
 
-    private const byte BG_A = byte.MaxValue;
-    private const byte BG_R = 42;
-    private const byte BG_G = 42;
-    private const byte BG_B = 42;
+    public const byte BG = 42;
     private void SetBackground()
     {
-        Color backgroundColor = new(BG_A, BG_R, BG_G, BG_B);
+        Color backgroundColor = new(byte.MaxValue, BG, BG, BG);
         SolidColorBrush brush = new(backgroundColor);
         Background = brush;
     }
