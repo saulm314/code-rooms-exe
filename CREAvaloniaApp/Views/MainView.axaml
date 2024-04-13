@@ -16,7 +16,7 @@
 		ColumnDefinitions="130, 1230, 560"
 		>
 			<Grid Grid.Row="0" Grid.Column="0"
-				ShowGridLines="True"
+				ShowGridLines="False"
 				RowDefinitions=
 					"
 						20, 25,
@@ -36,6 +36,11 @@
 						9, 25
 					"
 					>
+			</Grid>
+			<Grid Grid.Row="0" Grid.Column="1"
+				ShowGridLines="True"
+				RowDefinitions="760, 320"
+				>
 			</Grid>
 		</Grid>
 </UserControl>
