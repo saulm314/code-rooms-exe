@@ -13,12 +13,12 @@
 	</Design.DataContext>
 	<!-- FreeCode -->
 	<Grid
-		ShowGridLines="True"
+		ShowGridLines="False"
 		ColumnDefinitions="130, 1230, 560"
 		>
 			<!-- StackHeader, StackUpButton, StackComponents, StackEmptySpace, StackDownButton -->
 			<Grid
-				ShowGridLines="True"
+				ShowGridLines="False"
 				RowDefinitions=
 					"
 						20, 25,
@@ -41,27 +41,27 @@
 			</Grid>
 			<!-- TextEditor, [Other] -->
 			<Grid Grid.Column="1"
-				ShowGridLines="True"
+				ShowGridLines="False"
 				RowDefinitions="760, 320"
 				>
 					<!-- Heap, IdeControls, Output -->
 					<Grid Grid.Row="1"
-						ShowGridLines="True"
+						ShowGridLines="False"
 						ColumnDefinitions="600, 130, 500"
 						>
 							<!-- HeapHeader, HeapCore -->
 							<Grid
-								ShowGridLines="True"
+								ShowGridLines="False"
 								RowDefinitions="20, 300"
 								>
 									<!-- HeapLeftButton, HeapGrid, HeapRightButton -->
 									<Grid Grid.Row="1"
-										ShowGridLines="True"
+										ShowGridLines="False"
 										ColumnDefinitions="25, 550, 25"
 										>
 											<!-- HeapGrid -->
 											<Grid Grid.Column="1"
-												ShowGridLines="True"
+												ShowGridLines="False"
 												ColumnDefinitions=
 												"
 													2,
@@ -91,12 +91,12 @@
 							</Grid>
 							<!-- CompileButton, EditButton, RunButton, ControlButtons, NextButton -->
 							<Grid Grid.Column="1"
-								ShowGridLines="True"
+								ShowGridLines="False"
 								RowDefinitions="64, 64, 64, 64, 64"
 								>
 									<!-- RunPreviousButton, RunNextButton -->
 									<Grid Grid.Row="3"
-										ShowGridLines="True"
+										ShowGridLines="False"
 										ColumnDefinitions="65, 65"
 										>
 									</Grid>
@@ -105,12 +105,12 @@
 			</Grid>
 			<!-- Description, Hint1, Hint2, Hint3, EndButtons -->
 			<Grid Grid.Column="2"
-				ShowGridLines="True"
+				ShowGridLines="False"
 				RowDefinitions="760, 80, 80, 80, 80"
 				>
 					<!-- QuitButton, FinishButton -->
 					<Grid Grid.Row="4"
-						ShowGridLines="True"
+						ShowGridLines="False"
 						ColumnDefinitions="280, 280"
 						>
 					</Grid>
