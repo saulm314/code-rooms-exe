@@ -11,6 +11,25 @@
          to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
     <vm:MainViewModel />
   </Design.DataContext>
-
-  <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+	<StackPanel>
+		<Border Margin="5"
+		  CornerRadius="10"
+		  Background="LightBlue">
+			<TextBlock Margin="5"
+			   FontSize="24"
+			   HorizontalAlignment="Center"
+			   Text="Temperature Converter"
+				FontFamily="Consolas">
+			</TextBlock>
+		</Border>
+		<Grid ShowGridLines="False"  Margin="5"
+			  ColumnDefinitions="120, 100"
+			  RowDefinitions="Auto, Auto, Auto">
+			<Label Grid.Row="0" Grid.Column="0" Margin="10">Celsius</Label>
+			<TextBox Grid.Row="0" Grid.Column="1" Margin="0 5" Text="0" Name="celsius" PropertyChanged="CelsiusUpdated"/>
+			<Label Grid.Row="1" Grid.Column="0" Margin="10">Fahrenheit</Label>
+			<TextBox Grid.Row="1"  Grid.Column="1" Margin="0 5" Text="0" Name="fahrenheit" IsReadOnly="True"/>
+			<Button Grid.Row="2" Grid.Column="1" Margin="0 5" Click="ButtonClicked">Calculate</Button>
+		</Grid>
+	</StackPanel>
 </UserControl>
