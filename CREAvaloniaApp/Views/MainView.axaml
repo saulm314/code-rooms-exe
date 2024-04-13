@@ -42,9 +42,14 @@
 				RowDefinitions="760, 320"
 				>
 					<Grid Grid.Row="1" Grid.Column="0"
-						ShowGridLines="True"
+						ShowGridLines="False"
 						ColumnDefinitions="600, 130, 500"
 						>
+							<Grid Grid.Row="0" Grid.Column="1"
+								ShowGridLines="True"
+								RowDefinitions="64, 64, 64, 64, 64"
+								>
+							</Grid>
 					</Grid>
 			</Grid>
 		</Grid>
