@@ -51,14 +51,42 @@
 						>
 							<!-- HeapHeader, HeapCore -->
 							<Grid Grid.Row="0" Grid.Column="0"
-								ShowGridLines="True"
+								ShowGridLines="False"
 								RowDefinitions="20, 300"
 								>
 									<!-- HeapLeftButton, HeapGrid, HeapRightButton -->
 									<Grid Grid.Row="1" Grid.Column="0"
-										ShowGridLines="True"
+										ShowGridLines="False"
 										ColumnDefinitions="25, 550, 25"
 										>
+											<!-- HeapGrid -->
+											<Grid Grid.Row="1" Grid.Column="0"
+												ShowGridLines="True"
+												ColumnDefinitions=
+												"
+													2,
+													50, 5,
+													50, 5,
+													50, 5,
+													50, 5,
+													50, 5,
+													50, 5,
+													50, 5,
+													50, 5,
+													50, 5,
+													50,
+													3
+												"
+												RowDefinitions=
+												"
+													50, 10,
+													50, 10,
+													50, 10,
+													50, 10,
+													50, 10
+												"
+												>
+											</Grid>
 									</Grid>
 							</Grid>
 							<!-- CompileButton, EditButton, RunButton, ControlButtons, NextButton -->
