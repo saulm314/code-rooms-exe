@@ -11,10 +11,12 @@
 			 to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
 		<vm:MainViewModel />
 	</Design.DataContext>
+	<!-- FreeCode -->
 	<Grid
 		ShowGridLines="True"
 		ColumnDefinitions="130, 1230, 560"
 		>
+			<!-- Stack -->
 			<Grid Grid.Row="0" Grid.Column="0"
 				ShowGridLines="False"
 				RowDefinitions=
@@ -37,20 +39,24 @@
 					"
 					>
 			</Grid>
+			<!-- TextEditor, [Other] -->
 			<Grid Grid.Row="0" Grid.Column="1"
 				ShowGridLines="False"
 				RowDefinitions="760, 320"
 				>
+					<!-- Heap, IdeControls, Output -->
 					<Grid Grid.Row="1" Grid.Column="0"
 						ShowGridLines="False"
 						ColumnDefinitions="600, 130, 500"
 						>
+							<!-- CompileButton, EditButton, RunButton, ControlButtons, NextButton -->
 							<Grid Grid.Row="0" Grid.Column="1"
 								ShowGridLines="False"
 								RowDefinitions="64, 64, 64, 64, 64"
 								>
+									<!-- RunPreviousButton, RunNextButton -->
 									<Grid Grid.Row="3" Grid.Column="0"
-										ShowGridLines="True"
+										ShowGridLines="False"
 										ColumnDefinitions="65, 65"
 										>
 									</Grid>
