@@ -13,7 +13,7 @@
 	</Design.DataContext>
 	<!-- FreeCode -->
 	<Grid
-		ShowGridLines="True"
+		ShowGridLines="False"
 		ColumnDefinitions="130, 1230, 560"
 		>
 			<!-- StackHeader, StackUpButton, StackComponents, StackEmptySpace, StackDownButton -->
@@ -105,9 +105,15 @@
 			</Grid>
 			<!-- Description, Hint1, Hint2, Hint3, EndButtons -->
 			<Grid Grid.Row="0" Grid.Column="2"
-				ShowGridLines="True"
+				ShowGridLines="False"
 				RowDefinitions="760, 80, 80, 80, 80"
 				>
+					<!-- QuitButton, FinishButton -->
+					<Grid Grid.Row="4" Grid.Column="0"
+						ShowGridLines="False"
+						ColumnDefinitions="280, 280"
+						>
+					</Grid>
 			</Grid>
 		</Grid>
 </UserControl>
