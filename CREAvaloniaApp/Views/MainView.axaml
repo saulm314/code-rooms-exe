@@ -16,7 +16,7 @@
 		ShowGridLines="True"
 		ColumnDefinitions="130, 1230, 560"
 		>
-			<!-- Stack -->
+			<!-- StackHeader, StackUpButton, StackComponents, StackEmptySpace, StackDownButton -->
 			<Grid Grid.Row="0" Grid.Column="0"
 				ShowGridLines="False"
 				RowDefinitions=
@@ -49,6 +49,12 @@
 						ShowGridLines="False"
 						ColumnDefinitions="600, 130, 500"
 						>
+							<!-- HeapHeader, HeapCore -->
+							<Grid Grid.Row="0" Grid.Column="0"
+								ShowGridLines="True"
+								RowDefinitions="20, 300"
+								>
+							</Grid>
 							<!-- CompileButton, EditButton, RunButton, ControlButtons, NextButton -->
 							<Grid Grid.Row="0" Grid.Column="1"
 								ShowGridLines="False"
