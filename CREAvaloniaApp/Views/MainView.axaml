@@ -13,12 +13,12 @@
 	</Design.DataContext>
 	<!-- FreeCode -->
 	<Grid
-		ShowGridLines="False"
+		ShowGridLines="True"
 		ColumnDefinitions="130, 1230, 560"
 		>
 			<!-- StackHeader, StackUpButton, StackComponents, StackEmptySpace, StackDownButton -->
-			<Grid Grid.Row="0" Grid.Column="0"
-				ShowGridLines="False"
+			<Grid
+				ShowGridLines="True"
 				RowDefinitions=
 					"
 						20, 25,
@@ -40,28 +40,28 @@
 					>
 			</Grid>
 			<!-- TextEditor, [Other] -->
-			<Grid Grid.Row="0" Grid.Column="1"
-				ShowGridLines="False"
+			<Grid Grid.Column="1"
+				ShowGridLines="True"
 				RowDefinitions="760, 320"
 				>
 					<!-- Heap, IdeControls, Output -->
-					<Grid Grid.Row="1" Grid.Column="0"
-						ShowGridLines="False"
+					<Grid Grid.Row="1"
+						ShowGridLines="True"
 						ColumnDefinitions="600, 130, 500"
 						>
 							<!-- HeapHeader, HeapCore -->
-							<Grid Grid.Row="0" Grid.Column="0"
-								ShowGridLines="False"
+							<Grid
+								ShowGridLines="True"
 								RowDefinitions="20, 300"
 								>
 									<!-- HeapLeftButton, HeapGrid, HeapRightButton -->
-									<Grid Grid.Row="1" Grid.Column="0"
-										ShowGridLines="False"
+									<Grid Grid.Row="1"
+										ShowGridLines="True"
 										ColumnDefinitions="25, 550, 25"
 										>
 											<!-- HeapGrid -->
-											<Grid Grid.Row="1" Grid.Column="0"
-												ShowGridLines="False"
+											<Grid Grid.Column="1"
+												ShowGridLines="True"
 												ColumnDefinitions=
 												"
 													2,
@@ -90,13 +90,13 @@
 									</Grid>
 							</Grid>
 							<!-- CompileButton, EditButton, RunButton, ControlButtons, NextButton -->
-							<Grid Grid.Row="0" Grid.Column="1"
-								ShowGridLines="False"
+							<Grid Grid.Column="1"
+								ShowGridLines="True"
 								RowDefinitions="64, 64, 64, 64, 64"
 								>
 									<!-- RunPreviousButton, RunNextButton -->
-									<Grid Grid.Row="3" Grid.Column="0"
-										ShowGridLines="False"
+									<Grid Grid.Row="3"
+										ShowGridLines="True"
 										ColumnDefinitions="65, 65"
 										>
 									</Grid>
@@ -104,13 +104,13 @@
 					</Grid>
 			</Grid>
 			<!-- Description, Hint1, Hint2, Hint3, EndButtons -->
-			<Grid Grid.Row="0" Grid.Column="2"
-				ShowGridLines="False"
+			<Grid Grid.Column="2"
+				ShowGridLines="True"
 				RowDefinitions="760, 80, 80, 80, 80"
 				>
 					<!-- QuitButton, FinishButton -->
-					<Grid Grid.Row="4" Grid.Column="0"
-						ShowGridLines="False"
+					<Grid Grid.Row="4"
+						ShowGridLines="True"
 						ColumnDefinitions="280, 280"
 						>
 					</Grid>
