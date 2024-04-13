@@ -54,6 +54,12 @@
 								ShowGridLines="True"
 								RowDefinitions="20, 300"
 								>
+									<!-- HeapLeftButton, HeapGrid, HeapRightButton -->
+									<Grid Grid.Row="1" Grid.Column="0"
+										ShowGridLines="True"
+										ColumnDefinitions="25, 550, 25"
+										>
+									</Grid>
 							</Grid>
 							<!-- CompileButton, EditButton, RunButton, ControlButtons, NextButton -->
 							<Grid Grid.Row="0" Grid.Column="1"
