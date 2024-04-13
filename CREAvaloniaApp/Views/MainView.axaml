@@ -61,7 +61,7 @@
 										>
 											<!-- HeapGrid -->
 											<Grid Grid.Row="1" Grid.Column="0"
-												ShowGridLines="True"
+												ShowGridLines="False"
 												ColumnDefinitions=
 												"
 													2,
@@ -102,6 +102,12 @@
 									</Grid>
 							</Grid>
 					</Grid>
+			</Grid>
+			<!-- Description, Hint1, Hint2, Hint3, EndButtons -->
+			<Grid Grid.Row="0" Grid.Column="2"
+				ShowGridLines="True"
+				RowDefinitions="760, 80, 80, 80, 80"
+				>
 			</Grid>
 		</Grid>
 </UserControl>
