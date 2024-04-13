@@ -38,9 +38,14 @@
 					>
 			</Grid>
 			<Grid Grid.Row="0" Grid.Column="1"
-				ShowGridLines="True"
+				ShowGridLines="False"
 				RowDefinitions="760, 320"
 				>
+					<Grid Grid.Row="1" Grid.Column="0"
+						ShowGridLines="True"
+						ColumnDefinitions="600, 130, 500"
+						>
+					</Grid>
 			</Grid>
 		</Grid>
 </UserControl>
