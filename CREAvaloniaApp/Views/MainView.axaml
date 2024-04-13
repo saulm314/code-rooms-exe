@@ -11,4 +11,10 @@
 			 to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
 		<vm:MainViewModel />
 	</Design.DataContext>
+	<Grid
+		ShowGridLines="True"
+		ColumnDefinitions="130, 1230, 560"
+		>
+
+	</Grid>
 </UserControl>
