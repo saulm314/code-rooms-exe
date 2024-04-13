@@ -1,6 +1,6 @@
 ﻿using ReactiveUI;
 
-namespace CodeRoomsExe.ViewModels;
+namespace CREAvaloniaApp.ViewModels;
 
 public class ViewModelBase : ReactiveObject
 {

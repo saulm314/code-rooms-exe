@@ -3,7 +3,7 @@
 using Avalonia;
 using Avalonia.ReactiveUI;
 
-namespace CodeRoomsExe.Desktop;
+namespace CREAvaloniaApp.Desktop;
 
 class Program
 {

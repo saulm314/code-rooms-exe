@@ -2,10 +2,10 @@
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 
-using CodeRoomsExe.ViewModels;
-using CodeRoomsExe.Views;
+using CREAvaloniaApp.ViewModels;
+using CREAvaloniaApp.Views;
 
-namespace CodeRoomsExe;
+namespace CREAvaloniaApp;
 
 public partial class App : Application
 {

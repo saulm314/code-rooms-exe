@@ -1,4 +1,4 @@
-﻿namespace CodeRoomsExe.ViewModels;
+﻿namespace CREAvaloniaApp.ViewModels;
 
 public class MainViewModel : ViewModelBase
 {

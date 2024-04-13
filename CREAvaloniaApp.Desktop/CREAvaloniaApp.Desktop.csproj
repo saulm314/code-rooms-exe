@@ -14,6 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CodeRoomsExe\CodeRoomsExe.csproj" />
+    <ProjectReference Include="..\CREAvaloniaApp\CREAvaloniaApp.csproj" />
   </ItemGroup>
 </Project>
