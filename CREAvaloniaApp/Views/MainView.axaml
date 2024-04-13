@@ -85,6 +85,7 @@
 													50, 10,
 													50, 10
 												"
+												Name="heapGrid"
 												>
 											</Grid>
 									</Grid>
