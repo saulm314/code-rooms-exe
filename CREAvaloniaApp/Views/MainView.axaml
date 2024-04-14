@@ -51,6 +51,7 @@
 				Name="textEditorTextBox"
 				AcceptsReturn="True"
 				AcceptsTab="True"
+				PropertyChanged="OnTextChange"
 				/>
 		</Grid>
 	</StackPanel>
