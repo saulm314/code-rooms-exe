@@ -50,6 +50,8 @@
 				Height="{Binding TextEditorHeight}"
 				Width="{Binding TextEditorWidth}"
 				Name="textEditorTextBox"
+				AcceptsReturn="True"
+				AcceptsTab="True"
 				>
 			</TextBox>
 		</Grid>
