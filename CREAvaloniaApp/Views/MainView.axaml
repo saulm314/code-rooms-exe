@@ -23,11 +23,11 @@
 				FontWeight="UltraBold"
 				TextAlignment="Center"
 				Name="stackHeaderTextBlock"
-				Height="20"
+				Height="{Binding StackHeaderTextHeight}"
+				Width="{Binding StackWidth}"
 				>
 			</TextBlock>
-			<Panel Height="10" Width="130" Name="stackHeaderPanel"/>
-			<ScrollViewer Name="stackScrollViewer"/>
+			<Panel Height="{Binding StackHeaderPanelHeight}" Width="{Binding StackWidth}" Name="stackHeaderPanel"/>
 		</StackPanel>
 	</StackPanel>
 </UserControl>

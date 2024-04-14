@@ -8,10 +8,9 @@ public partial class MainWindow : Window
 {
     public MainWindow()
     {
-        WindowSize = ClientSize;
-        InitializeComponent();
-        WindowState = WindowState.FullScreen;
+        ConfigureWindow();
         SetBackground();
+        InitializeComponent();
     }
 
     public const byte BG = 42;
@@ -23,4 +22,13 @@ public partial class MainWindow : Window
     }
 
     public static Size WindowSize { get; private set; }
+
+    private void ConfigureWindow()
+    {
+        WindowState = WindowState.FullScreen;
+        double scaling = Screens.Primary!.Scaling;
+        double adjustedWidth = Screens.Primary.Bounds.Width / scaling;
+        double adjustedHeight = Screens.Primary.Bounds.Height / scaling;
+        WindowSize = new(adjustedWidth, adjustedHeight);
+    }
 }
