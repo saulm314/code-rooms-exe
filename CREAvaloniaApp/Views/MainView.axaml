@@ -14,7 +14,7 @@
 	<!-- Free code -->
 	<StackPanel Orientation="Horizontal" Height="{Binding WindowHeight}" Width="{Binding WindowWidth}">
 		<!-- Stack -->
-		<ScrollViewer Height="{Binding WindowHeight}" Width="{Binding StackWidth}">
+		<ScrollViewer Height="{Binding StackHeight}" Width="{Binding StackWidth}">
 			<StackPanel Orientation="Vertical" Width="{Binding StackWidth}" Name="stackStackPanel">
 				<TextBlock
 					Text="Stack"
@@ -24,11 +24,11 @@
 					FontWeight="UltraBold"
 					TextAlignment="Center"
 					Height="{Binding StackHeaderTextHeight}"
-					Width="{Binding StackWidth}"
+					Width="{Binding StackHeaderTextWidth}"
 					Name="stackHeaderTextBlock"
 					>
 				</TextBlock>
-				<Panel Height="{Binding StackHeaderPanelHeight}" Width="{Binding StackWidth}"/>
+				<Panel Height="{Binding StackHeaderPanelHeight}" Width="{Binding StackHeaderPanelWidth}"/>
 			</StackPanel>
 		</ScrollViewer>
 	</StackPanel>

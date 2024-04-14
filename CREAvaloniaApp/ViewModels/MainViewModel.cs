@@ -20,38 +20,76 @@ public class MainViewModel : ViewModelBase
     public const int HEAP_CELL_WIDTH = 50;
     public const int HEAP_CELL_HEIGHT = 50;
 
-    public int WindowWidth => (int)MainWindow.WindowSize.Width;
-    public int WindowHeight => (int)MainWindow.WindowSize.Height;
+    public static Size WindowSize => new(MainWindow.WindowSize.Width, MainWindow.WindowSize.Height);
+    public int WindowWidth => (int)WindowSize.Width;
+    public int WindowHeight => (int)WindowSize.Height;
 
-    public int StackWidth => STACK_WIDTH;
-    public int HeapWidth => HEAP_WIDTH;
-    public int HeapHeight => HEAP_HEIGHT;
-    public int IdeControlsWidth => IDE_CONTROLS_WIDTH;
-    
-    public int StackHeaderTextHeight => STACK_HEADER_TEXT_HEIGHT;
-    public int StackHeaderPanelHeight => STACK_HEADER_PANEL_HEIGHT;
-    
-    public int HeapHeaderTextHeight => HEAP_HEADER_TEXT_HEIGHT;
-    public int HeapVerticalSeparatorWidth => HEAP_VERTICAL_SEPARATOR_WIDTH;
-    public int HeapHorizontalSeparatorHeight => HEAP_HORIZONTAL_SEPARATOR_HEIGHT;
-    public int HeapTopHorizontalSeparatorHeight => HEAP_TOP_HORIZONTAL_SEPARATOR_HEIGHT;
-    public int HeapCellWidth => HEAP_CELL_WIDTH;
-    public int HeapCellHeight => HEAP_CELL_HEIGHT;
+    public static Size StackSize => new(STACK_WIDTH, WindowSize.Height);
+    public int StackWidth => (int)StackSize.Width;
+    public int StackHeight => (int)StackSize.Height;
 
-    public static Size StackSize => new(STACK_WIDTH, MainWindow.WindowSize.Height);
+    public static Size StackHeaderTextSize => new(STACK_WIDTH, STACK_HEADER_TEXT_HEIGHT);
+    public int StackHeaderTextWidth => (int)StackHeaderTextSize.Width;
+    public int StackHeaderTextHeight => (int)StackHeaderTextSize.Height;
+
+    public static Size StackHeaderPanelSize => new(STACK_WIDTH, STACK_HEADER_PANEL_HEIGHT);
+    public int StackHeaderPanelWidth => (int)StackHeaderPanelSize.Width;
+    public int StackHeaderPanelHeight => (int)StackHeaderPanelSize.Height;
+
     public static Size HeapSize => new(HEAP_WIDTH, HEAP_HEIGHT);
+    public int HeapWidth => (int)HeapSize.Width;
+    public int HeapHeight => (int)HeapSize.Height;
+
     public static Size IdeControlsSize => new(IDE_CONTROLS_WIDTH, HEAP_HEIGHT);
+    public int IdeControlsWidth => (int)IdeControlsSize.Width;
+    public int IdeControlsHeight => (int)IdeControlsSize.Height;
+
     public static Size IdeControlSize => new(IDE_CONTROLS_WIDTH, HEAP_HEIGHT / 5);
+    public int IdeControlWidth => (int)IdeControlSize.Width;
+    public int IdeControlHeight => (int)IdeControlSize.Height;
+
     public static Size IdeControlLeftSize => new(IDE_CONTROLS_WIDTH / 2, HEAP_HEIGHT / 5);
+    public int IdeControlLeftWidth => (int)IdeControlLeftSize.Width;
+    public int IdeControlLeftHeight => (int)IdeControlLeftSize.Height;
+
     public static Size IdeControlRightSize => new(IDE_CONTROLS_WIDTH - IDE_CONTROLS_WIDTH / 2, HEAP_HEIGHT / 5);
+    public int IdeControlRightWidth => (int)IdeControlRightSize.Width;
+    public int IdeControlRightHeight => (int)IdeControlRightSize.Height;
+
     public static Size IdeControlNextSize => new(IDE_CONTROLS_WIDTH, HEAP_HEIGHT - 4 * (HEAP_HEIGHT / 5));
-    public static Size OutputSize => new(((int)MainWindow.WindowSize.Width - IDE_CONTROLS_WIDTH - HEAP_WIDTH - STACK_WIDTH) / 2, HEAP_HEIGHT);
-    public static Size DescriptionSize => new(MainWindow.WindowSize.Width - IDE_CONTROLS_WIDTH - HEAP_WIDTH - STACK_WIDTH - OutputSize.Width,
-                                                MainWindow.WindowSize.Height - HEAP_HEIGHT);
+    public int IdeControlNextWidth => (int)IdeControlNextSize.Width;
+    public int IdeControlNextHeight => (int)IdeControlNextSize.Height;
+
+    public static Size OutputSize => new(((int)WindowSize.Width - IDE_CONTROLS_WIDTH - HEAP_WIDTH - STACK_WIDTH) / 2, HEAP_HEIGHT);
+    public int OutputWidth => (int)OutputSize.Width;
+    public int OutputHeight => (int)OutputSize.Height;
+
+    public static Size DescriptionSize => new(WindowSize.Width - IDE_CONTROLS_WIDTH - HEAP_WIDTH - STACK_WIDTH - OutputSize.Width,
+                                                WindowSize.Height - HEAP_HEIGHT);
+    public int DescriptionWidth => (int)DescriptionSize.Width;
+    public int DescriptionHeight => (int)DescriptionSize.Height;
+
     public static Size TextEditorSize => new(HEAP_WIDTH + IDE_CONTROLS_WIDTH + OutputSize.Width, DescriptionSize.Height);
+    public int TextEditorWidth => (int)TextEditorSize.Width;
+    public int TextEditorHeight => (int)TextEditorSize.Height;
+
     public static Size BottomRightPanelSize => new(DescriptionSize.Width, HEAP_HEIGHT);
+    public int BottomRightPanelWidth => (int)BottomRightPanelSize.Width;
+    public int BottomRightPanelHeight => (int)BottomRightPanelSize.Height;
+
     public static Size HintSize => new(DescriptionSize.Width, HEAP_HEIGHT / 4);
+    public int HintWidth => (int)HintSize.Width;
+    public int HintHeight => (int)HintSize.Height;
+
     public static Size ExitButtonsSize => new(DescriptionSize.Width, HEAP_HEIGHT - 3 * (HEAP_HEIGHT / 4));
+    public int ExitButtonsWidth => (int)ExitButtonsSize.Width;
+    public int ExitButtonsHeight => (int)ExitButtonsSize.Height;
+
     public static Size QuitButtonSize => new((int)DescriptionSize.Width / 2, ExitButtonsSize.Height);
+    public int QuitButtonWidth => (int)QuitButtonSize.Width;
+    public int QuitButtonHeight => (int)QuitButtonSize.Height;
+
     public static Size FinishButtonSize => new((int)DescriptionSize.Width - (int)DescriptionSize.Width / 2, ExitButtonsSize.Height);
+    public int FinishButtonWidth => (int)FinishButtonSize.Width;
+    public int FinishButtonHeight => (int)FinishButtonSize.Height;
 }
