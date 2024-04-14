@@ -21,6 +21,9 @@ public class MainViewModel : ViewModelBase
     public const int HEAP_CELL_WIDTH = 50;
     public const int HEAP_CELL_HEIGHT = 50;
 
+    public int WindowWidth => (int)MainWindow.WindowSize.Width;
+    public int WindowHeight => (int)MainWindow.WindowSize.Height;
+
     public int StackWidth => STACK_WIDTH;
     public int HeapWidth => HEAP_WIDTH;
     public int HeapHeight => HEAP_HEIGHT;

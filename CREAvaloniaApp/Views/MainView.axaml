@@ -11,10 +11,9 @@
 			 to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
 		<vm:MainViewModel />
 	</Design.DataContext>
-	<!-- FreeCode -->
-	<StackPanel Orientation="Horizontal">
+	<StackPanel Orientation="Horizontal" Height="{Binding WindowHeight}" Width="{Binding WindowWidth}">
 		<!-- Stack -->
-		<StackPanel Orientation="Vertical">
+		<StackPanel Orientation="Vertical" Height="{Binding WindowHeight}" Width="{Binding StackWidth}">
 			<TextBlock
 				Text="Stack"
 				FontSize="16"
@@ -22,12 +21,16 @@
 				Foreground="White"
 				FontWeight="UltraBold"
 				TextAlignment="Center"
-				Name="stackHeaderTextBlock"
 				Height="{Binding StackHeaderTextHeight}"
 				Width="{Binding StackWidth}"
 				>
 			</TextBlock>
-			<Panel Height="{Binding StackHeaderPanelHeight}" Width="{Binding StackWidth}" Name="stackHeaderPanel"/>
+			<Panel Height="{Binding StackHeaderPanelHeight}" Width="{Binding StackWidth}"/>
+			<ScrollViewer Height="{Binding StackScrollViewerHeight}" Width="{Binding StackWidth}" Name="stackScrollViewer">
+				<StackPanel Orientation="Vertical" Width="{Binding StackWidth}"/>
+			</ScrollViewer>
 		</StackPanel>
 	</StackPanel>
+	<!-- FreeCode -->
+
 </UserControl>
