@@ -26,8 +26,7 @@
 					Height="{Binding StackHeaderTextHeight}"
 					Width="{Binding StackHeaderTextWidth}"
 					Name="stackHeaderTextBlock"
-					>
-				</TextBlock>
+					/>
 				<Panel Height="{Binding StackHeaderPanelHeight}" Width="{Binding StackHeaderPanelWidth}"/>
 			</StackPanel>
 		</ScrollViewer>
@@ -52,8 +51,7 @@
 				Name="textEditorTextBox"
 				AcceptsReturn="True"
 				AcceptsTab="True"
-				>
-			</TextBox>
+				/>
 		</Grid>
 	</StackPanel>
 </UserControl>
