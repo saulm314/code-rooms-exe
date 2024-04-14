@@ -31,5 +31,16 @@
 				<Panel Height="{Binding StackHeaderPanelHeight}" Width="{Binding StackHeaderPanelWidth}"/>
 			</StackPanel>
 		</ScrollViewer>
+		<!-- !Stack -->
+		<Grid ShowGridLines="True">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="{Binding TextEditorWidthGL}"/>
+				<ColumnDefinition Width="{Binding DescriptionWidthGL}"/>
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="{Binding TextEditorHeightGL}"/>
+				<RowDefinition Height="{Binding HeapHeightGL}"/>
+			</Grid.RowDefinitions>
+		</Grid>
 	</StackPanel>
 </UserControl>

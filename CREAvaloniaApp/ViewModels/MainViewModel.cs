@@ -1,4 +1,5 @@
 ﻿using Avalonia;
+using Avalonia.Controls;
 using CREAvaloniaApp.Views;
 
 namespace CREAvaloniaApp.ViewModels;
@@ -39,6 +40,8 @@ public class MainViewModel : ViewModelBase
     public static Size HeapSize => new(HEAP_WIDTH, HEAP_HEIGHT);
     public int HeapWidth => (int)HeapSize.Width;
     public int HeapHeight => (int)HeapSize.Height;
+    public GridLength HeapWidthGL => new(HeapWidth);
+    public GridLength HeapHeightGL => new(HeapHeight);
 
     public static Size IdeControlsSize => new(IDE_CONTROLS_WIDTH, HEAP_HEIGHT);
     public int IdeControlsWidth => (int)IdeControlsSize.Width;
@@ -68,10 +71,14 @@ public class MainViewModel : ViewModelBase
                                                 WindowSize.Height - HEAP_HEIGHT);
     public int DescriptionWidth => (int)DescriptionSize.Width;
     public int DescriptionHeight => (int)DescriptionSize.Height;
+    public GridLength DescriptionWidthGL => new(DescriptionWidth);
+    public GridLength DescriptionHeightGL => new(DescriptionHeight);
 
     public static Size TextEditorSize => new(HEAP_WIDTH + IDE_CONTROLS_WIDTH + OutputSize.Width, DescriptionSize.Height);
     public int TextEditorWidth => (int)TextEditorSize.Width;
     public int TextEditorHeight => (int)TextEditorSize.Height;
+    public GridLength TextEditorWidthGL => new(TextEditorWidth);
+    public GridLength TextEditorHeightGL => new(TextEditorHeight);
 
     public static Size BottomRightPanelSize => new(DescriptionSize.Width, HEAP_HEIGHT);
     public int BottomRightPanelWidth => (int)BottomRightPanelSize.Width;
