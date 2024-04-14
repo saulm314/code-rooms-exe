@@ -32,7 +32,7 @@
 			</StackPanel>
 		</ScrollViewer>
 		<!-- !Stack -->
-		<Grid ShowGridLines="True">
+		<Grid ShowGridLines="False">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="{Binding TextEditorWidthGL}"/>
 				<ColumnDefinition Width="{Binding DescriptionWidthGL}"/>
@@ -41,6 +41,17 @@
 				<RowDefinition Height="{Binding TextEditorHeightGL}"/>
 				<RowDefinition Height="{Binding HeapHeightGL}"/>
 			</Grid.RowDefinitions>
+			<TextBox
+				Grid.Column="0"
+				Grid.Row="0"
+				FontSize="16"
+				FontFamily="Cascadia Mono"
+				Foreground="White"
+				Height="{Binding TextEditorHeight}"
+				Width="{Binding TextEditorWidth}"
+				Name="textEditorTextBox"
+				>
+			</TextBox>
 		</Grid>
 	</StackPanel>
 </UserControl>
