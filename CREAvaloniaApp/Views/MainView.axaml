@@ -42,7 +42,7 @@
 			<!-- TextEditor, [Other] -->
 			<Grid Grid.Column="1"
 				ShowGridLines="False"
-				RowDefinitions="755, 325"
+				RowDefinitions="730, 350"
 				>
 					<!-- Heap, IdeControls, Output -->
 					<Grid Grid.Row="1"
@@ -52,7 +52,7 @@
 							<!-- HeapHeader, HeapCore -->
 							<Grid
 								ShowGridLines="False"
-								RowDefinitions="20, 305"
+								RowDefinitions="20, 330"
 								>
 									<!-- HeapLeftButton, HeapGrid, HeapRightButton -->
 									<Grid Grid.Row="1"
@@ -80,11 +80,11 @@
 												RowDefinitions=
 												"
 													5,
-													50, 10,
-													50, 10,
-													50, 10,
-													50, 10,
-													50, 10
+													50, 15,
+													50, 15,
+													50, 15,
+													50, 15,
+													50, 15
 												"
 												Name="heapGrid"
 												>
@@ -108,7 +108,7 @@
 			<!-- Description, Hint1, Hint2, Hint3, EndButtons -->
 			<Grid Grid.Column="2"
 				ShowGridLines="False"
-				RowDefinitions="755, 81, 81, 81, 82"
+				RowDefinitions="730, 87, 87, 87, 89"
 				>
 					<!-- QuitButton, FinishButton -->
 					<Grid Grid.Row="4"
