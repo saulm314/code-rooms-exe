@@ -20,9 +20,12 @@
 				Foreground="White"
 				FontWeight="UltraBold"
 				TextAlignment="Center"
+				Name="stackHeaderTextBlock"
+				Height="20"
 				>
 			</TextBlock>
-			<Panel Height="10" Width="130"/>
+			<Panel Height="10" Width="130" Name="stackHeaderPanel"/>
+			<ScrollViewer Name="stackScrollViewer"/>
 		</StackPanel>
 	</StackPanel>
 </UserControl>
