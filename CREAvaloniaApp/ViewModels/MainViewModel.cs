@@ -12,7 +12,6 @@ public class MainViewModel : ViewModelBase
 
     public const int STACK_HEADER_TEXT_HEIGHT = 20;
     public const int STACK_HEADER_PANEL_HEIGHT = 10;
-    public static int s_StackScrollViewerHeight => (int)MainWindow.WindowSize.Height - STACK_HEADER_TEXT_HEIGHT - STACK_HEADER_PANEL_HEIGHT;
 
     public const int HEAP_HEADER_TEXT_HEIGHT = 20;
     public const int HEAP_VERTICAL_SEPARATOR_WIDTH = 5;
@@ -31,7 +30,6 @@ public class MainViewModel : ViewModelBase
     
     public int StackHeaderTextHeight => STACK_HEADER_TEXT_HEIGHT;
     public int StackHeaderPanelHeight => STACK_HEADER_PANEL_HEIGHT;
-    public int StackScrollViewerHeight => s_StackScrollViewerHeight;
     
     public int HeapHeaderTextHeight => HEAP_HEADER_TEXT_HEIGHT;
     public int HeapVerticalSeparatorWidth => HEAP_VERTICAL_SEPARATOR_WIDTH;

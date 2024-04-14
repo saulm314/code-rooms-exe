@@ -14,22 +14,22 @@
 	<!-- Free code -->
 	<StackPanel Orientation="Horizontal" Height="{Binding WindowHeight}" Width="{Binding WindowWidth}">
 		<!-- Stack -->
-		<StackPanel Orientation="Vertical" Height="{Binding WindowHeight}" Width="{Binding StackWidth}">
-			<TextBlock
-				Text="Stack"
-				FontSize="16"
-				FontFamily="Cascadia Mono"
-				Foreground="White"
-				FontWeight="UltraBold"
-				TextAlignment="Center"
-				Height="{Binding StackHeaderTextHeight}"
-				Width="{Binding StackWidth}"
-				>
-			</TextBlock>
-			<Panel Height="{Binding StackHeaderPanelHeight}" Width="{Binding StackWidth}"/>
-			<ScrollViewer Height="{Binding StackScrollViewerHeight}" Width="{Binding StackWidth}">
-				<StackPanel Orientation="Vertical" Width="{Binding StackWidth}" Name="stackStackPanel"/>
-			</ScrollViewer>
-		</StackPanel>
+		<ScrollViewer Height="{Binding WindowHeight}" Width="{Binding StackWidth}">
+			<StackPanel Orientation="Vertical" Width="{Binding StackWidth}" Name="stackStackPanel">
+				<TextBlock
+					Text="Stack"
+					FontSize="16"
+					FontFamily="Cascadia Mono"
+					Foreground="White"
+					FontWeight="UltraBold"
+					TextAlignment="Center"
+					Height="{Binding StackHeaderTextHeight}"
+					Width="{Binding StackWidth}"
+					Name="stackHeaderTextBlock"
+					>
+				</TextBlock>
+				<Panel Height="{Binding StackHeaderPanelHeight}" Width="{Binding StackWidth}"/>
+			</StackPanel>
+		</ScrollViewer>
 	</StackPanel>
 </UserControl>
