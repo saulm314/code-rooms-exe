@@ -4,7 +4,7 @@ namespace CREAvaloniaApp
 {
     public class Properties
     {
-        public Resolution_ Resolution = new();
+        public Resolution_ Resolution { get; set; } = new();
         public class Resolution_
         {
             public int x = 1980;

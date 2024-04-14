@@ -15,6 +15,7 @@ public partial class MainWindow : Window
         InitializeComponent();
         WindowState = WindowState.FullScreen;
         SetBackground();
+        SetResolution();
     }
 
     private const string PROPERTIES_PATH = @"..\..\..\..\Files\CREProperties.json";
@@ -38,5 +39,11 @@ public partial class MainWindow : Window
         Color backgroundColor = new(byte.MaxValue, BG, BG, BG);
         SolidColorBrush brush = new(backgroundColor);
         Background = brush;
+    }
+
+    private void SetResolution()
+    {
+        Width = Properties.Instance.Resolution.x;
+        Height = Properties.Instance.Resolution.y;
     }
 }
