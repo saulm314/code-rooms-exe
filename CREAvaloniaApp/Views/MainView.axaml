@@ -42,7 +42,7 @@
 			<!-- TextEditor, [Other] -->
 			<Grid Grid.Column="1"
 				ShowGridLines="False"
-				RowDefinitions="760, 320"
+				RowDefinitions="755, 325"
 				>
 					<!-- Heap, IdeControls, Output -->
 					<Grid Grid.Row="1"
@@ -52,7 +52,7 @@
 							<!-- HeapHeader, HeapCore -->
 							<Grid
 								ShowGridLines="False"
-								RowDefinitions="20, 300"
+								RowDefinitions="20, 305"
 								>
 									<!-- HeapLeftButton, HeapGrid, HeapRightButton -->
 									<Grid Grid.Row="1"
@@ -79,6 +79,7 @@
 												"
 												RowDefinitions=
 												"
+													5,
 													50, 10,
 													50, 10,
 													50, 10,
@@ -93,7 +94,7 @@
 							<!-- CompileButton, EditButton, RunButton, ControlButtons, NextButton -->
 							<Grid Grid.Column="1"
 								ShowGridLines="False"
-								RowDefinitions="64, 64, 64, 64, 64"
+								RowDefinitions="65, 65, 65, 65, 65"
 								>
 									<!-- RunPreviousButton, RunNextButton -->
 									<Grid Grid.Row="3"
@@ -107,7 +108,7 @@
 			<!-- Description, Hint1, Hint2, Hint3, EndButtons -->
 			<Grid Grid.Column="2"
 				ShowGridLines="False"
-				RowDefinitions="760, 80, 80, 80, 80"
+				RowDefinitions="755, 81, 81, 81, 82"
 				>
 					<!-- QuitButton, FinishButton -->
 					<Grid Grid.Row="4"

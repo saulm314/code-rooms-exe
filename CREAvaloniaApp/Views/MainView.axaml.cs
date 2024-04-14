@@ -20,20 +20,27 @@ public partial class MainView : UserControl
         heapGrid.Background = brush;
     }
 
+    public const int HEAP_PAGE_SIZE = 50;
+
+    public Panel[] HeapPanels { get; } = new Panel[HEAP_PAGE_SIZE];
+
     private void SetHeapGridForeground()
     {
         Color foregroundColor = new(byte.MaxValue, MainWindow.BG, MainWindow.BG, MainWindow.BG);
         SolidColorBrush brush = new(foregroundColor);
-        ColumnDefinitions columnDefinitions = heapGrid.ColumnDefinitions;
         RowDefinitions rowDefinitions = heapGrid.RowDefinitions;
-        for (int i = 1; i < columnDefinitions.Count; i += 2)
-            for (int j = 0; j < rowDefinitions.Count; j += 2)
+        ColumnDefinitions columnDefinitions = heapGrid.ColumnDefinitions;
+        int panelsAdded = 0;
+        for (int i = 1; i < rowDefinitions.Count; i += 2)
+            for (int j = 1; j < columnDefinitions.Count; j += 2)
             {
                 Panel panel = new();
-                panel[Grid.ColumnProperty] = i;
-                panel[Grid.RowProperty] = j;
+                panel[Grid.RowProperty] = i;
+                panel[Grid.ColumnProperty] = j;
                 panel.Background = brush;
                 heapGrid.Children.Add(panel);
+                HeapPanels[panelsAdded] = panel;
+                panelsAdded++;
             }
     }
 }
