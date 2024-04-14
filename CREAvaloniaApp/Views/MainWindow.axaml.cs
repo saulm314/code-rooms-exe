@@ -1,6 +1,7 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Media;
 using Newtonsoft.Json;
+using System;
 using System.Diagnostics;
 using System.IO;
 
@@ -21,7 +22,7 @@ public partial class MainWindow : Window
     {
         try
         {
-            Properties.Instance = JsonConvert.DeserializeObject<Properties>(File.ReadAllText(PROPERTIES_PATH)) ?? new();
+            Properties.Instance = JsonConvert.DeserializeObject<Properties>(File.ReadAllText(PROPERTIES_PATH)) ?? throw new Exception();
         }
         catch
         {
