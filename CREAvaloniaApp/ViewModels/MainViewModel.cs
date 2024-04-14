@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Media;
 using CREAvaloniaApp.Views;
 
 namespace CREAvaloniaApp.ViewModels;
@@ -99,4 +100,7 @@ public class MainViewModel : ViewModelBase
     public static Size FinishButtonSize => new((int)DescriptionSize.Width - (int)DescriptionSize.Width / 2, ExitButtonsSize.Height);
     public int FinishButtonWidth => (int)FinishButtonSize.Width;
     public int FinishButtonHeight => (int)FinishButtonSize.Height;
+
+    public const byte TEXT_EDITOR_BG = 30;
+    public IBrush TextEditorBrush => new SolidColorBrush(new Color(byte.MaxValue, TEXT_EDITOR_BG, TEXT_EDITOR_BG, TEXT_EDITOR_BG));
 }

@@ -46,13 +46,27 @@
 				FontSize="16"
 				FontFamily="Cascadia Mono"
 				Foreground="White"
+				Background="{Binding TextEditorBrush}"
 				Height="{Binding TextEditorHeight}"
 				Width="{Binding TextEditorWidth}"
-				Name="textEditorTextBox"
+				Name="textEditor"
 				AcceptsReturn="True"
 				AcceptsTab="True"
 				PropertyChanged="OnTextChange"
-				/>
+				BorderThickness="0"
+				CaretBrush="White"
+				CornerRadius="0"
+				>
+				<TextBox.Styles>
+					<Style Selector=":pointerover /template/ Border#PART_BorderElement">
+						<Setter Property="Background" Value="{Binding TextEditorBrush}"/>
+					</Style>
+					<Style Selector=":focus /template/ Border#PART_BorderElement">
+						<Setter Property="Background" Value="{Binding TextEditorBrush}"/>
+						<Setter Property="BorderThickness" Value="0"/>
+					</Style>
+				</TextBox.Styles>
+			</TextBox>
 		</Grid>
 	</StackPanel>
 </UserControl>

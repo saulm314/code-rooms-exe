@@ -1,7 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Input;
 using Avalonia.Media;
+using Avalonia.Styling;
 using System.Collections.Generic;
 
 namespace CREAvaloniaApp.Views;
@@ -14,7 +14,7 @@ public partial class MainView : UserControl
         SetStackHeaderBackground();
     }
 
-    public const byte STACK_HEADER_BG = 30;
+    public const byte STACK_HEADER_BG = 20;
     private void SetStackHeaderBackground()
     {
         Color color = new(byte.MaxValue, STACK_HEADER_BG, STACK_HEADER_BG, STACK_HEADER_BG);
@@ -24,26 +24,26 @@ public partial class MainView : UserControl
 
     public void OnTextChange(object sender, AvaloniaPropertyChangedEventArgs e)
     {
-        int caretIndex = textEditorTextBox.CaretIndex;
+        if (textEditor?.Text == null)
+            return;
+        int caretIndex = textEditor.CaretIndex;
         if (caretIndex < 1)
             return;
-        if (textEditorTextBox.Text == null)
-            return;
-        int previousNewlineIndex = textEditorTextBox.Text.LastIndexOf('\n', caretIndex - 1);
+        int previousNewlineIndex = textEditor.Text.LastIndexOf('\n', caretIndex - 1);
         int tabCount = 0;
         int i = previousNewlineIndex + 1;
-        while (i < textEditorTextBox.Text.Length && textEditorTextBox.Text[i] == '\t')
+        while (i < textEditor.Text.Length && textEditor.Text[i] == '\t')
         {
             tabCount++;
             i++;
         }
-        int previousOpenBraceIndex = textEditorTextBox.Text.LastIndexOf('{', caretIndex - 1);
+        int previousOpenBraceIndex = textEditor.Text.LastIndexOf('{', caretIndex - 1);
         bool openedBrace;
         if (previousOpenBraceIndex == -1)
             openedBrace = false;
         else
         {
-            string sub = textEditorTextBox.Text[(previousOpenBraceIndex + 1)..caretIndex];
+            string sub = textEditor.Text[(previousOpenBraceIndex + 1)..caretIndex];
             if (!string.IsNullOrWhiteSpace(sub))
                 openedBrace = false;
             else if (sub.Contains('\n'))
@@ -62,6 +62,6 @@ public partial class MainView : UserControl
                 newlineChars.Add('\t');
             newlineChars.Add('}');
         }
-        textEditorTextBox.NewLine = new(newlineChars.ToArray());
+        textEditor.NewLine = new(newlineChars.ToArray());
     }
 }
