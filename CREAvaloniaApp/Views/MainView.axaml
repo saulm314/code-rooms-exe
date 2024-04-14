@@ -11,111 +11,18 @@
 			 to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
 		<vm:MainViewModel />
 	</Design.DataContext>
-	<!-- FreeCode -->
-	<Grid
-		ShowGridLines="False"
-		ColumnDefinitions="130, 1230, 560"
-		>
-			<!-- StackHeader, StackUpButton, StackComponents, StackEmptySpace, StackDownButton -->
-			<Grid
-				ShowGridLines="False"
-				RowDefinitions=
-					"
-						20, 25,
-						50, 20, 7,
-						50, 20, 7,
-						50, 20, 7,
-						50, 20, 7,
-						50, 20, 7,
-						50, 20, 7,
-						50, 20, 7,
-						50, 20, 7,
-						50, 20, 7,
-						50, 20, 7,
-						50, 20, 7,
-						50, 20, 7,
-						50, 20, 7,
-						9, 25
-					"
-					>
-			</Grid>
-			<!-- TextEditor, [Other] -->
-			<Grid Grid.Column="1"
-				ShowGridLines="False"
-				RowDefinitions="730, 350"
+	<StackPanel Orientation="Horizontal">
+		<StackPanel Orientation="Vertical">
+			<TextBlock
+				Text="Stack"
+				FontSize="16"
+				FontFamily="Cascadia Mono"
+				Foreground="White"
+				FontWeight="UltraBold"
+				TextAlignment="Center"
 				>
-					<!-- Heap, IdeControls, Output -->
-					<Grid Grid.Row="1"
-						ShowGridLines="False"
-						ColumnDefinitions="600, 130, 500"
-						>
-							<!-- HeapHeader, HeapCore -->
-							<Grid
-								ShowGridLines="False"
-								RowDefinitions="20, 330"
-								>
-									<!-- HeapLeftButton, HeapGrid, HeapRightButton -->
-									<Grid Grid.Row="1"
-										ShowGridLines="False"
-										ColumnDefinitions="25, 550, 25"
-										>
-											<!-- HeapGrid -->
-											<Grid Grid.Column="1"
-												ShowGridLines="False"
-												ColumnDefinitions=
-												"
-													2,
-													50, 5,
-													50, 5,
-													50, 5,
-													50, 5,
-													50, 5,
-													50, 5,
-													50, 5,
-													50, 5,
-													50, 5,
-													50,
-													3
-												"
-												RowDefinitions=
-												"
-													5,
-													50, 15,
-													50, 15,
-													50, 15,
-													50, 15,
-													50, 15
-												"
-												Name="heapGrid"
-												>
-											</Grid>
-									</Grid>
-							</Grid>
-							<!-- CompileButton, EditButton, RunButton, ControlButtons, NextButton -->
-							<Grid Grid.Column="1"
-								ShowGridLines="False"
-								RowDefinitions="65, 65, 65, 65, 65"
-								>
-									<!-- RunPreviousButton, RunNextButton -->
-									<Grid Grid.Row="3"
-										ShowGridLines="False"
-										ColumnDefinitions="65, 65"
-										>
-									</Grid>
-							</Grid>
-					</Grid>
-			</Grid>
-			<!-- Description, Hint1, Hint2, Hint3, EndButtons -->
-			<Grid Grid.Column="2"
-				ShowGridLines="False"
-				RowDefinitions="730, 87, 87, 87, 89"
-				>
-					<!-- QuitButton, FinishButton -->
-					<Grid Grid.Row="4"
-						ShowGridLines="False"
-						ColumnDefinitions="280, 280"
-						>
-					</Grid>
-			</Grid>
-	</Grid>
+			</TextBlock>
+			<Panel Height="10" Width="130"/>
+		</StackPanel>
+	</StackPanel>
 </UserControl>

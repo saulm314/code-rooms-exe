@@ -8,12 +8,12 @@ public partial class MainView : UserControl
     public MainView()
     {
         InitializeComponent();
-        SetHeapGridBackground();
-        SetHeapGridForeground();
-        SetHeapIndexes();
+        //SetHeapGridBackground();
+        //SetHeapGridForeground();
+        //SetHeapIndexes();
     }
 
-    public const byte HEAP_GRID_BG = 0;
+    /*public const byte HEAP_GRID_BG = 0;
     private void SetHeapGridBackground()
     {
         Color backgroundColor = new(byte.MaxValue, HEAP_GRID_BG, HEAP_GRID_BG, HEAP_GRID_BG);
@@ -75,5 +75,5 @@ public partial class MainView : UserControl
                 HeapIndexTextBlocks[count] = textBlock;
                 count++;
             }
-    }
+    }*/
 }
