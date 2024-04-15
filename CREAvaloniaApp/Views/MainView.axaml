@@ -133,6 +133,27 @@
 						</Grid>
 					</ScrollViewer>
 				</StackPanel>
+				<!-- IdeControls -->
+				<StackPanel Orientation="Vertical" Height="{Binding IdeControlsHeight}" Width="{Binding IdeControlsWidth}">
+					<Button
+						Background="DarkGreen"
+						Height="{Binding IdeControlHeight}"
+						Width="{Binding IdeControlWidth}"
+						CornerRadius="0"
+						Click="OnCompilePressed"
+						>
+						<TextBlock
+							Text="Compile"
+							FontSize="20"
+							FontFamily="Cascadia Mono"
+							Foreground="White"
+							FontWeight="UltraBold"
+							TextAlignment="Center"
+							HorizontalAlignment="Center"
+							VerticalAlignment="Center"
+							/>
+					</Button>
+				</StackPanel>
 			</StackPanel>
 		</Grid>
 	</StackPanel>

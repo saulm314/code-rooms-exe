@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Avalonia.Media;
 using CREAvaloniaApp.ViewModels;
 using System.Collections.Generic;
@@ -88,5 +89,29 @@ public partial class MainView : UserControl
             newlineChars.Add('}');
         }
         textEditor.NewLine = new(newlineChars.ToArray());
+    }
+
+    public void OnCompilePressed(object sender, RoutedEventArgs e)
+    {
+    }
+
+    public void OnEditPressed(object sender, RoutedEventArgs e)
+    {
+    }
+
+    public void OnRunPressed(object sender, RoutedEventArgs e)
+    {
+    }
+
+    public void OnLeftPressed(object sender, RoutedEventArgs e)
+    {
+    }
+
+    public void OnRightPressed(object sender, RoutedEventArgs e)
+    {
+    }
+
+    public void OnNextPressed(object sender, RoutedEventArgs e)
+    {
     }
 }
