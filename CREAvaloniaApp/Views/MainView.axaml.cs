@@ -104,6 +104,8 @@ public partial class MainView : UserControl
         maxArrowCount = 0;
         executed = false;
         thrown = false;
+        statements = new();
+        interpreterException = null;
         OutputClear();
         OutputWriteLine("Compiling...");
         try
@@ -140,6 +142,7 @@ public partial class MainView : UserControl
     private int maxArrowCount = 0;
     private bool executed = false;
     private bool thrown = false;
+    private InterpreterException? interpreterException;
 
     public void OnLeftPressed(object sender, RoutedEventArgs e)
     {
@@ -147,23 +150,51 @@ public partial class MainView : UserControl
             leftButton.IsEnabled = false;
         rightButton.IsEnabled = true;
         arrowCount--;
+        OutputClear();
+        if (arrowCount > 0 && arrowCount - 1 < statements.Count)
+            OutputWriteLine(statements[arrowCount - 1]);
     }
+
+    private List<Statement> statements = new();
 
     public void OnRightPressed(object sender, RoutedEventArgs e)
     {
         leftButton.IsEnabled = true;
         if (arrowCount < maxArrowCount)
         {
+            if (arrowCount < statements.Count)
+            {
+                OutputClear();
+                OutputWriteLine(statements[arrowCount]);
+            }
             arrowCount++;
             if (arrowCount == maxArrowCount && (executed || thrown))
+            {
+                OutputClear();
+                if (thrown)
+                {
+                    OutputWriteLine(statements[arrowCount - 1] + "\n");
+                    OutputWriteLine(interpreterException!.Message);
+                }
                 rightButton.IsEnabled = false;
+            }
             return;
         }
+        int statementNumber = _Interpreter!.chunk.statementsDone;
         try
         {
-            if (!_Interpreter!.chunk.RunNextStatement())
+            executed = !_Interpreter.chunk.RunNextStatement();
+            if (statementNumber < _Interpreter.chunk.Statements.Length)
+            {
+                Statement statement = _Interpreter.chunk.Statements[statementNumber];
+                statements.Add(statement);
+                OutputClear();
+                OutputWriteLine(statements[arrowCount]);
+            }
+            if (executed)
             {
                 rightButton.IsEnabled = false;
+                OutputClear();
                 OutputWriteLine("Execution finished");
                 executed = true;
                 nextButton.IsEnabled = true;
@@ -173,7 +204,12 @@ public partial class MainView : UserControl
         }
         catch (InterpreterException exception)
         {
+            Statement statement = _Interpreter.chunk.Statements[statementNumber];
+            statements.Add(statement);
+            OutputClear();
+            OutputWriteLine(_Interpreter!.chunk.Statements[_Interpreter.chunk.statementsDone] + "\n");
             OutputWriteLine(exception.Message);
+            interpreterException = exception;
             rightButton.IsEnabled = false;
             thrown = true;
             arrowCount++;

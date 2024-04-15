@@ -1116,6 +1116,11 @@ namespace CRECSharpInterpreter
             Continue
         }
 
+        public override string ToString()
+        {
+            return ReducedText;
+        }
+
         public class StatementException : InterpreterException
         {
             private StatementException(Statement? statement, string? message = null) : base(message)
