@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using CREAvaloniaApp.ViewModels;
+using CRECSharpInterpreter;
 using System.Collections.Generic;
 
 namespace CREAvaloniaApp.Views;
@@ -99,7 +100,15 @@ public partial class MainView : UserControl
         textEditor.IsReadOnly = true;
         OutputClear();
         OutputWriteLine("Compiling...");
-        OutputWriteLine("Compilation successful");
+        try
+        {
+            _ = new Interpreter(textEditor.Text ?? string.Empty);
+            OutputWriteLine("Compilation successful");
+        }
+        catch (InterpreterException exception)
+        {
+            OutputWriteLine(exception.Message);
+        }
     }
 
     public void OnEditPressed(object sender, RoutedEventArgs e)
