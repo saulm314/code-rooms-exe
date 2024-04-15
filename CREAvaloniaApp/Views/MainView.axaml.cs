@@ -1,7 +1,5 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Media;
-using Avalonia.Styling;
 using System.Collections.Generic;
 
 namespace CREAvaloniaApp.Views;
