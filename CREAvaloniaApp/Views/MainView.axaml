@@ -142,6 +142,7 @@
 						CornerRadius="0"
 						Click="OnCompilePressed"
 						IsEnabled="True"
+						Name="compileButton"
 						>
 						<TextBlock
 							Text="Compile"
@@ -171,6 +172,8 @@
 						Width="{Binding IdeControlWidth}"
 						CornerRadius="0"
 						Click="OnEditPressed"
+						IsEnabled="False"
+						Name="editButton"
 						>
 						<TextBlock
 							Text="Edit"
@@ -182,6 +185,17 @@
 							HorizontalAlignment="Center"
 							VerticalAlignment="Center"
 							/>
+						<Button.Styles>
+							<Style Selector=":disabled /template/ ContentPresenter#PART_ContentPresenter">
+								<Setter Property="Background" Value="{Binding DisabledButtonBrush}"/>
+							</Style>
+							<Style Selector=":pointerover /template/ ContentPresenter#PART_ContentPresenter">
+								<Setter Property="Background" Value="{Binding EditHoveredBrush}"/>
+							</Style>
+							<Style Selector=":pressed /template/ ContentPresenter#PART_ContentPresenter">
+								<Setter Property="Background" Value="{Binding EditPressedBrush}"/>
+							</Style>
+						</Button.Styles>
 					</Button>
 					<Button
 						Background="{Binding RunBrush}"
@@ -189,6 +203,8 @@
 						Width="{Binding IdeControlWidth}"
 						CornerRadius="0"
 						Click="OnRunPressed"
+						IsEnabled="False"
+						Name="runButton"
 						>
 						<TextBlock
 							Text="Run"
@@ -200,6 +216,17 @@
 							HorizontalAlignment="Center"
 							VerticalAlignment="Center"
 							/>
+						<Button.Styles>
+							<Style Selector=":disabled /template/ ContentPresenter#PART_ContentPresenter">
+								<Setter Property="Background" Value="{Binding DisabledButtonBrush}"/>
+							</Style>
+							<Style Selector=":pointerover /template/ ContentPresenter#PART_ContentPresenter">
+								<Setter Property="Background" Value="{Binding RunHoveredBrush}"/>
+							</Style>
+							<Style Selector=":pressed /template/ ContentPresenter#PART_ContentPresenter">
+								<Setter Property="Background" Value="{Binding RunPressedBrush}"/>
+							</Style>
+						</Button.Styles>
 					</Button>
 					<StackPanel Orientation="Horizontal" Height="{Binding IdeControlHeight}" Width="{Binding IdeControlWidth}">
 						<Button
@@ -208,6 +235,8 @@
 							Width="{Binding IdeControlLeftWidth}"
 							CornerRadius="0"
 							Click="OnLeftPressed"
+							IsEnabled="False"
+							Name="leftButton"
 							>
 							<TextBlock
 								Text="&lt;"
@@ -219,6 +248,17 @@
 								HorizontalAlignment="Center"
 								VerticalAlignment="Center"
 								/>
+							<Button.Styles>
+								<Style Selector=":disabled /template/ ContentPresenter#PART_ContentPresenter">
+									<Setter Property="Background" Value="{Binding DisabledButtonBrush}"/>
+								</Style>
+								<Style Selector=":pointerover /template/ ContentPresenter#PART_ContentPresenter">
+									<Setter Property="Background" Value="{Binding ArrowHoveredBrush}"/>
+								</Style>
+								<Style Selector=":pressed /template/ ContentPresenter#PART_ContentPresenter">
+									<Setter Property="Background" Value="{Binding ArrowPressedBrush}"/>
+								</Style>
+							</Button.Styles>
 						</Button>
 						<Button
 							Background="{Binding ArrowBrush}"
@@ -226,6 +266,8 @@
 							Width="{Binding IdeControlRightWidth}"
 							CornerRadius="0"
 							Click="OnRightPressed"
+							IsEnabled="False"
+							Name="RightButton"
 							>
 							<TextBlock
 								Text="&gt;"
@@ -237,6 +279,17 @@
 								HorizontalAlignment="Center"
 								VerticalAlignment="Center"
 								/>
+							<Button.Styles>
+								<Style Selector=":disabled /template/ ContentPresenter#PART_ContentPresenter">
+									<Setter Property="Background" Value="{Binding DisabledButtonBrush}"/>
+								</Style>
+								<Style Selector=":pointerover /template/ ContentPresenter#PART_ContentPresenter">
+									<Setter Property="Background" Value="{Binding ArrowHoveredBrush}"/>
+								</Style>
+								<Style Selector=":pressed /template/ ContentPresenter#PART_ContentPresenter">
+									<Setter Property="Background" Value="{Binding ArrowPressedBrush}"/>
+								</Style>
+							</Button.Styles>
 						</Button>
 					</StackPanel>
 					<Button
@@ -245,6 +298,8 @@
 						Width="{Binding IdeControlWidth}"
 						CornerRadius="0"
 						Click="OnNextPressed"
+						IsEnabled="False"
+						Name="nextButton"
 						>
 						<TextBlock
 							Text="Next"
@@ -256,6 +311,17 @@
 							HorizontalAlignment="Center"
 							VerticalAlignment="Center"
 							/>
+						<Button.Styles>
+							<Style Selector=":disabled /template/ ContentPresenter#PART_ContentPresenter">
+								<Setter Property="Background" Value="{Binding DisabledButtonBrush}"/>
+							</Style>
+							<Style Selector=":pointerover /template/ ContentPresenter#PART_ContentPresenter">
+								<Setter Property="Background" Value="{Binding NextHoveredBrush}"/>
+							</Style>
+							<Style Selector=":pressed /template/ ContentPresenter#PART_ContentPresenter">
+								<Setter Property="Background" Value="{Binding NextPressedBrush}"/>
+							</Style>
+						</Button.Styles>
 					</Button>
 				</StackPanel>
 			</StackPanel>
