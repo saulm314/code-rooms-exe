@@ -20,6 +20,8 @@ public partial class MainView : UserControl
 
     public Interpreter? _Interpreter { get; private set; }
 
+    private List<Panel> heapCells { get; } = new();
+
     private void ConfigureHeapGrid()
     {
         RowDefinitions rowDefinitions = heapGrid.RowDefinitions;
@@ -36,6 +38,7 @@ public partial class MainView : UserControl
                     [Grid.ColumnProperty] = j
                 };
                 heapGrid.Children.Add(cell);
+                heapCells.Add(cell);
                 TextBlock label = new()
                 {
                     Text = count == 0 ? "null" : count.ToString(),
@@ -132,6 +135,7 @@ public partial class MainView : UserControl
         nextButton.IsEnabled = false;
         textEditor.IsReadOnly = false;
         ClearStack();
+        ClearHeap();
     }
 
     public void OnRunPressed(object sender, RoutedEventArgs e)
@@ -156,6 +160,7 @@ public partial class MainView : UserControl
         arrowCount--;
         OutputClear();
         ClearStack();
+        ClearHeap();
         if (arrowCount > 0 && arrowCount - 1 < memoryFrames!.Count)
             DisplayMemoryFrame(arrowCount - 1);
     }
@@ -321,7 +326,43 @@ public partial class MainView : UserControl
         stackPanel.Children.Clear();
     }
 
+    private void ClearHeap()
+    {
+        foreach (Panel panel in heapCells)
+            panel.Children.Clear();
+    }
+
     private void DisplayHeap(Heap heap)
     {
+        for (int i = 0; i < 50; i++)
+        {
+            heapCells[i].Children.Clear();
+            Variable? variable = heap[i];
+            if (variable?._VarType == null)
+                continue;
+            Image image = new()
+            {
+                Height = MainViewModel.STACK_CELL_HEIGHT,
+                Width = MainViewModel.STACK_CELL_HEIGHT,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                Source = new Bitmap(@$"..\..\..\..\Files\Types\{variable._VarType}.png")
+            };
+            TextBlock value = new()
+            {
+                Text = variable.ValueAsString,
+                FontSize = 16,
+                FontFamily = new("Cascadia Mono"),
+                FontWeight = FontWeight.UltraBold,
+                Foreground = new SolidColorBrush(Colors.Black),
+                TextAlignment = TextAlignment.Center,
+                Height = 20,
+                Width = MainViewModel.STACK_CELL_HEIGHT,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            heapCells[i].Children.Add(image);
+            heapCells[i].Children.Add(value);
+        }
     }
 }
