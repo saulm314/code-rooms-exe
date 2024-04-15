@@ -14,6 +14,9 @@ public class MainViewModel : ViewModelBase
 
     public const int STACK_HEADER_TEXT_HEIGHT = 20;
     public const int STACK_HEADER_PANEL_HEIGHT = 10;
+    public const int STACK_CELL_HEIGHT = 50;
+    public const int STACK_LABEL_HEIGHT = 20;
+    public const int STACK_SEPARATOR_HEIGHT = 15;
 
     public const int HEAP_HEADER_TEXT_HEIGHT = 20;
     public const int HEAP_VERTICAL_SEPARATOR_WIDTH = 5;
