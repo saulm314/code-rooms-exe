@@ -41,6 +41,10 @@ public class MainViewModel : ViewModelBase
     public int StackHeaderPanelWidth => (int)StackHeaderPanelSize.Width;
     public int StackHeaderPanelHeight => (int)StackHeaderPanelSize.Height;
 
+    public static Size StackScrollViewerSize => new(STACK_WIDTH, WindowSize.Height - STACK_HEADER_TEXT_HEIGHT - STACK_HEADER_PANEL_HEIGHT);
+    public int StackScrollViewerWidth => (int)StackScrollViewerSize.Width;
+    public int StackScrollViewerHeight => (int)StackScrollViewerSize.Height;
+
     public static Size HeapSize => new(HEAP_WIDTH, HEAP_HEIGHT);
     public int HeapWidth => (int)HeapSize.Width;
     public int HeapHeight => (int)HeapSize.Height;

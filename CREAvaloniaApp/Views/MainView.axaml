@@ -14,23 +14,23 @@
 	<!-- Free code -->
 	<StackPanel Orientation="Horizontal" Height="{Binding WindowHeight}" Width="{Binding WindowWidth}">
 		<!-- Stack -->
-		<ScrollViewer Height="{Binding StackHeight}" Width="{Binding StackWidth}">
-			<StackPanel Orientation="Vertical" Width="{Binding StackWidth}" Name="stackStackPanel">
-				<TextBlock
-					Text="Stack"
-					FontSize="16"
-					FontFamily="Cascadia Mono"
-					Foreground="White"
-					Background="{Binding StackHeaderBrush}"
-					FontWeight="UltraBold"
-					TextAlignment="Center"
-					Height="{Binding StackHeaderTextHeight}"
-					Width="{Binding StackHeaderTextWidth}"
-					Name="stackHeaderTextBlock"
-					/>
-				<Panel Height="{Binding StackHeaderPanelHeight}" Width="{Binding StackHeaderPanelWidth}"/>
-			</StackPanel>
-		</ScrollViewer>
+		<StackPanel Orientation="Vertical" Height="{Binding StackHeight}" Width="{Binding StackWidth}">
+			<TextBlock
+				Text="Stack"
+				FontSize="16"
+				FontFamily="Cascadia Mono"
+				Foreground="White"
+				Background="{Binding StackHeaderBrush}"
+				FontWeight="UltraBold"
+				TextAlignment="Center"
+				Height="{Binding StackHeaderTextHeight}"
+				Width="{Binding StackHeaderTextWidth}"
+				/>
+			<Panel Height="{Binding StackHeaderPanelHeight}" Width="{Binding StackHeaderPanelWidth}"/>
+			<ScrollViewer Height="{Binding StackScrollViewerHeight}" Width="{Binding StackScrollViewerWidth}">
+				<StackPanel Orientation="Vertical" Width="{Binding StackWidth}" Name="stackPanel"/>
+			</ScrollViewer>
+		</StackPanel>
 		<!-- !Stack -->
 		<Grid ShowGridLines="False">
 			<Grid.ColumnDefinitions>
@@ -41,6 +41,7 @@
 				<RowDefinition Height="{Binding TextEditorHeightGL}"/>
 				<RowDefinition Height="{Binding HeapHeightGL}"/>
 			</Grid.RowDefinitions>
+			<!-- TextEditor -->
 			<TextBox
 				Grid.Column="0"
 				Grid.Row="0"
@@ -68,6 +69,8 @@
 					</Style>
 				</TextBox.Styles>
 			</TextBox>
+			<!-- Heap -->
+			
 		</Grid>
 	</StackPanel>
 </UserControl>
