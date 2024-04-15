@@ -136,7 +136,7 @@
 				<!-- IdeControls -->
 				<StackPanel Orientation="Vertical" Height="{Binding IdeControlsHeight}" Width="{Binding IdeControlsWidth}">
 					<Button
-						Background="DarkGreen"
+						Background="DarkCyan"
 						Height="{Binding IdeControlHeight}"
 						Width="{Binding IdeControlWidth}"
 						CornerRadius="0"
@@ -144,6 +144,42 @@
 						>
 						<TextBlock
 							Text="Compile"
+							FontSize="20"
+							FontFamily="Cascadia Mono"
+							Foreground="White"
+							FontWeight="UltraBold"
+							TextAlignment="Center"
+							HorizontalAlignment="Center"
+							VerticalAlignment="Center"
+							/>
+					</Button>
+					<Button
+						Background="DarkGoldenrod"
+						Height="{Binding IdeControlHeight}"
+						Width="{Binding IdeControlWidth}"
+						CornerRadius="0"
+						Click="OnEditPressed"
+						>
+						<TextBlock
+							Text="Edit"
+							FontSize="20"
+							FontFamily="Cascadia Mono"
+							Foreground="White"
+							FontWeight="UltraBold"
+							TextAlignment="Center"
+							HorizontalAlignment="Center"
+							VerticalAlignment="Center"
+							/>
+					</Button>
+					<Button
+						Background="DarkGreen"
+						Height="{Binding IdeControlHeight}"
+						Width="{Binding IdeControlWidth}"
+						CornerRadius="0"
+						Click="OnRunPressed"
+						>
+						<TextBlock
+							Text="Run"
 							FontSize="20"
 							FontFamily="Cascadia Mono"
 							Foreground="White"
