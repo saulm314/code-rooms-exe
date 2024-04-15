@@ -97,6 +97,9 @@ public partial class MainView : UserControl
         editButton.IsEnabled = true;
         runButton.IsEnabled = true;
         textEditor.IsReadOnly = true;
+        OutputClear();
+        OutputWriteLine("Compiling...");
+        OutputWriteLine("Compilation successful");
     }
 
     public void OnEditPressed(object sender, RoutedEventArgs e)
@@ -114,6 +117,7 @@ public partial class MainView : UserControl
     {
         runButton.IsEnabled = false;
         rightButton.IsEnabled = true;
+        OutputWriteLine("Running...");
     }
 
     public void OnLeftPressed(object sender, RoutedEventArgs e)
@@ -130,5 +134,21 @@ public partial class MainView : UserControl
     {
         nextButton.IsEnabled = false;
         leftButton.IsEnabled = false;
+        OutputWriteLine("Running next...");
+    }
+
+    public void OutputWriteLine(object message)
+    {
+        output.Text += message + "\n";
+    }
+
+    public void OutputWrite(object message)
+    {
+        output.Text += message;
+    }
+
+    public void OutputClear()
+    {
+        output.Clear();
     }
 }
