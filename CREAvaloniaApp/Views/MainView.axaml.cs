@@ -276,7 +276,7 @@ public partial class MainView : UserControl
             VerticalAlignment = VerticalAlignment.Center,
             Source = new Bitmap(@$"..\..\..\..\Files\Types\{variable._VarType}.png")
         };
-        TextBlock textBlock = new()
+        TextBlock name = new()
         {
             Text = variable.Name,
             FontSize = 16,
@@ -286,13 +286,33 @@ public partial class MainView : UserControl
             Height = MainViewModel.STACK_LABEL_HEIGHT,
             Width = MainViewModel.STACK_WIDTH
         };
+        TextBlock value = new()
+        {
+            Text = variable.ValueAsString,
+            FontSize = 16,
+            FontFamily = new("Cascadia Mono"),
+            FontWeight = FontWeight.UltraBold,
+            Foreground = new SolidColorBrush(Colors.Black),
+            TextAlignment = TextAlignment.Center,
+            Height = 20,
+            Width = MainViewModel.STACK_CELL_HEIGHT,
+            HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Center
+        };
+        Panel imageBox = new()
+        {
+            Height = MainViewModel.STACK_CELL_HEIGHT,
+            Width = MainViewModel.STACK_CELL_HEIGHT
+        };
         Panel separator = new()
         {
             Height = MainViewModel.STACK_SEPARATOR_HEIGHT,
             Width = MainViewModel.STACK_WIDTH
         };
-        stackPanel.Children.Add(image);
-        stackPanel.Children.Add(textBlock);
+        imageBox.Children.Add(image);
+        imageBox.Children.Add(value);
+        stackPanel.Children.Add(imageBox);
+        stackPanel.Children.Add(name);
         stackPanel.Children.Add(separator);
     }
 
