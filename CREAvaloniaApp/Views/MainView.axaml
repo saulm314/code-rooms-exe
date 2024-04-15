@@ -141,6 +141,7 @@
 						Width="{Binding IdeControlWidth}"
 						CornerRadius="0"
 						Click="OnCompilePressed"
+						IsEnabled="True"
 						>
 						<TextBlock
 							Text="Compile"
@@ -152,6 +153,17 @@
 							HorizontalAlignment="Center"
 							VerticalAlignment="Center"
 							/>
+						<Button.Styles>
+							<Style Selector=":disabled /template/ ContentPresenter#PART_ContentPresenter">
+								<Setter Property="Background" Value="{Binding DisabledButtonBrush}"/>
+							</Style>
+							<Style Selector=":pointerover /template/ ContentPresenter#PART_ContentPresenter">
+								<Setter Property="Background" Value="{Binding CompileHoveredBrush}"/>
+							</Style>
+							<Style Selector=":pressed /template/ ContentPresenter#PART_ContentPresenter">
+								<Setter Property="Background" Value="{Binding CompilePressedBrush}"/>
+							</Style>
+						</Button.Styles>
 					</Button>
 					<Button
 						Background="{Binding EditBrush}"

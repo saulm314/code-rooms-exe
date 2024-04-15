@@ -134,6 +134,7 @@ public class MainViewModel : ViewModelBase
     public const byte STACK_HEADER_BG = 20;
     public const byte HEAP_HEADER_BG = 20;
     public const byte HEAP_LABEL_FG = 150;
+    public const byte DISABLED_BUTTON_BG = 60;
 
     public static (byte, byte, byte) COMPILE_BG => (5, 97, 67);
     public static (byte, byte, byte) EDIT_BG => (138, 108, 5);
@@ -146,11 +147,23 @@ public class MainViewModel : ViewModelBase
     public IBrush StackHeaderBrush => GetBrush(STACK_HEADER_BG);
     public IBrush HeapHeaderBrush => GetBrush(HEAP_HEADER_BG);
     public IBrush HeapLabelBrush => GetBrush(HEAP_LABEL_FG);
+    public IBrush DisabledButtonBrush => GetBrush(DISABLED_BUTTON_BG);
+
     public IBrush CompileBrush => GetBrush(COMPILE_BG);
+    public IBrush CompileHoveredBrush => GetHoveredBrush(COMPILE_BG);
+    public IBrush CompilePressedBrush => GetPressedBrush(COMPILE_BG);
     public IBrush EditBrush => GetBrush(EDIT_BG);
+    public IBrush EditHoveredBrush => GetHoveredBrush(EDIT_BG);
+    public IBrush EditPressedBrush => GetPressedBrush(EDIT_BG);
     public IBrush RunBrush => GetBrush(RUN_BG);
+    public IBrush RunHoveredBrush => GetHoveredBrush(RUN_BG);
+    public IBrush RunPressedBrush => GetPressedBrush(RUN_BG);
     public IBrush ArrowBrush => GetBrush(ARROW_BG);
+    public IBrush ArrowHoveredBrush => GetHoveredBrush(ARROW_BG);
+    public IBrush ArrowPressedBrush => GetPressedBrush(ARROW_BG);
     public IBrush NextBrush => GetBrush(NEXT_BG);
+    public IBrush NextHoveredBrush => GetHoveredBrush(NEXT_BG);
+    public IBrush NextPressedBrush => GetPressedBrush(NEXT_BG);
 
     public static SolidColorBrush GetBrush(byte brightness)
     {
@@ -160,5 +173,15 @@ public class MainViewModel : ViewModelBase
     public static SolidColorBrush GetBrush((byte, byte, byte) colorCode)
     {
         return new(new Color(byte.MaxValue, colorCode.Item1, colorCode.Item2, colorCode.Item3));
+    }
+
+    public static SolidColorBrush GetHoveredBrush((byte, byte, byte) colorCode)
+    {
+        return new(new Color(180, colorCode.Item1, colorCode.Item2, colorCode.Item3));
+    }
+
+    public static SolidColorBrush GetPressedBrush((byte, byte, byte) colorCode)
+    {
+        return new(new Color(100, colorCode.Item1, colorCode.Item2, colorCode.Item3));
     }
 }
