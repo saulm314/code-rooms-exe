@@ -143,6 +143,7 @@ public partial class MainView : UserControl
     private bool executed = false;
     private bool thrown = false;
     private InterpreterException? interpreterException;
+    private List<Statement>? statements;
 
     public void OnLeftPressed(object sender, RoutedEventArgs e)
     {
@@ -151,18 +152,16 @@ public partial class MainView : UserControl
         rightButton.IsEnabled = true;
         arrowCount--;
         OutputClear();
-        if (arrowCount > 0 && arrowCount - 1 < statements.Count)
+        if (arrowCount > 0 && arrowCount - 1 < statements!.Count)
             OutputWriteLine(statements[arrowCount - 1]);
     }
-
-    private List<Statement> statements = new();
 
     public void OnRightPressed(object sender, RoutedEventArgs e)
     {
         leftButton.IsEnabled = true;
         if (arrowCount < maxArrowCount)
         {
-            if (arrowCount < statements.Count)
+            if (arrowCount < statements!.Count)
             {
                 OutputClear();
                 OutputWriteLine(statements[arrowCount]);
@@ -187,7 +186,7 @@ public partial class MainView : UserControl
             if (statementNumber < _Interpreter.chunk.Statements.Length)
             {
                 Statement statement = _Interpreter.chunk.Statements[statementNumber];
-                statements.Add(statement);
+                statements!.Add(statement);
                 OutputClear();
                 OutputWriteLine(statements[arrowCount]);
             }
@@ -205,7 +204,7 @@ public partial class MainView : UserControl
         catch (InterpreterException exception)
         {
             Statement statement = _Interpreter.chunk.Statements[statementNumber];
-            statements.Add(statement);
+            statements!.Add(statement);
             OutputClear();
             OutputWriteLine(_Interpreter!.chunk.Statements[_Interpreter.chunk.statementsDone] + "\n");
             OutputWriteLine(exception.Message);
