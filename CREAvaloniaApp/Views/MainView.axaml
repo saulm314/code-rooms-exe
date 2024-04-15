@@ -324,6 +324,31 @@
 						</Button.Styles>
 					</Button>
 				</StackPanel>
+				<!-- Output -->
+				<TextBox
+					FontSize="16"
+					FontFamily="Cascadia Mono"
+					Foreground="White"
+					Background="Black"
+					Height="{Binding OutputHeight}"
+					Width="{Binding OutputWidth}"
+					Name="output"
+					IsReadOnly="True"
+					BorderThickness="0"
+					CaretBrush="Black"
+					CornerRadius="0"
+					TextWrapping="Wrap"
+					>
+					<TextBox.Styles>
+						<Style Selector=":pointerover /template/ Border#PART_BorderElement">
+							<Setter Property="Background" Value="Black"/>
+						</Style>
+						<Style Selector=":focus /template/ Border#PART_BorderElement">
+							<Setter Property="Background" Value="Black"/>
+							<Setter Property="BorderThickness" Value="0"/>
+						</Style>
+					</TextBox.Styles>
+				</TextBox>
 			</StackPanel>
 		</Grid>
 	</StackPanel>
