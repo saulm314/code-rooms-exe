@@ -338,6 +338,8 @@
 					CaretBrush="Black"
 					CornerRadius="0"
 					TextWrapping="WrapWithOverflow"
+					SelectionBrush="White"
+					SelectionForegroundBrush="Black"
 					>
 					<TextBox.Styles>
 						<Style Selector=":pointerover /template/ Border#PART_BorderElement">

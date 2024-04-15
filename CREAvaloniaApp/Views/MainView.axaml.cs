@@ -108,6 +108,7 @@ public partial class MainView : UserControl
         catch (InterpreterException exception)
         {
             OutputWriteLine(exception.Message);
+            runButton.IsEnabled = false;
         }
     }
 
