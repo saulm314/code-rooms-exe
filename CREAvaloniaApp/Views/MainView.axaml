@@ -90,46 +90,48 @@
 						Height="{Binding HeapHeaderTextHeight}"
 						Width="{Binding HeapHeaderTextWidth}"
 						/>
-					<Grid ShowGridLines="False" Background="Black" Name="heapGrid">
-						<Grid.ColumnDefinitions>
-							<!-- 10 repetitions -->
-							<ColumnDefinition Width="{Binding HeapVerticalSeparatorWidthGL}"/>
-							<ColumnDefinition Width="{Binding HeapCellWidthGL}"/>
-							<ColumnDefinition Width="{Binding HeapVerticalSeparatorWidthGL}"/>
-							<ColumnDefinition Width="{Binding HeapCellWidthGL}"/>
-							<ColumnDefinition Width="{Binding HeapVerticalSeparatorWidthGL}"/>
-							<ColumnDefinition Width="{Binding HeapCellWidthGL}"/>
-							<ColumnDefinition Width="{Binding HeapVerticalSeparatorWidthGL}"/>
-							<ColumnDefinition Width="{Binding HeapCellWidthGL}"/>
-							<ColumnDefinition Width="{Binding HeapVerticalSeparatorWidthGL}"/>
-							<ColumnDefinition Width="{Binding HeapCellWidthGL}"/>
-							<ColumnDefinition Width="{Binding HeapVerticalSeparatorWidthGL}"/>
-							<ColumnDefinition Width="{Binding HeapCellWidthGL}"/>
-							<ColumnDefinition Width="{Binding HeapVerticalSeparatorWidthGL}"/>
-							<ColumnDefinition Width="{Binding HeapCellWidthGL}"/>
-							<ColumnDefinition Width="{Binding HeapVerticalSeparatorWidthGL}"/>
-							<ColumnDefinition Width="{Binding HeapCellWidthGL}"/>
-							<ColumnDefinition Width="{Binding HeapVerticalSeparatorWidthGL}"/>
-							<ColumnDefinition Width="{Binding HeapCellWidthGL}"/>
-							<ColumnDefinition Width="{Binding HeapVerticalSeparatorWidthGL}"/>
-							<ColumnDefinition Width="{Binding HeapCellWidthGL}"/>
-							<ColumnDefinition Width="{Binding HeapVerticalSeparatorWidthGL}"/>
-						</Grid.ColumnDefinitions>
-						<Grid.RowDefinitions>
-							<!-- 5 repetitions -->
-							<RowDefinition Height="{Binding HeapTopHorizontalSeparatorHeightGL}"/>
-							<RowDefinition Height="{Binding HeapCellHeightGL}"/>
-							<RowDefinition Height="{Binding HeapHorizontalSeparatorHeightGL}"/>
-							<RowDefinition Height="{Binding HeapCellHeightGL}"/>
-							<RowDefinition Height="{Binding HeapHorizontalSeparatorHeightGL}"/>
-							<RowDefinition Height="{Binding HeapCellHeightGL}"/>
-							<RowDefinition Height="{Binding HeapHorizontalSeparatorHeightGL}"/>
-							<RowDefinition Height="{Binding HeapCellHeightGL}"/>
-							<RowDefinition Height="{Binding HeapHorizontalSeparatorHeightGL}"/>
-							<RowDefinition Height="{Binding HeapCellHeightGL}"/>
-							<RowDefinition Height="{Binding HeapHorizontalSeparatorHeightGL}"/>
-						</Grid.RowDefinitions>
-					</Grid>
+					<ScrollViewer Height="{Binding HeapScrollViewerHeight}" Width="{Binding HeapScrollViewerWidth}">
+						<Grid ShowGridLines="False" Background="Black" Name="heapGrid">
+							<Grid.ColumnDefinitions>
+								<!-- 10 repetitions -->
+								<ColumnDefinition Width="{Binding HeapVerticalSeparatorWidthGL}"/>
+								<ColumnDefinition Width="{Binding HeapCellWidthGL}"/>
+								<ColumnDefinition Width="{Binding HeapVerticalSeparatorWidthGL}"/>
+								<ColumnDefinition Width="{Binding HeapCellWidthGL}"/>
+								<ColumnDefinition Width="{Binding HeapVerticalSeparatorWidthGL}"/>
+								<ColumnDefinition Width="{Binding HeapCellWidthGL}"/>
+								<ColumnDefinition Width="{Binding HeapVerticalSeparatorWidthGL}"/>
+								<ColumnDefinition Width="{Binding HeapCellWidthGL}"/>
+								<ColumnDefinition Width="{Binding HeapVerticalSeparatorWidthGL}"/>
+								<ColumnDefinition Width="{Binding HeapCellWidthGL}"/>
+								<ColumnDefinition Width="{Binding HeapVerticalSeparatorWidthGL}"/>
+								<ColumnDefinition Width="{Binding HeapCellWidthGL}"/>
+								<ColumnDefinition Width="{Binding HeapVerticalSeparatorWidthGL}"/>
+								<ColumnDefinition Width="{Binding HeapCellWidthGL}"/>
+								<ColumnDefinition Width="{Binding HeapVerticalSeparatorWidthGL}"/>
+								<ColumnDefinition Width="{Binding HeapCellWidthGL}"/>
+								<ColumnDefinition Width="{Binding HeapVerticalSeparatorWidthGL}"/>
+								<ColumnDefinition Width="{Binding HeapCellWidthGL}"/>
+								<ColumnDefinition Width="{Binding HeapVerticalSeparatorWidthGL}"/>
+								<ColumnDefinition Width="{Binding HeapCellWidthGL}"/>
+								<ColumnDefinition Width="{Binding HeapVerticalSeparatorWidthGL}"/>
+							</Grid.ColumnDefinitions>
+							<Grid.RowDefinitions>
+								<!-- 5 repetitions -->
+								<RowDefinition Height="{Binding HeapTopHorizontalSeparatorHeightGL}"/>
+								<RowDefinition Height="{Binding HeapCellHeightGL}"/>
+								<RowDefinition Height="{Binding HeapHorizontalSeparatorHeightGL}"/>
+								<RowDefinition Height="{Binding HeapCellHeightGL}"/>
+								<RowDefinition Height="{Binding HeapHorizontalSeparatorHeightGL}"/>
+								<RowDefinition Height="{Binding HeapCellHeightGL}"/>
+								<RowDefinition Height="{Binding HeapHorizontalSeparatorHeightGL}"/>
+								<RowDefinition Height="{Binding HeapCellHeightGL}"/>
+								<RowDefinition Height="{Binding HeapHorizontalSeparatorHeightGL}"/>
+								<RowDefinition Height="{Binding HeapCellHeightGL}"/>
+								<RowDefinition Height="{Binding HeapHorizontalSeparatorHeightGL}"/>
+							</Grid.RowDefinitions>
+						</Grid>
+					</ScrollViewer>
 				</StackPanel>
 			</StackPanel>
 		</Grid>

@@ -61,6 +61,10 @@ public class MainViewModel : ViewModelBase
     public GridLength HeapCellWidthGL => new(HeapCellWidth);
     public GridLength HeapCellHeightGL => new(HeapCellHeight);
 
+    public static Size HeapScrollViewerSize => new(HEAP_WIDTH, HEAP_HEIGHT - HEAP_HEADER_TEXT_HEIGHT);
+    public int HeapScrollViewerWidth => (int)HeapScrollViewerSize.Width;
+    public int HeapScrollViewerHeight => (int)HeapScrollViewerSize.Height;
+
     public int HeapVerticalSeparatorWidth => HEAP_VERTICAL_SEPARATOR_WIDTH;
     public int HeapHorizontalSeparatorHeight => HEAP_HORIZONTAL_SEPARATOR_HEIGHT;
     public int HeapTopHorizontalSeparatorHeight => HEAP_TOP_HORIZONTAL_SEPARATOR_HEIGHT;
