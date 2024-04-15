@@ -104,7 +104,7 @@ public partial class MainView : UserControl
         maxArrowCount = 0;
         executed = false;
         thrown = false;
-        statements = new();
+        memoryFrames = new();
         interpreterException = null;
         OutputClear();
         OutputWriteLine("Compiling...");
@@ -143,7 +143,7 @@ public partial class MainView : UserControl
     private bool executed = false;
     private bool thrown = false;
     private InterpreterException? interpreterException;
-    private List<Statement>? statements;
+    private List<MemoryFrame>? memoryFrames;
 
     public void OnLeftPressed(object sender, RoutedEventArgs e)
     {
@@ -152,8 +152,8 @@ public partial class MainView : UserControl
         rightButton.IsEnabled = true;
         arrowCount--;
         OutputClear();
-        if (arrowCount > 0 && arrowCount - 1 < statements!.Count)
-            OutputWriteLine(statements[arrowCount - 1]);
+        if (arrowCount > 0 && arrowCount - 1 < memoryFrames!.Count)
+            OutputWriteLine(memoryFrames[arrowCount - 1]);
     }
 
     public void OnRightPressed(object sender, RoutedEventArgs e)
@@ -161,10 +161,10 @@ public partial class MainView : UserControl
         leftButton.IsEnabled = true;
         if (arrowCount < maxArrowCount)
         {
-            if (arrowCount < statements!.Count)
+            if (arrowCount < memoryFrames!.Count)
             {
                 OutputClear();
-                OutputWriteLine(statements[arrowCount]);
+                OutputWriteLine(memoryFrames[arrowCount]);
             }
             arrowCount++;
             if (arrowCount == maxArrowCount && (executed || thrown))
@@ -172,7 +172,7 @@ public partial class MainView : UserControl
                 OutputClear();
                 if (thrown)
                 {
-                    OutputWriteLine(statements[arrowCount - 1] + "\n");
+                    OutputWriteLine(memoryFrames[arrowCount - 1] + "\n");
                     OutputWriteLine(interpreterException!.Message);
                 }
                 rightButton.IsEnabled = false;
@@ -186,9 +186,9 @@ public partial class MainView : UserControl
             if (statementNumber < _Interpreter.chunk.Statements.Length)
             {
                 Statement statement = _Interpreter.chunk.Statements[statementNumber];
-                statements!.Add(statement);
+                memoryFrames!.Add(new(statement));
                 OutputClear();
-                OutputWriteLine(statements[arrowCount]);
+                OutputWriteLine(memoryFrames[arrowCount]);
             }
             if (executed)
             {
@@ -204,7 +204,7 @@ public partial class MainView : UserControl
         catch (InterpreterException exception)
         {
             Statement statement = _Interpreter.chunk.Statements[statementNumber];
-            statements!.Add(statement);
+            memoryFrames!.Add(new(statement));
             OutputClear();
             OutputWriteLine(_Interpreter!.chunk.Statements[_Interpreter.chunk.statementsDone] + "\n");
             OutputWriteLine(exception.Message);

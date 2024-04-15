@@ -4,6 +4,6 @@ namespace CRECSharpInterpreter
 {
     public class Scope
     {
-        public List<Variable> DeclaredVariables { get; } = new();
+        public List<Variable> DeclaredVariables { get; internal set; } = new();
     }
 }
