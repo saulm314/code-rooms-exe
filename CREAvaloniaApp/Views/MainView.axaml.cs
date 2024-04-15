@@ -93,14 +93,25 @@ public partial class MainView : UserControl
 
     public void OnCompilePressed(object sender, RoutedEventArgs e)
     {
+        compileButton.IsEnabled = false;
+        editButton.IsEnabled = true;
+        runButton.IsEnabled = true;
     }
 
     public void OnEditPressed(object sender, RoutedEventArgs e)
     {
+        editButton.IsEnabled = false;
+        compileButton.IsEnabled = true;
+        runButton.IsEnabled = false;
+        leftButton.IsEnabled = false;
+        rightButton.IsEnabled = false;
+        nextButton.IsEnabled = false;
     }
 
     public void OnRunPressed(object sender, RoutedEventArgs e)
     {
+        runButton.IsEnabled = false;
+        rightButton.IsEnabled = true;
     }
 
     public void OnLeftPressed(object sender, RoutedEventArgs e)
@@ -109,9 +120,13 @@ public partial class MainView : UserControl
 
     public void OnRightPressed(object sender, RoutedEventArgs e)
     {
+        leftButton.IsEnabled = true;
+        nextButton.IsEnabled = true;
     }
 
     public void OnNextPressed(object sender, RoutedEventArgs e)
     {
+        nextButton.IsEnabled = false;
+        leftButton.IsEnabled = false;
     }
 }

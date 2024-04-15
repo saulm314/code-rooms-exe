@@ -267,7 +267,7 @@
 							CornerRadius="0"
 							Click="OnRightPressed"
 							IsEnabled="False"
-							Name="RightButton"
+							Name="rightButton"
 							>
 							<TextBlock
 								Text="&gt;"
