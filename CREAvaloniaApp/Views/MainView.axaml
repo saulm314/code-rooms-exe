@@ -69,8 +69,28 @@
 					</Style>
 				</TextBox.Styles>
 			</TextBox>
-			<!-- Heap -->
-			
+			<StackPanel
+				Grid.Column="0"
+				Grid.Row="1"
+				Orientation="Horizontal"
+				Height="{Binding HeapHeight}"
+				Width="{Binding TextEditorWidth}"
+				>
+				<!-- Heap -->
+				<StackPanel Orientation="Vertical" Height="{Binding HeapHeight}" Width="{Binding HeapWidth}">
+					<TextBlock
+						Text="Heap"
+						FontSize="16"
+						FontFamily="Cascadia Mono"
+						Foreground="White"
+						Background="{Binding HeapHeaderBrush}"
+						FontWeight="UltraBold"
+						TextAlignment="Center"
+						Height="{Binding HeapHeaderTextHeight}"
+						Width="{Binding HeapHeaderTextWidth}"
+						/>
+				</StackPanel>
+			</StackPanel>
 		</Grid>
 	</StackPanel>
 </UserControl>

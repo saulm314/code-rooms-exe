@@ -51,6 +51,10 @@ public class MainViewModel : ViewModelBase
     public GridLength HeapWidthGL => new(HeapWidth);
     public GridLength HeapHeightGL => new(HeapHeight);
 
+    public static Size HeapHeaderTextSize => new(HEAP_WIDTH, HEAP_HEADER_TEXT_HEIGHT);
+    public int HeapHeaderTextWidth => (int)HeapHeaderTextSize.Width;
+    public int HeapHeaderTextHeight => (int)HeapHeaderTextSize.Height;
+
     public static Size IdeControlsSize => new(IDE_CONTROLS_WIDTH, HEAP_HEIGHT);
     public int IdeControlsWidth => (int)IdeControlsSize.Width;
     public int IdeControlsHeight => (int)IdeControlsSize.Height;
@@ -111,10 +115,12 @@ public class MainViewModel : ViewModelBase
     public const byte BG = 42;
     public const byte TEXT_EDITOR_BG = 30;
     public const byte STACK_HEADER_BG = 20;
+    public const byte HEAP_HEADER_BG = 20;
 
     public IBrush WindowBrush => GetBrush(BG);
     public IBrush TextEditorBrush => GetBrush(TEXT_EDITOR_BG);
     public IBrush StackHeaderBrush => GetBrush(STACK_HEADER_BG);
+    public IBrush HeapHeaderBrush => GetBrush(HEAP_HEADER_BG);
 
     public static SolidColorBrush GetBrush(byte brightness)
     {
