@@ -16,6 +16,8 @@ public partial class MainView : UserControl
         ConfigureHeapGrid();
     }
 
+    public Interpreter? _Interpreter { get; private set; }
+
     private void ConfigureHeapGrid()
     {
         RowDefinitions rowDefinitions = heapGrid.RowDefinitions;
@@ -98,11 +100,15 @@ public partial class MainView : UserControl
         editButton.IsEnabled = true;
         runButton.IsEnabled = true;
         textEditor.IsReadOnly = true;
+        arrowCount = 0;
+        maxArrowCount = 0;
+        executed = false;
+        thrown = false;
         OutputClear();
         OutputWriteLine("Compiling...");
         try
         {
-            _ = new Interpreter(textEditor.Text ?? string.Empty);
+            _Interpreter = new Interpreter(textEditor.Text ?? string.Empty);
             OutputWriteLine("Compilation successful");
         }
         catch (InterpreterException exception)
@@ -130,14 +136,49 @@ public partial class MainView : UserControl
         OutputWriteLine("Running...");
     }
 
+    private int arrowCount = 0;
+    private int maxArrowCount = 0;
+    private bool executed = false;
+    private bool thrown = false;
+
     public void OnLeftPressed(object sender, RoutedEventArgs e)
     {
+        if (arrowCount == 1)
+            leftButton.IsEnabled = false;
+        rightButton.IsEnabled = true;
+        arrowCount--;
     }
 
     public void OnRightPressed(object sender, RoutedEventArgs e)
     {
         leftButton.IsEnabled = true;
-        nextButton.IsEnabled = true;
+        if (arrowCount < maxArrowCount)
+        {
+            arrowCount++;
+            if (arrowCount == maxArrowCount && (executed || thrown))
+                rightButton.IsEnabled = false;
+            return;
+        }
+        try
+        {
+            if (!_Interpreter!.chunk.RunNextStatement())
+            {
+                rightButton.IsEnabled = false;
+                OutputWriteLine("Execution finished");
+                executed = true;
+                nextButton.IsEnabled = true;
+            }
+            arrowCount++;
+            maxArrowCount++;
+        }
+        catch (InterpreterException exception)
+        {
+            OutputWriteLine(exception.Message);
+            rightButton.IsEnabled = false;
+            thrown = true;
+            arrowCount++;
+            maxArrowCount++;
+        }
     }
 
     public void OnNextPressed(object sender, RoutedEventArgs e)
