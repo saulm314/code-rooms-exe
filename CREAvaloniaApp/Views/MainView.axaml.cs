@@ -1,7 +1,9 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Avalonia.Layout;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
 using CREAvaloniaApp.ViewModels;
 using CRECSharpInterpreter;
 using System.Collections.Generic;
@@ -129,6 +131,7 @@ public partial class MainView : UserControl
         rightButton.IsEnabled = false;
         nextButton.IsEnabled = false;
         textEditor.IsReadOnly = false;
+        ClearStack();
     }
 
     public void OnRunPressed(object sender, RoutedEventArgs e)
@@ -152,8 +155,9 @@ public partial class MainView : UserControl
         rightButton.IsEnabled = true;
         arrowCount--;
         OutputClear();
+        ClearStack();
         if (arrowCount > 0 && arrowCount - 1 < memoryFrames!.Count)
-            OutputWriteLine(memoryFrames[arrowCount - 1]);
+            DisplayMemoryFrame(arrowCount - 1);
     }
 
     public void OnRightPressed(object sender, RoutedEventArgs e)
@@ -164,7 +168,7 @@ public partial class MainView : UserControl
             if (arrowCount < memoryFrames!.Count)
             {
                 OutputClear();
-                OutputWriteLine(memoryFrames[arrowCount]);
+                DisplayMemoryFrame(arrowCount);
             }
             arrowCount++;
             if (arrowCount == maxArrowCount && (executed || thrown))
@@ -172,8 +176,8 @@ public partial class MainView : UserControl
                 OutputClear();
                 if (thrown)
                 {
-                    OutputWriteLine(memoryFrames[arrowCount - 1] + "\n");
-                    OutputWriteLine(interpreterException!.Message);
+                    DisplayMemoryFrame(arrowCount - 1);
+                    OutputWriteLine("\n" + interpreterException!.Message);
                 }
                 rightButton.IsEnabled = false;
             }
@@ -188,7 +192,7 @@ public partial class MainView : UserControl
                 Statement statement = _Interpreter.chunk.Statements[statementNumber];
                 memoryFrames!.Add(new(statement));
                 OutputClear();
-                OutputWriteLine(memoryFrames[arrowCount]);
+                DisplayMemoryFrame(arrowCount);
             }
             if (executed)
             {
@@ -206,8 +210,8 @@ public partial class MainView : UserControl
             Statement statement = _Interpreter.chunk.Statements[statementNumber];
             memoryFrames!.Add(new(statement));
             OutputClear();
-            OutputWriteLine(_Interpreter!.chunk.Statements[_Interpreter.chunk.statementsDone] + "\n");
-            OutputWriteLine(exception.Message);
+            DisplayMemoryFrame(arrowCount - 1);
+            OutputWriteLine("\n" + exception.Message);
             interpreterException = exception;
             rightButton.IsEnabled = false;
             thrown = true;
@@ -236,5 +240,68 @@ public partial class MainView : UserControl
     public void OutputClear()
     {
         output.Clear();
+    }
+
+    public void DisplayMemoryFrame(int index)
+    {
+        DisplayMemoryFrame(memoryFrames![index]);
+    }
+
+    private void DisplayMemoryFrame(MemoryFrame memoryFrame)
+    {
+        OutputWriteLine(memoryFrame);
+        DisplayStack(memoryFrame.Stack);
+        DisplayHeap(memoryFrame.Heap);
+    }
+
+    private void DisplayStack(Stack<Scope> stack)
+    {
+        ClearStack();
+        Scope[] scopes = stack.ToArray();
+        for (int i = scopes.Length - 1; i >= 0; i--)
+        {
+            Scope scope = scopes[i];
+            foreach (Variable variable in scope.DeclaredVariables)
+                PushToStack(variable);
+        }
+    }
+
+    private void PushToStack(Variable variable)
+    {
+        Image image = new()
+        {
+            Height = MainViewModel.STACK_CELL_HEIGHT,
+            Width = MainViewModel.STACK_CELL_HEIGHT,
+            HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Center,
+            Source = new Bitmap(@$"..\..\..\..\Files\Types\{variable._VarType}.png")
+        };
+        TextBlock textBlock = new()
+        {
+            Text = variable.Name,
+            FontSize = 16,
+            FontFamily = new("Cascadia Mono"),
+            Foreground = new SolidColorBrush(Colors.White),
+            TextAlignment = TextAlignment.Center,
+            Height = MainViewModel.STACK_LABEL_HEIGHT,
+            Width = MainViewModel.STACK_WIDTH
+        };
+        Panel separator = new()
+        {
+            Height = MainViewModel.STACK_SEPARATOR_HEIGHT,
+            Width = MainViewModel.STACK_WIDTH
+        };
+        stackPanel.Children.Add(image);
+        stackPanel.Children.Add(textBlock);
+        stackPanel.Children.Add(separator);
+    }
+
+    private void ClearStack()
+    {
+        stackPanel.Children.Clear();
+    }
+
+    private void DisplayHeap(Heap heap)
+    {
     }
 }
