@@ -11,15 +11,6 @@ public partial class MainView : UserControl
     public MainView()
     {
         InitializeComponent();
-        SetStackHeaderBackground();
-    }
-
-    public const byte STACK_HEADER_BG = 20;
-    private void SetStackHeaderBackground()
-    {
-        Color color = new(byte.MaxValue, STACK_HEADER_BG, STACK_HEADER_BG, STACK_HEADER_BG);
-        SolidColorBrush brush = new(color);
-        stackHeaderTextBlock.Background = brush;
     }
 
     public void OnTextChange(object sender, AvaloniaPropertyChangedEventArgs e)

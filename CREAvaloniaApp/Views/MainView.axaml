@@ -21,6 +21,7 @@
 					FontSize="16"
 					FontFamily="Cascadia Mono"
 					Foreground="White"
+					Background="{Binding StackHeaderBrush}"
 					FontWeight="UltraBold"
 					TextAlignment="Center"
 					Height="{Binding StackHeaderTextHeight}"

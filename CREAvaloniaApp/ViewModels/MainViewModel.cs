@@ -101,6 +101,16 @@ public class MainViewModel : ViewModelBase
     public int FinishButtonWidth => (int)FinishButtonSize.Width;
     public int FinishButtonHeight => (int)FinishButtonSize.Height;
 
+    public const byte BG = 42;
     public const byte TEXT_EDITOR_BG = 30;
-    public IBrush TextEditorBrush => new SolidColorBrush(new Color(byte.MaxValue, TEXT_EDITOR_BG, TEXT_EDITOR_BG, TEXT_EDITOR_BG));
+    public const byte STACK_HEADER_BG = 20;
+
+    public IBrush WindowBrush => GetBrush(BG);
+    public IBrush TextEditorBrush => GetBrush(TEXT_EDITOR_BG);
+    public IBrush StackHeaderBrush => GetBrush(STACK_HEADER_BG);
+
+    public static SolidColorBrush GetBrush(byte brightness)
+    {
+        return new(new Color(byte.MaxValue, brightness, brightness, brightness));
+    }
 }
