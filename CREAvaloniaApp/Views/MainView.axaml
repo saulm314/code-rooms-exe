@@ -136,7 +136,7 @@
 				<!-- IdeControls -->
 				<StackPanel Orientation="Vertical" Height="{Binding IdeControlsHeight}" Width="{Binding IdeControlsWidth}">
 					<Button
-						Background="DarkCyan"
+						Background="{Binding CompileBrush}"
 						Height="{Binding IdeControlHeight}"
 						Width="{Binding IdeControlWidth}"
 						CornerRadius="0"
@@ -154,7 +154,7 @@
 							/>
 					</Button>
 					<Button
-						Background="DarkGoldenrod"
+						Background="{Binding EditBrush}"
 						Height="{Binding IdeControlHeight}"
 						Width="{Binding IdeControlWidth}"
 						CornerRadius="0"
@@ -172,7 +172,7 @@
 							/>
 					</Button>
 					<Button
-						Background="DarkGreen"
+						Background="{Binding RunBrush}"
 						Height="{Binding IdeControlHeight}"
 						Width="{Binding IdeControlWidth}"
 						CornerRadius="0"
@@ -191,7 +191,7 @@
 					</Button>
 					<StackPanel Orientation="Horizontal" Height="{Binding IdeControlHeight}" Width="{Binding IdeControlWidth}">
 						<Button
-							Background="Black"
+							Background="{Binding ArrowBrush}"
 							Height="{Binding IdeControlLeftHeight}"
 							Width="{Binding IdeControlLeftWidth}"
 							CornerRadius="0"
@@ -209,7 +209,7 @@
 								/>
 						</Button>
 						<Button
-							Background="Black"
+							Background="{Binding ArrowBrush}"
 							Height="{Binding IdeControlRightHeight}"
 							Width="{Binding IdeControlRightWidth}"
 							CornerRadius="0"
@@ -228,7 +228,7 @@
 						</Button>
 					</StackPanel>
 					<Button
-						Background="Teal"
+						Background="{Binding NextBrush}"
 						Height="{Binding IdeControlHeight}"
 						Width="{Binding IdeControlWidth}"
 						CornerRadius="0"

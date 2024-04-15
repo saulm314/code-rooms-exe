@@ -135,14 +135,30 @@ public class MainViewModel : ViewModelBase
     public const byte HEAP_HEADER_BG = 20;
     public const byte HEAP_LABEL_FG = 150;
 
+    public static (byte, byte, byte) COMPILE_BG => (5, 97, 67);
+    public static (byte, byte, byte) EDIT_BG => (138, 108, 5);
+    public static (byte, byte, byte) RUN_BG => (10, 117, 1);
+    public static (byte, byte, byte) ARROW_BG => (0, 0, 0);
+    public static (byte, byte, byte) NEXT_BG => (0, 72, 130);
+
     public IBrush WindowBrush => GetBrush(BG);
     public IBrush TextEditorBrush => GetBrush(TEXT_EDITOR_BG);
     public IBrush StackHeaderBrush => GetBrush(STACK_HEADER_BG);
     public IBrush HeapHeaderBrush => GetBrush(HEAP_HEADER_BG);
     public IBrush HeapLabelBrush => GetBrush(HEAP_LABEL_FG);
+    public IBrush CompileBrush => GetBrush(COMPILE_BG);
+    public IBrush EditBrush => GetBrush(EDIT_BG);
+    public IBrush RunBrush => GetBrush(RUN_BG);
+    public IBrush ArrowBrush => GetBrush(ARROW_BG);
+    public IBrush NextBrush => GetBrush(NEXT_BG);
 
     public static SolidColorBrush GetBrush(byte brightness)
     {
         return new(new Color(byte.MaxValue, brightness, brightness, brightness));
+    }
+
+    public static SolidColorBrush GetBrush((byte, byte, byte) colorCode)
+    {
+        return new(new Color(byte.MaxValue, colorCode.Item1, colorCode.Item2, colorCode.Item3));
     }
 }
