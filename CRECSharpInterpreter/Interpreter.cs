@@ -4,7 +4,7 @@ namespace CRECSharpInterpreter
 {
     public class Interpreter
     {
-        public Interpreter(string text)
+        internal Interpreter(string text, bool dummy)
         {
             Console.WriteLine($"Creating interpreter for the following text:\n\n{text}");
             chunk = new(text, Mode.Compilation);
@@ -17,6 +17,12 @@ namespace CRECSharpInterpreter
                 Console.ReadLine();
             }
             Console.WriteLine("Done");
+        }
+
+        public Interpreter(string text)
+        {
+            chunk = new(text, Mode.Compilation);
+            chunk = new(text, Mode.Runtime);
         }
 
         public Chunk chunk;
