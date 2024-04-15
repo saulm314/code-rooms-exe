@@ -96,6 +96,7 @@ public partial class MainView : UserControl
         compileButton.IsEnabled = false;
         editButton.IsEnabled = true;
         runButton.IsEnabled = true;
+        textEditor.IsReadOnly = true;
     }
 
     public void OnEditPressed(object sender, RoutedEventArgs e)
@@ -106,6 +107,7 @@ public partial class MainView : UserControl
         leftButton.IsEnabled = false;
         rightButton.IsEnabled = false;
         nextButton.IsEnabled = false;
+        textEditor.IsReadOnly = false;
     }
 
     public void OnRunPressed(object sender, RoutedEventArgs e)
