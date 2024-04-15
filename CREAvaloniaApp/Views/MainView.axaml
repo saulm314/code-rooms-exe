@@ -69,6 +69,7 @@
 					</Style>
 				</TextBox.Styles>
 			</TextBox>
+			<!-- Heap, IdeControls, Output -->
 			<StackPanel
 				Grid.Column="0"
 				Grid.Row="1"
@@ -89,6 +90,46 @@
 						Height="{Binding HeapHeaderTextHeight}"
 						Width="{Binding HeapHeaderTextWidth}"
 						/>
+					<Grid ShowGridLines="False" Background="Black">
+						<Grid.ColumnDefinitions>
+							<!-- 10 repetitions -->
+							<ColumnDefinition Width="{Binding HeapVerticalSeparatorWidthGL}"/>
+							<ColumnDefinition Width="{Binding HeapCellWidthGL}"/>
+							<ColumnDefinition Width="{Binding HeapVerticalSeparatorWidthGL}"/>
+							<ColumnDefinition Width="{Binding HeapCellWidthGL}"/>
+							<ColumnDefinition Width="{Binding HeapVerticalSeparatorWidthGL}"/>
+							<ColumnDefinition Width="{Binding HeapCellWidthGL}"/>
+							<ColumnDefinition Width="{Binding HeapVerticalSeparatorWidthGL}"/>
+							<ColumnDefinition Width="{Binding HeapCellWidthGL}"/>
+							<ColumnDefinition Width="{Binding HeapVerticalSeparatorWidthGL}"/>
+							<ColumnDefinition Width="{Binding HeapCellWidthGL}"/>
+							<ColumnDefinition Width="{Binding HeapVerticalSeparatorWidthGL}"/>
+							<ColumnDefinition Width="{Binding HeapCellWidthGL}"/>
+							<ColumnDefinition Width="{Binding HeapVerticalSeparatorWidthGL}"/>
+							<ColumnDefinition Width="{Binding HeapCellWidthGL}"/>
+							<ColumnDefinition Width="{Binding HeapVerticalSeparatorWidthGL}"/>
+							<ColumnDefinition Width="{Binding HeapCellWidthGL}"/>
+							<ColumnDefinition Width="{Binding HeapVerticalSeparatorWidthGL}"/>
+							<ColumnDefinition Width="{Binding HeapCellWidthGL}"/>
+							<ColumnDefinition Width="{Binding HeapVerticalSeparatorWidthGL}"/>
+							<ColumnDefinition Width="{Binding HeapCellWidthGL}"/>
+							<ColumnDefinition Width="{Binding HeapVerticalSeparatorWidthGL}"/>
+						</Grid.ColumnDefinitions>
+						<Grid.RowDefinitions>
+							<!-- 5 repetitions -->
+							<RowDefinition Height="{Binding HeapTopHorizontalSeparatorHeightGL}"/>
+							<RowDefinition Height="{Binding HeapCellHeightGL}"/>
+							<RowDefinition Height="{Binding HeapHorizontalSeparatorHeightGL}"/>
+							<RowDefinition Height="{Binding HeapCellHeightGL}"/>
+							<RowDefinition Height="{Binding HeapHorizontalSeparatorHeightGL}"/>
+							<RowDefinition Height="{Binding HeapCellHeightGL}"/>
+							<RowDefinition Height="{Binding HeapHorizontalSeparatorHeightGL}"/>
+							<RowDefinition Height="{Binding HeapCellHeightGL}"/>
+							<RowDefinition Height="{Binding HeapHorizontalSeparatorHeightGL}"/>
+							<RowDefinition Height="{Binding HeapCellHeightGL}"/>
+							<RowDefinition Height="{Binding HeapHorizontalSeparatorHeightGL}"/>
+						</Grid.RowDefinitions>
+					</Grid>
 				</StackPanel>
 			</StackPanel>
 		</Grid>

@@ -55,6 +55,19 @@ public class MainViewModel : ViewModelBase
     public int HeapHeaderTextWidth => (int)HeapHeaderTextSize.Width;
     public int HeapHeaderTextHeight => (int)HeapHeaderTextSize.Height;
 
+    public static Size HeapCellSize => new(HEAP_CELL_WIDTH, HEAP_CELL_HEIGHT);
+    public int HeapCellWidth => (int)HeapCellSize.Width;
+    public int HeapCellHeight => (int)HeapCellSize.Height;
+    public GridLength HeapCellWidthGL => new(HeapCellWidth);
+    public GridLength HeapCellHeightGL => new(HeapCellHeight);
+
+    public int HeapVerticalSeparatorWidth => HEAP_VERTICAL_SEPARATOR_WIDTH;
+    public int HeapHorizontalSeparatorHeight => HEAP_HORIZONTAL_SEPARATOR_HEIGHT;
+    public int HeapTopHorizontalSeparatorHeight => HEAP_TOP_HORIZONTAL_SEPARATOR_HEIGHT;
+    public GridLength HeapVerticalSeparatorWidthGL => new(HeapVerticalSeparatorWidth);
+    public GridLength HeapHorizontalSeparatorHeightGL => new(HeapHorizontalSeparatorHeight);
+    public GridLength HeapTopHorizontalSeparatorHeightGL => new(HeapTopHorizontalSeparatorHeight);
+
     public static Size IdeControlsSize => new(IDE_CONTROLS_WIDTH, HEAP_HEIGHT);
     public int IdeControlsWidth => (int)IdeControlsSize.Width;
     public int IdeControlsHeight => (int)IdeControlsSize.Height;
