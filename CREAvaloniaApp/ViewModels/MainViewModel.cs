@@ -129,11 +129,13 @@ public class MainViewModel : ViewModelBase
     public const byte TEXT_EDITOR_BG = 30;
     public const byte STACK_HEADER_BG = 20;
     public const byte HEAP_HEADER_BG = 20;
+    public const byte HEAP_LABEL_FG = 150;
 
     public IBrush WindowBrush => GetBrush(BG);
     public IBrush TextEditorBrush => GetBrush(TEXT_EDITOR_BG);
     public IBrush StackHeaderBrush => GetBrush(STACK_HEADER_BG);
     public IBrush HeapHeaderBrush => GetBrush(HEAP_HEADER_BG);
+    public IBrush HeapLabelBrush => GetBrush(HEAP_LABEL_FG);
 
     public static SolidColorBrush GetBrush(byte brightness)
     {

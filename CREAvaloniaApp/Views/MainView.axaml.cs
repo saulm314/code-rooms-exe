@@ -1,5 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Media;
+using CREAvaloniaApp.ViewModels;
 using System.Collections.Generic;
 
 namespace CREAvaloniaApp.Views;
@@ -9,6 +11,40 @@ public partial class MainView : UserControl
     public MainView()
     {
         InitializeComponent();
+        ConfigureHeapGrid();
+    }
+
+    private void ConfigureHeapGrid()
+    {
+        RowDefinitions rowDefinitions = heapGrid.RowDefinitions;
+        ColumnDefinitions columnDefinitions = heapGrid.ColumnDefinitions;
+        int count = 0;
+        for (int i = 1; i < rowDefinitions.Count; i += 2)
+        {
+            for (int j = 1; j < columnDefinitions.Count; j += 2)
+            {
+                Panel cell = new()
+                {
+                    Background = MainViewModel.GetBrush(MainViewModel.BG),
+                    [Grid.RowProperty] = i,
+                    [Grid.ColumnProperty] = j
+                };
+                heapGrid.Children.Add(cell);
+                TextBlock label = new()
+                {
+                    Text = count == 0 ? "null" : count.ToString(),
+                    FontSize = 13,
+                    FontFamily = new("Cascadia Mono"),
+                    Foreground = MainViewModel.GetBrush(MainViewModel.HEAP_LABEL_FG),
+                    FontWeight = FontWeight.UltraBold,
+                    TextAlignment = TextAlignment.Center,
+                    [Grid.RowProperty] = i + 1,
+                    [Grid.ColumnProperty] = j
+                };
+                heapGrid.Children.Add(label);
+                count++;
+            }
+        }
     }
 
     public void OnTextChange(object sender, AvaloniaPropertyChangedEventArgs e)
