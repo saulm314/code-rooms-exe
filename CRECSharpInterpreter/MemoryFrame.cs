@@ -92,7 +92,7 @@ namespace CRECSharpInterpreter
             if (IsLastFrame && Memory.Instance!.Executed)
                 return str += "Execution finished";
             if (IsLastFrame && Memory.Instance!.Thrown)
-                return str += "\n\n" + Memory.Instance.ThrownException;
+                return str += "\n\n" + Memory.Instance.ThrownException!.Message;
             return str;
         }
     }

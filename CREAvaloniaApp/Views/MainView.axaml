@@ -337,7 +337,7 @@
 					BorderThickness="0"
 					CaretBrush="Black"
 					CornerRadius="0"
-					TextWrapping="WrapWithOverflow"
+					TextWrapping="Wrap"
 					SelectionBrush="White"
 					SelectionForegroundBrush="Black"
 					>
