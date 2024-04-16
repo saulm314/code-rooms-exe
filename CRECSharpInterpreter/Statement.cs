@@ -333,9 +333,12 @@ namespace CRECSharpInterpreter
             Executed = true;
             if (Parent?._Type == Type.For)
                 return;
+            
+            Memory.Instance!.Frames[Memory.Instance.CurrentFrame].Init();
+
             Console.WriteLine("Stack:");
             Console.WriteLine(separator + "\n");
-            Scope[] scopes = Memory.Instance!.Stack.ToArray();
+            Scope[] scopes = Memory.Instance.Stack.ToArray();
 
             for (int i = scopes.Length - 1; i >= 0; i--)
             {

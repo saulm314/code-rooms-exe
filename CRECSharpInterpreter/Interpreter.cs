@@ -45,14 +45,17 @@ namespace CRECSharpInterpreter
             {
                 Memory.Instance.Executed = !chunk.RunNextStatement();
                 if (Memory.Instance.Executed)
+                {
                     Memory.Instance.Frames.Add(new());
+                    Memory.Instance.Frames[Memory.Instance.CurrentFrame].Init();
+                }
             }
             catch (InterpreterException e)
             {
                 Memory.Instance.Thrown = true;
                 Memory.Instance.ThrownException = e;
+                Memory.Instance.Frames[Memory.Instance.CurrentFrame].Init();
             }
-            Memory.Instance.Frames[Memory.Instance.CurrentFrame].Init();
         }
 
         public Chunk chunk;
