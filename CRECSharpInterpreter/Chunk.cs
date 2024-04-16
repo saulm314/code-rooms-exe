@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-
-namespace CRECSharpInterpreter
+﻿namespace CRECSharpInterpreter
 {
     public class Chunk
     {

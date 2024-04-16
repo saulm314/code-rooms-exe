@@ -253,6 +253,8 @@ namespace CRECSharpInterpreter
                     if (Parent?._Type == Type.For)
                         break;
                     Console.WriteLine(ReducedText + '\n');
+                    if (Memory.Instance!._Mode == Mode.RuntimeStoreAllFrames)
+                        Memory.Instance.Frames.Add(new(this));
                     break;
             }
             switch (_Type)

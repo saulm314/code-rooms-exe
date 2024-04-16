@@ -4,16 +4,31 @@ namespace CRECSharpInterpreter
 {
     public class MemoryFrame
     {
-        public MemoryFrame(Statement statement)
+        public MemoryFrame(Statement? statement = null)
         {
             Statement = statement;
+            if (Memory.Instance != null)
+                Memory.Instance.CurrentFrame++;
+        }
+
+        public void Init()
+        {
             Stack = Copy(Memory.Instance!.Stack);
             Heap = Copy(Memory.Instance.Heap);
         }
 
-        public Statement Statement { get; init; }
-        public Stack<Scope> Stack { get; init; } = new();
-        public Heap Heap { get; init; }
+        public Statement? Statement { get; init; }
+        public Stack<Scope>? Stack { get; private set; }
+        public Heap? Heap { get; private set; }
+
+        public int Index { get; } = Memory.Instance?.Frames.Count ?? 0;
+
+        // this refers to the last frame of the frames that have been computed thus far
+        // just because it was the last frame at some point, doesn't mean it will stay as such
+        public bool IsLastFrame => Index == Memory.Instance!.Frames.Count - 1;
+
+        public bool CanMoveLeft => Index > 0;
+        public bool CanMoveRight => !(IsLastFrame && (Memory.Instance!.Executed || Memory.Instance.Thrown));
 
         private Variable Copy(Variable oldVariable)
         {
@@ -73,7 +88,12 @@ namespace CRECSharpInterpreter
 
         public override string ToString()
         {
-            return Statement.ToString();
+            string str = Statement?.ToString() ?? string.Empty;
+            if (IsLastFrame && Memory.Instance!.Executed)
+                return str += "Execution finished";
+            if (IsLastFrame && Memory.Instance!.Thrown)
+                return str += "\n\n" + Memory.Instance.ThrownException;
+            return str;
         }
     }
 }

@@ -20,6 +20,8 @@ public partial class MainView : UserControl
 
     public Interpreter? _Interpreter { get; private set; }
 
+    public MemoryFrame Frame => Memory.Instance!.Frames[Memory.Instance.CurrentFrame];
+
     private List<Panel> heapCells { get; } = new();
 
     private void ConfigureHeapGrid()
@@ -105,12 +107,6 @@ public partial class MainView : UserControl
         editButton.IsEnabled = true;
         runButton.IsEnabled = true;
         textEditor.IsReadOnly = true;
-        arrowCount = 0;
-        maxArrowCount = 0;
-        executed = false;
-        thrown = false;
-        memoryFrames = new();
-        interpreterException = null;
         OutputClear();
         OutputWriteLine("Compiling...");
         try
@@ -142,87 +138,25 @@ public partial class MainView : UserControl
     {
         runButton.IsEnabled = false;
         rightButton.IsEnabled = true;
+        leftButton.IsEnabled = Frame.CanMoveLeft;
+        rightButton.IsEnabled = Frame.CanMoveRight;
         OutputWriteLine("Running...");
     }
 
-    private int arrowCount = 0;
-    private int maxArrowCount = 0;
-    private bool executed = false;
-    private bool thrown = false;
-    private InterpreterException? interpreterException;
-    private List<MemoryFrame>? memoryFrames;
-
     public void OnLeftPressed(object sender, RoutedEventArgs e)
     {
-        if (arrowCount == 1)
-            leftButton.IsEnabled = false;
-        rightButton.IsEnabled = true;
-        arrowCount--;
-        OutputClear();
-        ClearStack();
-        ClearHeap();
-        if (arrowCount > 0 && arrowCount - 1 < memoryFrames!.Count)
-            DisplayMemoryFrame(arrowCount - 1);
+        _Interpreter!.MoveLeft();
+        leftButton.IsEnabled = Frame.CanMoveLeft;
+        rightButton.IsEnabled = Frame.CanMoveRight;
+        DisplayFrame();
     }
 
     public void OnRightPressed(object sender, RoutedEventArgs e)
     {
-        leftButton.IsEnabled = true;
-        if (arrowCount < maxArrowCount)
-        {
-            if (arrowCount < memoryFrames!.Count)
-            {
-                OutputClear();
-                DisplayMemoryFrame(arrowCount);
-            }
-            arrowCount++;
-            if (arrowCount == maxArrowCount && (executed || thrown))
-            {
-                OutputClear();
-                if (thrown)
-                {
-                    DisplayMemoryFrame(arrowCount - 1);
-                    OutputWriteLine("\n" + interpreterException!.Message);
-                }
-                rightButton.IsEnabled = false;
-            }
-            return;
-        }
-        int statementNumber = _Interpreter!.chunk.statementsDone;
-        try
-        {
-            executed = !_Interpreter.chunk.RunNextStatement();
-            if (statementNumber < _Interpreter.chunk.Statements.Length)
-            {
-                Statement statement = _Interpreter.chunk.Statements[statementNumber];
-                memoryFrames!.Add(new(statement));
-                OutputClear();
-                DisplayMemoryFrame(arrowCount);
-            }
-            if (executed)
-            {
-                rightButton.IsEnabled = false;
-                OutputClear();
-                OutputWriteLine("Execution finished");
-                executed = true;
-                nextButton.IsEnabled = true;
-            }
-            arrowCount++;
-            maxArrowCount++;
-        }
-        catch (InterpreterException exception)
-        {
-            Statement statement = _Interpreter.chunk.Statements[statementNumber];
-            memoryFrames!.Add(new(statement));
-            OutputClear();
-            DisplayMemoryFrame(arrowCount - 1);
-            OutputWriteLine("\n" + exception.Message);
-            interpreterException = exception;
-            rightButton.IsEnabled = false;
-            thrown = true;
-            arrowCount++;
-            maxArrowCount++;
-        }
+        _Interpreter!.MoveRight();
+        leftButton.IsEnabled = Frame.CanMoveLeft;
+        rightButton.IsEnabled = Frame.CanMoveRight;
+        DisplayFrame();
     }
 
     public void OnNextPressed(object sender, RoutedEventArgs e)
@@ -247,21 +181,19 @@ public partial class MainView : UserControl
         output.Clear();
     }
 
-    public void DisplayMemoryFrame(int index)
+    private void DisplayFrame()
     {
-        DisplayMemoryFrame(memoryFrames![index]);
+        OutputClear();
+        OutputWriteLine(Frame);
+        DisplayStack(Frame.Stack);
+        DisplayHeap(Frame.Heap);
     }
 
-    private void DisplayMemoryFrame(MemoryFrame memoryFrame)
-    {
-        OutputWriteLine(memoryFrame);
-        DisplayStack(memoryFrame.Stack);
-        DisplayHeap(memoryFrame.Heap);
-    }
-
-    private void DisplayStack(Stack<Scope> stack)
+    private void DisplayStack(Stack<Scope>? stack)
     {
         ClearStack();
+        if (stack == null)
+            return;
         Scope[] scopes = stack.ToArray();
         for (int i = scopes.Length - 1; i >= 0; i--)
         {
@@ -332,8 +264,13 @@ public partial class MainView : UserControl
             panel.Children.Clear();
     }
 
-    private void DisplayHeap(Heap heap)
+    private void DisplayHeap(Heap? heap)
     {
+        if (heap == null)
+        {
+            ClearHeap();
+            return;
+        }
         for (int i = 0; i < 50; i++)
         {
             heapCells[i].Children.Clear();
