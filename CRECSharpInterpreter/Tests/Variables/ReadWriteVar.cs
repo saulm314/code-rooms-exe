@@ -2,9 +2,9 @@
 
 namespace CRECSharpInterpreter.Tests.Variables
 {
-    public class WriteVar : ITest
+    public class ReadWriteVar : ITest
     {
-        public string Path => @"Variables\WriteVar";
+        public string Path => @"Variables\ReadWriteVar";
 
         public Variable[][] Stack =>
             new[]

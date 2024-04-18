@@ -11,7 +11,8 @@ namespace CRECSharpInterpreter.Tests
             new BadVarDeclarationKeyword(),
             new VarInitialisation(),
             new BadVarInitialisationWrongType(),
-            new WriteVar()
+            new ReadWriteVar(),
+            new BadReadVarNotDeclared()
         };
 
         public static int SuccessfulTests { get; set; } = 0;
