@@ -12,6 +12,15 @@ namespace CRECSharpInterpreter
             Value = varType?.DefaultValue;
         }
 
+        // used for testing
+        internal Variable(VarType? varType, string? name, object? value = null, bool initialised = false)
+        {
+            _VarType = varType;
+            Name = name;
+            Value = value;
+            Initialised = initialised;
+        }
+
         public VarType? _VarType { get; init; }
         public string? Name { get; init; }
         public object? Value { get; set; }

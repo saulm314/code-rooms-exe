@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 
 namespace CRECSharpInterpreter
 {
-    public class Heap
+    public class Heap : IEnumerable<Variable?>
     {
         private const int INITIAL_HEAP_CAPACITY = 100;
         private const int HEAP_ADDITION_CAPACITY = INITIAL_HEAP_CAPACITY;
@@ -29,6 +30,18 @@ namespace CRECSharpInterpreter
 
         internal List<Variable?> variables = new(INITIAL_HEAP_CAPACITY);
         public Variable? this[int i] { get => variables[i]; internal set => variables[i] = value; }
+
+        public IEnumerator<Variable?> GetEnumerator()
+        {
+            for (int i = 0; i < Size; i++)
+                yield return variables[i];
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            for (int i = 0; i < Size; i++)
+                yield return variables[i];
+        }
 
         public int Allocate(int length, IEnumerable<Variable> data)
         {

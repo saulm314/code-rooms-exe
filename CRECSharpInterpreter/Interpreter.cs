@@ -1,4 +1,5 @@
 ﻿using static CRECSharpInterpreter.Console;
+using CRECSharpInterpreter.Tests;
 using System;
 
 namespace CRECSharpInterpreter
@@ -7,7 +8,8 @@ namespace CRECSharpInterpreter
     {
         internal Interpreter(string text, bool dummy)
         {
-            WriteLine("Store all memory frames? (y/n)\n> ");
+            WriteLine("Store all memory frames? (y/n)\n");
+            Write("> ");
             string? storeAllFramesStr = ReadLine();
             bool storeAllFrames = storeAllFramesStr == "y";
             WriteLine();
@@ -16,6 +18,7 @@ namespace CRECSharpInterpreter
             {
                 WriteLine($"Creating interpreter for the following text:\n\n{text}");
                 chunk = new(text, Mode.Compilation);
+                ReadLine();
                 WriteLine(SEPARATOR + "\n");
                 chunk = new(text, Mode.Runtime);
                 while (chunk.RunNextStatement())
@@ -68,6 +71,38 @@ namespace CRECSharpInterpreter
             }
             WriteLine("Done");
         }
+
+        internal Interpreter(string text, byte dummy)
+        {
+            chunk = new(string.Empty, Mode.Compilation);
+            try
+            {
+                chunk = new(text, Mode.Compilation);
+            }
+            catch (Exception e)
+            {
+                error = Error.Compile;
+                exception = e;
+                return;
+            }
+            chunk = new(text, Mode.Runtime);
+        }
+
+        internal void RunAll()
+        {
+            try
+            {
+                while (chunk.RunNextStatement()) { }
+            }
+            catch (Exception e)
+            {
+                error = Error.Run;
+                exception = e;
+            }
+        }
+
+        internal Error error = Error.None;
+        internal Exception? exception;
 
         public Interpreter(string text)
         {
