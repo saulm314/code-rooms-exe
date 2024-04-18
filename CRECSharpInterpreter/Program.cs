@@ -67,6 +67,7 @@ namespace CRECSharpInterpreter
             Environment.Testing = true;
             foreach (ITest test in TestRepository.Tests)
                 RunTest(test, verbose);
+            System.Console.WriteLine($"{TestRepository.SuccessfulTests}/{TestRepository.TotalTests} passed");
         }
 
         private static readonly Pair<Syntax, string>[] languages = new Pair<Syntax, string>[]
@@ -163,6 +164,11 @@ namespace CRECSharpInterpreter
 
         private static void PrintResults(ITest test, Pair<Syntax, string> language, bool?[] results)
         {
+            foreach (bool? result in results)
+            {
+                TestRepository.SuccessfulTests += (bool)result! ? 1 : 0;
+                TestRepository.TotalTests++;
+            }
             System.Console.WriteLine(string.Format("{0,20} {1,10}", language.First + "_Compile", results[0]));
             System.Console.WriteLine(string.Format("{0,20} {1,10}", language.First + "_Run", results[1]));
         }

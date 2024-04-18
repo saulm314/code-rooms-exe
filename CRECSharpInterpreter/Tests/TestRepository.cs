@@ -8,5 +8,8 @@
             new BadVarDeclarationType(),
             new BadVarDeclarationKeyword()
         };
+
+        public static int SuccessfulTests { get; set; } = 0;
+        public static int TotalTests { get; set; } = 0;
     }
 }
