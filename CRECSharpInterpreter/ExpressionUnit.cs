@@ -429,7 +429,7 @@ namespace CRECSharpInterpreter
         {
             string str = string.Empty;
             foreach (KeyString keyString in GetKeyStrings())
-                str += keyString.Text;
+                str += keyString.Text + ' ';
             return str;
         }
 

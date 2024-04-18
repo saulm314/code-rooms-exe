@@ -426,3 +426,21 @@ strArr[0] = "Hello";
 
 String strLenTest = "Hi";
 int stringLength = strLenTest.length();
+
+String myString__ = "hello";
+String myString2__ = (String)myString__;
+myString__ = null;
+myString2__ = "hi";
+
+int myInt;
+if (false)
+	myInt = 0;
+else if (false)
+    myInt = 1;
+else if (false)
+    myInt = 2;
+else if (false)
+    myInt = 3;
+else
+    myInt = 4;
+int myInt2 = myInt;
