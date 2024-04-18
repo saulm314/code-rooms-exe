@@ -231,7 +231,7 @@ namespace CRECSharpInterpreter
             {
                 _Execute();
             }
-            catch (Exception e) when (e is not StatementException)
+            catch (Exception e) when (e is not StatementException && Environment._Debug == Debug.No)
             {
                 throw StatementException.New(this, null, e);
             }
@@ -333,8 +333,8 @@ namespace CRECSharpInterpreter
             Executed = true;
             if (Parent?._Type == Type.For)
                 return;
-            
-            Memory.Instance!.Frames[Memory.Instance.CurrentFrame].Init();
+            if (Memory.Instance!._Mode == Mode.RuntimeStoreAllFrames)
+                Memory.Instance!.Frames[Memory.Instance.CurrentFrame].Init();
 
             Console.WriteLine("Stack:");
             Console.WriteLine(separator + "\n");

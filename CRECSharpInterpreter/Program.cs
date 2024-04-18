@@ -16,7 +16,7 @@ namespace CRECSharpInterpreter
             string? choice = Console.ReadLine();
             try
             {
-                SyntaxEnvironment._Syntax = choice switch
+                Environment._Syntax = choice switch
                 {
                     "1" => Syntax.Java,
                     "2" => Syntax.CSharp,
@@ -27,10 +27,11 @@ namespace CRECSharpInterpreter
             {
                 Console.WriteLine($"WARNING: Unrecognised choice \"{choice}\"; choosing default option\n");
             }
-            Console.WriteLine($"Setting syntax to {languages[(int)SyntaxEnvironment._Syntax]}");
+            Console.WriteLine($"Setting syntax to {languages[(int)Environment._Syntax]}");
             Console.WriteLine();
+            Environment._Debug = Debug.Yes;
             Console.ReadLine();
-            string fileName = SyntaxEnvironment._Syntax switch
+            string fileName = Environment._Syntax switch
             {
                 Syntax.CSharp => "Dummy.cs",
                 Syntax.Java => "Dummy.java",

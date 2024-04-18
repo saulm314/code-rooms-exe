@@ -88,7 +88,7 @@ namespace CRECSharpInterpreter
                     SubKeyStrings = new KeyString[3];
                     SubKeyStrings[0] = new(_ArrayLength!.Array.Name!);
                     SubKeyStrings[1] = new(".");
-                    string arrayLengthKeyString = SyntaxEnvironment._Syntax switch
+                    string arrayLengthKeyString = Environment._Syntax switch
                     {
                         Syntax.CSharp => "Length",
                         Syntax.Java => "length",
@@ -100,7 +100,7 @@ namespace CRECSharpInterpreter
                     SubKeyStrings = new KeyString[3];
                     SubKeyStrings[0] = new(_StringLength!.String.Name!);
                     SubKeyStrings[1] = new(".");
-                    string stringLengthKeyString = SyntaxEnvironment._Syntax switch
+                    string stringLengthKeyString = Environment._Syntax switch
                     {
                         Syntax.CSharp => "Length",
                         Syntax.Java => "length()",
@@ -304,7 +304,7 @@ namespace CRECSharpInterpreter
             if (variable._VarType != VarType.@string)
                 return null;
             string stringAfterDot = Text[(dotIndex + 1)..];
-            switch (SyntaxEnvironment._Syntax)
+            switch (Environment._Syntax)
             {
                 case Syntax.CSharp:
                     if (stringAfterDot != "Length")
@@ -341,7 +341,7 @@ namespace CRECSharpInterpreter
             if (!variable._VarType!.IsArray)
                 return null;
             string stringAfterDot = Text[(dotIndex + 1)..];
-            switch (SyntaxEnvironment._Syntax)
+            switch (Environment._Syntax)
             {
                 case Syntax.CSharp:
                     if (stringAfterDot != "Length")
@@ -516,7 +516,7 @@ namespace CRECSharpInterpreter
         {
             get =>
                 _isLengthProperty ??=
-                    (Text, SyntaxEnvironment._Syntax) switch
+                    (Text, Environment._Syntax) switch
                         {
                             ("Length", Syntax.CSharp) => true,
                             ("length", Syntax.Java) => true,
