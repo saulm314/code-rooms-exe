@@ -25,8 +25,8 @@ namespace CRECSharpInterpreter
                 {
                     case "int":
                         return Value!.ToString()!;
-                    case "bool" when SyntaxEnvironment._Syntax == Syntax.CSharp:
-                    case "boolean" when SyntaxEnvironment._Syntax == Syntax.Java:
+                    case "bool" when Environment._Syntax == Syntax.CSharp:
+                    case "boolean" when Environment._Syntax == Syntax.Java:
                         if ((bool)Value!)
                             return "true";
                         return "false";

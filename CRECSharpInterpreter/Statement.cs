@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CRECSharpInterpreter
 {
@@ -16,6 +18,11 @@ namespace CRECSharpInterpreter
 
                 _Type = GetType();
                 VerifyKeyStrings();
+                Variable[] initialisedVariables = Memory.Instance!
+                    .GetDeclaredVariables()
+                    .Select(variable => variable)
+                    .Where(variable => variable.Initialised)
+                    .ToArray();
                 switch (_Type)
                 {
                     case Type.Invalid:
@@ -60,6 +67,13 @@ namespace CRECSharpInterpreter
                             // however in running them we verify that there are no compilation errors
                             CreateSubStatements();
                             Memory.Instance.PopFromStack();
+
+                            IEnumerable<Variable> varsInitialisedInIf_ = Memory.Instance
+                                .GetDeclaredVariables()
+                                .Select(variable => variable)
+                                .Where(variable => variable.Initialised && !initialisedVariables.Contains(variable));
+                            foreach (Variable variable in varsInitialisedInIf_)
+                                variable.Initialised = false;
                         }
                         break;
                     case Type.WhileSingleStatement:
@@ -69,10 +83,21 @@ namespace CRECSharpInterpreter
                         Header.Parent = this;
                         SubStatements = new Statement[SubStatementsStr.Length];
                         SubLineNumberInfos = subLineNumberInfosWhile;
+                        Variable[] initialisedVariablesWhile = Memory.Instance!
+                            .GetDeclaredVariables()
+                            .Select(variable => variable)
+                            .Where(variable => variable.Initialised)
+                            .ToArray();
                         if (Memory.Instance!._Mode == Mode.Compilation)
                         {
                             CreateSubStatements();
                             Memory.Instance.PopLoopFromStack();
+                            IEnumerable<Variable> varsInitialisedInWhile = Memory.Instance
+                                .GetDeclaredVariables()
+                                .Select(variable => variable)
+                                .Where(variable => variable.Initialised && !initialisedVariables.Contains(variable));
+                            foreach (Variable variable in varsInitialisedInWhile)
+                                variable.Initialised = false;
                         }
                         break;
                     case Type.ForSingleStatement:
@@ -87,6 +112,12 @@ namespace CRECSharpInterpreter
                             CreateSubStatements();
                             Memory.Instance.PopLoopFromStack();
                             Memory.Instance.PopFromStack();
+                            IEnumerable<Variable> varsInitialisedInFor = Memory.Instance
+                                .GetDeclaredVariables()
+                                .Select(variable => variable)
+                                .Where(variable => variable.Initialised && !initialisedVariables.Contains(variable));
+                            foreach (Variable variable in varsInitialisedInFor)
+                                variable.Initialised = false;
                         }
                         break;
                     case Type.IfElse:
@@ -95,10 +126,19 @@ namespace CRECSharpInterpreter
                         Header.Parent = this;
                         SubStatements = new Statement[SubStatementsStr.Length];
                         SubLineNumberInfos = _subLineNumberInfos;
+                        Variable[]? varsInitialisedInIf = null;
+                        Variable[]? varsInitialisedInElse = null;
                         if (Memory.Instance!._Mode == Mode.Compilation)
                         {
                             CreateSubStatements();
                             Memory.Instance.PopFromStack();
+                            varsInitialisedInIf = Memory.Instance
+                                .GetDeclaredVariables()
+                                .Select(variable => variable)
+                                .Where(variable => variable.Initialised && !initialisedVariables.Contains(variable))
+                                .ToArray();
+                            foreach (Variable variable in varsInitialisedInIf)
+                                variable.Initialised = false;
                         }
                         SubStatementsStr2 = GetSubStatementsElse(out Statement _header2, out LineNumberInfo[] _subLineNumberInfos2);
                         Header2 = _header2;
@@ -109,6 +149,18 @@ namespace CRECSharpInterpreter
                         {
                             CreateSubStatements2();
                             Memory.Instance.PopFromStack();
+                            varsInitialisedInElse = Memory.Instance
+                                .GetDeclaredVariables()
+                                .Select(variable => variable)
+                                .Where(variable => variable.Initialised && !initialisedVariables.Contains(variable))
+                                .ToArray();
+                            foreach (Variable variable in varsInitialisedInElse)
+                                variable.Initialised = false;
+                            IEnumerable<Variable> varsInitialisedInIfAndElse = varsInitialisedInElse
+                                .Select(variable => variable)
+                                .Where(variable => varsInitialisedInIf!.Contains(variable));
+                            foreach (Variable variable in varsInitialisedInIfAndElse)
+                                variable.Initialised = true;
                         }
                         break;
                     case Type.If:
@@ -146,9 +198,8 @@ namespace CRECSharpInterpreter
                         break;
                 }
             }
-            catch (Exception e) when (e is not StatementException)
+            catch (Exception e) when (e is not StatementException && Environment._Debug == Debug.No)
             {
-                //Console.WriteLine(e);
                 throw StatementException.New(this, null, e);
             }
         }
@@ -231,7 +282,7 @@ namespace CRECSharpInterpreter
             {
                 _Execute();
             }
-            catch (Exception e) when (e is not StatementException)
+            catch (Exception e) when (e is not StatementException && Environment._Debug == Debug.No)
             {
                 throw StatementException.New(this, null, e);
             }
@@ -333,8 +384,8 @@ namespace CRECSharpInterpreter
             Executed = true;
             if (Parent?._Type == Type.For)
                 return;
-            
-            Memory.Instance!.Frames[Memory.Instance.CurrentFrame].Init();
+            if (Memory.Instance!._Mode == Mode.RuntimeStoreAllFrames)
+                Memory.Instance!.Frames[Memory.Instance.CurrentFrame].Init();
 
             Console.WriteLine("Stack:");
             Console.WriteLine(separator + "\n");

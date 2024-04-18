@@ -192,9 +192,26 @@ namespace CRECSharpInterpreter
             if (keyStrings.Length == 0)
                 yield break;
             List<KeyString> currentKeyStrings = new();
+            int bracketsOpened = 0;
             foreach (KeyString keyString in keyStrings)
             {
-                if (keyString._Type == KeyString.Type.Comma)
+                bool isOpenBracket =
+                    keyString._Type == KeyString.Type.OpenBracket ||
+                    keyString._Type == KeyString.Type.OpenCurlyBrace ||
+                    keyString._Type == KeyString.Type.OpenSquareBrace;
+                bool isCloseBracket =
+                    keyString._Type == KeyString.Type.CloseBracket ||
+                    keyString._Type == KeyString.Type.CloseCurlyBrace ||
+                    keyString._Type == KeyString.Type.CloseSquareBrace;
+                if (isOpenBracket)
+                    bracketsOpened++;
+                if (isCloseBracket)
+                {
+                    bracketsOpened--;
+                    if (bracketsOpened == -1)
+                        throw new ExpressionUnitException(this, "Closed bracket without opening it");
+                }
+                if (keyString._Type == KeyString.Type.Comma && bracketsOpened == 0)
                 {
                     yield return currentKeyStrings.Count > 0 ?
                         new(currentKeyStrings.ToArray()) :
@@ -318,18 +335,19 @@ namespace CRECSharpInterpreter
                 throw new ExpressionUnitException(this, "Cannot create string from a null character array");
             int charArrayHeapIndex = (int)stringConstruction.CharArrayReference;
 
-            // when we inserted the char array into the constructor,
-            //      we strictly speaking added a reference to the char array (albeit a temporary one)
-            // here we decrement the reference counter to ensure the char array gets garbage collected appropriately
-            Memory.Instance!.Heap.DecrementReferenceCounter(charArrayHeapIndex);
-
-            int length = Memory.Instance.Heap.GetLength(charArrayHeapIndex);
+            int length = Memory.Instance!.Heap.GetLength(charArrayHeapIndex);
             Variable[] variablesToAllocate = new Variable[length];
             for (int i = 0; i < variablesToAllocate.Length; i++)
             {
                 variablesToAllocate[i] = new(VarType.@char);
                 variablesToAllocate[i].Value = (char)Memory.Instance.Heap.GetValue(charArrayHeapIndex, i)!;
             }
+
+            // when we inserted the char array into the constructor,
+            //      we strictly speaking added a reference to the char array (albeit a temporary one)
+            // here we decrement the reference counter to ensure the char array gets garbage collected appropriately
+            Memory.Instance!.Heap.DecrementReferenceCounter(charArrayHeapIndex);
+
             int heapIndex = Memory.Instance.Heap.Allocate(length, variablesToAllocate);
             Value = heapIndex;
         }
@@ -429,7 +447,7 @@ namespace CRECSharpInterpreter
         {
             string str = string.Empty;
             foreach (KeyString keyString in GetKeyStrings())
-                str += keyString.Text;
+                str += keyString.Text + ' ';
             return str;
         }
 

@@ -426,3 +426,23 @@ strArr[0] = "Hello";
 
 string strLenTest = "Hi";
 int stringLength = strLenTest.Length;
+
+string myString__ = "hello";
+string myString2__ = (string)myString__;
+myString__ = null;
+myString2__ = "hi";
+
+int myInt;
+if (false)
+	myInt = 0;
+else if (false)
+    myInt = 1;
+else if (false)
+    myInt = 2;
+else if (false)
+    myInt = 3;
+else
+    myInt = 4;
+int myInt2 = myInt;
+
+string[] myStringArr = new string[] { new string(new char[] { 'H', 'e', 'l', 'l', 'o', ',', ' ' }), "World!" };

@@ -13,6 +13,12 @@ namespace CRECSharpInterpreter
             variables[0] = new(null);
         }
 
+        internal Heap(int capacity)
+        {
+            variables.AddRange(GetNullVariables(capacity));
+            variables[0] = new(null);
+        }
+
         private IEnumerable<Variable?> GetNullVariables(int count)
         {
             for (int i = 0; i < count; i++)

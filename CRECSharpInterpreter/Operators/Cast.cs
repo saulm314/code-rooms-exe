@@ -26,7 +26,7 @@ namespace CRECSharpInterpreter.Operators
             Operand rightOperand = (Operand)RightOperand!;
             if (rightOperand._VarType == null)
                 return null;
-            if (rightOperand._VarType.IsArray)
+            if (rightOperand._VarType._Storage == VarType.Storage.Reference)
                 return rightValue;
             return Convert.ChangeType(rightValue, ReturnType!.SystemType);
         }

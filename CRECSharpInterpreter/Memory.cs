@@ -27,7 +27,7 @@ namespace CRECSharpInterpreter
 
         public bool Executed { get; internal set; } = false;
         public bool Thrown { get; internal set; } = false;
-        public InterpreterException? ThrownException { get; internal set; }
+        public Exception? ThrownException { get; internal set; }
 
         public void PushToStack()
         {
