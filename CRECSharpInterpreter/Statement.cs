@@ -1,4 +1,5 @@
-﻿using System;
+﻿using static CRECSharpInterpreter.Console;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -303,7 +304,7 @@ namespace CRECSharpInterpreter
                 default:
                     if (Parent?._Type == Type.For)
                         break;
-                    Console.WriteLine(ReducedText + '\n');
+                    WriteLine(ReducedText + '\n');
                     if (Memory.Instance!._Mode == Mode.RuntimeStoreAllFrames)
                         Memory.Instance.Frames.Add(new(this));
                     break;
@@ -387,26 +388,26 @@ namespace CRECSharpInterpreter
             if (Memory.Instance!._Mode == Mode.RuntimeStoreAllFrames)
                 Memory.Instance!.Frames[Memory.Instance.CurrentFrame].Init();
 
-            Console.WriteLine("Stack:");
-            Console.WriteLine(separator + "\n");
+            WriteLine("Stack:");
+            WriteLine(separator + "\n");
             Scope[] scopes = Memory.Instance.Stack.ToArray();
 
             for (int i = scopes.Length - 1; i >= 0; i--)
             {
                 Scope scope = scopes[i];
                 foreach (Variable variable in scope.DeclaredVariables)
-                    Console.WriteLine(variable);
-                Console.WriteLine(separator + "\n");
+                    WriteLine(variable);
+                WriteLine(separator + "\n");
             }
-            Console.WriteLine("\nHeap:\n");
+            WriteLine("\nHeap:\n");
             for (int i = 0; i < 10; i++)
             {
                 for (int j = 0; j < 10; j++)
-                    Console.Write(string.Format("{0,10}", Memory.Instance.Heap[10 * i + j]?.ValueAsString ?? "x"));
-                Console.Write("\n");
+                    Write(string.Format("{0,10}", Memory.Instance.Heap[10 * i + j]?.ValueAsString ?? "x"));
+                Write("\n");
             }
-            Console.WriteLine();
-            Console.WriteLine(separator + separator + separator);
+            WriteLine();
+            WriteLine(separator + separator + separator);
         }
 
         private void EvaluateIfWhile()

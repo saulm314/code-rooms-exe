@@ -1,19 +1,22 @@
-﻿using System;
+﻿using static CRECSharpInterpreter.Console;
+using System;
 using System.IO;
 using System.Threading;
 
 namespace CRECSharpInterpreter
 {
-    internal class Program
+    public class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
+            if (args.Length > 0 && args[0] == "test")
+                Environment.Testing = true;
             string[] languages = new string[] { "Java", "C#" };
-            Console.WriteLine("Choose syntax: [1-2]");
-            Console.WriteLine("\t1) Java");
-            Console.WriteLine("\t2) C#");
-            Console.Write("> ");
-            string? choice = Console.ReadLine();
+            WriteLine("Choose syntax: [1-2]");
+            WriteLine("\t1) Java");
+            WriteLine("\t2) C#");
+            Write("> ");
+            string? choice = ReadLine();
             try
             {
                 Environment._Syntax = choice switch
@@ -25,12 +28,12 @@ namespace CRECSharpInterpreter
             }
             catch
             {
-                Console.WriteLine($"WARNING: Unrecognised choice \"{choice}\"; choosing default option\n");
+                WriteLine($"WARNING: Unrecognised choice \"{choice}\"; choosing default option\n");
             }
-            Console.WriteLine($"Setting syntax to {languages[(int)Environment._Syntax]}");
-            Console.WriteLine();
+            WriteLine($"Setting syntax to {languages[(int)Environment._Syntax]}");
+            WriteLine();
             Environment.Debug = true;
-            Console.ReadLine();
+            ReadLine();
             string fileName = Environment._Syntax switch
             {
                 Syntax.CSharp => "Dummy.cs",
@@ -45,12 +48,11 @@ namespace CRECSharpInterpreter
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                WriteLine(e);
             }
             Thread.Sleep(10000);
             for (;;)
-                Console.ReadLine();
-            
+                ReadLine();
         }
     }
 }
