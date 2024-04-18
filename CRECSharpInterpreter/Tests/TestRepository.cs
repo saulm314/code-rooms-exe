@@ -5,7 +5,8 @@
         public static ITest[] Tests { get; } = new ITest[]
         {
             new VarDeclaration(),
-            new BadVarDeclarationType()
+            new BadVarDeclarationType(),
+            new BadVarDeclarationKeyword()
         };
     }
 }
