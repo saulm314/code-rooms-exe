@@ -444,3 +444,5 @@ else if (false)
 else
     myInt = 4;
 int myInt2 = myInt;
+
+String[] myStringArr = new String[] { new String(new char[] { 'H', 'e', 'l', 'l', 'o', ',', ' ' }), "World!" };
