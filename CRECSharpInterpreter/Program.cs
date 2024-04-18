@@ -14,7 +14,6 @@ namespace CRECSharpInterpreter
             if (args.Length > 0 && args[0] == "test")
             {
                 bool verbose = args.Length > 1 && args[1] == "verbose";
-                Environment.Debug = args.Length > 2 && args[2] == "debug";
                 RunTests(verbose);
                 return;
             }
@@ -68,8 +67,6 @@ namespace CRECSharpInterpreter
             Environment.Testing = true;
             foreach (ITest test in TestRepository.Tests)
                 RunTest(test, verbose);
-            System.Console.WriteLine("Press Enter to exit");
-            System.Console.ReadLine();
         }
 
         private static readonly Pair<Syntax, string>[] languages = new Pair<Syntax, string>[]
@@ -89,7 +86,7 @@ namespace CRECSharpInterpreter
                 Interpreter interpreter = new(text, 0);
                 bool?[] results = new bool?[2];
                 if (verbose)
-                    System.Console.WriteLine($"Compile: {test.Error} {interpreter.error} {interpreter.exception} {Environment._Syntax}");
+                    System.Console.WriteLine($"Compile: {test.Error} {interpreter.error} {interpreter.exception}");
                 switch (test.Error, interpreter.error)
                 {
                     case (Error.None, Error.None):
