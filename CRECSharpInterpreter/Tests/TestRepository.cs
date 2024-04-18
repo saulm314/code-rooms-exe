@@ -1,4 +1,6 @@
-﻿namespace CRECSharpInterpreter.Tests
+﻿using CRECSharpInterpreter.Tests.Variables;
+
+namespace CRECSharpInterpreter.Tests
 {
     public static class TestRepository
     {

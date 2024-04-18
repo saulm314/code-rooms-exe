@@ -1,6 +1,6 @@
 ﻿using static CRECSharpInterpreter.VarType;
 
-namespace CRECSharpInterpreter.Tests
+namespace CRECSharpInterpreter.Tests.Variables
 {
     public class BadVarDeclarationType : ITest
     {

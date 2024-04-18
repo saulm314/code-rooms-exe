@@ -1,10 +1,10 @@
 ﻿using static CRECSharpInterpreter.VarType;
 
-namespace CRECSharpInterpreter.Tests
+namespace CRECSharpInterpreter.Tests.Variables
 {
-    public class BadVarDeclarationKeyword : ITest
+    public class BadVarInitialisationWrongType : ITest
     {
-        public string Path => @"Variables\BadVarDeclarationKeyword";
+        public string Path => @"Variables\BadVarInitialisationWrongType";
 
         public Variable[][] Stack =>
             new[]
