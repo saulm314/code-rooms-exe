@@ -426,3 +426,8 @@ strArr[0] = "Hello";
 
 string strLenTest = "Hi";
 int stringLength = strLenTest.Length;
+
+string myString__ = "hello";
+string myString2__ = (string)myString__;
+myString__ = null;
+myString2__ = "hi";
