@@ -8,7 +8,8 @@
             new BadVarDeclarationType(),
             new BadVarDeclarationKeyword(),
             new VarInitialisation(),
-            new BadVarInitialisationWrongType()
+            new BadVarInitialisationWrongType(),
+            new WriteVar()
         };
 
         public static int SuccessfulTests { get; set; } = 0;
