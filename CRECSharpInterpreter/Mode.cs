@@ -3,6 +3,7 @@
     public enum Mode
     {
         Compilation,
-        Runtime
+        Runtime,
+        RuntimeStoreAllFrames
     }
 }

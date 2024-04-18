@@ -1,0 +1,357 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:CREAvaloniaApp.ViewModels"
+             mc:Ignorable="d"
+             x:Class="CREAvaloniaApp.Views.MainView"
+             x:DataType="vm:MainViewModel">
+	<Design.DataContext>
+		<!-- This only sets the DataContext for the previewer in an IDE,
+			 to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+		<vm:MainViewModel />
+	</Design.DataContext>
+	<!-- Free code -->
+	<StackPanel Orientation="Horizontal" Height="{Binding WindowHeight}" Width="{Binding WindowWidth}">
+		<!-- Stack -->
+		<StackPanel Orientation="Vertical" Height="{Binding StackHeight}" Width="{Binding StackWidth}">
+			<TextBlock
+				Text="Stack"
+				FontSize="16"
+				FontFamily="Cascadia Mono"
+				Foreground="White"
+				Background="{Binding StackHeaderBrush}"
+				FontWeight="UltraBold"
+				TextAlignment="Center"
+				Height="{Binding StackHeaderTextHeight}"
+				Width="{Binding StackHeaderTextWidth}"
+				/>
+			<Panel Height="{Binding StackHeaderPanelHeight}" Width="{Binding StackHeaderPanelWidth}"/>
+			<ScrollViewer Height="{Binding StackScrollViewerHeight}" Width="{Binding StackScrollViewerWidth}">
+				<StackPanel Orientation="Vertical" Width="{Binding StackWidth}" Name="stackPanel"/>
+			</ScrollViewer>
+		</StackPanel>
+		<!-- !Stack -->
+		<Grid ShowGridLines="False">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="{Binding TextEditorWidthGL}"/>
+				<ColumnDefinition Width="{Binding DescriptionWidthGL}"/>
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="{Binding TextEditorHeightGL}"/>
+				<RowDefinition Height="{Binding HeapHeightGL}"/>
+			</Grid.RowDefinitions>
+			<!-- TextEditor -->
+			<TextBox
+				Grid.Column="0"
+				Grid.Row="0"
+				FontSize="16"
+				FontFamily="Cascadia Mono"
+				Foreground="White"
+				Background="{Binding TextEditorBrush}"
+				Height="{Binding TextEditorHeight}"
+				Width="{Binding TextEditorWidth}"
+				Name="textEditor"
+				AcceptsReturn="True"
+				AcceptsTab="True"
+				PropertyChanged="OnTextChange"
+				BorderThickness="0"
+				CaretBrush="White"
+				CornerRadius="0"
+				>
+				<TextBox.Styles>
+					<Style Selector=":pointerover /template/ Border#PART_BorderElement">
+						<Setter Property="Background" Value="{Binding TextEditorBrush}"/>
+					</Style>
+					<Style Selector=":focus /template/ Border#PART_BorderElement">
+						<Setter Property="Background" Value="{Binding TextEditorBrush}"/>
+						<Setter Property="BorderThickness" Value="0"/>
+					</Style>
+				</TextBox.Styles>
+			</TextBox>
+			<!-- Heap, IdeControls, Output -->
+			<StackPanel
+				Grid.Column="0"
+				Grid.Row="1"
+				Orientation="Horizontal"
+				Height="{Binding HeapHeight}"
+				Width="{Binding TextEditorWidth}"
+				>
+				<!-- Heap -->
+				<StackPanel Orientation="Vertical" Height="{Binding HeapHeight}" Width="{Binding HeapWidth}">
+					<TextBlock
+						Text="Heap"
+						FontSize="16"
+						FontFamily="Cascadia Mono"
+						Foreground="White"
+						Background="{Binding HeapHeaderBrush}"
+						FontWeight="UltraBold"
+						TextAlignment="Center"
+						Height="{Binding HeapHeaderTextHeight}"
+						Width="{Binding HeapHeaderTextWidth}"
+						/>
+					<ScrollViewer Height="{Binding HeapScrollViewerHeight}" Width="{Binding HeapScrollViewerWidth}">
+						<Grid ShowGridLines="False" Background="Black" Name="heapGrid">
+							<Grid.ColumnDefinitions>
+								<!-- 10 repetitions -->
+								<ColumnDefinition Width="{Binding HeapVerticalSeparatorWidthGL}"/>
+								<ColumnDefinition Width="{Binding HeapCellWidthGL}"/>
+								<ColumnDefinition Width="{Binding HeapVerticalSeparatorWidthGL}"/>
+								<ColumnDefinition Width="{Binding HeapCellWidthGL}"/>
+								<ColumnDefinition Width="{Binding HeapVerticalSeparatorWidthGL}"/>
+								<ColumnDefinition Width="{Binding HeapCellWidthGL}"/>
+								<ColumnDefinition Width="{Binding HeapVerticalSeparatorWidthGL}"/>
+								<ColumnDefinition Width="{Binding HeapCellWidthGL}"/>
+								<ColumnDefinition Width="{Binding HeapVerticalSeparatorWidthGL}"/>
+								<ColumnDefinition Width="{Binding HeapCellWidthGL}"/>
+								<ColumnDefinition Width="{Binding HeapVerticalSeparatorWidthGL}"/>
+								<ColumnDefinition Width="{Binding HeapCellWidthGL}"/>
+								<ColumnDefinition Width="{Binding HeapVerticalSeparatorWidthGL}"/>
+								<ColumnDefinition Width="{Binding HeapCellWidthGL}"/>
+								<ColumnDefinition Width="{Binding HeapVerticalSeparatorWidthGL}"/>
+								<ColumnDefinition Width="{Binding HeapCellWidthGL}"/>
+								<ColumnDefinition Width="{Binding HeapVerticalSeparatorWidthGL}"/>
+								<ColumnDefinition Width="{Binding HeapCellWidthGL}"/>
+								<ColumnDefinition Width="{Binding HeapVerticalSeparatorWidthGL}"/>
+								<ColumnDefinition Width="{Binding HeapCellWidthGL}"/>
+								<ColumnDefinition Width="{Binding HeapVerticalSeparatorWidthGL}"/>
+							</Grid.ColumnDefinitions>
+							<Grid.RowDefinitions>
+								<!-- 5 repetitions -->
+								<RowDefinition Height="{Binding HeapTopHorizontalSeparatorHeightGL}"/>
+								<RowDefinition Height="{Binding HeapCellHeightGL}"/>
+								<RowDefinition Height="{Binding HeapHorizontalSeparatorHeightGL}"/>
+								<RowDefinition Height="{Binding HeapCellHeightGL}"/>
+								<RowDefinition Height="{Binding HeapHorizontalSeparatorHeightGL}"/>
+								<RowDefinition Height="{Binding HeapCellHeightGL}"/>
+								<RowDefinition Height="{Binding HeapHorizontalSeparatorHeightGL}"/>
+								<RowDefinition Height="{Binding HeapCellHeightGL}"/>
+								<RowDefinition Height="{Binding HeapHorizontalSeparatorHeightGL}"/>
+								<RowDefinition Height="{Binding HeapCellHeightGL}"/>
+								<RowDefinition Height="{Binding HeapHorizontalSeparatorHeightGL}"/>
+							</Grid.RowDefinitions>
+						</Grid>
+					</ScrollViewer>
+				</StackPanel>
+				<!-- IdeControls -->
+				<StackPanel Orientation="Vertical" Height="{Binding IdeControlsHeight}" Width="{Binding IdeControlsWidth}">
+					<Button
+						Background="{Binding CompileBrush}"
+						Height="{Binding IdeControlHeight}"
+						Width="{Binding IdeControlWidth}"
+						CornerRadius="0"
+						Click="OnCompilePressed"
+						IsEnabled="True"
+						Name="compileButton"
+						>
+						<TextBlock
+							Text="Compile"
+							FontSize="20"
+							FontFamily="Cascadia Mono"
+							Foreground="White"
+							FontWeight="UltraBold"
+							TextAlignment="Center"
+							HorizontalAlignment="Center"
+							VerticalAlignment="Center"
+							/>
+						<Button.Styles>
+							<Style Selector=":disabled /template/ ContentPresenter#PART_ContentPresenter">
+								<Setter Property="Background" Value="{Binding DisabledButtonBrush}"/>
+							</Style>
+							<Style Selector=":pointerover /template/ ContentPresenter#PART_ContentPresenter">
+								<Setter Property="Background" Value="{Binding CompileHoveredBrush}"/>
+							</Style>
+							<Style Selector=":pressed /template/ ContentPresenter#PART_ContentPresenter">
+								<Setter Property="Background" Value="{Binding CompilePressedBrush}"/>
+							</Style>
+						</Button.Styles>
+					</Button>
+					<Button
+						Background="{Binding EditBrush}"
+						Height="{Binding IdeControlHeight}"
+						Width="{Binding IdeControlWidth}"
+						CornerRadius="0"
+						Click="OnEditPressed"
+						IsEnabled="False"
+						Name="editButton"
+						>
+						<TextBlock
+							Text="Edit"
+							FontSize="20"
+							FontFamily="Cascadia Mono"
+							Foreground="White"
+							FontWeight="UltraBold"
+							TextAlignment="Center"
+							HorizontalAlignment="Center"
+							VerticalAlignment="Center"
+							/>
+						<Button.Styles>
+							<Style Selector=":disabled /template/ ContentPresenter#PART_ContentPresenter">
+								<Setter Property="Background" Value="{Binding DisabledButtonBrush}"/>
+							</Style>
+							<Style Selector=":pointerover /template/ ContentPresenter#PART_ContentPresenter">
+								<Setter Property="Background" Value="{Binding EditHoveredBrush}"/>
+							</Style>
+							<Style Selector=":pressed /template/ ContentPresenter#PART_ContentPresenter">
+								<Setter Property="Background" Value="{Binding EditPressedBrush}"/>
+							</Style>
+						</Button.Styles>
+					</Button>
+					<Button
+						Background="{Binding RunBrush}"
+						Height="{Binding IdeControlHeight}"
+						Width="{Binding IdeControlWidth}"
+						CornerRadius="0"
+						Click="OnRunPressed"
+						IsEnabled="False"
+						Name="runButton"
+						>
+						<TextBlock
+							Text="Run"
+							FontSize="20"
+							FontFamily="Cascadia Mono"
+							Foreground="White"
+							FontWeight="UltraBold"
+							TextAlignment="Center"
+							HorizontalAlignment="Center"
+							VerticalAlignment="Center"
+							/>
+						<Button.Styles>
+							<Style Selector=":disabled /template/ ContentPresenter#PART_ContentPresenter">
+								<Setter Property="Background" Value="{Binding DisabledButtonBrush}"/>
+							</Style>
+							<Style Selector=":pointerover /template/ ContentPresenter#PART_ContentPresenter">
+								<Setter Property="Background" Value="{Binding RunHoveredBrush}"/>
+							</Style>
+							<Style Selector=":pressed /template/ ContentPresenter#PART_ContentPresenter">
+								<Setter Property="Background" Value="{Binding RunPressedBrush}"/>
+							</Style>
+						</Button.Styles>
+					</Button>
+					<StackPanel Orientation="Horizontal" Height="{Binding IdeControlHeight}" Width="{Binding IdeControlWidth}">
+						<Button
+							Background="{Binding ArrowBrush}"
+							Height="{Binding IdeControlLeftHeight}"
+							Width="{Binding IdeControlLeftWidth}"
+							CornerRadius="0"
+							Click="OnLeftPressed"
+							IsEnabled="False"
+							Name="leftButton"
+							>
+							<TextBlock
+								Text="&lt;"
+								FontSize="30"
+								FontFamily="Cascadia Mono"
+								Foreground="White"
+								FontWeight="UltraBold"
+								TextAlignment="Center"
+								HorizontalAlignment="Center"
+								VerticalAlignment="Center"
+								/>
+							<Button.Styles>
+								<Style Selector=":disabled /template/ ContentPresenter#PART_ContentPresenter">
+									<Setter Property="Background" Value="{Binding DisabledButtonBrush}"/>
+								</Style>
+								<Style Selector=":pointerover /template/ ContentPresenter#PART_ContentPresenter">
+									<Setter Property="Background" Value="{Binding ArrowHoveredBrush}"/>
+								</Style>
+								<Style Selector=":pressed /template/ ContentPresenter#PART_ContentPresenter">
+									<Setter Property="Background" Value="{Binding ArrowPressedBrush}"/>
+								</Style>
+							</Button.Styles>
+						</Button>
+						<Button
+							Background="{Binding ArrowBrush}"
+							Height="{Binding IdeControlRightHeight}"
+							Width="{Binding IdeControlRightWidth}"
+							CornerRadius="0"
+							Click="OnRightPressed"
+							IsEnabled="False"
+							Name="rightButton"
+							>
+							<TextBlock
+								Text="&gt;"
+								FontSize="30"
+								FontFamily="Cascadia Mono"
+								Foreground="White"
+								FontWeight="UltraBold"
+								TextAlignment="Center"
+								HorizontalAlignment="Center"
+								VerticalAlignment="Center"
+								/>
+							<Button.Styles>
+								<Style Selector=":disabled /template/ ContentPresenter#PART_ContentPresenter">
+									<Setter Property="Background" Value="{Binding DisabledButtonBrush}"/>
+								</Style>
+								<Style Selector=":pointerover /template/ ContentPresenter#PART_ContentPresenter">
+									<Setter Property="Background" Value="{Binding ArrowHoveredBrush}"/>
+								</Style>
+								<Style Selector=":pressed /template/ ContentPresenter#PART_ContentPresenter">
+									<Setter Property="Background" Value="{Binding ArrowPressedBrush}"/>
+								</Style>
+							</Button.Styles>
+						</Button>
+					</StackPanel>
+					<Button
+						Background="{Binding NextBrush}"
+						Height="{Binding IdeControlHeight}"
+						Width="{Binding IdeControlWidth}"
+						CornerRadius="0"
+						Click="OnNextPressed"
+						IsEnabled="False"
+						Name="nextButton"
+						>
+						<TextBlock
+							Text="Next"
+							FontSize="20"
+							FontFamily="Cascadia Mono"
+							Foreground="White"
+							FontWeight="UltraBold"
+							TextAlignment="Center"
+							HorizontalAlignment="Center"
+							VerticalAlignment="Center"
+							/>
+						<Button.Styles>
+							<Style Selector=":disabled /template/ ContentPresenter#PART_ContentPresenter">
+								<Setter Property="Background" Value="{Binding DisabledButtonBrush}"/>
+							</Style>
+							<Style Selector=":pointerover /template/ ContentPresenter#PART_ContentPresenter">
+								<Setter Property="Background" Value="{Binding NextHoveredBrush}"/>
+							</Style>
+							<Style Selector=":pressed /template/ ContentPresenter#PART_ContentPresenter">
+								<Setter Property="Background" Value="{Binding NextPressedBrush}"/>
+							</Style>
+						</Button.Styles>
+					</Button>
+				</StackPanel>
+				<!-- Output -->
+				<TextBox
+					FontSize="16"
+					FontFamily="Cascadia Mono"
+					Foreground="White"
+					Background="Black"
+					Height="{Binding OutputHeight}"
+					Width="{Binding OutputWidth}"
+					Name="output"
+					IsReadOnly="True"
+					BorderThickness="0"
+					CaretBrush="Black"
+					CornerRadius="0"
+					TextWrapping="Wrap"
+					SelectionBrush="White"
+					SelectionForegroundBrush="Black"
+					>
+					<TextBox.Styles>
+						<Style Selector=":pointerover /template/ Border#PART_BorderElement">
+							<Setter Property="Background" Value="Black"/>
+						</Style>
+						<Style Selector=":focus /template/ Border#PART_BorderElement">
+							<Setter Property="Background" Value="Black"/>
+							<Setter Property="BorderThickness" Value="0"/>
+						</Style>
+					</TextBox.Styles>
+				</TextBox>
+			</StackPanel>
+		</Grid>
+	</StackPanel>
+</UserControl>

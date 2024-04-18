@@ -10,6 +10,8 @@ namespace CRECSharpInterpreter
             Instance = this;
             _Mode = mode;
             Stack.Push(new());
+            if (_Mode == Mode.RuntimeStoreAllFrames)
+                Frames.Add(new());
         }
 
         public static Memory? Instance { get; private set; }
@@ -18,6 +20,14 @@ namespace CRECSharpInterpreter
 
         public Stack<Scope> Stack { get; } = new();
         public Heap Heap { get; } = new();
+
+        public List<MemoryFrame> Frames { get; } = new();
+
+        public int CurrentFrame { get; internal set; } = -1;
+
+        public bool Executed { get; internal set; } = false;
+        public bool Thrown { get; internal set; } = false;
+        public InterpreterException? ThrownException { get; internal set; }
 
         public void PushToStack()
         {

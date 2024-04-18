@@ -40,7 +40,7 @@ namespace CRECSharpInterpreter
             string dummyText = streamReader.ReadToEnd();
             try
             {
-                Interpreter interpreter = new(dummyText);
+                Interpreter interpreter = new(dummyText, false);
             }
             catch (Exception e)
             {

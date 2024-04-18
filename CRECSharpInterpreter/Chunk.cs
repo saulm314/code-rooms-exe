@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-
-namespace CRECSharpInterpreter
+﻿namespace CRECSharpInterpreter
 {
     public class Chunk
     {
@@ -25,7 +22,7 @@ namespace CRECSharpInterpreter
         public Statement[] Statements { get; init; }
         public LineNumberInfo[] LineNumberInfos { get; init; }
 
-        private int statementsDone = 0;
+        public int statementsDone = 0;
         public bool RunNextStatement()
         {
             if (statementsDone >= statementsStr.Length)

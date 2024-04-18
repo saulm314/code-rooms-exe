@@ -253,6 +253,8 @@ namespace CRECSharpInterpreter
                     if (Parent?._Type == Type.For)
                         break;
                     Console.WriteLine(ReducedText + '\n');
+                    if (Memory.Instance!._Mode == Mode.RuntimeStoreAllFrames)
+                        Memory.Instance.Frames.Add(new(this));
                     break;
             }
             switch (_Type)
@@ -331,9 +333,12 @@ namespace CRECSharpInterpreter
             Executed = true;
             if (Parent?._Type == Type.For)
                 return;
+            
+            Memory.Instance!.Frames[Memory.Instance.CurrentFrame].Init();
+
             Console.WriteLine("Stack:");
             Console.WriteLine(separator + "\n");
-            Scope[] scopes = Memory.Instance!.Stack.ToArray();
+            Scope[] scopes = Memory.Instance.Stack.ToArray();
 
             for (int i = scopes.Length - 1; i >= 0; i--)
             {
@@ -1114,6 +1119,11 @@ namespace CRECSharpInterpreter
             ForMultiStatement,
             Break,
             Continue
+        }
+
+        public override string ToString()
+        {
+            return ReducedText;
         }
 
         public class StatementException : InterpreterException

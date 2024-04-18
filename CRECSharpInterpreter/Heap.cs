@@ -21,8 +21,8 @@ namespace CRECSharpInterpreter
 
         public int Size { get; private set; } = INITIAL_HEAP_CAPACITY;
 
-        private List<Variable?> variables = new(INITIAL_HEAP_CAPACITY);
-        public Variable? this[int i] { get => variables[i]; }
+        internal List<Variable?> variables = new(INITIAL_HEAP_CAPACITY);
+        public Variable? this[int i] { get => variables[i]; internal set => variables[i] = value; }
 
         public int Allocate(int length, IEnumerable<Variable> data)
         {
