@@ -155,7 +155,7 @@ namespace CRECSharpInterpreter
                 }
                 if (verbose)
                     PrintMemory();
-                results[1] = DoesMemoryMatch(test);
+                results[1] = DoesMemoryMatch(test, verbose);
                 PrintResults(test, language, results);
             }
             System.Console.WriteLine();
@@ -164,57 +164,125 @@ namespace CRECSharpInterpreter
         private static void PrintResults(ITest test, Pair<Syntax, string> language, bool?[] results)
         {
             System.Console.WriteLine(string.Format("{0,20} {1,10}", language.First + "_Compile", results[0]));
-            System.Console.WriteLine(string.Format("{0,20} {1,10}", language.First + "_Run", results[0]));
+            System.Console.WriteLine(string.Format("{0,20} {1,10}", language.First + "_Run", results[1]));
         }
 
-        private static bool DoesMemoryMatch(ITest test)
+        private static bool DoesMemoryMatch(ITest test, bool verbose)
         {
-            return DoesStackMatch(test.Stack) && DoesHeapMatch(test.Heap);
+            if (!DoesStackMatch(test.Stack, verbose))
+            {
+                if (verbose)
+                    System.Console.WriteLine("Test stack does not match real stack");
+                return false;
+            }
+            if (!DoesHeapMatch(test.Heap, verbose))
+            {
+                if (verbose)
+                    System.Console.WriteLine("Test heap does not match real heap");
+                return false;
+            }
+            return true;
         }
 
-        private static bool DoesStackMatch(Variable[][] stack)
+        private static bool DoesStackMatch(Variable[][] stack, bool verbose)
         {
             if (stack.Length != Memory.Instance!.Stack.Count)
+            {
+                if (verbose)
+                    System.Console.WriteLine($"Test stack size {stack.Length} different from real stack size {Memory.Instance.Stack.Count}");
                 return false;
+            }
             Scope[] stack2 = Memory.Instance!.Stack.ToArray();
             Array.Reverse(stack2);
             for (int i = 0; i < stack.Length; i++)
-                if (!DoesVarArrayMatch(stack[i], stack2[i]))
+                if (!DoesVarArrayMatch(stack[i], stack2[i], verbose))
+                {
+                    if (verbose)
+                        System.Console.WriteLine($"Scope {i} does not match");
                     return false;
+                }
             return true;
         }
 
-        private static bool DoesVarArrayMatch(Variable[] vars, Scope scope2)
+        private static bool DoesVarArrayMatch(Variable[] vars, Scope scope2, bool verbose)
         {
             if (vars.Length != scope2.DeclaredVariables.Count)
+            {
+                if (verbose)
+                    System.Console.WriteLine($"Test scope size {vars.Length} doesn't match real scope size {scope2.DeclaredVariables.Count}");
                 return false;
+            }
             for (int i = 0; i < vars.Length; i++)
-                if (!DoesVarMatch(vars[i], scope2.DeclaredVariables[i]))
+                if (!DoesVarMatch(vars[i], scope2.DeclaredVariables[i], verbose))
+                {
+                    if (verbose)
+                        System.Console.WriteLine($"Stack variable {i} does not match");
                     return false;
+                }
             return true;
         }
 
-        private static bool DoesVarMatch(Variable variable, Variable? variable2)
+        private static bool DoesVarMatch(Variable variable, Variable? variable2, bool verbose)
         {
             if (variable2 == null)
+            {
+                if (verbose)
+                    System.Console.WriteLine("Real variable is null (the variable itself, not its value");
                 return false;
-            return
-                variable._VarType == variable2._VarType &&
-                variable.Name == variable2.Name &&
-                variable.Value == variable2.Value &&
-                variable.Initialised == variable2.Initialised;
+            }
+            bool varTypeMatch = variable._VarType == variable2._VarType;
+            bool nameMatch = variable.Name == variable2.Name;
+            bool valueMatch = Equals(variable.Value, variable2.Value);
+            bool initialisedMatch = variable.Initialised == variable2.Initialised;
+            if (!varTypeMatch)
+            {
+                if (verbose)
+                    System.Console.WriteLine($"Test varType {variable._VarType} doesn't match real varType {variable2._VarType}");
+                return false;
+            }
+            if (!nameMatch)
+            {
+                if (verbose)
+                    System.Console.WriteLine($"Test name {variable.Name} doesn't match real name {variable2.Name}");
+                return false;
+            }
+            if (!valueMatch)
+            {
+                if (verbose)
+                    System.Console.WriteLine($"Test value {variable.Value} doesn't match real value {variable2.Value}");
+                return false;
+            }
+            if (!initialisedMatch)
+            {
+                if (verbose)
+                    System.Console.WriteLine($"Test initialised {variable.Initialised} doesn't match real initialised {variable2.Initialised}");
+                return false;
+            }
+            return true;
         }
 
-        private static bool DoesHeapMatch(Variable[] heap)
+        private static bool DoesHeapMatch(Variable[] heap, bool verbose)
         {
             if (heap.Length > Memory.Instance!.Heap.Size)
+            {
+                if (verbose)
+                    System.Console.WriteLine($"Test heap ({heap.Length}) bigger than real heap ({Memory.Instance.Heap.Size})");
                 return false;
+            }
             for (int i = 0; i < heap.Length; i++)
-                if (!DoesVarMatch(heap[i], Memory.Instance.Heap[i]))
+                if (!DoesVarMatch(heap[i], Memory.Instance.Heap[i], verbose))
+                {
+                    if (verbose)
+                        System.Console.WriteLine($"Heap variable {i} does not match");
                     return false;
+                }
             for (int i = heap.Length; i < Memory.Instance.Heap.Size; i++)
                 if (Memory.Instance.Heap[i] != null)
+                {
+                    if (verbose)
+                        System.Console.WriteLine($"Heap variable {i} null expected");
                     return false;
+                }
             return true;
         }
 
@@ -229,7 +297,7 @@ namespace CRECSharpInterpreter
             System.Console.WriteLine();
             System.Console.WriteLine("Heap:\n");
             foreach (Variable? variable in Memory.Instance.Heap)
-                System.Console.WriteLine(variable?.ToString() ?? "null");
+                System.Console.WriteLine(variable?.ToString() ?? "x");
         }
     }
 }

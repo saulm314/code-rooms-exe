@@ -71,7 +71,8 @@ namespace CRECSharpInterpreter
 
         public override string ToString()
         {
-            return string.Format("{0,10} {1,20} {2,10}", _VarType, Name, ValueAsString);
+            return string.Format("{0,10} {1,20} {2,10}", _VarType?.ToString() ?? "*", Name?.ToString() ?? "*",
+                string.IsNullOrEmpty(ValueAsString) ? "*" : ValueAsString);
         }
 
         public static IEnumerable<Variable> GetBlankVariables(VarType varType, int count)
