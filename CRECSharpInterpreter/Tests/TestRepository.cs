@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace CRECSharpInterpreter.Tests
+﻿namespace CRECSharpInterpreter.Tests
 {
     public static class TestRepository
     {
