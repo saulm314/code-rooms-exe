@@ -2,9 +2,9 @@
 
 namespace CRECSharpInterpreter.Tests
 {
-    public class VarDeclarationBad : ITest
+    public class BadVarDeclarationType : ITest
     {
-        public string Path => @"VarDeclarationInit\VarDeclarationBad";
+        public string Path => @"VarDeclarationInit\BadVarDeclarationType";
 
         public Variable[][] Stack =>
             new[]

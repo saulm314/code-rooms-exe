@@ -5,7 +5,7 @@
         public static ITest[] Tests { get; } = new ITest[]
         {
             new VarDeclaration(),
-            new VarDeclarationBad()
+            new BadVarDeclarationType()
         };
     }
 }
