@@ -17,6 +17,10 @@ namespace CRECSharpInterpreter.Operators
 
         public object? Calculate(object? leftValue, object? rightValue)
         {
+            if (LeftOperand?._VarType?._Storage == VarType.Storage.Reference && leftValue != null)
+                Memory.Instance!.Heap.DecrementReferenceCounter((int)leftValue);
+            if (RightOperand?._VarType?._Storage == VarType.Storage.Reference && rightValue != null)
+                Memory.Instance!.Heap.DecrementReferenceCounter((int)rightValue);
             return !Equals(leftValue, rightValue);
         }
 
