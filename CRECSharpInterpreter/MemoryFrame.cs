@@ -76,7 +76,7 @@ namespace CRECSharpInterpreter
 
         private Heap Copy(Heap oldHeap)
         {
-            Heap heap = new();
+            Heap heap = new(oldHeap.Size);
             for (int i = 0; i < oldHeap.Size; i++)
             {
                 Variable? oldVariable = oldHeap[i];
