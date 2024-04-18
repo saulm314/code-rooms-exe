@@ -105,7 +105,7 @@ namespace CRECSharpInterpreter
                 Memory.Instance.ThrownException = e;
                 Memory.Instance.Frames[Memory.Instance.CurrentFrame].Init();
             }
-            catch (Exception e) when (Environment._Debug == Debug.Yes)
+            catch (Exception e) when (Environment.Debug)
             {
                 Memory.Instance.Thrown = true;
                 Memory.Instance.ThrownException = e;

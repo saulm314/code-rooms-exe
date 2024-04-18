@@ -198,7 +198,7 @@ namespace CRECSharpInterpreter
                         break;
                 }
             }
-            catch (Exception e) when (e is not StatementException && Environment._Debug == Debug.No)
+            catch (Exception e) when (e is not StatementException && !Environment.Debug)
             {
                 throw StatementException.New(this, null, e);
             }
@@ -282,7 +282,7 @@ namespace CRECSharpInterpreter
             {
                 _Execute();
             }
-            catch (Exception e) when (e is not StatementException && Environment._Debug == Debug.No)
+            catch (Exception e) when (e is not StatementException && !Environment.Debug)
             {
                 throw StatementException.New(this, null, e);
             }

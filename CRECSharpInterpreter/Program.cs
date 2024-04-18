@@ -29,7 +29,7 @@ namespace CRECSharpInterpreter
             }
             Console.WriteLine($"Setting syntax to {languages[(int)Environment._Syntax]}");
             Console.WriteLine();
-            Environment._Debug = Debug.Yes;
+            Environment.Debug = true;
             Console.ReadLine();
             string fileName = Environment._Syntax switch
             {
