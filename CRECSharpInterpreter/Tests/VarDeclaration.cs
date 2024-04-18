@@ -4,7 +4,7 @@ namespace CRECSharpInterpreter.Tests
 {
     public class VarDeclaration : ITest
     {
-        public string Path => @"VarDeclarationInit\VarDeclaration";
+        public string Path => @"Variables\VarDeclaration";
 
         public Variable[][] Stack =>
             new[]

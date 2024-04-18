@@ -298,12 +298,18 @@ namespace CRECSharpInterpreter
             Array.Reverse(stack);
             System.Console.WriteLine("Stack:\n");
             foreach (Scope scope in stack)
-                foreach (Variable variable in scope.DeclaredVariables)
-                    System.Console.WriteLine(variable);
+                for (int i = 0; i < scope.DeclaredVariables.Count; i++)
+                {
+                    Variable variable = scope.DeclaredVariables[i];
+                    System.Console.WriteLine(i + "\t" + variable);
+                }
             System.Console.WriteLine();
             System.Console.WriteLine("Heap:\n");
-            foreach (Variable? variable in Memory.Instance.Heap)
-                System.Console.WriteLine(variable?.ToString() ?? "x");
+            for (int i = 0; i < Memory.Instance.Heap.Size; i++)
+            {
+                Variable? variable = Memory.Instance.Heap[i];
+                System.Console.WriteLine(i + "\t" + (variable?.ToString() ?? "x"));
+            }
         }
     }
 }

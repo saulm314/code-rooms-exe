@@ -1,0 +1,10 @@
+int myInt = 5;
+double myDouble = 5.0;
+boolean myBool = true;
+char myChar = 'a';
+int[] myIntArr = new int[3];
+double[] myDoubleArr = new double[5];
+boolean[] myBoolArr = new boolean[] { false, true };
+char[] myCharArr = new char[] { 'a', 'b' };
+String myString = "hello";
+String[] myStringArr = new String[] { "hi", "hello" };

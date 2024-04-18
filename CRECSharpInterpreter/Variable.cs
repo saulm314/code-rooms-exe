@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace CRECSharpInterpreter
 {
@@ -19,6 +18,12 @@ namespace CRECSharpInterpreter
             Name = name;
             Value = value;
             Initialised = initialised;
+        }
+
+        internal Variable(VarType? varType, object? value)
+        {
+            _VarType = varType;
+            Value = value;
         }
 
         public VarType? _VarType { get; init; }

@@ -6,7 +6,8 @@
         {
             new VarDeclaration(),
             new BadVarDeclarationType(),
-            new BadVarDeclarationKeyword()
+            new BadVarDeclarationKeyword(),
+            new VarInitialisation()
         };
 
         public static int SuccessfulTests { get; set; } = 0;

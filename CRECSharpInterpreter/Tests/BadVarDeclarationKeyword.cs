@@ -4,7 +4,7 @@ namespace CRECSharpInterpreter.Tests
 {
     public class BadVarDeclarationKeyword : ITest
     {
-        public string Path => @"VarDeclarationInit\BadVarDeclarationKeyword";
+        public string Path => @"Variables\BadVarDeclarationKeyword";
 
         public Variable[][] Stack =>
             new[]
