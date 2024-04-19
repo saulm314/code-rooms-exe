@@ -1,19 +1,16 @@
 ﻿using static CRECSharpInterpreter.VarType;
 
-namespace CRECSharpInterpreter.Tests.Types
+namespace CRECSharpInterpreter.Tests.ValueTypes
 {
-    public class Bool : ITest
+    public class BadCharQuoteNotClosed : ITest
     {
-        public string Path => @"Types\Bool";
+        public string Path => @"ValueTypes\BadCharQuoteNotClosed";
 
         public Variable[][] Stack =>
             new[]
             {
                 new Variable[]
                 {
-                    new(@bool, "myBool",  false,  true),
-                    new(@bool, "myBool2", true,   true),
-                    new(@bool, "myBool3", false,  false),
                 }
             };
 
@@ -23,6 +20,6 @@ namespace CRECSharpInterpreter.Tests.Types
                 new(null)
             };
 
-        public Error Error => Error.None;
+        public Error Error => Error.Compile;
     }
 }

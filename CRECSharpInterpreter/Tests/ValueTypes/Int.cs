@@ -1,10 +1,10 @@
 ﻿using static CRECSharpInterpreter.VarType;
 
-namespace CRECSharpInterpreter.Tests.Types
+namespace CRECSharpInterpreter.Tests.ValueTypes
 {
     public class Int : ITest
     {
-        public string Path => @"Types\Int";
+        public string Path => @"ValueTypes\Int";
 
         public Variable[][] Stack =>
             new[]

@@ -1,5 +1,6 @@
 ﻿using CRECSharpInterpreter.Tests.Variables;
-using CRECSharpInterpreter.Tests.Types;
+using CRECSharpInterpreter.Tests.ValueTypes;
+using CRECSharpInterpreter.Tests.ReferenceTypes;
 
 namespace CRECSharpInterpreter.Tests
 {
@@ -28,7 +29,8 @@ namespace CRECSharpInterpreter.Tests
             new BadCharNewlineChar(),
             new BadCharSingleBackslash(),
             new BadCharQuoteNotClosed(),
-            new BadCharTwoChars()
+            new BadCharTwoChars(),
+            new ValueTypeArrays()
         };
 
         public static int SuccessfulTests { get; set; } = 0;
