@@ -87,7 +87,7 @@ namespace CRECSharpInterpreter
                 Interpreter interpreter = new(text, 0);
                 bool?[] results = new bool?[2];
                 if (verbose)
-                    System.Console.WriteLine($"Compile: {test.Error} {interpreter.error} {interpreter.exception}");
+                    System.Console.WriteLine($"Compile (test vs real): {test.Error} {interpreter.error} {interpreter.exception}");
                 switch (test.Error, interpreter.error)
                 {
                     case (Error.None, Error.None):
@@ -126,7 +126,7 @@ namespace CRECSharpInterpreter
                 }
                 interpreter.RunAll();
                 if (verbose)
-                    System.Console.WriteLine($"Run: {test.Error} {interpreter.error} {interpreter.exception}");
+                    System.Console.WriteLine($"Run (test vs real): {test.Error} {interpreter.error} {interpreter.exception}");
                 switch (test.Error, interpreter.error)
                 {
                     case (Error.None, Error.None):

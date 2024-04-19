@@ -124,7 +124,7 @@ namespace CRECSharpInterpreter
             if (lengthAsVariable.Value == null)
                 throw new HeapException(this, $"Internal exception: length value cannot be null");
             int length = (int)lengthAsVariable.Value;
-            if (offset >= length)
+            if (offset >= length || offset < 0)
                 throw new HeapException(this, "Cannot access element out of range");
         }
 
