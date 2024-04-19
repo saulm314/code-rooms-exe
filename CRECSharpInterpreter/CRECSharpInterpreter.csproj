@@ -6,9 +6,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Folder Include="Tests\ReferenceTypes\Creation\Strings\" />
-    <Folder Include="Tests\ReferenceTypes\Indexing\Strings\" />
-  </ItemGroup>
-
 </Project>
