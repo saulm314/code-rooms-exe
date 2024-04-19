@@ -34,7 +34,8 @@ namespace CRECSharpInterpreter.Tests
             new ValueTypeArrayConstruction(),
             new BadArrayConstructionNegative(),
             new BadArrayConstructionNotInteger(),
-            new ValueTypeArrayLiteral()
+            new ValueTypeArrayLiteral(),
+            new BadArrayLiteralWrongType()
         };
 
         public static int SuccessfulTests { get; set; } = 0;
