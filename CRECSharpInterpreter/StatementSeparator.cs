@@ -369,6 +369,8 @@ namespace CRECSharpInterpreter
                     case QuoteState.SingleQuote:
                         if (text[i] == '\'')
                         {
+                            if (i >= 2 && text[i - 1] == '\\' && text[i - 2] != '\\')
+                                break;
                             currentPair.Second = i;
                             pairs.Add(currentPair);
                             currentPair = new(default, default);
