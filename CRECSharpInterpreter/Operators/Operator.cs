@@ -47,7 +47,7 @@ namespace CRECSharpInterpreter.Operators
                 new IntegerSubtraction(),
                 new IntegerNegation(),
                 new DoubleFloatSubtraction(),
-                new DoubleFloatConfirmation()
+                new DoubleFloatNegation()
             });
 
         public static Operator Multiply { get; } = new("*", OperatorPriority.ImmediateUnits, new ISpecificOperator[]
