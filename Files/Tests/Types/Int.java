@@ -9,3 +9,4 @@ int myInt3 = 2147483647;
 // but positive 2147483648 is bigger than the max value, hence it is not possible to obtain the min value directly
 // for the purposes of this application, this minor detail is irrelevant and we will simply ignore it
 int myInt4 = -2147483647;
+int myInt5;

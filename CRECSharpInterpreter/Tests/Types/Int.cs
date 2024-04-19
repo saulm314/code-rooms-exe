@@ -15,6 +15,7 @@ namespace CRECSharpInterpreter.Tests.Types
                     new(@int, "myInt2", 5,              true),
                     new(@int, "myInt3", 2147483647,     true),
                     new(@int, "myInt4", -2147483647,    true),
+                    new(@int, "myInt5", 0,              false),
                 }
             };
 

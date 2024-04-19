@@ -13,6 +13,7 @@ namespace CRECSharpInterpreter.Tests.Types
                 {
                     new(@bool, "myBool",  false,  true),
                     new(@bool, "myBool2", true,   true),
+                    new(@bool, "myBool3", false,  false),
                 }
             };
 

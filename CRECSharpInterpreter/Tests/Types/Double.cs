@@ -15,6 +15,7 @@ namespace CRECSharpInterpreter.Tests.Types
                     new(@double, "myDouble2", 0.0,     true),
                     new(@double, "myDouble3", -15.0,   true),
                     new(@double, "myDouble4", 3.14,    true),
+                    new(@double, "myDouble5", 0.0,     false),
                 }
             };
 
