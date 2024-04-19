@@ -24,7 +24,8 @@ namespace CRECSharpInterpreter.Tests
             new Char(),
             new BadCharEmpty(),
             new BadCharInvalidEscapeSequence(),
-            new BadCharNewline()
+            new BadCharNewline(),
+            new BadCharNewlineChar()
         };
 
         public static int SuccessfulTests { get; set; } = 0;
