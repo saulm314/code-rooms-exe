@@ -1,6 +1,7 @@
 ﻿using CRECSharpInterpreter.Tests.Variables;
 using CRECSharpInterpreter.Tests.ValueTypes;
-using CRECSharpInterpreter.Tests.ReferenceTypes;
+using CRECSharpInterpreter.Tests.ReferenceTypes.Creation;
+using CRECSharpInterpreter.Tests.ReferenceTypes.Indexing;
 
 namespace CRECSharpInterpreter.Tests
 {

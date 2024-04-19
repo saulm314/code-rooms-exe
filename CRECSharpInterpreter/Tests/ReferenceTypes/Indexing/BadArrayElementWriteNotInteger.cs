@@ -1,10 +1,10 @@
 ﻿using static CRECSharpInterpreter.VarType;
 
-namespace CRECSharpInterpreter.Tests.ReferenceTypes
+namespace CRECSharpInterpreter.Tests.ReferenceTypes.Indexing
 {
     public class BadArrayElementWriteNotInteger : ITest
     {
-        public string Path => @"ReferenceTypes\BadArrayElementWriteNotInteger";
+        public string Path => @"ReferenceTypes\Indexing\BadArrayElementWriteNotInteger";
 
         public Variable[][] Stack =>
             new[]

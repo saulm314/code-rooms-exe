@@ -1,10 +1,10 @@
 ﻿using static CRECSharpInterpreter.VarType;
 
-namespace CRECSharpInterpreter.Tests.ReferenceTypes
+namespace CRECSharpInterpreter.Tests.ReferenceTypes.Creation
 {
     public class ValueTypeArrayConstruction : ITest
     {
-        public string Path => @"ReferenceTypes\ValueTypeArrayConstruction";
+        public string Path => @"ReferenceTypes\Creation\ValueTypeArrayConstruction";
 
         public Variable[][] Stack =>
             new[]
