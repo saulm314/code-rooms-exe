@@ -14,7 +14,9 @@ namespace CRECSharpInterpreter.Tests.ReferenceTypes
                     new(@int.Array, "intArr", 1, true),
                     new(@double, "first", 3.0, true),
                     new(@double, "second", -3.9, true),
-                    new(@double.Array, "doubleArr", 4, true)
+                    new(@double.Array, "doubleArr", 4, true),
+                    new(@char.Array, "charArr", 9, true),
+                    new(@bool.Array, "boolArr", 10, true),
                 }
             };
 
@@ -30,6 +32,9 @@ namespace CRECSharpInterpreter.Tests.ReferenceTypes
                 new(@double, -3.9),
                 new(@double, -0.3),
                 new(@double, 3.0),
+                new(@int, 0),
+                new(@int, 1),
+                new(@bool, false)
             };
 
         public Error Error => Error.None;
