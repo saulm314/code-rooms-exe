@@ -30,7 +30,8 @@ namespace CRECSharpInterpreter.Tests
             new BadCharSingleBackslash(),
             new BadCharQuoteNotClosed(),
             new BadCharTwoChars(),
-            new ValueTypeArrays()
+            new ValueTypeArrayDeclInit(),
+            new ValueTypeArrayConstruction()
         };
 
         public static int SuccessfulTests { get; set; } = 0;

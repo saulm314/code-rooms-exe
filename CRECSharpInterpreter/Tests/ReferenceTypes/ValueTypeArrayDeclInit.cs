@@ -2,9 +2,9 @@
 
 namespace CRECSharpInterpreter.Tests.ReferenceTypes
 {
-    public class ValueTypeArrays : ITest
+    public class ValueTypeArrayDeclInit : ITest
     {
-        public string Path => @"ReferenceTypes\ValueTypeArrays";
+        public string Path => @"ReferenceTypes\ValueTypeArrayDeclInit";
 
         public Variable[][] Stack =>
             new[]
