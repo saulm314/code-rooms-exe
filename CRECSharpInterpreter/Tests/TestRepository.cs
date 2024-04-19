@@ -17,7 +17,8 @@ namespace CRECSharpInterpreter.Tests
             new BadReadVarNotInitialised(),
             new Int(),
             new BadIntDouble(),
-            new BadIntOutOfBounds()
+            new BadIntOutOfBounds(),
+            new Bool(),
         };
 
         public static int SuccessfulTests { get; set; } = 0;
