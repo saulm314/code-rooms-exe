@@ -1,4 +1,5 @@
 ﻿using CRECSharpInterpreter.Tests.Variables;
+using CRECSharpInterpreter.Tests.Types;
 
 namespace CRECSharpInterpreter.Tests
 {
@@ -13,7 +14,8 @@ namespace CRECSharpInterpreter.Tests
             new BadVarInitialisationWrongType(),
             new ReadWriteVar(),
             new BadReadVarNotDeclared(),
-            new BadReadVarNotInitialised()
+            new BadReadVarNotInitialised(),
+            new Int()
         };
 
         public static int SuccessfulTests { get; set; } = 0;
