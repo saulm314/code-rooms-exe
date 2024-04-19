@@ -30,6 +30,7 @@ namespace CRECSharpInterpreter.Tests
             new BadCharNewlineChar(),
             new BadCharSingleBackslash(),
             new BadCharQuoteNotClosed(),
+            new BadCharQuoteNotOpened(),
             new BadCharTwoChars(),
             new ValueTypeArrayDeclInit(),
             new ValueTypeArrayConstruction(),
