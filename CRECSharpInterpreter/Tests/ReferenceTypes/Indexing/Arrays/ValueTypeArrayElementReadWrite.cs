@@ -1,10 +1,10 @@
 ﻿using static CRECSharpInterpreter.VarType;
 
-namespace CRECSharpInterpreter.Tests.ReferenceTypes.Indexing
+namespace CRECSharpInterpreter.Tests.ReferenceTypes.Indexing.Arrays
 {
     public class ValueTypeArrayElementReadWrite : ITest
     {
-        public string Path => @"ReferenceTypes\Indexing\ValueTypeArrayElementReadWrite";
+        public string Path => @"ReferenceTypes\Indexing\Arrays\ValueTypeArrayElementReadWrite";
 
         public Variable[][] Stack =>
             new[]
