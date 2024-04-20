@@ -100,8 +100,8 @@ ReferenceTypes\Indexing\Arrays:
 
 ValueTypeArrayElementReadWrite
 ValueTypeArrayElementReadWrite_
-StringArrayElementRead
-StringArrayElementRead_
+StringArrayElementReadWrite
+StringArrayElementReadWrite_
 BadRArrayElementReadOutOfBounds
 BadRArrayElementReadNegative
 BadRArrayElementReadEmptyArr
@@ -182,6 +182,8 @@ Misc:
 
 EmptyStatement
 EmptyStatement_
+MultiStatementsOneLine
+MultiStatementsOneLine
 SingleLineComment
 SingleLineComment_
 MultiLineComment
