@@ -16,4 +16,8 @@ string myStr3 = ( string ) null ;
 string [ ] strArr3 = ( string [ ] ) null ;
 
 double myDouble2 = ( double ) 2 ;
-int myInt = ( int ) 2.0 ;
+int myInt2 = ( int ) 2.0 ;
+
+int myInt3 = ( int ) ( int ) 5 ;
+int myInt4 = ( int ) ( int ) ( int ) 5 ;
+int myInt5 = ( int ) ( double ) ( int ) 5.0 ;

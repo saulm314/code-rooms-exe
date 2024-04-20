@@ -310,6 +310,15 @@ BadCCastArg1
 BadCCastNullToValueType
 BadCCast
 
+Expressions:
+
+Bracket
+Bracket_
+BadCBracketNotOpened
+BadCBracketNotClosed
+OperatorPriority
+OperatorPriority_
+
 IfStatements:
 
 SingleIf
@@ -378,15 +387,6 @@ BadCForBreakNoSemicolon
 BadCForContinueNoSemicolon
 BadCBreakOutsideLoop
 BadCContinueOutsideLoop
-
-Expressions:
-
-Bracket
-Bracket_
-BadCBracketNotOpened
-BadCBracketNotClosed
-OperatorPriority
-OperatorPriority_
 
 Misc:
 
