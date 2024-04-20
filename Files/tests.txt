@@ -287,11 +287,9 @@ BadCGreaterThanOrEqualToNoArg1Int
 BadCGreaterThanOrEqualToNoArg1Double
 BadCGreaterThanOrEqualToNoArg2Int
 BadCGreaterThanOrEqualToNoArg2Double
-ConfirmationInt
-ConfirmationDouble
+Confirmation
 BadCConfirmationWrongType
-NegationInt
-NegationDouble
+Negation
 BadCNegationWrongType
 
 Expressions\Operations\Misc:
