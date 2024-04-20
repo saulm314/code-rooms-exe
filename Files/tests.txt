@@ -49,6 +49,8 @@ BadCCharQuoteNotOpened
 BadCCharQuoteNotClosed
 BadCCharTwoChars
 BadCCharNull
+BadCCharSingleLineComment
+BadCCharMultiLineComment
 
 ReferenceTypes\Creation\Arrays:
 
