@@ -3,12 +3,11 @@ using System;
 
 namespace CRECSharpInterpreter.Tests
 {
-    public class BadTest : ITest
+    public class GoodTestNotFound : ITest
     {
-        public BadTest(string pathNoExt, Error error)
+        public GoodTestNotFound(string pathNoExt)
         {
             PathNoExt = pathNoExt;
-            Error = error;
         }
 
         public string PathNoExt { get; init; }
@@ -17,6 +16,6 @@ namespace CRECSharpInterpreter.Tests
 
         public Variable[] Heap => Array.Empty<Variable>();
 
-        public Error Error { get; init; }
+        public Error Error { get; } = Error.None;
     }
 }

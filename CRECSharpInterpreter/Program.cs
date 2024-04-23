@@ -78,12 +78,23 @@ namespace CRECSharpInterpreter
 
         private static void RunTest(ITest test, bool verbose)
         {
-            System.Console.WriteLine($"{test.Path}:");
+            System.Console.WriteLine($"{test.PathNoExt}:");
             foreach (Pair<Syntax, string> language in languages)
             {
                 Environment._Syntax = language.First;
-                string fullPath = @"..\..\..\..\Files\Tests\" + test.Path + language.Second;
-                string text = File.ReadAllText(fullPath);
+                string fullPath = test.PathNoExt + language.Second;
+                string text;
+                try
+                {
+                    text = File.ReadAllText(fullPath);
+                }
+                catch (IOException e)
+                {
+                    if (verbose)
+                        System.Console.WriteLine(e);
+                    PrintResults(test, language, new bool?[] { false, false });
+                    continue;
+                }
                 Interpreter interpreter = new(text, 0);
                 bool?[] results = new bool?[2];
                 if (verbose)

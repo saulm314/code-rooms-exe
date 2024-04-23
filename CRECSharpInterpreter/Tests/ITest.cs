@@ -2,7 +2,7 @@
 {
     public interface ITest
     {
-        string Path { get; }
+        string PathNoExt { get; }
         Variable[][] Stack { get; }
         Variable[] Heap { get; }
         Error Error { get; }
