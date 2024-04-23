@@ -1,6 +1,6 @@
 int myInt = ( int ) 1 ;
 double myDouble = ( double ) 1.0 ;
-boolean myB = ( boolean ) true ;
+boolean myB = (boolean)true ;
 char myChar = ( char ) 'a' ;
 
 int [ ] intArr = new int [ 0 ] ;
