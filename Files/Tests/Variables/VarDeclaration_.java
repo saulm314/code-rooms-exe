@@ -1,0 +1,10 @@
+int myInt;
+double _myDouble;
+boolean myB0;
+char myChar_;
+int[]intArr;
+double[]doubleArr;
+boolean[]bArr;
+char[]charArr;
+String myStr;
+String[]strArr;
