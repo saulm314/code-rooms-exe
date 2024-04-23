@@ -6,6 +6,18 @@ namespace CRETestCsJavaConverter
 {
     public class Program
     {
+
+        // * find each .cs file in the test directory (including subdirectories)
+        // * make a copy of the .cs file and rename it to a .java file
+        // * within the .java file, make the following replacements:
+        // * * "bool" => "boolean"
+        // * * "string" => "String"
+        // * * "Length" => "length"
+        // * if at this point the .java file contains "length", print the path of this file
+        // * * this is so that we can manually inspect whether this length refers to a string length or an array length
+        // * * if it is a string length, brackets "()" need to be appended as this should be a method
+        //
+        // execute this program from the command line to see the console output
         private static void Main(string[] args)
         {
             Console.WriteLine("Copying and converting .cs files to .java...");
