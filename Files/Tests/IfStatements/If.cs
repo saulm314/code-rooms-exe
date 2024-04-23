@@ -23,7 +23,7 @@ if ( true )
         myInt3 = 2 ;
 
 int myInt4 = 0 ;
-if ( false)
+if ( false )
     if ( false )
         myInt4 = 1 ;
     else

@@ -25,3 +25,8 @@ bool myB12 = myStr != myStr2 ;
 
 bool myB13 = strArr != strArr ;
 bool myB14 = strArr != strArr2 ;
+
+string myStr3 = null ;
+bool myB15 = myStr3 != null ;
+bool myB16 = myStr2 != null ;
+bool myB17 = null != null ;

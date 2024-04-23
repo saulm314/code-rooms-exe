@@ -16,8 +16,8 @@ while ( index < copyArray . Length )
 }
 
 char [ ] helloChars = new char [ ] { 'h' , 'e' , 'l' , 'l' , 'o' } ;
-char [ ] helloCharsCopy = new char [helloChars . Length ] ;
-for ( int i = 0 ; i < helloChars . Length; i = i + 1 )
+char [ ] helloCharsCopy = new char [ helloChars . Length ] ;
+for ( int i = 0 ; i < helloChars . Length ; i = i + 1 )
     helloCharsCopy [ i ] = helloChars [ i ] ;
 
 bool arraysAreEqual = true ;
