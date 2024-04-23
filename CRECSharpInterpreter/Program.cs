@@ -13,8 +13,14 @@ namespace CRECSharpInterpreter
         {
             if (args.Length > 0 && args[0] == "test")
             {
-                bool verbose = args.Length > 1 && args[1] == "verbose";
-                RunTests(verbose);
+                Environment.Verbose = args.Length > 1 && args[1] == "verbose";
+                int testStart = 2 - (Environment.Verbose ? 0 : 1);
+                if (args.Length > testStart)
+                {
+                    Environment.Tests = new string[args.Length - testStart];
+                    Array.Copy(args, testStart, Environment.Tests, 0, args.Length - testStart);
+                }
+                RunTests();
                 return;
             }
             string[] languages = new string[] { "Java", "C#" };
@@ -61,12 +67,12 @@ namespace CRECSharpInterpreter
                 ReadLine();
         }
 
-        private static void RunTests(bool verbose)
+        private static void RunTests()
         {
             System.Console.WriteLine();
             Environment.Testing = true;
             foreach (ITest test in TestRepository.Tests)
-                RunTest(test, verbose);
+                RunTest(test);
             System.Console.WriteLine($"{TestRepository.SuccessfulTests}/{TestRepository.TotalTests} passed");
         }
 
@@ -76,9 +82,11 @@ namespace CRECSharpInterpreter
             new(Syntax.Java, ".java")
         };
 
-        private static void RunTest(ITest test, bool verbose)
+        private static void RunTest(ITest test)
         {
-            System.Console.WriteLine($"{test.PathNoExt}:");
+            SetShouldPrint(test);
+            if (Environment.ShouldPrint)
+                System.Console.WriteLine($"{test.PathNoExt}:");
             foreach (Pair<Syntax, string> language in languages)
             {
                 Environment._Syntax = language.First;
@@ -90,15 +98,13 @@ namespace CRECSharpInterpreter
                 }
                 catch (IOException e)
                 {
-                    if (verbose)
-                        System.Console.WriteLine(e);
+                    PrintIfVerbose(e);
                     PrintResults(test, language, new bool?[] { false, false });
                     continue;
                 }
                 Interpreter interpreter = new(text, 0);
                 bool?[] results = new bool?[2];
-                if (verbose)
-                    System.Console.WriteLine($"Compile (test vs real): {test.Error} {interpreter.error} {interpreter.exception}");
+                PrintIfVerbose($"Compile (test vs real): {test.Error} {interpreter.error} {interpreter.exception}");
                 switch (test.Error, interpreter.error)
                 {
                     case (Error.None, Error.None):
@@ -136,8 +142,7 @@ namespace CRECSharpInterpreter
                     continue;
                 }
                 interpreter.RunAll();
-                if (verbose)
-                    System.Console.WriteLine($"Run (test vs real): {test.Error} {interpreter.error} {interpreter.exception}");
+                PrintIfVerbose($"Run (test vs real): {test.Error} {interpreter.error} {interpreter.exception}");
                 switch (test.Error, interpreter.error)
                 {
                     case (Error.None, Error.None):
@@ -165,16 +170,19 @@ namespace CRECSharpInterpreter
                     PrintResults(test, language, results);
                     continue;
                 }
-                if (verbose)
+                if (Environment.Verbose)
                     PrintMemory();
-                results[1] = DoesMemoryMatch(test, verbose);
+                results[1] = DoesMemoryMatch(test);
                 PrintResults(test, language, results);
             }
-            System.Console.WriteLine();
+            if (Environment.ShouldPrint)
+                System.Console.WriteLine();
         }
 
         private static void PrintResults(ITest test, Pair<Syntax, string> language, bool?[] results)
         {
+            if (!Environment.ShouldPrint)
+                return;
             foreach (bool? result in results)
             {
                 TestRepository.SuccessfulTests += (bool)result! ? 1 : 0;
@@ -184,67 +192,60 @@ namespace CRECSharpInterpreter
             System.Console.WriteLine(string.Format("{0,20} {1,10}", language.First + "_Run", results[1]));
         }
 
-        private static bool DoesMemoryMatch(ITest test, bool verbose)
+        private static bool DoesMemoryMatch(ITest test)
         {
-            if (!DoesStackMatch(test.Stack, verbose))
+            if (!DoesStackMatch(test.Stack))
             {
-                if (verbose)
-                    System.Console.WriteLine("Test stack does not match real stack");
+                PrintIfVerbose("Test stack does not match real stack");
                 return false;
             }
-            if (!DoesHeapMatch(test.Heap, verbose))
+            if (!DoesHeapMatch(test.Heap))
             {
-                if (verbose)
-                    System.Console.WriteLine("Test heap does not match real heap");
+                PrintIfVerbose("Test heap does not match real heap");
                 return false;
             }
             return true;
         }
 
-        private static bool DoesStackMatch(Variable[][] stack, bool verbose)
+        private static bool DoesStackMatch(Variable[][] stack)
         {
             if (stack.Length != Memory.Instance!.Stack.Count)
             {
-                if (verbose)
-                    System.Console.WriteLine($"Test stack size {stack.Length} different from real stack size {Memory.Instance.Stack.Count}");
+                PrintIfVerbose($"Test stack size {stack.Length} different from real stack size {Memory.Instance.Stack.Count}");
                 return false;
             }
             Scope[] stack2 = Memory.Instance!.Stack.ToArray();
             Array.Reverse(stack2);
             for (int i = 0; i < stack.Length; i++)
-                if (!DoesVarArrayMatch(stack[i], stack2[i], verbose))
+                if (!DoesVarArrayMatch(stack[i], stack2[i]))
                 {
-                    if (verbose)
-                        System.Console.WriteLine($"Scope {i} does not match");
+                    PrintIfVerbose($"Scope {i} does not match");
                     return false;
                 }
             return true;
         }
 
-        private static bool DoesVarArrayMatch(Variable[] vars, Scope scope2, bool verbose)
+        private static bool DoesVarArrayMatch(Variable[] vars, Scope scope2)
         {
             if (vars.Length != scope2.DeclaredVariables.Count)
             {
-                if (verbose)
-                    System.Console.WriteLine($"Test scope size {vars.Length} doesn't match real scope size {scope2.DeclaredVariables.Count}");
+                PrintIfVerbose($"Test scope size {vars.Length} doesn't match real scope size {scope2.DeclaredVariables.Count}");
                 return false;
             }
             for (int i = 0; i < vars.Length; i++)
-                if (!DoesVarMatch(vars[i], scope2.DeclaredVariables[i], verbose))
+                if (!DoesVarMatch(vars[i], scope2.DeclaredVariables[i]))
                 {
-                    if (verbose)
-                        System.Console.WriteLine($"Stack variable {i} does not match");
+                    PrintIfVerbose($"Stack variable {i} does not match");
                     return false;
                 }
             return true;
         }
 
-        private static bool DoesVarMatch(Variable variable, Variable? variable2, bool verbose)
+        private static bool DoesVarMatch(Variable variable, Variable? variable2)
         {
             if (variable2 == null)
             {
-                if (verbose)
-                    System.Console.WriteLine("Real variable is null (the variable itself, not its value");
+                PrintIfVerbose("Real variable is null (the variable itself, not its value");
                 return false;
             }
             bool varTypeMatch = variable._VarType == variable2._VarType;
@@ -253,51 +254,44 @@ namespace CRECSharpInterpreter
             bool initialisedMatch = variable.Initialised == variable2.Initialised;
             if (!varTypeMatch)
             {
-                if (verbose)
-                    System.Console.WriteLine($"Test varType {variable._VarType} doesn't match real varType {variable2._VarType}");
+                PrintIfVerbose($"Test varType {variable._VarType} doesn't match real varType {variable2._VarType}");
                 return false;
             }
             if (!nameMatch)
             {
-                if (verbose)
-                    System.Console.WriteLine($"Test name {variable.Name} doesn't match real name {variable2.Name}");
+                PrintIfVerbose($"Test name {variable.Name} doesn't match real name {variable2.Name}");
                 return false;
             }
             if (!valueMatch)
             {
-                if (verbose)
-                    System.Console.WriteLine($"Test value {variable.Value} doesn't match real value {variable2.Value}");
+                PrintIfVerbose($"Test value {variable.Value} doesn't match real value {variable2.Value}");
                 return false;
             }
             if (!initialisedMatch)
             {
-                if (verbose)
-                    System.Console.WriteLine($"Test initialised {variable.Initialised} doesn't match real initialised {variable2.Initialised}");
+                PrintIfVerbose($"Test initialised {variable.Initialised} doesn't match real initialised {variable2.Initialised}");
                 return false;
             }
             return true;
         }
 
-        private static bool DoesHeapMatch(Variable[] heap, bool verbose)
+        private static bool DoesHeapMatch(Variable[] heap)
         {
             if (heap.Length > Memory.Instance!.Heap.Size)
             {
-                if (verbose)
-                    System.Console.WriteLine($"Test heap ({heap.Length}) bigger than real heap ({Memory.Instance.Heap.Size})");
+                PrintIfVerbose($"Test heap ({heap.Length}) bigger than real heap ({Memory.Instance.Heap.Size})");
                 return false;
             }
             for (int i = 0; i < heap.Length; i++)
-                if (!DoesVarMatch(heap[i], Memory.Instance.Heap[i], verbose))
+                if (!DoesVarMatch(heap[i], Memory.Instance.Heap[i]))
                 {
-                    if (verbose)
-                        System.Console.WriteLine($"Heap variable {i} does not match");
+                    PrintIfVerbose($"Heap variable {i} does not match");
                     return false;
                 }
             for (int i = heap.Length; i < Memory.Instance.Heap.Size; i++)
                 if (Memory.Instance.Heap[i] != null)
                 {
-                    if (verbose)
-                        System.Console.WriteLine($"Heap variable {i} null expected");
+                    PrintIfVerbose($"Heap variable {i} null expected");
                     return false;
                 }
             return true;
@@ -305,6 +299,8 @@ namespace CRECSharpInterpreter
 
         private static void PrintMemory()
         {
+            if (!Environment.ShouldPrint)
+                return;
             Scope[] stack = Memory.Instance!.Stack.ToArray();
             Array.Reverse(stack);
             System.Console.WriteLine("Stack:\n");
@@ -321,6 +317,27 @@ namespace CRECSharpInterpreter
                 Variable? variable = Memory.Instance.Heap[i];
                 System.Console.WriteLine(i + "\t" + (variable?.ToString() ?? "x"));
             }
+        }
+
+        private static void SetShouldPrint(ITest test)
+        {
+            if (Environment.Tests == null)
+                return;
+            foreach (string testStr in Environment.Tests)
+            {
+                if (test.PathNoExt.Contains(testStr))
+                {
+                    Environment.ShouldPrint = true;
+                    return;
+                }
+            }
+            Environment.ShouldPrint = false;
+        }
+
+        private static void PrintIfVerbose(object obj)
+        {
+            if (Environment.Verbose && Environment.ShouldPrint)
+                System.Console.WriteLine(obj);
         }
     }
 }
