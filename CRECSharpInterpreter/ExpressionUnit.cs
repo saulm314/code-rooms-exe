@@ -182,8 +182,9 @@ namespace CRECSharpInterpreter
             foreach (Expression expression in GetExpressionsBetweenCommas(keyStringsInsideBraces))
             {
                 if (expression._VarType != varType.Unarray)
-                    throw new ExpressionUnitException(this,
-                        $"Cannot have variable of type {expression._VarType} in array of type {varType}");
+                    if (expression._VarType != null || varType.Unarray!._Storage != VarType.Storage.Reference)
+                        throw new ExpressionUnitException(this,
+                            $"Cannot have variable of type {expression._VarType} in array of type {varType}");
                 arrayLiteralExpressions.Add(expression);
             }
             return varType;
