@@ -359,6 +359,10 @@ BadCIfInitialisation
 BadCIfElseNoInitialisation
 BadCIfElseNoInitialisation1
 BadCIfElseNoInitialisation2
+BadCElseWithoutIf
+BadCElseAfterIf
+BadCElseInIf
+BadCElseInElse
 
 Loops:
 
