@@ -4,7 +4,7 @@
     {
         string PathNoExt { get; }
         Variable[][] Stack { get; }
-        Variable[] Heap { get; }
+        Variable?[] Heap { get; }
         Error Error { get; }
     }
 }

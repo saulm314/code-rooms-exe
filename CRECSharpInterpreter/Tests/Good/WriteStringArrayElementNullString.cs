@@ -2,9 +2,9 @@
 
 namespace CRECSharpInterpreter.Tests.Good
 {
-    public class Confirmation : ITest
+    public class WriteStringArrayElementNullString : ITest
     {
-        public Confirmation(string pathNoExt)
+        public WriteStringArrayElementNullString(string pathNoExt)
         {
             PathNoExt = pathNoExt;
         }
@@ -16,19 +16,18 @@ namespace CRECSharpInterpreter.Tests.Good
             {
                 new Variable[]
                 {
-                    new(@int, "myInt", 5, true),
-                    new(@int, "myInt2", 5, true),
-                    new(@int, "myInt3", 5, true),
-                    new(@double, "myDouble", 5.0, true),
-                    new(@double, "myDouble2", 5.0, true),
-                    new(@double, "myDouble3", 5.0, true)
+                    new(@string.Array, "strArr", 2, true),
+                    new(@string, "myStr", null, true)
                 }
             };
 
         public Variable?[] Heap =>
             new Variable?[]
             {
-                new(null)
+                new(null),
+                null,
+                new(@int, 1),
+                new(@string, null)
             };
 
         public Error Error { get; } = Error.None;

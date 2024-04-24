@@ -241,14 +241,21 @@ namespace CRECSharpInterpreter
             return true;
         }
 
-        private static bool DoesVarMatch(Variable variable, Variable? variable2)
+        private static bool DoesVarMatch(Variable? variable, Variable? variable2)
         {
-            if (variable2 == null)
+            if (variable == null && variable2 != null)
             {
-                PrintIfVerbose("Real variable is null (the variable itself, not its value");
+                PrintIfVerbose("Test variable is null but real variable isn't");
                 return false;
             }
-            bool varTypeMatch = variable._VarType == variable2._VarType;
+            if (variable != null && variable2 == null)
+            {
+                PrintIfVerbose("Test variable is not null but real variable is");
+                return false;
+            }
+            if (variable == null && variable2 == null)
+                return true;
+            bool varTypeMatch = variable!._VarType == variable2!._VarType;
             bool nameMatch = variable.Name == variable2.Name;
             bool valueMatch = Equals(variable.Value, variable2.Value);
             bool initialisedMatch = variable.Initialised == variable2.Initialised;
@@ -275,7 +282,7 @@ namespace CRECSharpInterpreter
             return true;
         }
 
-        private static bool DoesHeapMatch(Variable[] heap)
+        private static bool DoesHeapMatch(Variable?[] heap)
         {
             if (heap.Length > Memory.Instance!.Heap.Size)
             {

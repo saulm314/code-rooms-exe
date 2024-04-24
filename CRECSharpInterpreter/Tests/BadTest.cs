@@ -15,7 +15,7 @@ namespace CRECSharpInterpreter.Tests
 
         public Variable[][] Stack => Array.Empty<Variable[]>();
 
-        public Variable[] Heap => Array.Empty<Variable>();
+        public Variable?[] Heap => Array.Empty<Variable?>();
 
         public Error Error { get; init; }
     }

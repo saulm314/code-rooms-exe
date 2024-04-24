@@ -21,8 +21,8 @@ namespace CRECSharpInterpreter.Tests.Good
                 }
             };
 
-        public Variable[] Heap =>
-            new Variable[]
+        public Variable?[] Heap =>
+            new Variable?[]
             {
                 new(null),
                 new(@int, 0),

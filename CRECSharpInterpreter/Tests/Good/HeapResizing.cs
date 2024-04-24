@@ -20,11 +20,11 @@ namespace CRECSharpInterpreter.Tests.Good
                 }
             };
 
-        public Variable[] Heap
+        public Variable?[] Heap
         {
             get
             {
-                Variable[] variables = new Variable[212];
+                Variable?[] variables = new Variable?[212];
                 variables[0] = new(null);
                 variables[1] = new(@int, 210);
                 for (int i = 2; i < 212; i++)
