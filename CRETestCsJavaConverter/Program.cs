@@ -18,13 +18,18 @@ namespace CRETestCsJavaConverter
         // * * if it is a string length, brackets "()" need to be appended as this should be a method
         //
         // execute this program from the command line to see the console output
+        // use no-overwrite argument to prevent existing files from being overwritten
         private static void Main(string[] args)
         {
+            if (args.Length > 0 && args[0] == "no-overwrite")
+                overwrite = false;
             Console.WriteLine("Copying and converting .cs files to .java...");
             string directory = @"..\..\..\..\Files\Tests";
             ConvertDirectoriesToJava(new string[] { directory });
             Console.WriteLine("Done");
         }
+
+        private static bool overwrite = true;
 
         private static void ConvertDirectoriesToJava(string[] directories)
         {
@@ -43,7 +48,14 @@ namespace CRETestCsJavaConverter
             foreach (string csFile in csFiles)
             {
                 string javaFile = csFile[0..(csFile.Length - 2)] + "java";
-                File.Copy(csFile, javaFile, true);
+                try
+                {
+                    File.Copy(csFile, javaFile, overwrite);
+                }
+                catch
+                {
+                    continue;
+                }
                 ConvertJavaFile(javaFile);
             }
         }
