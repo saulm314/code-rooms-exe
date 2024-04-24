@@ -385,9 +385,9 @@ namespace CRECSharpInterpreter
             {
                 case SuperStatement.Else:
                     return headerStart + 3;
-                case SuperStatement.If:
-                case SuperStatement.While:
-                case SuperStatement.For:
+                case SuperStatement.IfUnknown:
+                case SuperStatement.WhileUnknown:
+                case SuperStatement.ForUnknown:
                     foreach (Pair<int, int> bracketIndexPair in bracketIndexPairs)
                         if (bracketIndexPair.First > headerStart)
                             return bracketIndexPair.Second;
@@ -400,18 +400,45 @@ namespace CRECSharpInterpreter
         private static int GetSuperStatementEnd(string text, SuperStatement superStatement, int headerEnd, List<Pair<int, int>> bracketIndexPairs,
                                                 out SuperStatement finalSuperStatement)
         {
-            finalSuperStatement = superStatement;
-            if (superStatement == SuperStatement.None || superStatement == SuperStatement.IfElse)
-                throw new InterpreterException("Internal error");
+            switch (superStatement)
+            {
+                case SuperStatement.IfUnknown:
+                case SuperStatement.Else:
+                case SuperStatement.WhileUnknown:
+                case SuperStatement.ForUnknown:
+                    break;
+                default:
+                    throw new InterpreterException("Internal error");
+            }
             int firstNonWhiteSpaceIndexAfterHeader = GetFirstNonWhiteSpaceIndexAfterIndex(text, headerEnd);
             if (firstNonWhiteSpaceIndexAfterHeader == -1)
                 throw new InterpreterException("Substatement after if/else/while/for expected");
             int superStatementEnd;
             if (text[firstNonWhiteSpaceIndexAfterHeader] == '{')
+            {
                 superStatementEnd = GetMultiSuperStatementEnd(firstNonWhiteSpaceIndexAfterHeader, bracketIndexPairs);
+                finalSuperStatement = superStatement switch
+                {
+                    SuperStatement.IfUnknown => SuperStatement.IfMulti,
+                    SuperStatement.WhileUnknown => SuperStatement.WhileMulti,
+                    SuperStatement.ForUnknown => SuperStatement.ForMulti,
+                    SuperStatement.Else => SuperStatement.Else,
+                    _ => throw new InterpreterException("Internal error")
+                };
+            }
             else
+            {
                 superStatementEnd = GetSingleSuperStatementEnd(text, headerEnd);
-            if (superStatement != SuperStatement.If)
+                finalSuperStatement = superStatement switch
+                {
+                    SuperStatement.IfUnknown => SuperStatement.IfSingle,
+                    SuperStatement.WhileUnknown => SuperStatement.WhileSingle,
+                    SuperStatement.ForUnknown => SuperStatement.ForSingle,
+                    SuperStatement.Else => SuperStatement.Else,
+                    _ => throw new InterpreterException("Internal error")
+                };
+            }
+            if (superStatement != SuperStatement.IfUnknown)
                 return superStatementEnd;
             int firstNonWhiteSpaceIndexAfterSuperStatement = GetFirstNonWhiteSpaceIndexAfterIndex(text, superStatementEnd);
             if (firstNonWhiteSpaceIndexAfterSuperStatement == -1)
@@ -450,13 +477,13 @@ namespace CRECSharpInterpreter
         private static SuperStatement GetOpenSuperStatement(string text, int index)
         {
             if (IsWordAtIndex(text, index, "if"))
-                return SuperStatement.If;
+                return SuperStatement.IfUnknown;
             if (IsWordAtIndex(text, index, "else"))
                 return SuperStatement.Else;
             if (IsWordAtIndex(text, index, "while"))
-                return SuperStatement.While;
+                return SuperStatement.WhileUnknown;
             if (IsWordAtIndex(text, index, "for"))
-                return SuperStatement.For;
+                return SuperStatement.ForUnknown;
             return SuperStatement.None;
         }
 
@@ -464,9 +491,16 @@ namespace CRECSharpInterpreter
         {
             if (word.Length == 0)
                 return false;
+            if (index + word.Length - 1 >= text.Length)
+                return false;
             for (int i = 0; i < word.Length; i++)
-                if (index + i >= text.Length || text[index + i] != word[i])
+                if (text[index + i] != word[i])
                     return false;
+            if (index + word.Length == text.Length)
+                return true;
+            char afterChar = text[index + word.Length];
+            if (char.IsLetter(afterChar) || char.IsDigit(afterChar) || afterChar == '_')
+                return false;
             return true;
         }
 

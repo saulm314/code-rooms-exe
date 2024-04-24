@@ -3,10 +3,16 @@
     public enum SuperStatement
     {
         None,
-        If,
+        IfUnknown,
+        IfSingle,
+        IfMulti,
         Else,
         IfElse,
-        While,
-        For
+        WhileUnknown,
+        WhileSingle,
+        WhileMulti,
+        ForUnknown,
+        ForSingle,
+        ForMulti
     }
 }

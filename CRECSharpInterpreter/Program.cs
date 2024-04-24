@@ -11,6 +11,7 @@ namespace CRECSharpInterpreter
     {
         private static void Main(string[] args)
         {
+            Environment.Debug = true;
             if (args.Length > 0 && args[0] == "test")
             {
                 Environment.Verbose = args.Length > 1 && args[1] == "verbose";
@@ -44,7 +45,6 @@ namespace CRECSharpInterpreter
             }
             WriteLine($"Setting syntax to {languages[(int)Environment._Syntax]}");
             WriteLine();
-            Environment.Debug = true;
             ReadLine();
             string fileName = Environment._Syntax switch
             {

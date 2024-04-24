@@ -1059,7 +1059,7 @@ namespace CRECSharpInterpreter
                     KeyStrings[0]._Type == KeyString.Type.IfKeyword &&
                     KeyStrings[1]._Type == KeyString.Type.OpenBracket &&
                     Array.Exists(KeyStrings, keyString => keyString._Type == KeyString.Type.CloseBracket) &&
-                    _SuperStatement == SuperStatement.If;
+                    _SuperStatement == SuperStatement.IfSingle;
         }
         private bool? _isIfSingleStatement;
 
@@ -1071,7 +1071,7 @@ namespace CRECSharpInterpreter
                     KeyStrings[0]._Type == KeyString.Type.WhileKeyword &&
                     KeyStrings[1]._Type == KeyString.Type.OpenBracket &&
                     Array.Exists(KeyStrings, keyString => keyString._Type == KeyString.Type.CloseBracket) &&
-                    KeyStrings[KeyStrings.Length - 1]._Type == KeyString.Type.Semicolon;
+                    _SuperStatement == SuperStatement.WhileSingle;
         }
         private bool? _isWhileSingleStatement;
 
@@ -1085,7 +1085,7 @@ namespace CRECSharpInterpreter
                     Array.Exists(KeyStrings, keyString => keyString._Type == KeyString.Type.CloseBracket) &&
                     Array.Exists(KeyStrings, keyString => keyString._Type == KeyString.Type.OpenCurlyBrace) &&
                     KeyStrings[KeyStrings.Length - 1]._Type == KeyString.Type.CloseCurlyBrace &&
-                    _SuperStatement == SuperStatement.If;
+                    _SuperStatement == SuperStatement.IfMulti;
         }
         private bool? _isIfMultiStatement;
 
@@ -1098,7 +1098,8 @@ namespace CRECSharpInterpreter
                     KeyStrings[1]._Type == KeyString.Type.OpenBracket &&
                     Array.Exists(KeyStrings, keyString => keyString._Type == KeyString.Type.CloseBracket) &&
                     Array.Exists(KeyStrings, keyString => keyString._Type == KeyString.Type.OpenCurlyBrace) &&
-                    KeyStrings[KeyStrings.Length - 1]._Type == KeyString.Type.CloseCurlyBrace;
+                    KeyStrings[KeyStrings.Length - 1]._Type == KeyString.Type.CloseCurlyBrace &&
+                    _SuperStatement == SuperStatement.WhileMulti;
         }
         private bool? _isWhileMultiStatement;
 
@@ -1154,7 +1155,7 @@ namespace CRECSharpInterpreter
                     KeyStrings[0]._Type == KeyString.Type.ForKeyword &&
                     KeyStrings[1]._Type == KeyString.Type.OpenBracket &&
                     Array.FindAll(KeyStrings, keyString => keyString._Type == KeyString.Type.Semicolon).Length >= 2 &&
-                    KeyStrings[KeyStrings.Length - 1]._Type == KeyString.Type.Semicolon;
+                    _SuperStatement == SuperStatement.ForSingle;
         }
         private bool? _isForSingleStatement;
 
@@ -1167,7 +1168,8 @@ namespace CRECSharpInterpreter
                     KeyStrings[1]._Type == KeyString.Type.OpenBracket &&
                     Array.FindAll(KeyStrings, keyString => keyString._Type == KeyString.Type.Semicolon).Length >= 2 &&
                     Array.Exists(KeyStrings, keyString => keyString._Type == KeyString.Type.OpenCurlyBrace) &&
-                    KeyStrings[KeyStrings.Length - 1]._Type == KeyString.Type.CloseCurlyBrace;
+                    KeyStrings[KeyStrings.Length - 1]._Type == KeyString.Type.CloseCurlyBrace &&
+                    _SuperStatement == SuperStatement.ForMulti;
         }
         private bool? _isForMultiStatement;
 
