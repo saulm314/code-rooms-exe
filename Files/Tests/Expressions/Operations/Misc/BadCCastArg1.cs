@@ -1,0 +1,1 @@
+int myInt = 5 (int) 3;

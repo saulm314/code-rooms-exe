@@ -8,6 +8,8 @@
 
         public object? Calculate(object? leftValue, object? rightValue)
         {
+            if ((double)rightValue! == 0.0)
+                throw new System.DivideByZeroException();
             return (double)leftValue! / (double)rightValue!;
         }
     }

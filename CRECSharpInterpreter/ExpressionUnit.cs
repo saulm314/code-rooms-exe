@@ -159,6 +159,8 @@ namespace CRECSharpInterpreter
         {
             arrayConstruction!.ArrayLengthExpression.Compute();
             arrayConstruction.ArrayLength = (int)arrayConstruction.ArrayLengthExpression.Value!;
+            if (arrayConstruction.ArrayLength < 0)
+                throw new ExpressionUnitException(this, "Array length must not be negative!");
             IEnumerable<Variable> variables = Variable.GetBlankVariables(arrayConstruction._VarType.Unarray!, arrayConstruction.ArrayLength);
             int heapIndex = Memory.Instance!.Heap.Allocate(arrayConstruction.ArrayLength, variables);
             Value = heapIndex;
@@ -180,8 +182,9 @@ namespace CRECSharpInterpreter
             foreach (Expression expression in GetExpressionsBetweenCommas(keyStringsInsideBraces))
             {
                 if (expression._VarType != varType.Unarray)
-                    throw new ExpressionUnitException(this,
-                        $"Cannot have variable of type {expression._VarType} in array of type {varType}");
+                    if (expression._VarType != null || varType.Unarray!._Storage != VarType.Storage.Reference)
+                        throw new ExpressionUnitException(this,
+                            $"Cannot have variable of type {expression._VarType} in array of type {varType}");
                 arrayLiteralExpressions.Add(expression);
             }
             return varType;

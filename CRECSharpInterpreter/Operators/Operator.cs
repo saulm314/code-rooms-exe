@@ -5,7 +5,18 @@ namespace CRECSharpInterpreter.Operators
 {
     public class Operator : IExpressionComponent
     {
-        public string Symbol { get; init; }
+        public string Symbol => GetSymbol();
+
+        private string GetSymbol()
+        {
+            if (_castType == null)
+                return _symbol;
+            return $"({_castType.Name})";
+        }
+
+        private string _symbol;
+        private VarType? _castType;
+
         public OperatorPriority Priority { get; init; }
         public ISpecificOperator[] PotentialSpecificOperators { get; init; }
 
@@ -15,11 +26,12 @@ namespace CRECSharpInterpreter.Operators
 
         public ExpressionComponentType _Type { get; } = ExpressionComponentType.Operator;
 
-        private Operator(string symbol, OperatorPriority priority, ISpecificOperator[] potentialSpecificOperators)
+        private Operator(string symbol, OperatorPriority priority, ISpecificOperator[] potentialSpecificOperators, VarType? castType = null)
         {
-            Symbol = symbol;
+            _symbol = symbol;
             Priority = priority;
             PotentialSpecificOperators = potentialSpecificOperators;
+            _castType = castType;
 
             Operators.Add(this);
         }
@@ -47,7 +59,7 @@ namespace CRECSharpInterpreter.Operators
                 new IntegerSubtraction(),
                 new IntegerNegation(),
                 new DoubleFloatSubtraction(),
-                new DoubleFloatConfirmation()
+                new DoubleFloatNegation()
             });
 
         public static Operator Multiply { get; } = new("*", OperatorPriority.ImmediateUnits, new ISpecificOperator[]
@@ -133,7 +145,7 @@ namespace CRECSharpInterpreter.Operators
             {
                 VarType varType = VarType.VarTypes[i];
                 ISpecificOperator[] specificOperators = Cast.GetCastsForReturnType(varType);
-                operators[i] = new($"({varType.Name})", OperatorPriority.LeftToRight, specificOperators);
+                operators[i] = new($"({varType.Name})", OperatorPriority.LeftToRight, specificOperators, varType);
             }
             return operators;
         }

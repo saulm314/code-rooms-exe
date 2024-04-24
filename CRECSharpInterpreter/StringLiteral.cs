@@ -6,6 +6,8 @@
         public StringLiteral(string keyString)
         {
             Value = keyString.Replace("\"", string.Empty);
+            if (Value.Contains('\n'))
+                throw new StringLiteralException(this, "String literal cannot contain newline character");
         }
 
         public string Value { get; init; }

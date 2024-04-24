@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 
 namespace CRECSharpInterpreter
 {
-    public class Heap
+    public class Heap : IEnumerable<Variable?>
     {
         private const int INITIAL_HEAP_CAPACITY = 100;
         private const int HEAP_ADDITION_CAPACITY = INITIAL_HEAP_CAPACITY;
@@ -29,6 +30,18 @@ namespace CRECSharpInterpreter
 
         internal List<Variable?> variables = new(INITIAL_HEAP_CAPACITY);
         public Variable? this[int i] { get => variables[i]; internal set => variables[i] = value; }
+
+        public IEnumerator<Variable?> GetEnumerator()
+        {
+            for (int i = 0; i < Size; i++)
+                yield return variables[i];
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            for (int i = 0; i < Size; i++)
+                yield return variables[i];
+        }
 
         public int Allocate(int length, IEnumerable<Variable> data)
         {
@@ -111,7 +124,7 @@ namespace CRECSharpInterpreter
             if (lengthAsVariable.Value == null)
                 throw new HeapException(this, $"Internal exception: length value cannot be null");
             int length = (int)lengthAsVariable.Value;
-            if (offset >= length)
+            if (offset >= length || offset < 0)
                 throw new HeapException(this, "Cannot access element out of range");
         }
 
@@ -121,8 +134,8 @@ namespace CRECSharpInterpreter
             for (int i = 0; i < variables.Count; i++)
                 if (IsSpaceEmpty(i, size))
                     return i;
-            int newHeapIndex = ResizeHeap();
-            return GetLeftMostConsecutiveEmptySpaceFromIndex(newHeapIndex);
+            ResizeHeap();
+            return GetEmptySpace(size);
         }
 
         private bool IsSpaceEmpty(int index, int size)
@@ -143,16 +156,6 @@ namespace CRECSharpInterpreter
             variables.AddRange(GetNullVariables(HEAP_ADDITION_CAPACITY));
             Size = variables.Capacity;
             return index;
-        }
-
-        private int GetLeftMostConsecutiveEmptySpaceFromIndex(int index)
-        {
-            if (variables[index] != null)
-                throw new HeapException(this, $"Internal exception: index {index} is not empty");
-            for (int i = index - 1; i >= 0; i--)
-                if (variables[i] != null)
-                    return i + 1;
-            return 0;
         }
 
         public class HeapException : InterpreterException

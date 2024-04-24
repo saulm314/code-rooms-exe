@@ -6,21 +6,24 @@
         {
             Text = LineNumberUtils.AddNewlineSeparators(text);
 
-            statementsStr = StatementSeparator.GetStatementsAsStrings(Text, 0, out LineNumberInfo[] lineNumberInfos);
+            statementsStr = StatementSeparator.GetStatementsAsStrings(Text, 0, out LineNumberInfo[] lineNumberInfos,
+                                                                        out SuperStatement[] superStatements);
             Statements = new Statement[statementsStr.Length];
             LineNumberInfos = lineNumberInfos;
+            SuperStatements = superStatements;
 
             _ = new Memory(mode);
 
             if (Memory.Instance!._Mode == Mode.Compilation)
                 for (int i = 0; i < Statements.Length; i++)
-                    Statements[i] = new(statementsStr[i], LineNumberInfos[i]);
+                    Statements[i] = new(statementsStr[i], LineNumberInfos[i], SuperStatements[i]);
         }
 
         public string Text { get; init; }
 
         public Statement[] Statements { get; init; }
         public LineNumberInfo[] LineNumberInfos { get; init; }
+        public SuperStatement[] SuperStatements { get; init; }
 
         public int statementsDone = 0;
         public bool RunNextStatement()
@@ -28,7 +31,7 @@
             if (statementsDone >= statementsStr.Length)
                 return false;
             if (Statements[statementsDone] == null)
-                Statements[statementsDone] = new(statementsStr[statementsDone], LineNumberInfos[statementsDone]);
+                Statements[statementsDone] = new(statementsStr[statementsDone], LineNumberInfos[statementsDone], SuperStatements[statementsDone]);
             Statements[statementsDone].Execute();
             if (!Statements[statementsDone].Executed)
                 return true;

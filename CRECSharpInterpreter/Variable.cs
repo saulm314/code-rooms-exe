@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace CRECSharpInterpreter
 {
@@ -10,6 +9,21 @@ namespace CRECSharpInterpreter
             _VarType = varType;
             Name = name;
             Value = varType?.DefaultValue;
+        }
+
+        // used for testing
+        internal Variable(VarType? varType, string? name, object? value = null, bool initialised = false)
+        {
+            _VarType = varType;
+            Name = name;
+            Value = value;
+            Initialised = initialised;
+        }
+
+        internal Variable(VarType? varType, object? value)
+        {
+            _VarType = varType;
+            Value = value;
         }
 
         public VarType? _VarType { get; init; }
@@ -62,7 +76,8 @@ namespace CRECSharpInterpreter
 
         public override string ToString()
         {
-            return string.Format("{0,10} {1,20} {2,10}", _VarType, Name, ValueAsString);
+            return string.Format("{0,10} {1,20} {2,10}", _VarType?.ToString() ?? "*", Name?.ToString() ?? "*",
+                string.IsNullOrEmpty(ValueAsString) ? "*" : ValueAsString);
         }
 
         public static IEnumerable<Variable> GetBlankVariables(VarType varType, int count)

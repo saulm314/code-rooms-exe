@@ -1,4 +1,5 @@
-﻿using System;
+﻿using static CRECSharpInterpreter.Console;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,11 +7,12 @@ namespace CRECSharpInterpreter
 {
     public class Statement
     {
-        public Statement(string text, LineNumberInfo lineNumberInfo)
+        public Statement(string text, LineNumberInfo lineNumberInfo, SuperStatement superStatement)
         {
             Text = text;
             ReducedText = LineNumberUtils.Trim(LineNumberUtils.RemoveSeparators(Text));
             _LineNumberInfo = lineNumberInfo;
+            _SuperStatement = superStatement;
 
             try
             {
@@ -56,11 +58,13 @@ namespace CRECSharpInterpreter
                         break;
                     case Type.IfSingleStatement:
                     case Type.IfMultiStatement:
-                        SubStatementsStr = GetSubStatementsIfWhileFor(out Statement header, out LineNumberInfo[] subLineNumberInfos);
+                        SubStatementsStr = GetSubStatementsIfWhileFor(out Statement header, out LineNumberInfo[] subLineNumberInfos,
+                                                                        out SuperStatement[] subSuperStatements);
                         Header = header;
                         Header.Parent = this;
                         SubStatements = new Statement[SubStatementsStr.Length];
                         SubLineNumberInfos = subLineNumberInfos;
+                        SubSuperStatements = subSuperStatements;
                         if (Memory.Instance!._Mode == Mode.Compilation)
                         {
                             // these two lines cancel each other out
@@ -78,11 +82,13 @@ namespace CRECSharpInterpreter
                         break;
                     case Type.WhileSingleStatement:
                     case Type.WhileMultiStatement:
-                        SubStatementsStr = GetSubStatementsIfWhileFor(out Statement headerWhile, out LineNumberInfo[] subLineNumberInfosWhile);
+                        SubStatementsStr = GetSubStatementsIfWhileFor(out Statement headerWhile, out LineNumberInfo[] subLineNumberInfosWhile,
+                                                                        out SuperStatement[] subSuperStatementsWhile);
                         Header = headerWhile;
                         Header.Parent = this;
                         SubStatements = new Statement[SubStatementsStr.Length];
                         SubLineNumberInfos = subLineNumberInfosWhile;
+                        SubSuperStatements = subSuperStatementsWhile;
                         Variable[] initialisedVariablesWhile = Memory.Instance!
                             .GetDeclaredVariables()
                             .Select(variable => variable)
@@ -102,11 +108,13 @@ namespace CRECSharpInterpreter
                         break;
                     case Type.ForSingleStatement:
                     case Type.ForMultiStatement:
-                        SubStatementsStr = GetSubStatementsIfWhileFor(out Statement headerFor, out LineNumberInfo[] subLineNumberInfosFor);
+                        SubStatementsStr = GetSubStatementsIfWhileFor(out Statement headerFor, out LineNumberInfo[] subLineNumberInfosFor,
+                                                                        out SuperStatement[] subSuperStatementsFor);
                         Header = headerFor;
                         Header.Parent = this;
                         SubStatements = new Statement[SubStatementsStr.Length];
                         SubLineNumberInfos = subLineNumberInfosFor;
+                        SubSuperStatements = subSuperStatementsFor;
                         if (Memory.Instance!._Mode == Mode.Compilation)
                         {
                             CreateSubStatements();
@@ -121,11 +129,13 @@ namespace CRECSharpInterpreter
                         }
                         break;
                     case Type.IfElse:
-                        SubStatementsStr = GetSubStatementsIfWhileFor(out Statement _header, out LineNumberInfo[] _subLineNumberInfos);
+                        SubStatementsStr = GetSubStatementsIfWhileFor(out Statement _header, out LineNumberInfo[] _subLineNumberInfos,
+                                                                        out SuperStatement[] _subSuperStatements);
                         Header = _header;
                         Header.Parent = this;
                         SubStatements = new Statement[SubStatementsStr.Length];
                         SubLineNumberInfos = _subLineNumberInfos;
+                        SubSuperStatements = _subSuperStatements;
                         Variable[]? varsInitialisedInIf = null;
                         Variable[]? varsInitialisedInElse = null;
                         if (Memory.Instance!._Mode == Mode.Compilation)
@@ -140,11 +150,13 @@ namespace CRECSharpInterpreter
                             foreach (Variable variable in varsInitialisedInIf)
                                 variable.Initialised = false;
                         }
-                        SubStatementsStr2 = GetSubStatementsElse(out Statement _header2, out LineNumberInfo[] _subLineNumberInfos2);
+                        SubStatementsStr2 = GetSubStatementsElse(out Statement _header2, out LineNumberInfo[] _subLineNumberInfos2,
+                                                                    out SuperStatement[] _subSuperStatements2);
                         Header2 = _header2;
                         Header2.Parent = this;
                         SubStatements2 = new Statement[SubStatementsStr2.Length];
                         SubLineNumberInfos2 = _subLineNumberInfos2;
+                        SubSuperStatements2 = _subSuperStatements2;
                         if (Memory.Instance._Mode == Mode.Compilation)
                         {
                             CreateSubStatements2();
@@ -198,7 +210,7 @@ namespace CRECSharpInterpreter
                         break;
                 }
             }
-            catch (Exception e) when (e is not StatementException && Environment._Debug == Debug.No)
+            catch (Exception e) when (e is not StatementException && !Environment.Debug)
             {
                 throw StatementException.New(this, null, e);
             }
@@ -245,6 +257,7 @@ namespace CRECSharpInterpreter
         public string ReducedText { get; init; }
 
         public LineNumberInfo _LineNumberInfo { get; init; }
+        public SuperStatement _SuperStatement { get; init; }
 
         public KeyString[] KeyStrings { get; private set; }
 
@@ -263,9 +276,11 @@ namespace CRECSharpInterpreter
 
         public string[]? SubStatementsStr { get; init; }
         public LineNumberInfo[]? SubLineNumberInfos { get; init; }
+        public SuperStatement[]? SubSuperStatements { get; init; }
         public Statement[]? SubStatements { get; private set; }
         public string[]? SubStatementsStr2 { get; init; }
         public LineNumberInfo[]? SubLineNumberInfos2 { get; init; }
+        public SuperStatement[]? SubSuperStatements2 { get; init; }
         public Statement[]? SubStatements2 { get; private set; }
 
         public Variable? Condition { get; private set; }
@@ -282,7 +297,7 @@ namespace CRECSharpInterpreter
             {
                 _Execute();
             }
-            catch (Exception e) when (e is not StatementException && Environment._Debug == Debug.No)
+            catch (Exception e) when (e is not StatementException && !Environment.Debug)
             {
                 throw StatementException.New(this, null, e);
             }
@@ -303,7 +318,7 @@ namespace CRECSharpInterpreter
                 default:
                     if (Parent?._Type == Type.For)
                         break;
-                    Console.WriteLine(ReducedText + '\n');
+                    WriteLine(ReducedText + '\n');
                     if (Memory.Instance!._Mode == Mode.RuntimeStoreAllFrames)
                         Memory.Instance.Frames.Add(new(this));
                     break;
@@ -387,26 +402,26 @@ namespace CRECSharpInterpreter
             if (Memory.Instance!._Mode == Mode.RuntimeStoreAllFrames)
                 Memory.Instance!.Frames[Memory.Instance.CurrentFrame].Init();
 
-            Console.WriteLine("Stack:");
-            Console.WriteLine(separator + "\n");
+            WriteLine("Stack:");
+            WriteLine(separator + "\n");
             Scope[] scopes = Memory.Instance.Stack.ToArray();
 
             for (int i = scopes.Length - 1; i >= 0; i--)
             {
                 Scope scope = scopes[i];
                 foreach (Variable variable in scope.DeclaredVariables)
-                    Console.WriteLine(variable);
-                Console.WriteLine(separator + "\n");
+                    WriteLine(variable);
+                WriteLine(separator + "\n");
             }
-            Console.WriteLine("\nHeap:\n");
+            WriteLine("\nHeap:\n");
             for (int i = 0; i < 10; i++)
             {
                 for (int j = 0; j < 10; j++)
-                    Console.Write(string.Format("{0,10}", Memory.Instance.Heap[10 * i + j]?.ValueAsString ?? "x"));
-                Console.Write("\n");
+                    Write(string.Format("{0,10}", Memory.Instance.Heap[10 * i + j]?.ValueAsString ?? "x"));
+                Write("\n");
             }
-            Console.WriteLine();
-            Console.WriteLine(separator + separator + separator);
+            WriteLine();
+            WriteLine(separator + separator + separator);
         }
 
         private void EvaluateIfWhile()
@@ -618,7 +633,8 @@ namespace CRECSharpInterpreter
         private int subStatementsExecuted = 0;
         private void ExecuteNextSubStatement()
         {
-            SubStatements![subStatementsExecuted] ??= new(SubStatementsStr![subStatementsExecuted], SubLineNumberInfos![subStatementsExecuted]);
+            SubStatements![subStatementsExecuted] ??= new(SubStatementsStr![subStatementsExecuted], SubLineNumberInfos![subStatementsExecuted],
+                                                            SubSuperStatements![subStatementsExecuted]);
             SubStatements[subStatementsExecuted].Parent = this;
             SubStatements[subStatementsExecuted].Execute();
             if (ToReturn)
@@ -630,7 +646,8 @@ namespace CRECSharpInterpreter
         private int subStatementsExecuted2 = 0;
         private void ExecuteNextSubStatement2()
         {
-            SubStatements2![subStatementsExecuted2] ??= new(SubStatementsStr2![subStatementsExecuted2], SubLineNumberInfos2![subStatementsExecuted2]);
+            SubStatements2![subStatementsExecuted2] ??= new(SubStatementsStr2![subStatementsExecuted2], SubLineNumberInfos2![subStatementsExecuted2],
+                                                            SubSuperStatements2![subStatementsExecuted]);
             SubStatements2[subStatementsExecuted2].Parent = this;
             SubStatements2[subStatementsExecuted2].Execute();
             if (ToReturn)
@@ -667,7 +684,7 @@ namespace CRECSharpInterpreter
         private Statement CreateInitialiser()
         {
             string initialiserStr = StatementSeparator.GetForInitialiserAsString(Text);
-            Statement initialiser = new(initialiserStr, _LineNumberInfo);
+            Statement initialiser = new(initialiserStr, _LineNumberInfo, SuperStatement.None);
             switch (initialiser._Type)
             {
                 case Type.DeclarationInitialisation:
@@ -684,7 +701,7 @@ namespace CRECSharpInterpreter
         private Statement CreateIterator()
         {
             string iteratorStr = StatementSeparator.GetForIteratorAsString(Text);
-            Statement iterator = new(iteratorStr, _LineNumberInfo);
+            Statement iterator = new(iteratorStr, _LineNumberInfo, SuperStatement.None);
             switch (iterator._Type)
             {
                 case Type.DeclarationInitialisation:
@@ -739,25 +756,32 @@ namespace CRECSharpInterpreter
             return expression;
         }
 
-        private string[] GetSubStatementsIfWhileFor(out Statement header, out LineNumberInfo[] subLineNumberInfos)
+        private string[] GetSubStatementsIfWhileFor(out Statement header, out LineNumberInfo[] subLineNumberInfos, out SuperStatement[] superStatements)
         {
             string? headerStr;
             string[] subStatementsStr = _Type switch
             {
                 Type.IfSingleStatement =>
-                    StatementSeparator.GetSubStatementsAsStringsIfSingleStatement(Text, out headerStr, _LineNumberInfo.LineNumber, out subLineNumberInfos),
+                    StatementSeparator.GetSubStatementsAsStringsIfSingleStatement(Text, out headerStr, _LineNumberInfo.LineNumber, out subLineNumberInfos,
+                                                                                    out superStatements),
                 Type.IfMultiStatement =>
-                    StatementSeparator.GetSubStatementsAsStringsIfMultiStatement(Text, out headerStr, _LineNumberInfo.LineNumber, out subLineNumberInfos),
+                    StatementSeparator.GetSubStatementsAsStringsIfMultiStatement(Text, out headerStr, _LineNumberInfo.LineNumber, out subLineNumberInfos,
+                                                                                    out superStatements),
                 Type.IfElse =>
-                    StatementSeparator.GetSubStatementsAsStringsIfElseIf(Text, out headerStr, _LineNumberInfo.LineNumber, out subLineNumberInfos),
+                    StatementSeparator.GetSubStatementsAsStringsIfElseIf(Text, out headerStr, _LineNumberInfo.LineNumber, out subLineNumberInfos,
+                                                                            out superStatements),
                 Type.WhileSingleStatement =>
-                    StatementSeparator.GetSubStatementsAsStringsIfSingleStatement(Text, out headerStr, _LineNumberInfo.LineNumber, out subLineNumberInfos),
+                    StatementSeparator.GetSubStatementsAsStringsIfSingleStatement(Text, out headerStr, _LineNumberInfo.LineNumber, out subLineNumberInfos,
+                                                                                    out superStatements),
                 Type.WhileMultiStatement =>
-                    StatementSeparator.GetSubStatementsAsStringsIfMultiStatement(Text, out headerStr, _LineNumberInfo.LineNumber, out subLineNumberInfos),
+                    StatementSeparator.GetSubStatementsAsStringsIfMultiStatement(Text, out headerStr, _LineNumberInfo.LineNumber, out subLineNumberInfos,
+                                                                                    out superStatements),
                 Type.ForSingleStatement =>
-                    StatementSeparator.GetSubStatementsAsStringsIfSingleStatement(Text, out headerStr, _LineNumberInfo.LineNumber, out subLineNumberInfos),
+                    StatementSeparator.GetSubStatementsAsStringsIfSingleStatement(Text, out headerStr, _LineNumberInfo.LineNumber, out subLineNumberInfos,
+                                                                                    out superStatements),
                 Type.ForMultiStatement =>
-                    StatementSeparator.GetSubStatementsAsStringsIfMultiStatement(Text, out headerStr, _LineNumberInfo.LineNumber, out subLineNumberInfos),
+                    StatementSeparator.GetSubStatementsAsStringsIfMultiStatement(Text, out headerStr, _LineNumberInfo.LineNumber, out subLineNumberInfos,
+                                                                                    out superStatements),
                 _ =>
                     throw StatementException.New(this, "Internal error")
             };
@@ -767,14 +791,15 @@ namespace CRECSharpInterpreter
                 headerLineNumberInfo = new(_LineNumberInfo.LineNumber, actualLineNumber, headerLineNumbers[^1]);
             else
                 headerLineNumberInfo = new(_LineNumberInfo.LineNumber, _LineNumberInfo.ActualLineNumber, _LineNumberInfo.ActualLineNumber);
-            header = new(headerStr, headerLineNumberInfo);
+            header = new(headerStr, headerLineNumberInfo, SuperStatement.None);
             return subStatementsStr;
         }
 
-        private string[] GetSubStatementsElse(out Statement header, out LineNumberInfo[] subLineNumberInfos)
+        private string[] GetSubStatementsElse(out Statement header, out LineNumberInfo[] subLineNumberInfos, out SuperStatement[] superStatements)
         {
             string[] subStatementsStr =
-                StatementSeparator.GetSubStatementsAsStringsIfElseElse(Text, out string? headerStr, _LineNumberInfo.LineNumber, out subLineNumberInfos);
+                StatementSeparator.GetSubStatementsAsStringsIfElseElse(Text, out string? headerStr, _LineNumberInfo.LineNumber, out subLineNumberInfos,
+                                                                        out superStatements);
             ushort[] headerLineNumbers = LineNumberUtils.GetLineNumbers(headerStr, out ushort actualLineNumber);
             LineNumberInfo headerLineNumberInfo;
             if (headerLineNumbers.Length > 0)
@@ -793,24 +818,28 @@ namespace CRECSharpInterpreter
                     ushort headerLineNumber = Header!._LineNumberInfo.EndLineNumber;
                     headerLineNumberInfo = new(headerLineNumber, headerLineNumber, headerLineNumber);
                 }
-            header = new(headerStr, headerLineNumberInfo);
+            header = new(headerStr, headerLineNumberInfo, SuperStatement.None);
             return subStatementsStr;
         }
 
         private void CreateSubStatements()
         {
+            if (SubStatements!.Length > 0 && (SubSuperStatements == null || SubSuperStatements.Length == 0))
+                throw StatementException.New(this, "Compilation error");
             for (int i = 0; i < SubStatements!.Length; i++)
             {
-                SubStatements[i] = new(SubStatementsStr![i], SubLineNumberInfos![i]);
+                SubStatements[i] = new(SubStatementsStr![i], SubLineNumberInfos![i], SubSuperStatements![i]);
                 SubStatements[i].Parent = this;
             }
         }
 
         private void CreateSubStatements2()
         {
+            if (SubStatements2!.Length > 0 && (SubSuperStatements2 == null || SubSuperStatements2.Length == 0))
+                throw StatementException.New(this, "Compilation error");
             for (int i = 0; i < SubStatements2!.Length; i++)
             {
-                SubStatements2[i] = new(SubStatementsStr2![i], SubLineNumberInfos2![i]);
+                SubStatements2[i] = new(SubStatementsStr2![i], SubLineNumberInfos2![i], SubSuperStatements2![i]);
                 SubStatements2[i].Parent = this;
             }
         }
@@ -1034,8 +1063,7 @@ namespace CRECSharpInterpreter
                     KeyStrings[0]._Type == KeyString.Type.IfKeyword &&
                     KeyStrings[1]._Type == KeyString.Type.OpenBracket &&
                     Array.Exists(KeyStrings, keyString => keyString._Type == KeyString.Type.CloseBracket) &&
-                    KeyStrings[KeyStrings.Length - 1]._Type == KeyString.Type.Semicolon &&
-                    !Array.Exists(KeyStrings, keyString => keyString._Type == KeyString.Type.ElseKeyword);
+                    _SuperStatement == SuperStatement.IfSingle;
         }
         private bool? _isIfSingleStatement;
 
@@ -1047,7 +1075,7 @@ namespace CRECSharpInterpreter
                     KeyStrings[0]._Type == KeyString.Type.WhileKeyword &&
                     KeyStrings[1]._Type == KeyString.Type.OpenBracket &&
                     Array.Exists(KeyStrings, keyString => keyString._Type == KeyString.Type.CloseBracket) &&
-                    KeyStrings[KeyStrings.Length - 1]._Type == KeyString.Type.Semicolon;
+                    _SuperStatement == SuperStatement.WhileSingle;
         }
         private bool? _isWhileSingleStatement;
 
@@ -1061,7 +1089,7 @@ namespace CRECSharpInterpreter
                     Array.Exists(KeyStrings, keyString => keyString._Type == KeyString.Type.CloseBracket) &&
                     Array.Exists(KeyStrings, keyString => keyString._Type == KeyString.Type.OpenCurlyBrace) &&
                     KeyStrings[KeyStrings.Length - 1]._Type == KeyString.Type.CloseCurlyBrace &&
-                    !Array.Exists(KeyStrings, keyString => keyString._Type == KeyString.Type.ElseKeyword);
+                    _SuperStatement == SuperStatement.IfMulti;
         }
         private bool? _isIfMultiStatement;
 
@@ -1074,7 +1102,8 @@ namespace CRECSharpInterpreter
                     KeyStrings[1]._Type == KeyString.Type.OpenBracket &&
                     Array.Exists(KeyStrings, keyString => keyString._Type == KeyString.Type.CloseBracket) &&
                     Array.Exists(KeyStrings, keyString => keyString._Type == KeyString.Type.OpenCurlyBrace) &&
-                    KeyStrings[KeyStrings.Length - 1]._Type == KeyString.Type.CloseCurlyBrace;
+                    KeyStrings[KeyStrings.Length - 1]._Type == KeyString.Type.CloseCurlyBrace &&
+                    _SuperStatement == SuperStatement.WhileMulti;
         }
         private bool? _isWhileMultiStatement;
 
@@ -1086,7 +1115,7 @@ namespace CRECSharpInterpreter
                     KeyStrings[0]._Type == KeyString.Type.IfKeyword &&
                     KeyStrings[1]._Type == KeyString.Type.OpenBracket &&
                     Array.Exists(KeyStrings, keyString => keyString._Type == KeyString.Type.CloseBracket) &&
-                    Array.Exists(KeyStrings, keyString => keyString._Type == KeyString.Type.ElseKeyword);
+                    _SuperStatement == SuperStatement.IfElse;
         }
         private bool? _isIfElse;
 
@@ -1130,7 +1159,7 @@ namespace CRECSharpInterpreter
                     KeyStrings[0]._Type == KeyString.Type.ForKeyword &&
                     KeyStrings[1]._Type == KeyString.Type.OpenBracket &&
                     Array.FindAll(KeyStrings, keyString => keyString._Type == KeyString.Type.Semicolon).Length >= 2 &&
-                    KeyStrings[KeyStrings.Length - 1]._Type == KeyString.Type.Semicolon;
+                    _SuperStatement == SuperStatement.ForSingle;
         }
         private bool? _isForSingleStatement;
 
@@ -1143,7 +1172,8 @@ namespace CRECSharpInterpreter
                     KeyStrings[1]._Type == KeyString.Type.OpenBracket &&
                     Array.FindAll(KeyStrings, keyString => keyString._Type == KeyString.Type.Semicolon).Length >= 2 &&
                     Array.Exists(KeyStrings, keyString => keyString._Type == KeyString.Type.OpenCurlyBrace) &&
-                    KeyStrings[KeyStrings.Length - 1]._Type == KeyString.Type.CloseCurlyBrace;
+                    KeyStrings[KeyStrings.Length - 1]._Type == KeyString.Type.CloseCurlyBrace &&
+                    _SuperStatement == SuperStatement.ForMulti;
         }
         private bool? _isForMultiStatement;
 
