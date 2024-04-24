@@ -134,8 +134,8 @@ namespace CRECSharpInterpreter
             for (int i = 0; i < variables.Count; i++)
                 if (IsSpaceEmpty(i, size))
                     return i;
-            int newHeapIndex = ResizeHeap();
-            return GetLeftMostConsecutiveEmptySpaceFromIndex(newHeapIndex);
+            ResizeHeap();
+            return GetEmptySpace(size);
         }
 
         private bool IsSpaceEmpty(int index, int size)
@@ -156,16 +156,6 @@ namespace CRECSharpInterpreter
             variables.AddRange(GetNullVariables(HEAP_ADDITION_CAPACITY));
             Size = variables.Capacity;
             return index;
-        }
-
-        private int GetLeftMostConsecutiveEmptySpaceFromIndex(int index)
-        {
-            if (variables[index] != null)
-                throw new HeapException(this, $"Internal exception: index {index} is not empty");
-            for (int i = index - 1; i >= 0; i--)
-                if (variables[i] != null)
-                    return i + 1;
-            return 0;
         }
 
         public class HeapException : InterpreterException
