@@ -85,8 +85,9 @@ namespace CRECSharpInterpreter
         private static void RunTest(ITest test)
         {
             SetShouldPrint(test);
-            if (Environment.ShouldPrint)
-                System.Console.WriteLine($"{test.PathNoExt}:");
+            if (!Environment.ShouldPrint)
+                return;
+            System.Console.WriteLine($"{test.PathNoExt}:");
             foreach (Pair<Syntax, string> language in languages)
             {
                 Environment._Syntax = language.First;
@@ -175,8 +176,7 @@ namespace CRECSharpInterpreter
                 results[1] = DoesMemoryMatch(test);
                 PrintResults(test, language, results);
             }
-            if (Environment.ShouldPrint)
-                System.Console.WriteLine();
+            System.Console.WriteLine();
         }
 
         private static void PrintResults(ITest test, Pair<Syntax, string> language, bool?[] results)
