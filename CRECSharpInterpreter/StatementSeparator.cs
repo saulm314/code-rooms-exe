@@ -591,6 +591,7 @@ namespace CRECSharpInterpreter
                 if (commentEndIndex <= commentStartIndex)
                     throw new InterpreterException("Unexpected \"*/\"");
                 text = text.Remove(commentStartIndex, commentEndIndex - commentStartIndex + 2);
+                text = text.Insert(commentStartIndex, " ");
                 commentStartIndex = text.IndexOf("/*");
             }
             return text;
