@@ -824,6 +824,8 @@ namespace CRECSharpInterpreter
 
         private void CreateSubStatements()
         {
+            if (SubStatements!.Length > 0 && (SubSuperStatements == null || SubSuperStatements.Length == 0))
+                throw StatementException.New(this, "Compilation error");
             for (int i = 0; i < SubStatements!.Length; i++)
             {
                 SubStatements[i] = new(SubStatementsStr![i], SubLineNumberInfos![i], SubSuperStatements![i]);
@@ -833,6 +835,8 @@ namespace CRECSharpInterpreter
 
         private void CreateSubStatements2()
         {
+            if (SubStatements2!.Length > 0 && (SubSuperStatements2 == null || SubSuperStatements2.Length == 0))
+                throw StatementException.New(this, "Compilation error");
             for (int i = 0; i < SubStatements2!.Length; i++)
             {
                 SubStatements2[i] = new(SubStatementsStr2![i], SubLineNumberInfos2![i], SubSuperStatements2![i]);
