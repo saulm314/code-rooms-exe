@@ -38,7 +38,6 @@ namespace CRECSharpInterpreter.Tests.Good
                     new(@string, "xyz", 26, true),
                     new(@string.Array, "pqr", 39, true),
                     new(@bool, "check", false, true)
-
                 }
             };
 
