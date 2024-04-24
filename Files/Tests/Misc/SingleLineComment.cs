@@ -1,5 +1,5 @@
-// This is a comment "
+// This is a comment /* "
 
-int i = 0 ; // comment
+int i = 0 ; // comment */
 
 //comment

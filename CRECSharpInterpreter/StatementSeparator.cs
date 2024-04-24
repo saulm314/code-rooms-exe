@@ -587,11 +587,16 @@ namespace CRECSharpInterpreter
 
         private static string RemoveMultiLineComments(string text)
         {
-            List<Pair<int, int>> quoteIndexPairs = GetQuoteIndexPairs(text);
+            List<Pair<int, int>> quoteIndexPairs = GetQuoteIndexPairs(text, false);
             int commentStartIndex = text.IndexOf("/*");
             while (commentStartIndex != -1)
             {
-                while (commentStartIndex != -1 && IsIndexBetweenAnyPairs(commentStartIndex, quoteIndexPairs))
+                while
+                (
+                    commentStartIndex != -1 && 
+                    (IsIndexBetweenAnyPairs(commentStartIndex, quoteIndexPairs) ||
+                    IsIndexInSingleLineComment(text, commentStartIndex))
+                )
                     commentStartIndex = text.IndexOf("/*", commentStartIndex + 1);
                 if (commentStartIndex == -1)
                     break;
@@ -603,15 +608,28 @@ namespace CRECSharpInterpreter
                 text = text.Remove(commentStartIndex, commentEndIndex - commentStartIndex + 2);
                 text = text.Insert(commentStartIndex, " ");
                 commentStartIndex = text.IndexOf("/*");
-                quoteIndexPairs = GetQuoteIndexPairs(text);
+                quoteIndexPairs = GetQuoteIndexPairs(text, false);
             }
             return text;
+        }
+
+        private static bool IsIndexInSingleLineComment(string text, int index)
+        {
+            int lastComment = text.LastIndexOf("//", index);
+            int lastNewline = text.LastIndexOf('\n', index);
+            if (lastComment == -1)
+                return false;
+            if (lastNewline == -1)
+                return true;
+            if (lastComment > lastNewline)
+                return true;
+            return false;
         }
 
         // this assumes that multi line comments have already been removed
         private static string RemoveSingleLineComments(string text)
         {
-            List<Pair<int, int>> quoteIndexPairs = GetQuoteIndexPairs(text);
+            List<Pair<int, int>> quoteIndexPairs = GetQuoteIndexPairs(text, false);
             int commentStartIndex = text.IndexOf("//");
             while (commentStartIndex != -1)
             {
@@ -627,7 +645,7 @@ namespace CRECSharpInterpreter
                 }
                 text = text.Remove(commentStartIndex, nextNewlineIndex - commentStartIndex);
                 commentStartIndex = text.IndexOf("//");
-                quoteIndexPairs = GetQuoteIndexPairs(text);
+                quoteIndexPairs = GetQuoteIndexPairs(text, false);
             }
             return text;
         }
