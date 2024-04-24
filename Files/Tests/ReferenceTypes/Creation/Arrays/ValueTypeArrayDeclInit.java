@@ -6,10 +6,10 @@
 
 int [ ] intArr ;
 double [ ] doubleArr ;
-boolean [ ] booleanArr ;
+boolean [ ] bArr ;
 char [ ] charArr ;
 
 int [ ] intArr2 = null ;
 double [ ] doubleArr2 = new double [ 0 ] ;
-boolean [ ] booleanArr2 = new boolean [ 2 ] ;
+boolean [ ] bArr2 = new boolean [ 2 ] ;
 char [ ] charArr2 = new char [ ] { 'a' , 'b' , 'c' } ;
