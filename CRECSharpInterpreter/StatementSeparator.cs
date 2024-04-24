@@ -16,34 +16,30 @@ namespace CRECSharpInterpreter
             List<Pair<int, int>> superStatementIndexPairs = GetSuperStatementIndexPairs(text, bracketIndexPairs, out List<SuperStatement> superStatements);
 
             List<int> semicolonIndexes = GetRelevantSemicolonIndexes(text, quoteIndexPairs, bracketIndexPairs, superStatementIndexPairs);
-            List<int> superStatementEndIndexes = GetSuperStatementEndIndexes(superStatementIndexPairs, superStatements,
-                                                                                out List<SuperStatementInfo> superStatementInfos);
+            List<int> superStatementEndIndexes = GetSuperStatementEndIndexes(superStatementIndexPairs);
             
             List<int> statementEndIndexes = CombineListsAndSort(semicolonIndexes, superStatementEndIndexes);
 
             string[] statements = SplitTextBetweenIndexesInclusive(text, statementEndIndexes);
 
             GetLineNumbers(statements, startLineNumber, out lineNumberInfos);
-            outputSuperStatements = GetSuperStatements(statementEndIndexes, superStatementInfos);
+            outputSuperStatements = GetOutputSuperStatements(statementEndIndexes, superStatementEndIndexes, superStatements);
 
             return statements;
         }
 
-        private static SuperStatement[] GetSuperStatements(List<int> statementEndIndexes, List<SuperStatementInfo> superStatementInfos)
+        private static SuperStatement[] GetOutputSuperStatements(List<int> statementEndIndexes, List<int> superStatementEndIndexes,
+                                                                    List<SuperStatement> superStatements)
         {
-            SuperStatement[] superStatements = new SuperStatement[statementEndIndexes.Count];
-            for (int i = 0; i < superStatements.Length; i++)
+            SuperStatement[] output = new SuperStatement[statementEndIndexes.Count];
+            int superStatementsAdded = 0;
+            for (int i = 0; i < statementEndIndexes.Count; i++)
             {
-                foreach (SuperStatementInfo superStatementInfo in superStatementInfos)
-                {
-                    if (superStatementInfo.endIndex == statementEndIndexes[i])
-                    {
-                        superStatements[i] = superStatementInfo.superStatement;
-                        break;
-                    }
-                }
+                int endIndex = statementEndIndexes[i];
+                if (superStatementEndIndexes.Contains(endIndex))
+                    output[i] = superStatements[superStatementsAdded++];
             }
-            return superStatements;
+            return output;
         }
 
         private static void GetLineNumbers(string[] statements, ushort startLineNumber, out LineNumberInfo[] lineNumberInfos)
@@ -182,38 +178,23 @@ namespace CRECSharpInterpreter
             return semicolonIndexes;
         }
 
-        private static List<int> GetSuperStatementEndIndexes(List<Pair<int, int>> superStatementIndexPairs,
-                                                                            List<SuperStatement> superStatements,
-                                                                            out List<SuperStatementInfo> superStatementInfos)
+        private static List<int> GetSuperStatementEndIndexes(List<Pair<int, int>> superStatementIndexPairs)
         {
             List<int> superStatementEndIndexes = new();
-            superStatementInfos = new();
             for (int i = 0; i < superStatementIndexPairs.Count; i++)
-            {
                 superStatementEndIndexes.Add(superStatementIndexPairs[i].Second);
-                SuperStatementInfo superStatementInfo = new(superStatementIndexPairs[i].Second, superStatements[i]);
-                superStatementInfos.Add(superStatementInfo);
-            }
             return superStatementEndIndexes;
-        }
-
-        private readonly struct SuperStatementInfo
-        {
-            public SuperStatementInfo(int endIndex, SuperStatement superStatement)
-            {
-                this.endIndex = endIndex;
-                this.superStatement = superStatement;
-            }
-
-            public readonly int endIndex;
-            public readonly SuperStatement superStatement;
         }
 
         private static List<T> CombineListsAndSort<T>(List<T> list1, List<T> list2)
         {
+            HashSet<T> combinedSet = new();
+            foreach (T item in list1)
+                combinedSet.Add(item);
+            foreach (T item in list2)
+                combinedSet.Add(item);
             List<T> combinedList = new();
-            combinedList.AddRange(list1);
-            combinedList.AddRange(list2);
+            combinedList.AddRange(combinedSet);
             combinedList.Sort();
             return combinedList;
         }
