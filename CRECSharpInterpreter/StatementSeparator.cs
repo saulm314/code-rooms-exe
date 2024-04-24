@@ -131,11 +131,20 @@ namespace CRECSharpInterpreter
             return subStatements;
         }
 
+        private static int GetElseIndex(string ifElseStatement)
+        {
+            List<Pair<int, int>> quoteIndexPairs = GetQuoteIndexPairs(ifElseStatement);
+            List<Pair<int, int>> bracketIndexPairs = GetBracketIndexPairs(ifElseStatement, quoteIndexPairs);
+            int headerEnd = GetHeaderEnd(0, SuperStatement.IfUnknown, bracketIndexPairs);
+            GetSuperStatementEnd(ifElseStatement, SuperStatement.IfUnknown, headerEnd, bracketIndexPairs, out _, out int elseIndex);
+            return elseIndex;
+        }
+
         public static string[] GetSubStatementsAsStringsIfElseIf(string baseStatement, out string header, ushort startLineNumber,
                                                                     out LineNumberInfo[] lineNumberInfos, out SuperStatement[] superStatements)
         {
             Console.WriteLine(baseStatement);
-            int elseIndex = baseStatement.LastIndexOf("else");
+            int elseIndex = GetElseIndex(baseStatement);
             string baseStatementBeforeElse = baseStatement[..elseIndex];
             List<Pair<int, int>> quoteIndexPairs = GetQuoteIndexPairs(baseStatementBeforeElse);
             List<Pair<int, int>> bracketIndexPairs = GetBracketIndexPairs(baseStatementBeforeElse, quoteIndexPairs);
@@ -150,7 +159,7 @@ namespace CRECSharpInterpreter
         public static string[] GetSubStatementsAsStringsIfElseElse(string baseStatement, out string header, ushort startLineNumber,
                                                                     out LineNumberInfo[] lineNumberInfos, out SuperStatement[] superStatements)
         {
-            int elseIndex = baseStatement.LastIndexOf("else");
+            int elseIndex = GetElseIndex(baseStatement);
             string baseStatementFromElse = baseStatement[elseIndex..];
             int lastElseIndex = 3;
             int firstNonWhiteSpaceIndexAfterElse = GetFirstNonWhiteSpaceIndexAfterIndex(baseStatementFromElse, lastElseIndex);
@@ -227,11 +236,6 @@ namespace CRECSharpInterpreter
                 string.IsNullOrWhiteSpace(text) ||
                 LineNumberUtils.Trim(text).Length == 0;
             return _is;
-        }
-
-        private static void RemoveIndexesFollowedByElse(string text, List<int> indexes)
-        {
-            indexes.RemoveAll(index => IsIndexBeforeElse(text, index));
         }
 
         private static bool IsIndexBeforeElse(string text, int index)
@@ -320,7 +324,8 @@ namespace CRECSharpInterpreter
                 }
                 currentPair.First = i;
                 int headerEnd = GetHeaderEnd(i, superStatement, bracketIndexPairs);
-                int superStatementEnd = GetSuperStatementEnd(text, superStatement, headerEnd, bracketIndexPairs, out SuperStatement finalSuperStatement);
+                int superStatementEnd = GetSuperStatementEnd(text, superStatement, headerEnd, bracketIndexPairs, out SuperStatement finalSuperStatement,
+                                                                out _);
                 superStatements.Add(finalSuperStatement);
                 currentPair.Second = superStatementEnd;
                 pairs.Add(currentPair);
@@ -349,8 +354,9 @@ namespace CRECSharpInterpreter
         }
 
         private static int GetSuperStatementEnd(string text, SuperStatement superStatement, int headerEnd, List<Pair<int, int>> bracketIndexPairs,
-                                                out SuperStatement finalSuperStatement)
+                                                out SuperStatement finalSuperStatement, out int elseIndex)
         {
+            elseIndex = -1;
             switch (superStatement)
             {
                 case SuperStatement.IfUnknown:
@@ -398,8 +404,9 @@ namespace CRECSharpInterpreter
             if (nextSuperStatement != SuperStatement.Else)
                 return superStatementEnd;
             finalSuperStatement = SuperStatement.IfElse;
+            elseIndex = firstNonWhiteSpaceIndexAfterSuperStatement;
             int nextHeaderEnd = GetHeaderEnd(firstNonWhiteSpaceIndexAfterSuperStatement, SuperStatement.Else, bracketIndexPairs);
-            return GetSuperStatementEnd(text, SuperStatement.Else, nextHeaderEnd, bracketIndexPairs, out _);
+            return GetSuperStatementEnd(text, SuperStatement.Else, nextHeaderEnd, bracketIndexPairs, out _, out _);
         }
 
         private static int GetMultiSuperStatementEnd(int curlyBraceStart, List<Pair<int, int>> bracketIndexPairs)

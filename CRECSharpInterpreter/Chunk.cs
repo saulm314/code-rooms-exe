@@ -17,9 +17,6 @@
             if (Memory.Instance!._Mode == Mode.Compilation)
                 for (int i = 0; i < Statements.Length; i++)
                     Statements[i] = new(statementsStr[i], LineNumberInfos[i], SuperStatements[i]);
-
-            foreach (Statement statement in Statements)
-                System.Diagnostics.Debug.WriteLine(statement + "\n\n");
         }
 
         public string Text { get; init; }
