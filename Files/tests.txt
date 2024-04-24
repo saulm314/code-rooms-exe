@@ -412,3 +412,5 @@ GarbageCollection
 GarbageCollection_
 HeapResizing
 HeapResizing_
+VarNamesIncludeKeywords
+VarNamesIncludeKeywords_
