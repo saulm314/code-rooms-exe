@@ -135,7 +135,7 @@ namespace CRECSharpInterpreter
                                                                     out LineNumberInfo[] lineNumberInfos, out SuperStatement[] superStatements)
         {
             Console.WriteLine(baseStatement);
-            int elseIndex = baseStatement.IndexOf("else");
+            int elseIndex = baseStatement.LastIndexOf("else");
             string baseStatementBeforeElse = baseStatement[..elseIndex];
             List<Pair<int, int>> quoteIndexPairs = GetQuoteIndexPairs(baseStatementBeforeElse);
             List<Pair<int, int>> bracketIndexPairs = GetBracketIndexPairs(baseStatementBeforeElse, quoteIndexPairs);
@@ -150,7 +150,7 @@ namespace CRECSharpInterpreter
         public static string[] GetSubStatementsAsStringsIfElseElse(string baseStatement, out string header, ushort startLineNumber,
                                                                     out LineNumberInfo[] lineNumberInfos, out SuperStatement[] superStatements)
         {
-            int elseIndex = baseStatement.IndexOf("else");
+            int elseIndex = baseStatement.LastIndexOf("else");
             string baseStatementFromElse = baseStatement[elseIndex..];
             int lastElseIndex = 3;
             int firstNonWhiteSpaceIndexAfterElse = GetFirstNonWhiteSpaceIndexAfterIndex(baseStatementFromElse, lastElseIndex);
@@ -281,36 +281,6 @@ namespace CRECSharpInterpreter
         private static bool IsIndexBetweenPairIndexes(int index, Pair<int, int> pair)
         {
             return pair.First < index && index < pair.Second;
-        }
-
-        // relevant means close curly braces '}' that denote a statement end
-        // for example:     if (something) { something; }   the '}' here denotes a statement end
-        // example:     for (int i = 0; i < length; i++) { something; }     the '}' here denotes a statement end
-        // example:     if (something) { something; } else { something; }       only the second '}' denotes a statement end
-        // example:     int[] array = new int[] { 5, 3 };       the '}' does *not* denote a statement end
-        private static List<int> GetRelevantCloseBraceIndexes(string text, List<Pair<int, int>> bracketIndexPairs)
-        {
-            List<int> closeCurlyBraceIndexes = new();
-            foreach (Pair<int, int> bracketIndexPair in bracketIndexPairs)
-                if (text[bracketIndexPair.Second] == '}' && IsCurlyBracePairAfterCloseBracketOrElse(text, bracketIndexPair))
-                    closeCurlyBraceIndexes.Add(bracketIndexPair.Second);
-            RemoveIndexesFollowedByElse(text, closeCurlyBraceIndexes);
-            return closeCurlyBraceIndexes;
-        }
-
-        private static bool IsCurlyBracePairAfterCloseBracketOrElse(string text, Pair<int, int> curlyBracePair)
-        {
-            int lastNonWhiteSpaceIndexBeforeCurlyBraces = GetLastNonWhiteSpaceIndexBeforeIndex(text, curlyBracePair.First);
-            if (lastNonWhiteSpaceIndexBeforeCurlyBraces == -1)
-                return false;
-            if (text[lastNonWhiteSpaceIndexBeforeCurlyBraces] == ')')
-                return true;
-            if (lastNonWhiteSpaceIndexBeforeCurlyBraces < 3)
-                return false;
-            string lastFourCharacters = text[(lastNonWhiteSpaceIndexBeforeCurlyBraces - 3)..(lastNonWhiteSpaceIndexBeforeCurlyBraces + 1)];
-            if (lastFourCharacters == "else")
-                return true;
-            return false;
         }
 
         // we take the separator and associated characters to be whitespace
