@@ -1,2 +1,2 @@
-int intArr = new int[3];
+int[] intArr = new int[3];
 intArr[3] = 0;
