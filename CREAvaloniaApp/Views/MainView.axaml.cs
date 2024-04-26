@@ -6,6 +6,7 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using CREAvaloniaApp.ViewModels;
 using CRECSharpInterpreter;
+using System;
 using System.Collections.Generic;
 
 namespace CREAvaloniaApp.Views;
@@ -117,6 +118,12 @@ public partial class MainView : UserControl
         catch (InterpreterException exception)
         {
             OutputWriteLine(exception.Message);
+            runButton.IsEnabled = false;
+        }
+        catch (Exception exception)
+        {
+            OutputWriteLine("Error, possibly internal:");
+            OutputWriteLine(exception);
             runButton.IsEnabled = false;
         }
     }
