@@ -25,6 +25,9 @@ namespace CRECSharpInterpreter
             GetLineNumbers(statements, startLineNumber, out lineNumberInfos);
             outputSuperStatements = GetOutputSuperStatements(statementEndIndexes, superStatementEndIndexes, superStatements);
 
+            if (statements.Length != outputSuperStatements.Length)
+                throw new InterpreterException("Compilation error, possibly due to a missing semicolon at the end");
+
             return statements;
         }
 
