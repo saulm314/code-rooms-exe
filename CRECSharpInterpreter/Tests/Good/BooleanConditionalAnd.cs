@@ -19,7 +19,9 @@ namespace CRECSharpInterpreter.Tests.Good
                     new(@bool, "myB", true, true),
                     new(@bool, "myB2", false, true),
                     new(@bool, "myB3", false, true),
-                    new(@bool, "myB4", false, true)
+                    new(@bool, "myB4", false, true),
+                    new(@bool.Array, "bArr", null, true),
+                    new(@bool, "myB5", false, true)
                 }
             };
 
