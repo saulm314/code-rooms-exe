@@ -7,6 +7,7 @@ using Avalonia.Media.Imaging;
 using CREAvaloniaApp.ViewModels;
 using CRECSharpInterpreter;
 using CRECSharpInterpreter.Levels;
+using CRECSharpInterpreter.Levels.Tests;
 using System;
 using System.Collections.Generic;
 using Variable = CRECSharpInterpreter.Variable;
@@ -168,6 +169,11 @@ public partial class MainView : UserControl
         leftButton.IsEnabled = Frame.CanMoveLeft;
         rightButton.IsEnabled = Frame.CanMoveRight;
         DisplayFrame();
+
+        if (Frame.CanMoveRight)
+            return;
+        _001Declaration level = new();
+        nextButton.IsEnabled = level.HasPassed(0);
     }
 
     public void OnNextPressed(object sender, RoutedEventArgs e)
