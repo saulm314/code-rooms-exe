@@ -1,6 +1,6 @@
 ﻿namespace CRECSharpInterpreter.Levels.Tests
 {
-    public class _001Declaration : ILevelTest
+    public class Declaration : ILevelTest
     {
         public bool HasPassed(int cycle)
         {

@@ -36,9 +36,7 @@ namespace CRECSharpInterpreter.Levels
                 Variable variable = stackVariables[i];
                 VarType varType = VarType.GetVarTypeFromSlug(variable.type!)!;
                 string name = variable.name!;
-                object? value = variable.value;
-                if (value is long)
-                    value = Convert.ToInt32(value);
+                object? value = GetConvertedValue(variable.value, varType);
                 bool initialised = variable.initialised;
                 RealVariable realVariable = new(varType, name, value, initialised);
                 realStackVariables[i] = realVariable;
@@ -49,13 +47,24 @@ namespace CRECSharpInterpreter.Levels
             {
                 Variable variable = heapVariables[i];
                 VarType varType = VarType.GetVarTypeFromSlug(variable.type!)!;
-                object? value = variable.value;
-                int? length = variable.length;
+                object? value = GetConvertedValue(variable.value, varType);
+                int? length = GetConvertedValue(variable.length, VarType.@int) as int?;
                 RealVariable realVariable = value != null ? new RealVariable(varType, value) : new HeapLengthVariable() { Value = length! };
                 realHeapVariables[i] = realVariable;
             }
             Memory.preloadedStackVariables = realStackVariables;
             Memory.preloadedHeapVariables = realHeapVariables;
+        }
+
+        private object? GetConvertedValue(object? oldValue, VarType varType)
+        {
+            if (oldValue is long)
+                return Convert.ToInt32(oldValue);
+            if (oldValue is string str)
+                return str[0];
+            if (varType == VarType.@double && oldValue != null)
+                return (double)oldValue!;
+            return oldValue;
         }
 
         public void LoadLevel(int id)

@@ -172,7 +172,7 @@ public partial class MainView : UserControl
 
         if (Frame.CanMoveRight)
             return;
-        _001Declaration level = new();
+        Declaration level = new();
         nextButton.IsEnabled = level.HasPassed(0);
     }
 
