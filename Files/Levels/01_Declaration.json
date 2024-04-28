@@ -1,0 +1,42 @@
+{
+    "id" : 1,
+    "name" : "Declaration",
+    "initialStacks" : [
+        [
+        ]
+    ],
+    "finalStacks" : [
+        [
+            [
+                {
+                    "type" : "int",
+                    "name" : null,
+                    "value" : null,
+                    "initialised" : null,
+                    "anyValue" : true
+                },
+                {
+                    "type" : "double",
+                    "name" : null,
+                    "value" : null,
+                    "initialised" : null,
+                    "anyValue" : true
+                },
+                {
+                    "type" : "bool",
+                    "name" : null,
+                    "value" : null,
+                    "initialised" : null,
+                    "anyValue" : true
+                },
+                {
+                    "type" : "char",
+                    "name" : null,
+                    "value" : null,
+                    "initialised" : null,
+                    "anyValue" : true
+                }
+            ]
+        ]
+    ]
+}
