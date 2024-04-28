@@ -105,7 +105,8 @@ public partial class MainView : UserControl
         textEditor.NewLine = new(newlineChars.ToArray());
     }
 
-    public void OnCompilePressed(object sender, RoutedEventArgs e)
+    private int currentCycle = 0;
+    public void OnCompilePressed(object? sender, RoutedEventArgs? e)
     {
         compileButton.IsEnabled = false;
         editButton.IsEnabled = true;
@@ -113,7 +114,7 @@ public partial class MainView : UserControl
         textEditor.IsReadOnly = true;
         OutputClear();
         OutputWriteLine("Compiling...");
-        LevelManager.Instance.LoadLevel(1);
+        LevelManager.Instance.LoadLevel(1, currentCycle);
         try
         {
             _Interpreter = new Interpreter(textEditor.Text ?? string.Empty);
@@ -132,7 +133,7 @@ public partial class MainView : UserControl
         }
     }
 
-    public void OnEditPressed(object sender, RoutedEventArgs e)
+    public void OnEditPressed(object? sender, RoutedEventArgs? e)
     {
         editButton.IsEnabled = false;
         compileButton.IsEnabled = true;
@@ -143,9 +144,10 @@ public partial class MainView : UserControl
         textEditor.IsReadOnly = false;
         ClearStack();
         ClearHeap();
+        currentCycle = 0;
     }
 
-    public void OnRunPressed(object sender, RoutedEventArgs e)
+    public void OnRunPressed(object? sender, RoutedEventArgs? e)
     {
         runButton.IsEnabled = false;
         rightButton.IsEnabled = true;
@@ -155,7 +157,7 @@ public partial class MainView : UserControl
         OutputWriteLine("Running...");
     }
 
-    public void OnLeftPressed(object sender, RoutedEventArgs e)
+    public void OnLeftPressed(object? sender, RoutedEventArgs? e)
     {
         _Interpreter!.MoveLeft();
         leftButton.IsEnabled = Frame.CanMoveLeft;
@@ -163,7 +165,7 @@ public partial class MainView : UserControl
         DisplayFrame();
     }
 
-    public void OnRightPressed(object sender, RoutedEventArgs e)
+    public void OnRightPressed(object? sender, RoutedEventArgs? e)
     {
         _Interpreter!.MoveRight();
         leftButton.IsEnabled = Frame.CanMoveLeft;
@@ -173,14 +175,28 @@ public partial class MainView : UserControl
         if (Frame.CanMoveRight)
             return;
         Declaration level = new();
-        nextButton.IsEnabled = level.HasPassed(0);
+        if (level.HasPassed(currentCycle))
+        {
+            OutputWriteLine("Pass");
+            nextButton.IsEnabled = true;
+            return;
+        }
+        OutputWriteLine("Fail");
     }
 
-    public void OnNextPressed(object sender, RoutedEventArgs e)
+    public void OnNextPressed(object? sender, RoutedEventArgs? e)
     {
         nextButton.IsEnabled = false;
         leftButton.IsEnabled = false;
+        currentCycle++;
+        if (currentCycle >= LevelManager.Instance.GetCycleCount(1))
+        {
+            OutputWriteLine("All passed");
+            return;
+        }
         OutputWriteLine("Running next...");
+        OnCompilePressed(null, null);
+        OnRunPressed(null, null);
     }
 
     public void OutputWriteLine(object message)

@@ -5,7 +5,7 @@
         [
             {
                 "type" : "char[]",
-                "name" : "testIntArr",
+                "name" : "testCharArr",
                 "value" : 1,
                 "initialised" : true
             }

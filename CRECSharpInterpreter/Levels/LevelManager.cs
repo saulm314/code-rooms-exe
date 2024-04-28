@@ -27,9 +27,9 @@ namespace CRECSharpInterpreter.Levels
             throw new Exception($"Level with id {id} not found");
         }
 
-        public void LoadLevel(Level level)
+        public void LoadLevel(Level level, int cycle = 0)
         {
-            Variable[] stackVariables = level.initialStacks![0];
+            Variable[] stackVariables = level.initialStacks![cycle];
             RealVariable[] realStackVariables = new RealVariable[stackVariables.Length];
             for (int i = 0; i < stackVariables.Length; i++)
             {
@@ -41,7 +41,7 @@ namespace CRECSharpInterpreter.Levels
                 RealVariable realVariable = new(varType, name, value, initialised);
                 realStackVariables[i] = realVariable;
             }
-            Variable[] heapVariables = level.initialHeaps![0];
+            Variable[] heapVariables = level.initialHeaps![cycle];
             RealVariable[] realHeapVariables = new RealVariable[heapVariables.Length];
             for (int i = 0; i < heapVariables.Length; i++)
             {
@@ -67,10 +67,21 @@ namespace CRECSharpInterpreter.Levels
             return oldValue;
         }
 
-        public void LoadLevel(int id)
+        public void LoadLevel(int id, int cycle = 0)
         {
             Level level = GetLevel(id);
-            LoadLevel(level);
+            LoadLevel(level, cycle);
+        }
+
+        public int GetCycleCount(Level level)
+        {
+            return level.initialStacks!.Length;
+        }
+
+        public int GetCycleCount(int id)
+        {
+            Level level = GetLevel(id);
+            return level.initialStacks!.Length;
         }
     }
 }

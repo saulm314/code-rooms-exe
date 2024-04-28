@@ -4,8 +4,12 @@
     {
         public bool HasPassed(int cycle)
         {
-            return
-                Memory.Instance!.IsDeclared("myInt");
+            return cycle switch
+            {
+                0 => Memory.Instance!.IsDeclared("myInt"),
+                1 => Memory.Instance!.IsDeclared("myChar"),
+                _ => false
+            };
         }
     }
 }
