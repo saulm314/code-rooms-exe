@@ -27,24 +27,9 @@ namespace CRECSharpInterpreter.Levels
                 string title = textFile.Remove(textFile.Length - 4);
                 foreach (Level level in Levels)
                 {
-                    if (title.EndsWith(level.name!))
+                    if (title.EndsWith(level.slug!))
                     {
                         level.Description = File.ReadAllText(textFile);
-                        continue;
-                    }
-                    if (title.EndsWith(level.name + "1"))
-                    {
-                        level.Hint1 = File.ReadAllText(textFile);
-                        continue;
-                    }
-                    if (title.EndsWith(level.name + "2"))
-                    {
-                        level.Hint2 = File.ReadAllText(textFile);
-                        continue;
-                    }
-                    if (title.EndsWith(level.name + "3"))
-                    {
-                        level.Hint3 = File.ReadAllText(textFile);
                         continue;
                     }
                 }
@@ -54,6 +39,8 @@ namespace CRECSharpInterpreter.Levels
         public static LevelManager Instance { get; } = new();
 
         public Level[] Levels { get; init; }
+
+        public int CurrentLevel { get; private set; }
 
         public Level GetLevel(int id)
         {
@@ -65,7 +52,7 @@ namespace CRECSharpInterpreter.Levels
 
         public void LoadLevel(Level level, int cycle = 0)
         {
-            Variable[] stackVariables = level.initialStacks![cycle];
+            Variable[] stackVariables = level.initialStacks?[cycle] ?? Array.Empty<Variable>();
             RealVariable[] realStackVariables = new RealVariable[stackVariables.Length];
             for (int i = 0; i < stackVariables.Length; i++)
             {
@@ -77,7 +64,7 @@ namespace CRECSharpInterpreter.Levels
                 RealVariable realVariable = new(varType, name, value, initialised);
                 realStackVariables[i] = realVariable;
             }
-            Variable[] heapVariables = level.initialHeaps![cycle];
+            Variable[] heapVariables = level.initialHeaps?[cycle] ?? Array.Empty<Variable>();
             RealVariable[] realHeapVariables = new RealVariable[heapVariables.Length];
             for (int i = 0; i < heapVariables.Length; i++)
             {
@@ -90,6 +77,7 @@ namespace CRECSharpInterpreter.Levels
             }
             Memory.preloadedStackVariables = realStackVariables;
             Memory.preloadedHeapVariables = realHeapVariables;
+            CurrentLevel = level.id;
         }
 
         private object? GetConvertedValue(object? oldValue, VarType varType)
@@ -109,8 +97,9 @@ namespace CRECSharpInterpreter.Levels
             LoadLevel(level, cycle);
         }
 
-        public int GetCycleCount(Level level)
+        public int GetCycleCount(Level? level = null)
         {
+            level ??= GetLevel(CurrentLevel);
             return level.initialStacks!.Length;
         }
 
@@ -120,8 +109,9 @@ namespace CRECSharpInterpreter.Levels
             return level.initialStacks!.Length;
         }
 
-        public ILevelTest GetLevelTest(Level level)
+        public ILevelTest GetLevelTest(Level? level = null)
         {
+            level ??= GetLevel(CurrentLevel);
             return level.LevelTest;
         }
 

@@ -22,7 +22,7 @@ public partial class MainView : UserControl
         InitializeComponent();
         ConfigureHeapGrid();
 
-        LoadLevel(1);
+        LoadLevel(0);
     }
 
     private void LoadLevel(int id, int cycle = 0)
@@ -126,7 +126,7 @@ public partial class MainView : UserControl
         textEditor.IsReadOnly = true;
         OutputClear();
         OutputWriteLine("Compiling...");
-        LoadLevel(1, currentCycle);
+        LoadLevel(LevelManager.Instance.CurrentLevel, currentCycle);
         try
         {
             _Interpreter = new Interpreter(textEditor.Text ?? string.Empty);
@@ -188,7 +188,7 @@ public partial class MainView : UserControl
 
         if (Frame.CanMoveRight)
             return;
-        ILevelTest levelTest = LevelManager.Instance.GetLevelTest(1);
+        ILevelTest levelTest = LevelManager.Instance.GetLevelTest();
         int starsAchieved = levelTest.StarsAchieved(currentCycle);
         if (starsAchieved > 0)
         {
@@ -205,7 +205,7 @@ public partial class MainView : UserControl
         nextButton.IsEnabled = false;
         leftButton.IsEnabled = false;
         currentCycle++;
-        if (currentCycle >= LevelManager.Instance.GetCycleCount(1))
+        if (currentCycle >= LevelManager.Instance.GetCycleCount())
         {
             OutputWriteLine($"All passed with {minStars} stars");
             return;

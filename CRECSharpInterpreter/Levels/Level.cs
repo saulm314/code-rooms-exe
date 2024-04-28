@@ -8,13 +8,13 @@ namespace CRECSharpInterpreter.Levels
     {
         private ILevelTest GetLevelTest()
         {
-            if (name == null)
+            if (slug == null)
                 return new DummyLevelTest();
             Assembly assembly = Assembly.GetExecutingAssembly();
             Type[] assemblyTypes = assembly.GetTypes();
             Predicate<Type> testPredicate = type =>
                 type.Namespace == "CRECSharpInterpreter.Levels.Tests" &&
-                type.Name == name;
+                type.Name == slug;
             Type? testType = Array.Find(assemblyTypes, testPredicate);
             if (testType == null)
                 return new DummyLevelTest();
@@ -29,6 +29,7 @@ namespace CRECSharpInterpreter.Levels
 
         public int id;
         public string? name;
+        public string? slug;
         public int maxStars;
         public Variable[][]? initialStacks;
         public Variable[][]? initialHeaps;
@@ -41,14 +42,5 @@ namespace CRECSharpInterpreter.Levels
 
         [JsonIgnore]
         public string? Description { get; set; }
-
-        [JsonIgnore]
-        public string? Hint1 { get; set; }
-
-        [JsonIgnore]
-        public string? Hint2 { get; set; }
-
-        [JsonIgnore]
-        public string? Hint3 { get; set; }
     }
 }
