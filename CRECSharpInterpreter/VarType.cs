@@ -109,6 +109,14 @@ namespace CRECSharpInterpreter
             return GetVarType(type);
         }
 
+        public static VarType? GetVarTypeFromSlug(string slug)
+        {
+            foreach (VarType varType in VarTypes)
+                if (varType.Slug == slug)
+                    return varType;
+            return null;
+        }
+
         public override string ToString() => Name;
 
         public enum Storage

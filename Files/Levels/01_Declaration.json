@@ -3,6 +3,12 @@
     "name" : "Declaration",
     "initialStacks" : [
         [
+            {
+                "type" : "int",
+                "name" : "{testInt}",
+                "value" : 5,
+                "initialised" : true
+            }
         ]
     ],
     "finalStacks" : [

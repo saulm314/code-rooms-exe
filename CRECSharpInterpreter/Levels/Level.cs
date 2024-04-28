@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace CRECSharpInterpreter.Levels
+﻿namespace CRECSharpInterpreter.Levels
 {
     public class Level
     {
@@ -8,10 +6,5 @@ namespace CRECSharpInterpreter.Levels
         public string? name;
         public Variable[][]? initialStacks;
         public Variable[][][]? finalStacks;
-
-        public override string ToString()
-        {
-            return $"{id} {name} {initialStacks!.Length} {finalStacks!.Length}";
-        }
     }
 }

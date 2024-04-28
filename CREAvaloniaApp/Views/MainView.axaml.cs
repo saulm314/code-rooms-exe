@@ -6,8 +6,10 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using CREAvaloniaApp.ViewModels;
 using CRECSharpInterpreter;
+using CRECSharpInterpreter.Levels;
 using System;
 using System.Collections.Generic;
+using Variable = CRECSharpInterpreter.Variable;
 
 namespace CREAvaloniaApp.Views;
 
@@ -147,6 +149,8 @@ public partial class MainView : UserControl
         rightButton.IsEnabled = true;
         leftButton.IsEnabled = Frame.CanMoveLeft;
         rightButton.IsEnabled = Frame.CanMoveRight;
+        LevelManager.Instance.LoadLevel(1);
+        DisplayFrame();
         OutputWriteLine("Running...");
     }
 
