@@ -41,5 +41,14 @@ namespace CRECSharpInterpreter.Levels
 
         [JsonIgnore]
         public string? Description { get; set; }
+
+        [JsonIgnore]
+        public string? Hint1 { get; set; }
+
+        [JsonIgnore]
+        public string? Hint2 { get; set; }
+
+        [JsonIgnore]
+        public string? Hint3 { get; set; }
     }
 }

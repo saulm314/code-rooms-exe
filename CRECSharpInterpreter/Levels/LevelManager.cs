@@ -28,7 +28,25 @@ namespace CRECSharpInterpreter.Levels
                 foreach (Level level in Levels)
                 {
                     if (level.name == title)
+                    {
                         level.Description = File.ReadAllText(textFile);
+                        continue;
+                    }
+                    if (level.name + "1" == title)
+                    {
+                        level.Hint1 = File.ReadAllText(textFile);
+                        continue;
+                    }
+                    if (level.name + "2" == title)
+                    {
+                        level.Hint2 = File.ReadAllText(textFile);
+                        continue;
+                    }
+                    if (level.name + "3" == title)
+                    {
+                        level.Hint3 = File.ReadAllText(textFile);
+                        continue;
+                    }
                 }
             }
         }
