@@ -23,6 +23,8 @@ public partial class MainView : UserControl
         ConfigureHeapGrid();
 
         LoadLevel(0);
+        OnSyntaxPressed(null, null);
+        OnSyntaxPressed(null, null);
     }
 
     private void LoadLevel(int id, int cycle = 0)
@@ -250,7 +252,7 @@ public partial class MainView : UserControl
             Syntax.Java => Syntax.CSharp,
             _ => Syntax.CSharp
         };
-        string baseText = "Current Syntax: ";
+        string baseText = "Current Syntax:\n";
         string result = Environment._Syntax switch
         {
             Syntax.CSharp => "C#",
