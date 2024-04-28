@@ -547,6 +547,22 @@
 						</Button>
 					</StackPanel>
 				</ScrollViewer>
+				<StackPanel Orientation="Horizontal" Height="{Binding FinalControlsStackPanelHeight}" Width="{Binding FinalControlsStackPanelWidth}">
+					<Panel Width="{Binding FinalControlWidth}" Height="{Binding FinalControlHeight}" Background="{Binding TotalBrush}">
+						<TextBlock
+							Text="Total: 0/0 ⭐"
+							FontSize="20"
+							FontFamily="Cascadia Mono"
+							Foreground="White"
+							FontWeight="UltraBold"
+							TextAlignment="Center"
+							HorizontalAlignment="Center"
+							VerticalAlignment="Center"
+							Width="{Binding FinalControlWidth}"
+							Name="totalText"
+							/>
+					</Panel>
+				</StackPanel>
 			</StackPanel>
 		</Grid>
 	</StackPanel>
