@@ -566,8 +566,7 @@
 						Name="syntaxButton"
 							>
 						<TextBlock
-							Text="Current Syntax: C#"
-							FontSize="14"
+							FontSize="12"
 							FontFamily="Cascadia Mono"
 							Foreground="White"
 							FontWeight="UltraBold"
