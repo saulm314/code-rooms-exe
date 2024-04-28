@@ -38,5 +38,8 @@ namespace CRECSharpInterpreter.Levels
         
         [JsonIgnore]
         private ILevelTest? _levelTest;
+
+        [JsonIgnore]
+        public string? Description { get; set; }
     }
 }

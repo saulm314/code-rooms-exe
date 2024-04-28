@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.IO;
+using System.Linq;
 using RealVariable = CRECSharpInterpreter.Variable;
 
 namespace CRECSharpInterpreter.Levels
@@ -10,9 +11,26 @@ namespace CRECSharpInterpreter.Levels
         public LevelManager()
         {
             string[] files = Directory.GetFiles(@"..\..\..\..\Files\Levels");
-            Levels = new Level[files.Length];
-            for (int i = 0; i < files.Length; i++)
-                Levels[i] = JsonConvert.DeserializeObject<Level>(File.ReadAllText(files[i]))!;
+            string[] jsonFiles = files
+                .Select(file => file)
+                .Where(file => file.EndsWith(".json"))
+                .ToArray();
+            Levels = new Level[jsonFiles.Length];
+            for (int i = 0; i < jsonFiles.Length; i++)
+                Levels[i] = JsonConvert.DeserializeObject<Level>(File.ReadAllText(jsonFiles[i]))!;
+            string[] textFiles = files
+                .Select(file => file)
+                .Where(file => file.EndsWith(".txt"))
+                .ToArray();
+            foreach (string textFile in textFiles)
+            {
+                string title = textFile.Remove(textFile.Length - 4);
+                foreach (Level level in Levels)
+                {
+                    if (level.name == title)
+                        level.Description = File.ReadAllText(textFile);
+                }
+            }
         }
 
         public static LevelManager Instance { get; } = new();
