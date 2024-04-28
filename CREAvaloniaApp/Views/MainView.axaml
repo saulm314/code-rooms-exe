@@ -594,6 +594,37 @@
 							</Style>
 						</Button.Styles>
 					</Button>
+					<Button
+						Background="{Binding QuitBrush}"
+						Height="{Binding QuitButtonHeight}"
+						Width="{Binding QuitButtonWidth}"
+						CornerRadius="0"
+						Click="OnQuitPressed"
+						IsEnabled="True"
+						Name="quitButton"
+							>
+						<TextBlock
+							Text="Quit"
+							FontSize="24"
+							FontFamily="Cascadia Mono"
+							Foreground="White"
+							FontWeight="UltraBold"
+							TextAlignment="Center"
+							HorizontalAlignment="Center"
+							VerticalAlignment="Center"
+								/>
+						<Button.Styles>
+							<Style Selector=":disabled /template/ ContentPresenter#PART_ContentPresenter">
+								<Setter Property="Background" Value="{Binding DisabledButtonBrush}"/>
+							</Style>
+							<Style Selector=":pointerover /template/ ContentPresenter#PART_ContentPresenter">
+								<Setter Property="Background" Value="{Binding QuitHoveredBrush}"/>
+							</Style>
+							<Style Selector=":pressed /template/ ContentPresenter#PART_ContentPresenter">
+								<Setter Property="Background" Value="{Binding QuitPressedBrush}"/>
+							</Style>
+						</Button.Styles>
+					</Button>
 				</StackPanel>
 			</StackPanel>
 		</Grid>

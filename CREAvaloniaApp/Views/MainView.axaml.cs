@@ -235,6 +235,10 @@ public partial class MainView : UserControl
     {
     }
 
+    public void OnQuitPressed(object? sender, RoutedEventArgs? e)
+    {
+    }
+
     public void OutputWriteLine(object message)
     {
         output.Text += message + "\n";
