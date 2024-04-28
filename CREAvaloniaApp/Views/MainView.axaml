@@ -357,7 +357,7 @@
 				Grid.Column="1"
 				Grid.Row="0"
 				FontSize="16"
-				FontFamily="Arial"
+				FontFamily="Verdana"
 				Foreground="White"
 				Background="{Binding DescriptionBrush}"
 				Height="{Binding DescriptionHeight}"
@@ -379,6 +379,15 @@
 					</Style>
 				</TextBox.Styles>
 			</TextBox>
+			<!-- BottomRightPanel -->
+			<StackPanel
+				Grid.Column="1"
+				Grid.Row="1"
+				Orientation="Vertical"
+				Height="{Binding BottomRightPanelHeight}"
+				Width="{Binding BottomRightPanelWidth}"
+				>
+			</StackPanel>
 		</Grid>
 	</StackPanel>
 </UserControl>
