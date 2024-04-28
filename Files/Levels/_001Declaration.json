@@ -1,6 +1,7 @@
 {
     "id" : 1,
     "name" : "Declaration",
+    "maxStars" : 1,
     "initialStacks" : [
         [
             {

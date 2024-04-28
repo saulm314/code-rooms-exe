@@ -29,6 +29,7 @@ namespace CRECSharpInterpreter.Levels
 
         public int id;
         public string? name;
+        public int maxStars;
         public Variable[][]? initialStacks;
         public Variable[][]? initialHeaps;
 
