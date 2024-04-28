@@ -112,6 +112,7 @@ public partial class MainView : UserControl
         textEditor.IsReadOnly = true;
         OutputClear();
         OutputWriteLine("Compiling...");
+        LevelManager.Instance.LoadLevel(1);
         try
         {
             _Interpreter = new Interpreter(textEditor.Text ?? string.Empty);
@@ -149,7 +150,6 @@ public partial class MainView : UserControl
         rightButton.IsEnabled = true;
         leftButton.IsEnabled = Frame.CanMoveLeft;
         rightButton.IsEnabled = Frame.CanMoveRight;
-        LevelManager.Instance.LoadLevel(1);
         DisplayFrame();
         OutputWriteLine("Running...");
     }

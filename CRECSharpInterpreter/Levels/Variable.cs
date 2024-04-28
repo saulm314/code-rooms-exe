@@ -5,7 +5,7 @@
         public string? type;
         public string? name;
         public object? value;
-        public bool? initialised;
-        public bool anyValue;
+        public bool initialised;
+        public int? length;
     }
 }

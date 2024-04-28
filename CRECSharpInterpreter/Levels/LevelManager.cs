@@ -30,18 +30,32 @@ namespace CRECSharpInterpreter.Levels
         public void LoadLevel(Level level)
         {
             Variable[] stackVariables = level.initialStacks![0];
-            RealVariable[] realVariables = new RealVariable[stackVariables.Length];
+            RealVariable[] realStackVariables = new RealVariable[stackVariables.Length];
             for (int i = 0; i < stackVariables.Length; i++)
             {
                 Variable variable = stackVariables[i];
                 VarType varType = VarType.GetVarTypeFromSlug(variable.type!)!;
                 string name = variable.name!;
                 object? value = variable.value;
-                bool initialised = (bool)variable.initialised!;
+                if (value is long)
+                    value = Convert.ToInt32(value);
+                bool initialised = variable.initialised;
                 RealVariable realVariable = new(varType, name, value, initialised);
-                Memory.Instance!.AddToCurrentScope(realVariable);
+                realStackVariables[i] = realVariable;
             }
-            Memory.Instance!.Frames[Memory.Instance.CurrentFrame].Init();
+            Variable[] heapVariables = level.initialHeaps![0];
+            RealVariable[] realHeapVariables = new RealVariable[heapVariables.Length];
+            for (int i = 0; i < heapVariables.Length; i++)
+            {
+                Variable variable = heapVariables[i];
+                VarType varType = VarType.GetVarTypeFromSlug(variable.type!)!;
+                object? value = variable.value;
+                int? length = variable.length;
+                RealVariable realVariable = value != null ? new RealVariable(varType, value) : new HeapLengthVariable() { Value = length! };
+                realHeapVariables[i] = realVariable;
+            }
+            Memory.preloadedStackVariables = realStackVariables;
+            Memory.preloadedHeapVariables = realHeapVariables;
         }
 
         public void LoadLevel(int id)

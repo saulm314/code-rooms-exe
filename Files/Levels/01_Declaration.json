@@ -4,63 +4,26 @@
     "initialStacks" : [
         [
             {
-                "type" : "int",
-                "name" : "{testInt}",
-                "value" : 5,
+                "type" : "int[]",
+                "name" : "testIntArr",
+                "value" : 1,
                 "initialised" : true
             }
         ]
     ],
-    "finalStacks" : [
+    "initialHeaps" : [
         [
-            [
-                {
-                    "type" : null,
-                    "name" : null,
-                    "value" : null,
-                    "initialised" : null,
-                    "anyValue" : true
-                }
-            ],
-            [
-                {
-                    "type" : "int",
-                    "name" : null,
-                    "value" : null,
-                    "initialised" : null,
-                    "anyValue" : true
-                }
-            ],
-            [
-                {
-                    "type" : "int",
-                    "name" : null,
-                    "value" : null,
-                    "initialised" : null,
-                    "anyValue" : true
-                },
-                {
-                    "type" : "double",
-                    "name" : null,
-                    "value" : null,
-                    "initialised" : null,
-                    "anyValue" : true
-                },
-                {
-                    "type" : "bool",
-                    "name" : null,
-                    "value" : null,
-                    "initialised" : null,
-                    "anyValue" : true
-                },
-                {
-                    "type" : "char",
-                    "name" : null,
-                    "value" : null,
-                    "initialised" : null,
-                    "anyValue" : true
-                }
-            ]
+            {
+                "length" : 2
+            },
+            {
+                "type" : "int",
+                "value" : 5
+            },
+            {
+                "type" : "int",
+                "value" : 3
+            }
         ]
     ]
 }
