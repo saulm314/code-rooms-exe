@@ -352,6 +352,33 @@
 					</TextBox.Styles>
 				</TextBox>
 			</StackPanel>
+			<!-- Description -->
+			<TextBox
+				Grid.Column="1"
+				Grid.Row="0"
+				FontSize="16"
+				FontFamily="Arial"
+				Foreground="White"
+				Background="{Binding DescriptionBrush}"
+				Height="{Binding DescriptionHeight}"
+				Width="{Binding DescriptionWidth}"
+				Name="description"
+				IsReadOnly="True"
+				BorderThickness="0"
+				CaretBrush="{Binding DescriptionBrush}"
+				CornerRadius="0"
+				TextWrapping="Wrap"
+				>
+				<TextBox.Styles>
+					<Style Selector=":pointerover /template/ Border#PART_BorderElement">
+						<Setter Property="Background" Value="{Binding DescriptionBrush}"/>
+					</Style>
+					<Style Selector=":focus /template/ Border#PART_BorderElement">
+						<Setter Property="Background" Value="{Binding DescriptionBrush}"/>
+						<Setter Property="BorderThickness" Value="0"/>
+					</Style>
+				</TextBox.Styles>
+			</TextBox>
 		</Grid>
 	</StackPanel>
 </UserControl>

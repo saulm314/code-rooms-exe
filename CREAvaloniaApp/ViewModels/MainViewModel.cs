@@ -135,6 +135,7 @@ public class MainViewModel : ViewModelBase
     public const byte HEAP_HEADER_BG = 20;
     public const byte HEAP_LABEL_FG = 150;
     public const byte DISABLED_BUTTON_BG = 60;
+    public const byte DESCRIPTION_BG = 42;
 
     public static (byte, byte, byte) COMPILE_BG => (5, 97, 67);
     public static (byte, byte, byte) EDIT_BG => (138, 108, 5);
@@ -148,6 +149,7 @@ public class MainViewModel : ViewModelBase
     public IBrush HeapHeaderBrush => GetBrush(HEAP_HEADER_BG);
     public IBrush HeapLabelBrush => GetBrush(HEAP_LABEL_FG);
     public IBrush DisabledButtonBrush => GetBrush(DISABLED_BUTTON_BG);
+    public IBrush DescriptionBrush => GetBrush(DESCRIPTION_BG);
 
     public IBrush CompileBrush => GetBrush(COMPILE_BG);
     public IBrush CompileHoveredBrush => GetHoveredBrush(COMPILE_BG);
