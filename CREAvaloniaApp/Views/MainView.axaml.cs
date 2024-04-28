@@ -197,7 +197,8 @@ public partial class MainView : UserControl
             minStars = starsAchieved < minStars ? starsAchieved : minStars;
             return;
         }
-        OutputWriteLine("Fail");
+        if (LevelManager.Instance.CurrentLevel != 0)
+            OutputWriteLine("Fail");
     }
 
     public void OnNextPressed(object? sender, RoutedEventArgs? e)
