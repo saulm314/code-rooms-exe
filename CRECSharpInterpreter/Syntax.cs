@@ -2,7 +2,7 @@
 {
     public enum Syntax
     {
-        Java,
-        CSharp
+        CSharp,
+        Java
     }
 }

@@ -148,6 +148,7 @@ public class MainViewModel : ViewModelBase
     public static (byte, byte, byte) ARROW_BG => (0, 0, 0);
     public static (byte, byte, byte) NEXT_BG => (0, 72, 130);
     public static (byte, byte, byte) LEVEL_BG => (0, 0, 0);
+    public static (byte, byte, byte) SYNTAX_BG => (4, 58, 77);
     public static (byte, byte, byte) QUIT_BG => (82, 0, 13);
 
     public IBrush WindowBrush => GetBrush(BG);
@@ -177,6 +178,9 @@ public class MainViewModel : ViewModelBase
     public IBrush LevelBrush => GetBrush(LEVEL_BG);
     public IBrush LevelHoveredBrush => GetHoveredBrush(LEVEL_BG);
     public IBrush LevelPressedBrush => GetPressedBrush(LEVEL_BG);
+    public IBrush SyntaxBrush => GetBrush(SYNTAX_BG);
+    public IBrush SyntaxHoveredBrush => GetHoveredBrush(SYNTAX_BG);
+    public IBrush SyntaxPressedBrush => GetPressedBrush(SYNTAX_BG);
     public IBrush QuitBrush => GetBrush(QUIT_BG);
     public IBrush QuitHoveredBrush => GetHoveredBrush(QUIT_BG);
     public IBrush QuitPressedBrush => GetPressedBrush(QUIT_BG);

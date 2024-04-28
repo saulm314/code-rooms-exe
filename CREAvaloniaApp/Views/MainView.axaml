@@ -547,6 +547,7 @@
 						</Button>
 					</StackPanel>
 				</ScrollViewer>
+				<!-- FinalControls -->
 				<StackPanel Orientation="Horizontal" Height="{Binding FinalControlsStackPanelHeight}" Width="{Binding FinalControlsStackPanelWidth}">
 					<Panel Width="{Binding FinalControlWidth}" Height="{Binding FinalControlHeight}" Background="{Binding TotalBrush}">
 						<TextBlock
@@ -562,6 +563,37 @@
 							Name="totalText"
 							/>
 					</Panel>
+					<Button
+						Background="{Binding SyntaxBrush}"
+						Height="{Binding FinalControlHeight}"
+						Width="{Binding FinalControlWidth}"
+						CornerRadius="0"
+						Click="OnSyntaxPressed"
+						IsEnabled="True"
+						Name="syntaxButton"
+							>
+						<TextBlock
+							Text="Current syntax: C#"
+							FontSize="14"
+							FontFamily="Cascadia Mono"
+							Foreground="White"
+							FontWeight="UltraBold"
+							TextAlignment="Center"
+							HorizontalAlignment="Center"
+							VerticalAlignment="Center"
+								/>
+						<Button.Styles>
+							<Style Selector=":disabled /template/ ContentPresenter#PART_ContentPresenter">
+								<Setter Property="Background" Value="{Binding DisabledButtonBrush}"/>
+							</Style>
+							<Style Selector=":pointerover /template/ ContentPresenter#PART_ContentPresenter">
+								<Setter Property="Background" Value="{Binding SyntaxHoveredBrush}"/>
+							</Style>
+							<Style Selector=":pressed /template/ ContentPresenter#PART_ContentPresenter">
+								<Setter Property="Background" Value="{Binding SyntaxPressedBrush}"/>
+							</Style>
+						</Button.Styles>
+					</Button>
 				</StackPanel>
 			</StackPanel>
 		</Grid>
