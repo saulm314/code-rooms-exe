@@ -219,6 +219,18 @@ public partial class MainView : UserControl
     {
     }
 
+    public void OnLevel2Pressed(object? sender, RoutedEventArgs? e)
+    {
+    }
+
+    public void OnLevel3Pressed(object? sender, RoutedEventArgs? e)
+    {
+    }
+
+    public void OnLevel4Pressed(object? sender, RoutedEventArgs? e)
+    {
+    }
+
     public void OutputWriteLine(object message)
     {
         output.Text += message + "\n";
