@@ -7,7 +7,6 @@ using Avalonia.Media.Imaging;
 using CREAvaloniaApp.ViewModels;
 using CRECSharpInterpreter;
 using CRECSharpInterpreter.Levels;
-using CRECSharpInterpreter.Levels.Tests;
 using System;
 using System.Collections.Generic;
 using Variable = CRECSharpInterpreter.Variable;
@@ -20,6 +19,17 @@ public partial class MainView : UserControl
     {
         InitializeComponent();
         ConfigureHeapGrid();
+
+        LoadLevel(1);
+    }
+
+    private void LoadLevel(int id, int cycle = 0)
+    {
+        LevelManager.Instance.LoadLevel(id, cycle);
+        Level level = LevelManager.Instance.GetLevel(id);
+        description.Text = level.Description ?? string.Empty;
+        if (_Interpreter != null)
+            DisplayFrame();
     }
 
     public Interpreter? _Interpreter { get; private set; }
@@ -115,7 +125,7 @@ public partial class MainView : UserControl
         textEditor.IsReadOnly = true;
         OutputClear();
         OutputWriteLine("Compiling...");
-        LevelManager.Instance.LoadLevel(1, currentCycle);
+        LoadLevel(1, currentCycle);
         try
         {
             _Interpreter = new Interpreter(textEditor.Text ?? string.Empty);

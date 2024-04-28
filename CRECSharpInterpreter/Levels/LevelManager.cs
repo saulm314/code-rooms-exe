@@ -27,22 +27,22 @@ namespace CRECSharpInterpreter.Levels
                 string title = textFile.Remove(textFile.Length - 4);
                 foreach (Level level in Levels)
                 {
-                    if (level.name == title)
+                    if (title.EndsWith(level.name!))
                     {
                         level.Description = File.ReadAllText(textFile);
                         continue;
                     }
-                    if (level.name + "1" == title)
+                    if (title.EndsWith(level.name + "1"))
                     {
                         level.Hint1 = File.ReadAllText(textFile);
                         continue;
                     }
-                    if (level.name + "2" == title)
+                    if (title.EndsWith(level.name + "2"))
                     {
                         level.Hint2 = File.ReadAllText(textFile);
                         continue;
                     }
-                    if (level.name + "3" == title)
+                    if (title.EndsWith(level.name + "3"))
                     {
                         level.Hint3 = File.ReadAllText(textFile);
                         continue;

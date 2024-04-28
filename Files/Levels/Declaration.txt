@@ -1,1 +1,1 @@
-Declare a variable myInt and declare another variable myChar
+Declare a variable myInt and declare another variable myChar and then I keep writing lots of words to see how it wraps
