@@ -28,8 +28,6 @@ public partial class MainView : UserControl
         LevelManager.Instance.LoadLevel(id, cycle);
         Level level = LevelManager.Instance.GetLevel(id);
         description.Text = level.Description ?? string.Empty;
-        if (_Interpreter != null)
-            DisplayFrame();
     }
 
     public Interpreter? _Interpreter { get; private set; }
@@ -211,6 +209,14 @@ public partial class MainView : UserControl
         OutputWriteLine("Running next...");
         OnCompilePressed(null, null);
         OnRunPressed(null, null);
+    }
+
+    public void OnLevel0Pressed(object? sender, RoutedEventArgs? e)
+    {
+    }
+
+    public void OnLevel1Pressed(object? sender, RoutedEventArgs? e)
+    {
     }
 
     public void OutputWriteLine(object message)
