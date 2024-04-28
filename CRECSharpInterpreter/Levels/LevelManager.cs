@@ -83,5 +83,16 @@ namespace CRECSharpInterpreter.Levels
             Level level = GetLevel(id);
             return level.initialStacks!.Length;
         }
+
+        public ILevelTest GetLevelTest(Level level)
+        {
+            return level.LevelTest;
+        }
+
+        public ILevelTest GetLevelTest(int id)
+        {
+            Level level = GetLevel(id);
+            return level.LevelTest;
+        }
     }
 }

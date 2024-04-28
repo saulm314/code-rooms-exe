@@ -174,8 +174,8 @@ public partial class MainView : UserControl
 
         if (Frame.CanMoveRight)
             return;
-        Declaration level = new();
-        if (level.HasPassed(currentCycle))
+        ILevelTest levelTest = LevelManager.Instance.GetLevelTest(1);
+        if (levelTest.HasPassed(currentCycle))
         {
             OutputWriteLine("Pass");
             nextButton.IsEnabled = true;
