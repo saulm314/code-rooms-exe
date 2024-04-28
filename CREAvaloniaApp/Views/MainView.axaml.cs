@@ -10,6 +10,7 @@ using CRECSharpInterpreter;
 using CRECSharpInterpreter.Levels;
 using System;
 using System.Collections.Generic;
+using Environment = CRECSharpInterpreter.Environment;
 using Variable = CRECSharpInterpreter.Variable;
 
 namespace CREAvaloniaApp.Views;
@@ -121,6 +122,7 @@ public partial class MainView : UserControl
         compileButton.IsEnabled = false;
         editButton.IsEnabled = true;
         runButton.IsEnabled = true;
+        syntaxButton.IsEnabled = false;
         textEditor.IsReadOnly = true;
         OutputClear();
         OutputWriteLine("Compiling...");
@@ -151,6 +153,7 @@ public partial class MainView : UserControl
         leftButton.IsEnabled = false;
         rightButton.IsEnabled = false;
         nextButton.IsEnabled = false;
+        syntaxButton.IsEnabled = true;
         textEditor.IsReadOnly = false;
         ClearStack();
         ClearHeap();
@@ -234,6 +237,20 @@ public partial class MainView : UserControl
 
     public void OnSyntaxPressed(object? sender, RoutedEventArgs? e)
     {
+        Environment._Syntax = Environment._Syntax switch
+        {
+            Syntax.CSharp => Syntax.Java,
+            Syntax.Java => Syntax.CSharp,
+            _ => Syntax.CSharp
+        };
+        string baseText = "Current Syntax: ";
+        string result = Environment._Syntax switch
+        {
+            Syntax.CSharp => "C#",
+            Syntax.Java => "Java",
+            _ => string.Empty
+        };
+        syntaxText.Text = baseText + result;
     }
 
     public void OnQuitPressed(object? sender, RoutedEventArgs? e)

@@ -573,7 +573,7 @@
 						Name="syntaxButton"
 							>
 						<TextBlock
-							Text="Current syntax: C#"
+							Text="Current Syntax: C#"
 							FontSize="14"
 							FontFamily="Cascadia Mono"
 							Foreground="White"
@@ -581,6 +581,7 @@
 							TextAlignment="Center"
 							HorizontalAlignment="Center"
 							VerticalAlignment="Center"
+							Name="syntaxText"
 								/>
 						<Button.Styles>
 							<Style Selector=":disabled /template/ ContentPresenter#PART_ContentPresenter">
