@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media;
@@ -237,6 +238,9 @@ public partial class MainView : UserControl
 
     public void OnQuitPressed(object? sender, RoutedEventArgs? e)
     {
+        Application application = Application.Current!;
+        ClassicDesktopStyleApplicationLifetime applicationLifetime = (ClassicDesktopStyleApplicationLifetime)application.ApplicationLifetime!;
+        applicationLifetime.Shutdown();
     }
 
     public void OutputWriteLine(object message)
