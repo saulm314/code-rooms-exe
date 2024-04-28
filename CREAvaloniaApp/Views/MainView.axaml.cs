@@ -218,10 +218,16 @@ public partial class MainView : UserControl
 
     public void OnLevel0Pressed(object? sender, RoutedEventArgs? e)
     {
+        textEditor.Text = string.Empty;
+        OnEditPressed(null, null);
+        LoadLevel(0);
     }
 
     public void OnLevel1Pressed(object? sender, RoutedEventArgs? e)
     {
+        textEditor.Text = string.Empty;
+        OnEditPressed(null, null);
+        LoadLevel(1);
     }
 
     public void OnLevel2Pressed(object? sender, RoutedEventArgs? e)
