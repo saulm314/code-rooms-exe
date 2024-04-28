@@ -2,6 +2,6 @@
 {
     public interface ILevelTest
     {
-        bool HasPassed(int cycle);
+        int StarsAchieved(int cycle);
     }
 }

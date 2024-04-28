@@ -2,6 +2,6 @@
 {
     public class DummyLevelTest : ILevelTest
     {
-        public bool HasPassed(int cycle) => false;
+        public int StarsAchieved(int cycle) => 0;
     }
 }

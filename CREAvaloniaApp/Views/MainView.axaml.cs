@@ -106,6 +106,7 @@ public partial class MainView : UserControl
     }
 
     private int currentCycle = 0;
+    private int minStars = int.MaxValue;
     public void OnCompilePressed(object? sender, RoutedEventArgs? e)
     {
         compileButton.IsEnabled = false;
@@ -145,6 +146,7 @@ public partial class MainView : UserControl
         ClearStack();
         ClearHeap();
         currentCycle = 0;
+        minStars = int.MaxValue;
     }
 
     public void OnRunPressed(object? sender, RoutedEventArgs? e)
@@ -175,10 +177,12 @@ public partial class MainView : UserControl
         if (Frame.CanMoveRight)
             return;
         ILevelTest levelTest = LevelManager.Instance.GetLevelTest(1);
-        if (levelTest.HasPassed(currentCycle))
+        int starsAchieved = levelTest.StarsAchieved(currentCycle);
+        if (starsAchieved > 0)
         {
-            OutputWriteLine("Pass");
+            OutputWriteLine($"Pass with {starsAchieved} stars");
             nextButton.IsEnabled = true;
+            minStars = starsAchieved < minStars ? starsAchieved : minStars;
             return;
         }
         OutputWriteLine("Fail");
@@ -191,7 +195,7 @@ public partial class MainView : UserControl
         currentCycle++;
         if (currentCycle >= LevelManager.Instance.GetCycleCount(1))
         {
-            OutputWriteLine("All passed");
+            OutputWriteLine($"All passed with {minStars} stars");
             return;
         }
         OutputWriteLine("Running next...");
