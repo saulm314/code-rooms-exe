@@ -332,6 +332,9 @@ public partial class MainView : UserControl
 
     public void OnLevel2Pressed(object? sender, RoutedEventArgs? e)
     {
+        textEditor.Text = string.Empty;
+        OnEditPressed(null, null);
+        LoadLevel(2);
     }
 
     public void OnLevel3Pressed(object? sender, RoutedEventArgs? e)
