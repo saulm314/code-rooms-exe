@@ -1,0 +1,20 @@
+Level 2: Initialisation
+
+We now know how to store a variable in the computer's memory, but at the moment, there is very little we can do with that, because we don't know how to change that variable, or reference it from another variable.
+
+The first step in being able to do more with a declared variable is to be able to give it a custom initial value. This process is called initialisation.
+
+To initialise a variable, we write the same statement as if we were declaring a variable, but just before the semicolon, we add an equals sign and specify what value it should hold.
+
+For example, to declare an integer variable called "myInteger" and initialise it to a value of 2, we write the following:
+int myInteger = 2;
+
+Your task for this level is to once again declare four variables of each type, but this time they must be initialised to any value of your choosing, as long as it is a valid value for that type.
+
+For example, a char variable cannot have an integer value.
+
+Values of each type are written as follows:
+- for integers, we write the integer (e.g. 2, 7, 36, -403)
+- for doubles, we write the number with a decimal point, making sure to include the decimal even if it is .0 (e.g. 3.7, -53.6, 5.0)
+- for chars, we write a single character surrounded by single quotes (e.g. 'a', 'w', '3', '-')
+- for bools, we write either true or false

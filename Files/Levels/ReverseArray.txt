@@ -1,0 +1,9 @@
+Pre-loaded on the stack is an array of characters called characters.
+
+Your task is to reverse this array, and store the reversed characters in the same array.
+
+To prevent you from hardcoding your answer, your code will run 3 times, with 3 different character arrays. Only if you pass all three times with the same code, will you pass this task as a whole.
+
+For 2 stars, complete this task without allocating any memory past variable 15 on the heap.
+
+For 3 stars, complete this task without allocating any memory past variable 7 on the heap.

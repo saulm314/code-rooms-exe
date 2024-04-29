@@ -40,9 +40,51 @@ namespace CRECSharpInterpreter
 
         public void Compute()
         {
+            if (SpecificOperator is BooleanConditionalAnd or BooleanConditionalOr)
+            {
+                ComputeConditional();
+                return;
+            }
             LeftEvaluable?.Compute();
             RightEvaluable?.Compute();
             Value = SpecificOperator.Calculate(LeftEvaluable?.Value, RightEvaluable?.Value);
+        }
+
+        private void ComputeConditional()
+        {
+            LeftEvaluable!.Compute();
+            if (SpecificOperator is BooleanConditionalAnd)
+            {
+                ComputeConditionalAnd();
+                return;
+            }
+            if (SpecificOperator is BooleanConditionalOr)
+            {
+                ComputeConditionalOr();
+                return;
+            }
+        }
+
+        private void ComputeConditionalAnd()
+        {
+            if (!(bool)LeftEvaluable!.Value!)
+            {
+                Value = false;
+                return;
+            }
+            RightEvaluable!.Compute();
+            Value = SpecificOperator.Calculate(LeftEvaluable.Value, RightEvaluable.Value);
+        }
+
+        private void ComputeConditionalOr()
+        {
+            if ((bool)LeftEvaluable!.Value!)
+            {
+                Value = true;
+                return;
+            }
+            RightEvaluable!.Compute();
+            Value = SpecificOperator.Calculate(LeftEvaluable.Value, RightEvaluable.Value);
         }
 
         // returns null if impossible to determine from the evaluables immediately next to the operator

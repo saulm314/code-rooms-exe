@@ -116,6 +116,36 @@ namespace CRECSharpInterpreter
                 Free(index);
         }
 
+        public T[]? GetArray<T>(int index)
+        {
+            if (index == 0)
+                return null;
+            T[] array = new T[GetLength(index)];
+            for (int i = 0; i < array.Length; i++)
+                array[i] = (T)GetValue(index, i)!;
+            return array;
+        }
+
+        public string? GetString(int index)
+        {
+            if (index == 0)
+                return null;
+            char[] chars = GetArray<char>(index)!;
+            string str = new(chars);
+            return str;
+        }
+
+        public string?[]? GetStringArray(int index)
+        {
+            if (index == 0)
+                return null;
+            int[] stringIndexes = GetArray<int>(index)!;
+            string?[] strings = new string?[stringIndexes.Length];
+            for (int i = 0; i < stringIndexes.Length; i++)
+                strings[i] = GetString(index);
+            return strings;
+        }
+
         private void VerifyRange(int index, int offset)
         {
             Variable lengthAsVariable = variables[index]!;

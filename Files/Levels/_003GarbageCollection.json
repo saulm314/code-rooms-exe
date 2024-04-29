@@ -1,0 +1,57 @@
+{
+    "id" : 3,
+    "name" : "Garbage Collection",
+    "slug" : "GarbageCollection",
+    "maxStars" : 1,
+    "initialStacks" : [
+        [
+            {
+                "type" : "char[]",
+                "name" : "characters",
+                "value" : 1,
+                "initialised" : true
+            },
+            {
+                "type" : "char[]",
+                "name" : "characters2",
+                "value" : 1,
+                "initialised" : true
+            },
+            {
+                "type" : "bool[]",
+                "name" : "booleans",
+                "value" : 5,
+                "initialised" : true
+            }
+        ]
+    ],
+    "initialHeaps" : [
+        [
+            {
+                "length" : 3,
+                "references" : 2
+            },
+            {
+                "type" : "char",
+                "value" : "c"
+            },
+            {
+                "type" : "char",
+                "value" : "a"
+            },
+            {
+                "type" : "char",
+                "value" : "t"
+            },
+            {
+                "length" : 1,
+                "references" : 1
+            },
+            {
+                "type" : "bool",
+                "value" : true
+            }
+        ]
+    ]
+
+}

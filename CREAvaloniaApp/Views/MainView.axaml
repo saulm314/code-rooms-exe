@@ -352,6 +352,274 @@
 					</TextBox.Styles>
 				</TextBox>
 			</StackPanel>
+			<!-- Description -->
+			<ScrollViewer
+				Grid.Column="1"
+				Grid.Row="0"
+				Height="{Binding DescriptionHeight}"
+				Width="{Binding DescriptionWidth}"
+				>
+				<SelectableTextBlock
+					Grid.Column="1"
+					Grid.Row="0"
+					FontSize="16"
+					FontFamily="Verdana"
+					Foreground="White"
+					Background="{Binding DescriptionBrush}"
+					Width="{Binding DescriptionWidth}"
+					Name="description"
+					TextWrapping="Wrap"
+					Padding="10"
+				/>
+			</ScrollViewer>
+			<!-- BottomRightPanel -->
+			<StackPanel
+				Grid.Column="1"
+				Grid.Row="1"
+				Orientation="Vertical"
+				Height="{Binding BottomRightPanelHeight}"
+				Width="{Binding BottomRightPanelWidth}"
+				>
+				<!-- LevelButtons -->
+				<ScrollViewer Height="{Binding LevelScrollViewerHeight}" Width="{Binding LevelScrollViewerWidth}">
+					<StackPanel Width="{Binding LevelScrollViewerWidth}">
+						<Button
+							Background="{Binding LevelBrush}"
+							Height="{Binding LevelButtonHeight}"
+							Width="{Binding LevelButtonWidth}"
+							CornerRadius="0"
+							Click="OnLevel0Pressed"
+							IsEnabled="True"
+							Name="level0Button"
+								>
+							<TextBlock
+								Text="Free Code"
+								FontSize="20"
+								FontFamily="Cascadia Mono"
+								Foreground="White"
+								FontWeight="UltraBold"
+								TextAlignment="Left"
+								HorizontalAlignment="Left"
+								VerticalAlignment="Center"
+									/>
+							<Button.Styles>
+								<Style Selector=":disabled /template/ ContentPresenter#PART_ContentPresenter">
+									<Setter Property="Background" Value="{Binding DisabledButtonBrush}"/>
+								</Style>
+								<Style Selector=":pointerover /template/ ContentPresenter#PART_ContentPresenter">
+									<Setter Property="Background" Value="{Binding LevelHoveredBrush}"/>
+								</Style>
+								<Style Selector=":pressed /template/ ContentPresenter#PART_ContentPresenter">
+									<Setter Property="Background" Value="{Binding LevelPressedBrush}"/>
+								</Style>
+							</Button.Styles>
+						</Button>
+						<Button
+							Background="{Binding LevelBrush}"
+							Height="{Binding LevelButtonHeight}"
+							Width="{Binding LevelButtonWidth}"
+							CornerRadius="0"
+							Click="OnLevel1Pressed"
+							IsEnabled="True"
+							Name="level1Button"
+								>
+							<TextBlock
+								FontSize="20"
+								FontFamily="Cascadia Mono"
+								Foreground="White"
+								FontWeight="UltraBold"
+								TextAlignment="Left"
+								HorizontalAlignment="Left"
+								VerticalAlignment="Center"
+								Name="level1Text"
+									/>
+							<Button.Styles>
+								<Style Selector=":disabled /template/ ContentPresenter#PART_ContentPresenter">
+									<Setter Property="Background" Value="{Binding DisabledButtonBrush}"/>
+								</Style>
+								<Style Selector=":pointerover /template/ ContentPresenter#PART_ContentPresenter">
+									<Setter Property="Background" Value="{Binding LevelHoveredBrush}"/>
+								</Style>
+								<Style Selector=":pressed /template/ ContentPresenter#PART_ContentPresenter">
+									<Setter Property="Background" Value="{Binding LevelPressedBrush}"/>
+								</Style>
+							</Button.Styles>
+						</Button>
+						<Button
+							Background="{Binding LevelBrush}"
+							Height="{Binding LevelButtonHeight}"
+							Width="{Binding LevelButtonWidth}"
+							CornerRadius="0"
+							Click="OnLevel2Pressed"
+							IsEnabled="False"
+							Name="level2Button"
+								>
+							<TextBlock
+								FontSize="20"
+								FontFamily="Cascadia Mono"
+								Foreground="White"
+								FontWeight="UltraBold"
+								TextAlignment="Left"
+								HorizontalAlignment="Left"
+								VerticalAlignment="Center"
+								Name="level2Text"
+									/>
+							<Button.Styles>
+								<Style Selector=":disabled /template/ ContentPresenter#PART_ContentPresenter">
+									<Setter Property="Background" Value="{Binding DisabledButtonBrush}"/>
+								</Style>
+								<Style Selector=":pointerover /template/ ContentPresenter#PART_ContentPresenter">
+									<Setter Property="Background" Value="{Binding LevelHoveredBrush}"/>
+								</Style>
+								<Style Selector=":pressed /template/ ContentPresenter#PART_ContentPresenter">
+									<Setter Property="Background" Value="{Binding LevelPressedBrush}"/>
+								</Style>
+							</Button.Styles>
+						</Button>
+						<Button
+							Background="{Binding LevelBrush}"
+							Height="{Binding LevelButtonHeight}"
+							Width="{Binding LevelButtonWidth}"
+							CornerRadius="0"
+							Click="OnLevel3Pressed"
+							IsEnabled="False"
+							Name="level3Button"
+								>
+							<TextBlock
+								FontSize="20"
+								FontFamily="Cascadia Mono"
+								Foreground="White"
+								FontWeight="UltraBold"
+								TextAlignment="Left"
+								HorizontalAlignment="Left"
+								VerticalAlignment="Center"
+								Name="level3Text"
+									/>
+							<Button.Styles>
+								<Style Selector=":disabled /template/ ContentPresenter#PART_ContentPresenter">
+									<Setter Property="Background" Value="{Binding DisabledButtonBrush}"/>
+								</Style>
+								<Style Selector=":pointerover /template/ ContentPresenter#PART_ContentPresenter">
+									<Setter Property="Background" Value="{Binding LevelHoveredBrush}"/>
+								</Style>
+								<Style Selector=":pressed /template/ ContentPresenter#PART_ContentPresenter">
+									<Setter Property="Background" Value="{Binding LevelPressedBrush}"/>
+								</Style>
+							</Button.Styles>
+						</Button>
+						<Button
+							Background="{Binding LevelBrush}"
+							Height="{Binding LevelButtonHeight}"
+							Width="{Binding LevelButtonWidth}"
+							CornerRadius="0"
+							Click="OnLevel4Pressed"
+							IsEnabled="False"
+							Name="level4Button"
+								>
+							<TextBlock
+								FontSize="20"
+								FontFamily="Cascadia Mono"
+								Foreground="White"
+								FontWeight="UltraBold"
+								TextAlignment="Left"
+								HorizontalAlignment="Left"
+								VerticalAlignment="Center"
+								Name="level4Text"
+									/>
+							<Button.Styles>
+								<Style Selector=":disabled /template/ ContentPresenter#PART_ContentPresenter">
+									<Setter Property="Background" Value="{Binding DisabledButtonBrush}"/>
+								</Style>
+								<Style Selector=":pointerover /template/ ContentPresenter#PART_ContentPresenter">
+									<Setter Property="Background" Value="{Binding LevelHoveredBrush}"/>
+								</Style>
+								<Style Selector=":pressed /template/ ContentPresenter#PART_ContentPresenter">
+									<Setter Property="Background" Value="{Binding LevelPressedBrush}"/>
+								</Style>
+							</Button.Styles>
+						</Button>
+					</StackPanel>
+				</ScrollViewer>
+				<!-- FinalControls -->
+				<StackPanel Orientation="Horizontal" Height="{Binding FinalControlsStackPanelHeight}" Width="{Binding FinalControlsStackPanelWidth}">
+					<Panel Width="{Binding FinalControlWidth}" Height="{Binding FinalControlHeight}" Background="{Binding TotalBrush}">
+						<TextBlock
+							Text="Total: 0/0 ⭐"
+							FontSize="20"
+							FontFamily="Cascadia Mono"
+							Foreground="White"
+							FontWeight="UltraBold"
+							TextAlignment="Center"
+							HorizontalAlignment="Center"
+							VerticalAlignment="Center"
+							Width="{Binding FinalControlWidth}"
+							Name="totalText"
+							/>
+					</Panel>
+					<Button
+						Background="{Binding SyntaxBrush}"
+						Height="{Binding FinalControlHeight}"
+						Width="{Binding FinalControlWidth}"
+						CornerRadius="0"
+						Click="OnSyntaxPressed"
+						IsEnabled="True"
+						Name="syntaxButton"
+							>
+						<TextBlock
+							FontSize="12"
+							FontFamily="Cascadia Mono"
+							Foreground="White"
+							FontWeight="UltraBold"
+							TextAlignment="Center"
+							HorizontalAlignment="Center"
+							VerticalAlignment="Center"
+							Name="syntaxText"
+								/>
+						<Button.Styles>
+							<Style Selector=":disabled /template/ ContentPresenter#PART_ContentPresenter">
+								<Setter Property="Background" Value="{Binding DisabledButtonBrush}"/>
+							</Style>
+							<Style Selector=":pointerover /template/ ContentPresenter#PART_ContentPresenter">
+								<Setter Property="Background" Value="{Binding SyntaxHoveredBrush}"/>
+							</Style>
+							<Style Selector=":pressed /template/ ContentPresenter#PART_ContentPresenter">
+								<Setter Property="Background" Value="{Binding SyntaxPressedBrush}"/>
+							</Style>
+						</Button.Styles>
+					</Button>
+					<Button
+						Background="{Binding QuitBrush}"
+						Height="{Binding QuitButtonHeight}"
+						Width="{Binding QuitButtonWidth}"
+						CornerRadius="0"
+						Click="OnQuitPressed"
+						IsEnabled="True"
+						Name="quitButton"
+							>
+						<TextBlock
+							Text="Quit"
+							FontSize="24"
+							FontFamily="Cascadia Mono"
+							Foreground="White"
+							FontWeight="UltraBold"
+							TextAlignment="Center"
+							HorizontalAlignment="Center"
+							VerticalAlignment="Center"
+								/>
+						<Button.Styles>
+							<Style Selector=":disabled /template/ ContentPresenter#PART_ContentPresenter">
+								<Setter Property="Background" Value="{Binding DisabledButtonBrush}"/>
+							</Style>
+							<Style Selector=":pointerover /template/ ContentPresenter#PART_ContentPresenter">
+								<Setter Property="Background" Value="{Binding QuitHoveredBrush}"/>
+							</Style>
+							<Style Selector=":pressed /template/ ContentPresenter#PART_ContentPresenter">
+								<Setter Property="Background" Value="{Binding QuitPressedBrush}"/>
+							</Style>
+						</Button.Styles>
+					</Button>
+				</StackPanel>
+			</StackPanel>
 		</Grid>
 	</StackPanel>
 </UserControl>

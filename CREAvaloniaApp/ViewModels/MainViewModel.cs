@@ -113,21 +113,25 @@ public class MainViewModel : ViewModelBase
     public int BottomRightPanelWidth => (int)BottomRightPanelSize.Width;
     public int BottomRightPanelHeight => (int)BottomRightPanelSize.Height;
 
-    public static Size HintSize => new(DescriptionSize.Width, HEAP_HEIGHT / 4);
-    public int HintWidth => (int)HintSize.Width;
-    public int HintHeight => (int)HintSize.Height;
+    public static Size LevelScrollViewerSize => new(DescriptionSize.Width, HEAP_HEIGHT / 5 * 4);
+    public int LevelScrollViewerWidth => (int)LevelScrollViewerSize.Width;
+    public int LevelScrollViewerHeight => (int)LevelScrollViewerSize.Height;
 
-    public static Size ExitButtonsSize => new(DescriptionSize.Width, HEAP_HEIGHT - 3 * (HEAP_HEIGHT / 4));
-    public int ExitButtonsWidth => (int)ExitButtonsSize.Width;
-    public int ExitButtonsHeight => (int)ExitButtonsSize.Height;
+    public static Size LevelButtonSize => new(DescriptionSize.Width, HEAP_HEIGHT / 5);
+    public int LevelButtonWidth => (int)LevelButtonSize.Width;
+    public int LevelButtonHeight => (int)LevelButtonSize.Height;
 
-    public static Size QuitButtonSize => new((int)DescriptionSize.Width / 2, ExitButtonsSize.Height);
+    public static Size FinalControlsStackPanelSize => new(DescriptionSize.Width, HEAP_HEIGHT - 4 * (HEAP_HEIGHT / 5));
+    public int FinalControlsStackPanelWidth => (int)FinalControlsStackPanelSize.Width;
+    public int FinalControlsStackPanelHeight => (int)FinalControlsStackPanelSize.Height;
+
+    public static Size FinalControlSize => new(DescriptionSize.Width / 3, FinalControlsStackPanelSize.Height);
+    public int FinalControlWidth => (int)FinalControlSize.Width;
+    public int FinalControlHeight => (int)FinalControlSize.Height;
+
+    public static Size QuitButtonSize => new(DescriptionSize.Width - 2 * (DescriptionSize.Width / 3), FinalControlSize.Height);
     public int QuitButtonWidth => (int)QuitButtonSize.Width;
     public int QuitButtonHeight => (int)QuitButtonSize.Height;
-
-    public static Size FinishButtonSize => new((int)DescriptionSize.Width - (int)DescriptionSize.Width / 2, ExitButtonsSize.Height);
-    public int FinishButtonWidth => (int)FinishButtonSize.Width;
-    public int FinishButtonHeight => (int)FinishButtonSize.Height;
 
     public const byte BG = 42;
     public const byte TEXT_EDITOR_BG = 30;
@@ -135,12 +139,17 @@ public class MainViewModel : ViewModelBase
     public const byte HEAP_HEADER_BG = 20;
     public const byte HEAP_LABEL_FG = 150;
     public const byte DISABLED_BUTTON_BG = 60;
+    public const byte DESCRIPTION_BG = 42;
+    public const byte TOTAL_BG = 20;
 
     public static (byte, byte, byte) COMPILE_BG => (5, 97, 67);
     public static (byte, byte, byte) EDIT_BG => (138, 108, 5);
     public static (byte, byte, byte) RUN_BG => (10, 117, 1);
     public static (byte, byte, byte) ARROW_BG => (0, 0, 0);
     public static (byte, byte, byte) NEXT_BG => (0, 72, 130);
+    public static (byte, byte, byte) LEVEL_BG => (0, 0, 0);
+    public static (byte, byte, byte) SYNTAX_BG => (4, 58, 77);
+    public static (byte, byte, byte) QUIT_BG => (82, 0, 13);
 
     public IBrush WindowBrush => GetBrush(BG);
     public IBrush TextEditorBrush => GetBrush(TEXT_EDITOR_BG);
@@ -148,6 +157,8 @@ public class MainViewModel : ViewModelBase
     public IBrush HeapHeaderBrush => GetBrush(HEAP_HEADER_BG);
     public IBrush HeapLabelBrush => GetBrush(HEAP_LABEL_FG);
     public IBrush DisabledButtonBrush => GetBrush(DISABLED_BUTTON_BG);
+    public IBrush DescriptionBrush => GetBrush(DESCRIPTION_BG);
+    public IBrush TotalBrush => GetBrush(TOTAL_BG);
 
     public IBrush CompileBrush => GetBrush(COMPILE_BG);
     public IBrush CompileHoveredBrush => GetHoveredBrush(COMPILE_BG);
@@ -164,6 +175,15 @@ public class MainViewModel : ViewModelBase
     public IBrush NextBrush => GetBrush(NEXT_BG);
     public IBrush NextHoveredBrush => GetHoveredBrush(NEXT_BG);
     public IBrush NextPressedBrush => GetPressedBrush(NEXT_BG);
+    public IBrush LevelBrush => GetBrush(LEVEL_BG);
+    public IBrush LevelHoveredBrush => GetHoveredBrush(LEVEL_BG);
+    public IBrush LevelPressedBrush => GetPressedBrush(LEVEL_BG);
+    public IBrush SyntaxBrush => GetBrush(SYNTAX_BG);
+    public IBrush SyntaxHoveredBrush => GetHoveredBrush(SYNTAX_BG);
+    public IBrush SyntaxPressedBrush => GetPressedBrush(SYNTAX_BG);
+    public IBrush QuitBrush => GetBrush(QUIT_BG);
+    public IBrush QuitHoveredBrush => GetHoveredBrush(QUIT_BG);
+    public IBrush QuitPressedBrush => GetPressedBrush(QUIT_BG);
 
     public static SolidColorBrush GetBrush(byte brightness)
     {

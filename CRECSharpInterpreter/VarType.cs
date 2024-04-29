@@ -24,6 +24,22 @@ namespace CRECSharpInterpreter
             _ => throw new VarTypeException(this, "internal error")
         };
 
+        public string Slug => _slug ??= SystemType.Name switch
+        {
+            "Int32" => "int",
+            "Double" => "double",
+            "Boolean" => "bool",
+            "Char" => "char",
+            "Int32[]" => "int[]",
+            "Double[]" => "double[]",
+            "Boolean[]" => "bool[]",
+            "Char[]" => "char[]",
+            "String" => "string",
+            "String[]" => "string[]",
+            _ => throw new VarTypeException(this, "internal error")
+        };
+        private string? _slug;
+
         public Type SystemType { get; init; }
         public bool IsArray { get; init; }
         
@@ -91,6 +107,14 @@ namespace CRECSharpInterpreter
         {
             Type type = value.GetType();
             return GetVarType(type);
+        }
+
+        public static VarType? GetVarTypeFromSlug(string slug)
+        {
+            foreach (VarType varType in VarTypes)
+                if (varType.Slug == slug)
+                    return varType;
+            return null;
         }
 
         public override string ToString() => Name;

@@ -1,12 +1,20 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using CREAvaloniaApp.ViewModels;
 using CRECSharpInterpreter;
+using CRECSharpInterpreter.Levels;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Environment = CRECSharpInterpreter.Environment;
+using Variable = CRECSharpInterpreter.Variable;
 
 namespace CREAvaloniaApp.Views;
 
@@ -16,6 +24,108 @@ public partial class MainView : UserControl
     {
         InitializeComponent();
         ConfigureHeapGrid();
+
+        LoadLevel(0);
+        OnSyntaxPressed(null, null);
+        OnSyntaxPressed(null, null);
+
+        save = GetSave();
+        UpdateFromSave();
+    }
+
+    private void LoadLevel(int id, int cycle = 0)
+    {
+        LevelManager.Instance.LoadLevel(id, cycle);
+        Level level = LevelManager.Instance.GetLevel(id);
+        description.Text = level.Description ?? string.Empty;
+    }
+
+    private Save GetSave()
+    {
+        string[] files = Directory.GetFiles(@"..\..\..\..\Files\Save");
+        string? file = Array.Find(files, file => file.EndsWith("player.json"));
+        Save save;
+        try
+        {
+            save = JsonConvert.DeserializeObject<Save>(File.ReadAllText(file!))!;
+            if (save == null)
+                throw new ArgumentNullException();
+        }
+        catch (Exception e) when (e is JsonException or ArgumentNullException)
+        {
+            save = new();
+            string jsonText = JsonConvert.SerializeObject(save, Formatting.Indented);
+            string filePath = @"..\..\..\..\Files\Save\player.json";
+            File.Create(filePath).Close();
+            File.WriteAllText(filePath, jsonText);
+        }
+        return save;
+    }
+
+    private Save save;
+
+    private void UpdateFromSave()
+    {
+        bool zeroReached = false;
+        Button[] levelButtons = GetLevelButtons();
+        TextBlock[] levelTextBlocks = GetLevelTextBlocks();
+        for (int i = 0; i < levelButtons.Length; i++)
+        {
+            Level? level = i + 1 < LevelManager.Instance.Levels.Length ? LevelManager.Instance.GetLevel(i + 1) : null;
+            int starsCollected = i < save.starsCollected!.Length ? save.starsCollected[i] : 0;
+            levelTextBlocks[i].Text = $"Level {i + 1}: {level?.name}\n         {starsCollected}/{level?.maxStars} ⭐";
+            if (zeroReached)
+            {
+                levelButtons[i].IsEnabled = false;
+                continue;
+            }
+            if (i >= save.starsCollected.Length)
+            {
+                zeroReached = true;
+                levelButtons[i].IsEnabled = true;
+                continue;
+            }
+            if (save.starsCollected[i] == 0)
+            {
+                zeroReached = true;
+                levelButtons[i].IsEnabled = true;
+                continue;
+            }
+            levelButtons[i].IsEnabled = true;
+        }
+        int totalAcquired = save.starsCollected!.Sum();
+        int totalAvailable = LevelManager.Instance.Levels.Sum(level => level.maxStars);
+        totalText.Text = $"Total:\n{totalAcquired}/{totalAvailable} ⭐";
+    }
+
+    private void UpdateSaveFile()
+    {
+        string jsonText = JsonConvert.SerializeObject(save, Formatting.Indented);
+        string filePath = @"..\..\..\..\Files\Save\player.json";
+        File.Create(filePath).Close();
+        File.WriteAllText(filePath, jsonText);
+    }
+
+    private Button[] GetLevelButtons()
+    {
+        return
+        [
+            level1Button,
+            level2Button,
+            level3Button,
+            level4Button
+        ];
+    }
+
+    private TextBlock[] GetLevelTextBlocks()
+    {
+        return
+        [
+            level1Text,
+            level2Text,
+            level3Text,
+            level4Text
+        ];
     }
 
     public Interpreter? _Interpreter { get; private set; }
@@ -101,14 +211,18 @@ public partial class MainView : UserControl
         textEditor.NewLine = new(newlineChars.ToArray());
     }
 
-    public void OnCompilePressed(object sender, RoutedEventArgs e)
+    private int currentCycle = 0;
+    private int minStars = int.MaxValue;
+    public void OnCompilePressed(object? sender, RoutedEventArgs? e)
     {
         compileButton.IsEnabled = false;
         editButton.IsEnabled = true;
         runButton.IsEnabled = true;
+        syntaxButton.IsEnabled = false;
         textEditor.IsReadOnly = true;
         OutputClear();
         OutputWriteLine("Compiling...");
+        LoadLevel(LevelManager.Instance.CurrentLevel, currentCycle);
         try
         {
             _Interpreter = new Interpreter(textEditor.Text ?? string.Empty);
@@ -119,9 +233,15 @@ public partial class MainView : UserControl
             OutputWriteLine(exception.Message);
             runButton.IsEnabled = false;
         }
+        catch (Exception exception)
+        {
+            OutputWriteLine("Error, possibly internal:");
+            OutputWriteLine(exception);
+            runButton.IsEnabled = false;
+        }
     }
 
-    public void OnEditPressed(object sender, RoutedEventArgs e)
+    public void OnEditPressed(object? sender, RoutedEventArgs? e)
     {
         editButton.IsEnabled = false;
         compileButton.IsEnabled = true;
@@ -129,21 +249,25 @@ public partial class MainView : UserControl
         leftButton.IsEnabled = false;
         rightButton.IsEnabled = false;
         nextButton.IsEnabled = false;
+        syntaxButton.IsEnabled = true;
         textEditor.IsReadOnly = false;
         ClearStack();
         ClearHeap();
+        currentCycle = 0;
+        minStars = int.MaxValue;
     }
 
-    public void OnRunPressed(object sender, RoutedEventArgs e)
+    public void OnRunPressed(object? sender, RoutedEventArgs? e)
     {
         runButton.IsEnabled = false;
         rightButton.IsEnabled = true;
         leftButton.IsEnabled = Frame.CanMoveLeft;
         rightButton.IsEnabled = Frame.CanMoveRight;
+        DisplayFrame();
         OutputWriteLine("Running...");
     }
 
-    public void OnLeftPressed(object sender, RoutedEventArgs e)
+    public void OnLeftPressed(object? sender, RoutedEventArgs? e)
     {
         _Interpreter!.MoveLeft();
         leftButton.IsEnabled = Frame.CanMoveLeft;
@@ -151,19 +275,105 @@ public partial class MainView : UserControl
         DisplayFrame();
     }
 
-    public void OnRightPressed(object sender, RoutedEventArgs e)
+    public void OnRightPressed(object? sender, RoutedEventArgs? e)
     {
         _Interpreter!.MoveRight();
         leftButton.IsEnabled = Frame.CanMoveLeft;
         rightButton.IsEnabled = Frame.CanMoveRight;
         DisplayFrame();
+
+        if (Frame.CanMoveRight)
+            return;
+        ILevelTest levelTest = LevelManager.Instance.GetLevelTest();
+        int starsAchieved = levelTest.StarsAchieved(currentCycle);
+        if (starsAchieved > 0)
+        {
+            OutputWriteLine($"Pass with {starsAchieved} stars");
+            nextButton.IsEnabled = true;
+            minStars = starsAchieved < minStars ? starsAchieved : minStars;
+            return;
+        }
+        if (LevelManager.Instance.CurrentLevel != 0)
+            OutputWriteLine("Fail");
     }
 
-    public void OnNextPressed(object sender, RoutedEventArgs e)
+    public void OnNextPressed(object? sender, RoutedEventArgs? e)
     {
         nextButton.IsEnabled = false;
         leftButton.IsEnabled = false;
+        currentCycle++;
+        if (currentCycle >= LevelManager.Instance.GetCycleCount())
+        {
+            OutputWriteLine($"All passed with {minStars} stars; next level unlocked");
+            int current = LevelManager.Instance.CurrentLevel;
+            save.starsCollected![current - 1] = save.starsCollected[current - 1] < minStars ? minStars : save.starsCollected[current - 1];
+            UpdateSaveFile();
+            UpdateFromSave();
+            return;
+        }
         OutputWriteLine("Running next...");
+        OnCompilePressed(null, null);
+        OnRunPressed(null, null);
+    }
+
+    public void OnLevel0Pressed(object? sender, RoutedEventArgs? e)
+    {
+        textEditor.Text = string.Empty;
+        OnEditPressed(null, null);
+        LoadLevel(0);
+    }
+
+    public void OnLevel1Pressed(object? sender, RoutedEventArgs? e)
+    {
+        textEditor.Text = string.Empty;
+        OnEditPressed(null, null);
+        LoadLevel(1);
+    }
+
+    public void OnLevel2Pressed(object? sender, RoutedEventArgs? e)
+    {
+        textEditor.Text = string.Empty;
+        OnEditPressed(null, null);
+        LoadLevel(2);
+    }
+
+    public void OnLevel3Pressed(object? sender, RoutedEventArgs? e)
+    {
+        textEditor.Text = string.Empty;
+        OnEditPressed(null, null);
+        LoadLevel(3);
+    }
+
+    public void OnLevel4Pressed(object? sender, RoutedEventArgs? e)
+    {
+        textEditor.Text = string.Empty;
+        OnEditPressed(null, null);
+        LoadLevel(4);
+    }
+
+    public void OnSyntaxPressed(object? sender, RoutedEventArgs? e)
+    {
+        Environment._Syntax = Environment._Syntax switch
+        {
+            Syntax.CSharp => Syntax.Java,
+            Syntax.Java => Syntax.CSharp,
+            _ => Syntax.CSharp
+        };
+        string baseText = "Current Syntax:\n";
+        string result = Environment._Syntax switch
+        {
+            Syntax.CSharp => "C#",
+            Syntax.Java => "Java",
+            _ => string.Empty
+        };
+        syntaxText.Text = baseText + result;
+    }
+
+    public void OnQuitPressed(object? sender, RoutedEventArgs? e)
+    {
+        Application application = Application.Current!;
+        ClassicDesktopStyleApplicationLifetime applicationLifetime = (ClassicDesktopStyleApplicationLifetime)application.ApplicationLifetime!;
+        applicationLifetime.Shutdown();
     }
 
     public void OutputWriteLine(object message)

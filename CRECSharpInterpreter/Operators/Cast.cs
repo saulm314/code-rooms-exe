@@ -26,9 +26,13 @@ namespace CRECSharpInterpreter.Operators
             Operand rightOperand = (Operand)RightOperand!;
             if (rightOperand._VarType == null)
                 return null;
-            if (rightOperand._VarType._Storage == VarType.Storage.Reference)
+            if (rightOperand._VarType == ReturnType)
                 return rightValue;
-            return Convert.ChangeType(rightValue, ReturnType!.SystemType);
+            if (rightOperand._VarType == VarType.@int && ReturnType == VarType.@double)
+                return (double)(int)rightValue!;
+            if (rightOperand._VarType == VarType.@double && ReturnType == VarType.@int)
+                return (int)(double)rightValue!;
+            throw new InterpreterException("Internal error");
         }
 
         public static ISpecificOperator[] GetCastsForReturnType(VarType returnType)

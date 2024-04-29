@@ -10,8 +10,17 @@ namespace CRECSharpInterpreter
             Instance = this;
             _Mode = mode;
             Stack.Push(new());
+
+            foreach (Variable variable in preloadedStackVariables)
+                AddToCurrentScope(variable);
+            for (int i = 0; i < preloadedHeapVariables.Length; i++)
+                Heap[i + 1] = preloadedHeapVariables[i];
+
             if (_Mode == Mode.RuntimeStoreAllFrames)
+            {
                 Frames.Add(new());
+                Frames[CurrentFrame].Init();
+            }
         }
 
         public static Memory? Instance { get; private set; }
@@ -108,6 +117,9 @@ namespace CRECSharpInterpreter
         }
 
         public Mode _Mode { get; }
+
+        public static Variable[] preloadedStackVariables = Array.Empty<Variable>();
+        public static Variable[] preloadedHeapVariables = Array.Empty<Variable>();
 
         public class MemoryException : InterpreterException
         {

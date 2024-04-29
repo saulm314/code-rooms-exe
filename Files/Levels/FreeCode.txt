@@ -1,0 +1,9 @@
+Welcome to CodeRooms.exe!
+
+This is a game about programming. The aim of the game is to complete all the levels and collect all the stars, and hopefully learn a thing or two about programming in the process. You are currently in Free Code mode, which allows you to code freely without any objectives.
+
+To get started, type some C# code in the text editor to the left. Alternatively, if you prefer Java, then select Java syntax below, and type some Java code. Then, hit Compile, and you will be told if there are any compilation errors. Note that since CodeRooms.exe is aimed at people with little programming experience, only basic C# and Java features are supported, so don't get too excited with your multi-threaded web API; that code will just not compile here.
+
+If your code compiles, hit Run and proceed through the code line-by-line by using the left and right arrow buttons. You will notice that you can see the exact state of the stack and the heap with each line.
+
+If even the above is too difficult for you, don't worry. Simply click on Level 1 below, and you will be taken through the basics.

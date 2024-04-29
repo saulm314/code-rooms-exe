@@ -31,9 +31,10 @@ namespace CRECSharpInterpreter.Tests.Good
                     new(@string.Array, "strArr3", null, true),
                     new(@double, "myDouble2", 2.0, true),
                     new(@int, "myInt2", 2, true),
-                    new(@int, "myInt3", 5, true),
+                    new(@int, "myInt3", 2, true),
                     new(@int, "myInt4", 5, true),
-                    new(@int, "myInt5", 5, true)
+                    new(@int, "myInt5", 5, true),
+                    new(@int, "myInt6", 5, true)
                 }
             };
 
