@@ -28,8 +28,8 @@ public partial class MainView : UserControl
         OnSyntaxPressed(null, null);
         OnSyntaxPressed(null, null);
 
-        Save save = GetSave();
-        UpdateFromSave(save);
+        save = GetSave();
+        UpdateFromSave();
     }
 
     private void LoadLevel(int id, int cycle = 0)
@@ -61,7 +61,9 @@ public partial class MainView : UserControl
         return save;
     }
 
-    private void UpdateFromSave(Save save)
+    private Save save;
+
+    private void UpdateFromSave()
     {
         bool zeroReached = false;
         Button[] levelButtons = GetLevelButtons();
@@ -90,6 +92,14 @@ public partial class MainView : UserControl
             }
             levelButtons[i].IsEnabled = true;
         }
+    }
+
+    private void UpdateSaveFile()
+    {
+        string jsonText = JsonConvert.SerializeObject(save, Formatting.Indented);
+        string filePath = @"..\..\..\..\Files\Save\player.json";
+        File.Create(filePath).Close();
+        File.WriteAllText(filePath, jsonText);
     }
 
     private Button[] GetLevelButtons()
@@ -291,6 +301,10 @@ public partial class MainView : UserControl
         if (currentCycle >= LevelManager.Instance.GetCycleCount())
         {
             OutputWriteLine($"All passed with {minStars} stars");
+            int current = LevelManager.Instance.CurrentLevel;
+            save.starsCollected![current - 1] = save.starsCollected[current - 1] < minStars ? minStars : save.starsCollected[current - 1];
+            UpdateSaveFile();
+            UpdateFromSave();
             return;
         }
         OutputWriteLine("Running next...");
