@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Environment = CRECSharpInterpreter.Environment;
 using Variable = CRECSharpInterpreter.Variable;
 
@@ -92,6 +93,9 @@ public partial class MainView : UserControl
             }
             levelButtons[i].IsEnabled = true;
         }
+        int totalAcquired = save.starsCollected!.Sum();
+        int totalAvailable = LevelManager.Instance.Levels.Sum(level => level.maxStars);
+        totalText.Text = $"Total:\n{totalAcquired}/{totalAvailable} ⭐";
     }
 
     private void UpdateSaveFile()
@@ -300,7 +304,7 @@ public partial class MainView : UserControl
         currentCycle++;
         if (currentCycle >= LevelManager.Instance.GetCycleCount())
         {
-            OutputWriteLine($"All passed with {minStars} stars");
+            OutputWriteLine($"All passed with {minStars} stars; next level unlocked");
             int current = LevelManager.Instance.CurrentLevel;
             save.starsCollected![current - 1] = save.starsCollected[current - 1] < minStars ? minStars : save.starsCollected[current - 1];
             UpdateSaveFile();

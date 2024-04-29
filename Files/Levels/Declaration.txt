@@ -1,1 +1,30 @@
-Declare a variable myInt and declare another variable myChar and then I keep writing lots of words to see how it wraps
+Level 1: Declaration
+
+Suppose we were counting how many socks there are in a very large drawer. We do this by keeping a tally, such that every time we remove a sock from the drawer, we add 1 to the tally. By the end, no socks will be left in the drawer, and the value of the tally will be equal to the number of socks.
+
+In order to keep track of the number of socks, we write down a number (in the form of a tally) on a piece of paper, and whenever we learn new information (i.e. that another sock has been removed from the drawer), we increase the number written on the paper by 1. By the end, even though we still cannot directly conceptualise how many socks there were in the drawer, we can read the number on the paper and know the result.
+
+But in order to perform this algorithm, we needed to store a number on the piece of paper throughout. Alternatively we could have simply stored the number in our memory. But either way, the number needed to be stored somewhere, else we would never have performed this algorithm.
+
+Likewise, when a computer program is to execute an algorithm, it will also need to store information throughout. This information will be stored in the computer's memory. Just like our piece of paper, we could write down a number in the computer's memory, amend it as we please, and read it. In this case, we say that the number we have written down in the computer's memory is a variable.
+
+A variable has a name, a type, and a value. Continuing with the same analogy, our variable's name could be "sock counter", its type is number, and its value is initially zero. Each variable is given a distinct name so that we don't mix them up. Likewise, each variable must have a type, so that the computer knows operations it can perform on that variable. For example, if a variable is a number, then it is easy to add 1 to it, however if a variable is a letter, then adding 1 is impossible. Different things can be done to variables of different types.
+
+In C# and Java, the main types of variable are int, double, char, and bool (or boolean in Java). These stand for integer, double-precision floating-point number (which is fancy for a number with a decimal), character, and Boolean (which is a true or false value).
+
+The variable name can be any sequence of letters, numbers, and underscores, as long as it does not begin with a number.
+
+Variable declaration is the process of adding a new variable to the computer's memory. In C# and Java, this is done by writing the variable's type, followed by a space, followed by its name, followed by a semicolon to indicate that the variable declaration statement has ended. At this point, we may (optionally on a new line) start another variable declaration to declare another variable.
+
+In CodeRooms.exe, each variable type is represented by a particular shape. Your task for this level is to declare one variable of each type, and observe how they are stored in the computer's memory. The variables can have any name of your choosing. For example, to declare a new integer whose name is "myInteger", you may write:
+int myInteger;
+
+Once you've written your code, hit Compile. The black output window will tell you if you have made any syntax mistake, for example if you have forgotten a semicolon. In this case, press Edit, fix the mistake, and try again.
+
+Once the code has successfully, compiled, hit Run.
+
+In a real program, statements are executed immediately one after the other. However, in CodeRooms.exe, as soon as we hit Run, the program freezes. We then execute the next statement by pressing the right arrow. This way, we can see exactly how each statement contributes to the computer's memory.
+
+If, by the time the last statement is executed, you have successfully completed the task, the Next button will appear. You will be awarded a star and will be free to move on to level 2. If you fail, click the Edit button, amend your code, and try again.
+
+To pass this level, you must store an int, a double, a char, and a bool (or boolean if you're using Java syntax) in the computer's memory.

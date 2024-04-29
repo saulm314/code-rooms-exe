@@ -100,7 +100,7 @@ namespace CRECSharpInterpreter.Levels
         public int GetCycleCount(Level? level = null)
         {
             level ??= GetLevel(CurrentLevel);
-            return level.initialStacks!.Length;
+            return level.initialStacks?.Length ?? 1;
         }
 
         public int GetCycleCount(int id)
