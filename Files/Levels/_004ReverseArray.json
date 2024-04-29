@@ -1,0 +1,101 @@
+{
+    "id" : 4,
+    "name" : "Reverse Array",
+    "slug" : "ReverseArray",
+    "maxStars" : 3,
+    "initialStacks" : [
+        [
+            {
+                "type" : "char[]",
+                "name" : "characters",
+                "value" : 1,
+                "initialised" : true
+            }
+        ],
+        [
+            {
+                "type" : "char[]",
+                "name" : "characters",
+                "value" : 1,
+                "initialised" : true
+            }
+        ],
+        [
+            {
+                "type" : "char[]",
+                "name" : "characters",
+                "value" : 1,
+                "initialised" : true
+            }
+        ]
+    ],
+    "initialHeaps" : [
+        [
+            {
+                "length" : 3,
+                "references" : 2
+            },
+            {
+                "type" : "char",
+                "value" : "c"
+            },
+            {
+                "type" : "char",
+                "value" : "a"
+            },
+            {
+                "type" : "char",
+                "value" : "t"
+            }
+        ],
+        [
+            {
+                "length" : 6,
+                "references" : 2
+            },
+            {
+                "type" : "char",
+                "value" : "r"
+            },
+            {
+                "type" : "char",
+                "value" : "a"
+            },
+            {
+                "type" : "char",
+                "value" : "b"
+            },
+            {
+                "type" : "char",
+                "value" : "b"
+            },
+            {
+                "type" : "char",
+                "value" : "i"
+            },
+            {
+                "type" : "char",
+                "value" : "t"
+            }
+        ],
+        [
+            {
+                "length" : 3,
+                "references" : 2
+            },
+            {
+                "type" : "char",
+                "value" : "d"
+            },
+            {
+                "type" : "char",
+                "value" : "o"
+            },
+            {
+                "type" : "char",
+                "value" : "g"
+            }
+        ]
+    ]
+
+}

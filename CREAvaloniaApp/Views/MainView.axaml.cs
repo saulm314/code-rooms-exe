@@ -346,6 +346,9 @@ public partial class MainView : UserControl
 
     public void OnLevel4Pressed(object? sender, RoutedEventArgs? e)
     {
+        textEditor.Text = string.Empty;
+        OnEditPressed(null, null);
+        LoadLevel(4);
     }
 
     public void OnSyntaxPressed(object? sender, RoutedEventArgs? e)
