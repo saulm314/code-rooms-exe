@@ -65,14 +65,18 @@ public partial class MainView : UserControl
     {
         bool zeroReached = false;
         Button[] levelButtons = GetLevelButtons();
+        TextBlock[] levelTextBlocks = GetLevelTextBlocks();
         for (int i = 0; i < levelButtons.Length; i++)
         {
+            Level? level = i + 1 < LevelManager.Instance.Levels.Length ? LevelManager.Instance.GetLevel(i + 1) : null;
+            int starsCollected = i < save.starsCollected!.Length ? save.starsCollected[i] : 0;
+            levelTextBlocks[i].Text = $"Level {i + 1}: {level?.name}\n         {starsCollected}/{level?.maxStars} ⭐";
             if (zeroReached)
             {
                 levelButtons[i].IsEnabled = false;
                 continue;
             }
-            if (i >= save.starsCollected!.Length)
+            if (i >= save.starsCollected.Length)
             {
                 zeroReached = true;
                 levelButtons[i].IsEnabled = true;
@@ -96,6 +100,17 @@ public partial class MainView : UserControl
             level2Button,
             level3Button,
             level4Button
+        ];
+    }
+
+    private TextBlock[] GetLevelTextBlocks()
+    {
+        return
+        [
+            level1Text,
+            level2Text,
+            level3Text,
+            level4Text
         ];
     }
 

@@ -432,6 +432,7 @@
 								TextAlignment="Left"
 								HorizontalAlignment="Left"
 								VerticalAlignment="Center"
+								Name="level1Text"
 									/>
 							<Button.Styles>
 								<Style Selector=":disabled /template/ ContentPresenter#PART_ContentPresenter">
@@ -463,6 +464,7 @@
 								TextAlignment="Left"
 								HorizontalAlignment="Left"
 								VerticalAlignment="Center"
+								Name="level2Text"
 									/>
 							<Button.Styles>
 								<Style Selector=":disabled /template/ ContentPresenter#PART_ContentPresenter">
@@ -494,6 +496,7 @@
 								TextAlignment="Left"
 								HorizontalAlignment="Left"
 								VerticalAlignment="Center"
+								Name="level3Text"
 									/>
 							<Button.Styles>
 								<Style Selector=":disabled /template/ ContentPresenter#PART_ContentPresenter">
@@ -525,6 +528,7 @@
 								TextAlignment="Left"
 								HorizontalAlignment="Left"
 								VerticalAlignment="Center"
+								Name="level4Text"
 									/>
 							<Button.Styles>
 								<Style Selector=":disabled /template/ ContentPresenter#PART_ContentPresenter">
