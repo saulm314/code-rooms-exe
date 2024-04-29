@@ -52,7 +52,11 @@ namespace CRECSharpInterpreter
                 Syntax.Java => "Dummy.java",
                 _ => throw new Exception("internal error")
             };
+            #if DEBUG
             StreamReader streamReader = new(@$"..\..\..\..\Files\{fileName}");
+            #elif RELEASE
+            StreamReader streamReader = new(@$"Files\{fileName}");
+            #endif
             string dummyText = streamReader.ReadToEnd();
             try
             {

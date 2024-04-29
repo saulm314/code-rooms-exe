@@ -42,7 +42,11 @@ public partial class MainView : UserControl
 
     private Save GetSave()
     {
+        #if DEBUG
         string[] files = Directory.GetFiles(@"..\..\..\..\Files\Save");
+        #elif RELEASE
+        string[] files = Directory.GetFiles(@"Files\Save");
+        #endif
         string? file = Array.Find(files, file => file.EndsWith("player.json"));
         Save save;
         try
@@ -55,7 +59,11 @@ public partial class MainView : UserControl
         {
             save = new();
             string jsonText = JsonConvert.SerializeObject(save, Formatting.Indented);
+            #if DEBUG
             string filePath = @"..\..\..\..\Files\Save\player.json";
+            #elif RELEASE
+            string filePath = @"Files\Save\player.json";
+            #endif
             File.Create(filePath).Close();
             File.WriteAllText(filePath, jsonText);
         }
@@ -101,7 +109,11 @@ public partial class MainView : UserControl
     private void UpdateSaveFile()
     {
         string jsonText = JsonConvert.SerializeObject(save, Formatting.Indented);
+        #if DEBUG
         string filePath = @"..\..\..\..\Files\Save\player.json";
+        #elif RELEASE
+        string filePath = @"Files\Save\player.json";
+        #endif
         File.Create(filePath).Close();
         File.WriteAllText(filePath, jsonText);
     }
@@ -421,7 +433,11 @@ public partial class MainView : UserControl
             Width = MainViewModel.STACK_CELL_HEIGHT,
             HorizontalAlignment = HorizontalAlignment.Center,
             VerticalAlignment = VerticalAlignment.Center,
+            #if DEBUG
             Source = new Bitmap(@$"..\..\..\..\Files\Types\{variable._VarType}.png")
+            #elif RELEASE
+            Source = new Bitmap(@$"Files\Types\{variable._VarType}.png")
+            #endif
         };
         TextBlock name = new()
         {
@@ -493,7 +509,11 @@ public partial class MainView : UserControl
                 Width = MainViewModel.STACK_CELL_HEIGHT,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
+                #if DEBUG
                 Source = new Bitmap(@$"..\..\..\..\Files\Types\{variable._VarType}.png")
+                #elif RELEASE
+                Source = new Bitmap(@$"Files\Types\{variable._VarType}.png")
+                #endif
             };
             TextBlock value = new()
             {

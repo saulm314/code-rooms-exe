@@ -9,7 +9,11 @@ namespace CRECSharpInterpreter.Tests
     {
         static TestRepository()
         {
+            #if DEBUG
             string directory = @"..\..\..\..\Files\Tests";
+            #elif RELEASE
+            string directory = @"Files\Tests";
+            #endif
             AddTestsFromDirectories(new string[] { directory });
         }
 

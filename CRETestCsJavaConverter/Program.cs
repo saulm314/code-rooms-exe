@@ -24,7 +24,11 @@ namespace CRETestCsJavaConverter
             if (args.Length > 0 && args[0] == "no-overwrite")
                 overwrite = false;
             Console.WriteLine("Copying and converting .cs files to .java...");
+            #if DEBUG
             string directory = @"..\..\..\..\Files\Tests";
+            #elif RELEASE
+            string directory = @"Files\Tests";
+            #endif
             ConvertDirectoriesToJava(new string[] { directory });
             Console.WriteLine("Done");
         }

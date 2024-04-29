@@ -10,7 +10,11 @@ namespace CRECSharpInterpreter.Levels
     {
         public LevelManager()
         {
+            #if DEBUG
             string[] files = Directory.GetFiles(@"..\..\..\..\Files\Levels");
+            #elif RELEASE
+            string[] files = Directory.GetFiles(@"Files\Levels");
+            #endif
             string[] jsonFiles = files
                 .Select(file => file)
                 .Where(file => file.EndsWith(".json"))

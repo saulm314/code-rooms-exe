@@ -22,9 +22,7 @@ namespace CRECSharpInterpreter
                 WriteLine(SEPARATOR + "\n");
                 chunk = new(text, Mode.Runtime);
                 while (chunk.RunNextStatement())
-                {
                     ReadLine();
-                }
                 WriteLine("Done");
                 return;
             }
