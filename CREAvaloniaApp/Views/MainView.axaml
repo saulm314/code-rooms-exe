@@ -424,7 +424,6 @@
 							Name="level1Button"
 								>
 							<TextBlock
-								Text="Level 1: Declaration                    0/1 ⭐"
 								FontSize="20"
 								FontFamily="Cascadia Mono"
 								Foreground="White"
@@ -456,7 +455,6 @@
 							Name="level2Button"
 								>
 							<TextBlock
-								Text="Level 2: Declaration                    0/1 ⭐"
 								FontSize="20"
 								FontFamily="Cascadia Mono"
 								Foreground="White"
@@ -488,7 +486,6 @@
 							Name="level3Button"
 								>
 							<TextBlock
-								Text="Level 3: Declaration                    0/1 ⭐"
 								FontSize="20"
 								FontFamily="Cascadia Mono"
 								Foreground="White"
@@ -520,7 +517,6 @@
 							Name="level4Button"
 								>
 							<TextBlock
-								Text="Level 4: Declaration                    0/1 ⭐"
 								FontSize="20"
 								FontFamily="Cascadia Mono"
 								Foreground="White"
