@@ -72,7 +72,12 @@ namespace CRECSharpInterpreter.Levels
                 VarType varType = VarType.GetVarTypeFromSlug(variable.type!)!;
                 object? value = GetConvertedValue(variable.value, varType);
                 int? length = GetConvertedValue(variable.length, VarType.@int) as int?;
-                RealVariable realVariable = value != null ? new RealVariable(varType, value) : new HeapLengthVariable() { Value = length! };
+                int? references = GetConvertedValue(variable.references, VarType.@int) as int?;
+                RealVariable realVariable = value != null ? new RealVariable(varType, value) : new HeapLengthVariable()
+                {
+                    referenceCount = (int)references!,
+                    Value = (int)length!
+                };
                 realHeapVariables[i] = realVariable;
             }
             Memory.preloadedStackVariables = realStackVariables;

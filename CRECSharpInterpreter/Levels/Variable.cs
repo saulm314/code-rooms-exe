@@ -7,5 +7,6 @@
         public object? value;
         public bool initialised;
         public int? length;
+        public int? references;
     }
 }
