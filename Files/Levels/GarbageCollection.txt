@@ -1,0 +1,7 @@
+Level 3: Garbage Collection
+
+Garbage collection is the process of automatically de-allocating memory from the heap if it is no longer in use. If some memory in the heap is being referenced, then it is being used and it will not be garbage collected.
+
+In this level, some variables are pre-loaded on the stack and the heap. Run the program with empty code to see what these are. Your task is to completely clear out the heap, such that no variable is left on it.
+
+Hint: a reference type variable can have a value of null
