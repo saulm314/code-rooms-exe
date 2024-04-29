@@ -8,8 +8,10 @@ using Avalonia.Media.Imaging;
 using CREAvaloniaApp.ViewModels;
 using CRECSharpInterpreter;
 using CRECSharpInterpreter.Levels;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Environment = CRECSharpInterpreter.Environment;
 using Variable = CRECSharpInterpreter.Variable;
 
@@ -25,6 +27,9 @@ public partial class MainView : UserControl
         LoadLevel(0);
         OnSyntaxPressed(null, null);
         OnSyntaxPressed(null, null);
+
+        Save save = GetSave();
+        UpdateFromSave(save);
     }
 
     private void LoadLevel(int id, int cycle = 0)
@@ -32,6 +37,66 @@ public partial class MainView : UserControl
         LevelManager.Instance.LoadLevel(id, cycle);
         Level level = LevelManager.Instance.GetLevel(id);
         description.Text = level.Description ?? string.Empty;
+    }
+
+    private Save GetSave()
+    {
+        string[] files = Directory.GetFiles(@"..\..\..\..\Files\Save");
+        string? file = Array.Find(files, file => file.EndsWith("player.json"));
+        Save save;
+        try
+        {
+            save = JsonConvert.DeserializeObject<Save>(File.ReadAllText(file!))!;
+            if (save == null)
+                throw new ArgumentNullException();
+        }
+        catch (Exception e) when (e is JsonException or ArgumentNullException)
+        {
+            save = new();
+            string jsonText = JsonConvert.SerializeObject(save, Formatting.Indented);
+            string filePath = @"..\..\..\..\Files\Save\player.json";
+            File.Create(filePath).Close();
+            File.WriteAllText(filePath, jsonText);
+        }
+        return save;
+    }
+
+    private void UpdateFromSave(Save save)
+    {
+        bool zeroReached = false;
+        Button[] levelButtons = GetLevelButtons();
+        for (int i = 0; i < levelButtons.Length; i++)
+        {
+            if (zeroReached)
+            {
+                levelButtons[i].IsEnabled = false;
+                continue;
+            }
+            if (i >= save.starsCollected!.Length)
+            {
+                zeroReached = true;
+                levelButtons[i].IsEnabled = true;
+                continue;
+            }
+            if (save.starsCollected[i] == 0)
+            {
+                zeroReached = true;
+                levelButtons[i].IsEnabled = true;
+                continue;
+            }
+            levelButtons[i].IsEnabled = true;
+        }
+    }
+
+    private Button[] GetLevelButtons()
+    {
+        return
+        [
+            level1Button,
+            level2Button,
+            level3Button,
+            level4Button
+        ];
     }
 
     public Interpreter? _Interpreter { get; private set; }

@@ -20,5 +20,7 @@
     <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="$(AvaloniaVersion)" />
 
     <ProjectReference Include="..\CRECSharpInterpreter\CRECSharpInterpreter.csproj"/>
+
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 </Project>
