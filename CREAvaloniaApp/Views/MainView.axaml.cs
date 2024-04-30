@@ -407,14 +407,14 @@ public partial class MainView : UserControl
     {
         OutputClear();
         OutputWriteLine(Frame);
-        DisplayStack(Frame.Stack);
+        DisplayStack(Frame.Stack, Frame.ActiveLoops, Frame.ActiveForHeaders);
         DisplayHeap(Frame.Heap);
     }
 
-    private void DisplayStack(Stack<Scope>? stack)
+    private void DisplayStack(Stack<Scope>? stack, Stack<int>? activeLoops, Stack<int>? activeForHeaders)
     {
         ClearStack();
-        if (stack == null)
+        if (stack == null || activeLoops == null || activeForHeaders == null)
             return;
         Scope[] scopes = stack.ToArray();
         for (int i = scopes.Length - 1; i >= 0; i--)
@@ -422,6 +422,21 @@ public partial class MainView : UserControl
             Scope scope = scopes[i];
             foreach (Variable variable in scope.DeclaredVariables)
                 PushToStack(variable);
+
+            if (i == 0)
+                continue;
+
+            int antiIndex = scopes.Length - 1 - i;
+            bool scopeEndIsActiveForHeader = activeForHeaders.Contains(antiIndex + 1);
+            bool previousScopeEndIsActiveForHeader = activeForHeaders.Contains(antiIndex);
+            bool scopeEndIsActiveLoop = activeLoops.Contains(antiIndex + 1);
+            IBrush separatorBrush = (scopeEndIsActiveForHeader, previousScopeEndIsActiveForHeader, scopeEndIsActiveLoop) switch
+            {
+                (true, _, _) => MainViewModel.GetBrush(MainViewModel.STACK_LOOP_SEPARATOR_BG),
+                (false, true, _) => MainViewModel.GetBrush(MainViewModel.STACK_FOR_HEADER_SEPARATOR_BG),
+                (false, false, true) => MainViewModel.GetBrush(MainViewModel.STACK_LOOP_SEPARATOR_BG),
+                _ => MainViewModel.GetBrush(MainViewModel.STACK_NON_LOOP_SEPARATOR_BG)
+            };
 
             // the indexer for the Controls class appears to be broken,
             //      so to get the last element, we enumerate through the entire collection
@@ -439,7 +454,7 @@ public partial class MainView : UserControl
                     Height = MainViewModel.STACK_SEPARATOR_HEIGHT / 2,
                     Width = MainViewModel.STACK_WIDTH
                 };
-                childPanel.Background = new SolidColorBrush(Colors.White);
+                childPanel.Background = separatorBrush;
                 panel.Children.Add(childPanel);
             }
         }
