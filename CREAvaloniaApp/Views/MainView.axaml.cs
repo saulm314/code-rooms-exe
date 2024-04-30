@@ -454,8 +454,12 @@ public partial class MainView : UserControl
             Text = variable.ValueAsString,
             FontSize = 16,
             FontFamily = new("Cascadia Mono"),
-            FontWeight = FontWeight.UltraBold,
-            Foreground = new SolidColorBrush(Colors.Black),
+            FontWeight = variable._VarType!._Storage == VarType.Storage.Value ?
+                FontWeight.UltraBold :
+                FontWeight.Normal,
+            Foreground = variable._VarType._Storage == VarType.Storage.Value ?
+                new SolidColorBrush(Colors.Black) :
+                new SolidColorBrush(Colors.White),
             TextAlignment = TextAlignment.Center,
             Height = 20,
             Width = MainViewModel.STACK_CELL_HEIGHT,
@@ -520,8 +524,12 @@ public partial class MainView : UserControl
                 Text = variable.ValueAsString,
                 FontSize = 16,
                 FontFamily = new("Cascadia Mono"),
-                FontWeight = FontWeight.UltraBold,
-                Foreground = new SolidColorBrush(Colors.Black),
+                FontWeight = variable._VarType._Storage == VarType.Storage.Value ?
+                    FontWeight.UltraBold :
+                    FontWeight.Normal,
+                Foreground = variable._VarType._Storage == VarType.Storage.Value ?
+                    new SolidColorBrush(Colors.Black) :
+                    new SolidColorBrush(Colors.White),
                 TextAlignment = TextAlignment.Center,
                 Height = 20,
                 Width = MainViewModel.STACK_CELL_HEIGHT,
