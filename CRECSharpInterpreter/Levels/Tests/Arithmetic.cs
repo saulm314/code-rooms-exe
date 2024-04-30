@@ -20,20 +20,20 @@ namespace CRECSharpInterpreter.Levels.Tests
         {
             return cycle switch
             {
-                0 => (double?)Memory.Instance!.GetVariable("combinedArea")?.Value == 41.67,
-                1 => (double?)Memory.Instance!.GetVariable("combinedArea")?.Value == 50.73,
-                2 => (double?)Memory.Instance!.GetVariable("combinedArea")?.Value == 102.57,
+                0 => DoubleEquals((double?)Memory.Instance!.GetVariable("combinedArea")?.Value, 41.67),
+                1 => DoubleEquals((double?)Memory.Instance!.GetVariable("combinedArea")?.Value, 50.73),
+                2 => DoubleEquals((double?)Memory.Instance!.GetVariable("combinedArea")?.Value, 102.57),
                 _ => false
-            };
+            } || Star2(cycle);
         }
 
         private bool Star2(int cycle)
         {
             return cycle switch
             {
-                0 => (double?)Memory.Instance!.GetVariable("combinedArea")?.Value == 41.7,
-                1 => (double?)Memory.Instance!.GetVariable("combinedArea")?.Value == 50.7,
-                2 => (double?)Memory.Instance!.GetVariable("combinedArea")?.Value == 102.6,
+                0 => DoubleEquals((double?)Memory.Instance!.GetVariable("combinedArea")?.Value, 41.7),
+                1 => DoubleEquals((double?)Memory.Instance!.GetVariable("combinedArea")?.Value, 50.7),
+                2 => DoubleEquals((double?)Memory.Instance!.GetVariable("combinedArea")?.Value, 102.6),
                 _ => false
             };
         }
@@ -49,5 +49,13 @@ namespace CRECSharpInterpreter.Levels.Tests
             };
         }
 
+        private bool DoubleEquals(double? x, double y)
+        {
+            if (x == null)
+                return false;
+            if (-0.01 < x - y && x - y < 0.01)
+                return true;
+            return false;
+        }
     }
 }
