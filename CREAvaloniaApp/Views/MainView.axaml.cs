@@ -460,6 +460,7 @@ public partial class MainView : UserControl
                 panel.Children.Add(childPanel);
             }
         }
+        stackScroll.ScrollToEnd();
     }
 
     private void PushToStack(Variable variable)
@@ -608,6 +609,7 @@ public partial class MainView : UserControl
             ClearHeap();
             return;
         }
+        int previousDisplayedHeapSize = displayedHeapSize;
         while (displayedHeapSize < heap.Size)
         {
             for (int i = 0; i < 5; i++)
@@ -670,5 +672,7 @@ public partial class MainView : UserControl
             heapCells[i].Children.Add(image);
             heapCells[i].Children.Add(value);
         }
+        if (displayedHeapSize != previousDisplayedHeapSize)
+            heapScroll.ScrollToEnd();
     }
 }

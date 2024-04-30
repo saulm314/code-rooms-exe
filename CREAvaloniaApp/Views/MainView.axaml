@@ -27,7 +27,7 @@
 				Width="{Binding StackHeaderTextWidth}"
 				/>
 			<Panel Height="{Binding StackHeaderPanelHeight}" Width="{Binding StackHeaderPanelWidth}"/>
-			<ScrollViewer Height="{Binding StackScrollViewerHeight}" Width="{Binding StackScrollViewerWidth}">
+			<ScrollViewer Height="{Binding StackScrollViewerHeight}" Width="{Binding StackScrollViewerWidth}" Name="stackScroll">
 				<StackPanel Orientation="Vertical" Width="{Binding StackWidth}" Name="stackPanel"/>
 			</ScrollViewer>
 		</StackPanel>
@@ -90,7 +90,7 @@
 						Height="{Binding HeapHeaderTextHeight}"
 						Width="{Binding HeapHeaderTextWidth}"
 						/>
-					<ScrollViewer Height="{Binding HeapScrollViewerHeight}" Width="{Binding HeapScrollViewerWidth}">
+					<ScrollViewer Height="{Binding HeapScrollViewerHeight}" Width="{Binding HeapScrollViewerWidth}" Name="heapScroll">
 						<Grid ShowGridLines="False" Background="Black" Name="heapGrid">
 							<Grid.ColumnDefinitions>
 								<!-- 10 repetitions -->
