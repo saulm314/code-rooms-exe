@@ -452,7 +452,7 @@ public partial class MainView : UserControl
         TextBlock value = new()
         {
             Text = variable.ValueAsString,
-            FontSize = 16,
+            FontSize = GetFontSize(variable),
             FontFamily = new("Cascadia Mono"),
             FontWeight = variable._VarType!._Storage == VarType.Storage.Value ?
                 FontWeight.UltraBold :
@@ -481,6 +481,26 @@ public partial class MainView : UserControl
         stackPanel.Children.Add(imageBox);
         stackPanel.Children.Add(name);
         stackPanel.Children.Add(separator);
+    }
+
+    private int GetFontSize(Variable variable)
+    {
+        if (variable._VarType == null)
+            return -1;
+        int length = variable.ValueAsString.Length;
+        return variable._VarType.Slug switch
+        {
+            "bool" => 16,
+            "char" => 16,
+            "int" or "double" when length <= 2 => 16,
+            "int" or "double" when length <= 3 => 12,
+            "int" or "double" => 8,
+            "string" when length <= 3 => 12,
+            "string" => 8,
+            _ when length <= 3 => 16,
+            _ when length <= 4 => 12,
+            _ => 8
+        };
     }
 
     private void ClearStack()
@@ -522,7 +542,7 @@ public partial class MainView : UserControl
             TextBlock value = new()
             {
                 Text = variable.ValueAsString,
-                FontSize = 16,
+                FontSize = GetFontSize(variable),
                 FontFamily = new("Cascadia Mono"),
                 FontWeight = variable._VarType._Storage == VarType.Storage.Value ?
                     FontWeight.UltraBold :
