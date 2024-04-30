@@ -1,4 +1,4 @@
-Level 3: Garbage Collection
+Level 8: Garbage Collection
 
 Garbage collection is the process of automatically de-allocating memory from the heap if it is no longer in use. If some memory in the heap is being referenced, then it is being used and it will not be garbage collected.
 

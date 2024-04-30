@@ -1,0 +1,94 @@
+{
+    "id" : 4,
+    "name" : "Casts",
+    "slug" : "Casts",
+    "maxStars" : 3,
+    "initialStacks" : [
+        [
+            {
+                "type" : "double",
+                "name" : "myDouble",
+                "value" : 5.3,
+                "initialised" : true
+            },
+            {
+                "type" : "int",
+                "name" : "myInt",
+                "value" : 7,
+                "initialised" : true
+            },
+            {
+                "type" : "double",
+                "name" : "doubleWithDecimal",
+                "value" : 2.7,
+                "initialised" : true
+            },
+            {
+                "type" : "double",
+                "name" : "unroundedNumber",
+                "value" : 1.3,
+                "initialised" : true
+            }
+        ],
+        [
+            {
+                "type" : "double",
+                "name" : "myDouble",
+                "value" : 8.3,
+                "initialised" : true
+            },
+            {
+                "type" : "int",
+                "name" : "myInt",
+                "value" : 3,
+                "initialised" : true
+            },
+            {
+                "type" : "double",
+                "name" : "doubleWithDecimal",
+                "value" : 2.3,
+                "initialised" : true
+            },
+            {
+                "type" : "double",
+                "name" : "unroundedNumber",
+                "value" : 1.9,
+                "initialised" : true
+            }
+        ],
+        [
+            {
+                "type" : "double",
+                "name" : "myDouble",
+                "value" : 2.9,
+                "initialised" : true
+            },
+            {
+                "type" : "int",
+                "name" : "myInt",
+                "value" : 2,
+                "initialised" : true
+            },
+            {
+                "type" : "double",
+                "name" : "doubleWithDecimal",
+                "value" : 0.3,
+                "initialised" : true
+            },
+            {
+                "type" : "double",
+                "name" : "unroundedNumber",
+                "value" : 32.5,
+                "initialised" : true
+            }
+        ]
+    ],
+    "initialHeaps" : [
+        [
+        ],
+        [
+        ],
+        [
+        ]
+    ]
+}

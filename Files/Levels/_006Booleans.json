@@ -1,0 +1,58 @@
+{
+    "id" : 6,
+    "name" : "Booleans",
+    "slug" : "Booleans",
+    "maxStars" : 4,
+    "initialStacks" : [
+        [
+            {
+                "type" : "int",
+                "name" : "myInt",
+                "value" : 7,
+                "initialised" : true
+            },
+            {
+                "type" : "int",
+                "name" : "myInt2",
+                "value" : 6,
+                "initialised" : true
+            }
+        ],
+        [
+            {
+                "type" : "int",
+                "name" : "myInt",
+                "value" : 4,
+                "initialised" : true
+            },
+            {
+                "type" : "int",
+                "name" : "myInt2",
+                "value" : 6,
+                "initialised" : true
+            }
+        ],
+        [
+            {
+                "type" : "int",
+                "name" : "myInt",
+                "value" : 7,
+                "initialised" : true
+            },
+            {
+                "type" : "int",
+                "name" : "myInt2",
+                "value" : 3,
+                "initialised" : true
+            }
+        ]
+    ],
+    "initialHeaps" : [
+        [
+        ],
+        [
+        ],
+        [
+        ]
+    ]
+}

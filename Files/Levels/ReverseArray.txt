@@ -1,3 +1,5 @@
+Level 9: Reverse Array
+
 Pre-loaded on the stack is an array of characters called characters.
 
 Your task is to reverse this array, and store the reversed characters in the same array.

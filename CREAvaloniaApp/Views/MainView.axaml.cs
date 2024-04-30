@@ -125,7 +125,12 @@ public partial class MainView : UserControl
             level1Button,
             level2Button,
             level3Button,
-            level4Button
+            level4Button,
+            level5Button,
+            level6Button,
+            level7Button,
+            level8Button,
+            level9Button
         ];
     }
 
@@ -136,7 +141,12 @@ public partial class MainView : UserControl
             level1Text,
             level2Text,
             level3Text,
-            level4Text
+            level4Text,
+            level5Text,
+            level6Text,
+            level7Text,
+            level8Text,
+            level9Text
         ];
     }
 
@@ -363,6 +373,41 @@ public partial class MainView : UserControl
         textEditor.Text = string.Empty;
         OnEditPressed(null, null);
         LoadLevel(4);
+    }
+
+    public void OnLevel5Pressed(object? sender, RoutedEventArgs? e)
+    {
+        textEditor.Text = string.Empty;
+        OnEditPressed(null, null);
+        LoadLevel(5);
+    }
+
+    public void OnLevel6Pressed(object? sender, RoutedEventArgs? e)
+    {
+        textEditor.Text = string.Empty;
+        OnEditPressed(null, null);
+        LoadLevel(6);
+    }
+
+    public void OnLevel7Pressed(object? sender, RoutedEventArgs? e)
+    {
+        textEditor.Text = string.Empty;
+        OnEditPressed(null, null);
+        LoadLevel(7);
+    }
+
+    public void OnLevel8Pressed(object? sender, RoutedEventArgs? e)
+    {
+        textEditor.Text = string.Empty;
+        OnEditPressed(null, null);
+        LoadLevel(8);
+    }
+
+    public void OnLevel9Pressed(object? sender, RoutedEventArgs? e)
+    {
+        textEditor.Text = string.Empty;
+        OnEditPressed(null, null);
+        LoadLevel(9);
     }
 
     public void OnSyntaxPressed(object? sender, RoutedEventArgs? e)

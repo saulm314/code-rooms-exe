@@ -1,0 +1,21 @@
+Level 7: Reference Types
+
+So far, every single variable we've stored has been on the stack, and the heap has been empty. This is because we have only been using value types. int, double, char, and bool/boolean are all value types, meaning that their value is stored directly. On the stack, you can see that the value of an integer is stored directly on the triangle. But also, so far, each variable has only stored one value. What if we wanted to store more than one value in a variable? For example, in level 5 there were two rectangles, and accordingly we had two height variables and two width variables. What if there had been 50 rectangles? It would be completely impractical to write width, width2, width3, and so on up to width50, and then the same for the height. Clearly, a more efficient solution is needed.
+
+For this we will use an array. Each type covered up to this point has an associated array type, denoted by []. For example, an array of integers is denoted by int[], while an array of characters is denoted by char[]. An array is a reference type, meaning that the value it contains on the stack is not the actual value of the array, but a reference to where the actual value is stored. In practice, this value will be stored on the heap.
+
+By default, a reference type has a value of null, meaning that it points to the null field on the heap, which is always empty. When we instantiate a reference type such as an array, the data will get stored on the heap, and on the stack will be a reference to that data.
+
+There are two ways to create a new array (not specific to Booleans or characters):
+bool[] myBools = new bool[5];
+char[] myChars = new char[] { 'a', 'b', 'c' };
+
+The first way creates a new array of Booleans of length 5. This simply means that on the heap there will be 5 Booleans arranged consecutively.
+
+The second way creates a new array of characters, with the characters a, b, and c.
+
+Then we can read the element of an array by writing myBools[0] for the first element, myBools[1] for the second element, and so on. We can also write an element of an array by writing myBools[0] = true;
+
+For 1 star, create a new Boolean array of length 4.
+For 2 stars, set the final value in the array to true, while keeping the rest as false.
+For 3 stars, also create a new character array containing the characters x, y, and z.
