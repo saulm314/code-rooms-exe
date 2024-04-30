@@ -417,7 +417,7 @@ namespace CRECSharpInterpreter
             for (int i = 0; i < 10; i++)
             {
                 for (int j = 0; j < 10; j++)
-                    Write(string.Format("{0,10}", Memory.Instance.Heap[10 * i + j]?.ValueAsString ?? "x"));
+                    Write(string.Format("{0,10}", Memory.Instance.Heap.Size >= 100 ? Memory.Instance.Heap[10 * i + j]?.ValueAsString ?? "x" : ""));
                 Write("\n");
             }
             WriteLine();

@@ -148,6 +148,8 @@ public partial class MainView : UserControl
 
     private void ConfigureHeapGrid()
     {
+        heapGrid.Children.Clear();
+        heapCells.Clear();
         RowDefinitions rowDefinitions = heapGrid.RowDefinitions;
         ColumnDefinitions columnDefinitions = heapGrid.ColumnDefinitions;
         int count = 0;
@@ -598,6 +600,7 @@ public partial class MainView : UserControl
             panel.Children.Clear();
     }
 
+    private int displayedHeapSize = 50;
     private void DisplayHeap(Heap? heap)
     {
         if (heap == null)
@@ -605,7 +608,35 @@ public partial class MainView : UserControl
             ClearHeap();
             return;
         }
-        for (int i = 0; i < 50; i++)
+        while (displayedHeapSize < heap.Size)
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                RowDefinition cellRow = new()
+                {
+                    Height = new(MainViewModel.HEAP_CELL_HEIGHT)
+                };
+                RowDefinition separatorRow = new()
+                {
+                    Height = new(MainViewModel.HEAP_HORIZONTAL_SEPARATOR_HEIGHT)
+                };
+                heapGrid.RowDefinitions.Add(cellRow);
+                heapGrid.RowDefinitions.Add(separatorRow);
+            }
+            ConfigureHeapGrid();
+            displayedHeapSize += 50;
+        }
+        while (displayedHeapSize > heap.Size)
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                heapGrid.RowDefinitions.RemoveAt(heapGrid.RowDefinitions.Count - 1);
+                heapGrid.RowDefinitions.RemoveAt(heapGrid.RowDefinitions.Count - 1);
+            }
+            ConfigureHeapGrid();
+            displayedHeapSize -= 50;
+        }
+        for (int i = 0; i < displayedHeapSize; i++)
         {
             heapCells[i].Children.Clear();
             Variable? variable = heap[i];

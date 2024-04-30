@@ -12,6 +12,7 @@ namespace CRECSharpInterpreter
         private static void Main(string[] args)
         {
             Environment.Debug = true;
+            Heap.initialHeapCapacity = 100;
             if (args.Length > 0 && args[0] == "test")
             {
                 Environment.Verbose = args.Length > 1 && args[1] == "verbose";

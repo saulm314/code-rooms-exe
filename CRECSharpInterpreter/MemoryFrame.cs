@@ -88,6 +88,7 @@ namespace CRECSharpInterpreter
                 Variable? variable = oldVariable == null ? null : Copy(oldVariable);
                 heap[i] = variable;
             }
+            heap.Size = oldHeap.Size;
             return heap;
         }
 

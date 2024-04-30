@@ -5,12 +5,12 @@ namespace CRECSharpInterpreter
 {
     public class Heap : IEnumerable<Variable?>
     {
-        private const int INITIAL_HEAP_CAPACITY = 100;
-        private const int HEAP_ADDITION_CAPACITY = INITIAL_HEAP_CAPACITY;
+        public static int initialHeapCapacity = 50;
+        private static int heapAdditionCapacity = initialHeapCapacity;
 
         public Heap()
         {
-            variables.AddRange(GetNullVariables(INITIAL_HEAP_CAPACITY));
+            variables.AddRange(GetNullVariables(initialHeapCapacity));
             variables[0] = new(null);
         }
 
@@ -26,9 +26,9 @@ namespace CRECSharpInterpreter
                 yield return null;
         }
 
-        public int Size { get; private set; } = INITIAL_HEAP_CAPACITY;
+        public int Size { get; internal set; } = initialHeapCapacity;
 
-        internal List<Variable?> variables = new(INITIAL_HEAP_CAPACITY);
+        internal List<Variable?> variables = new(initialHeapCapacity);
         public Variable? this[int i] { get => variables[i]; internal set => variables[i] = value; }
 
         public IEnumerator<Variable?> GetEnumerator()
@@ -182,8 +182,8 @@ namespace CRECSharpInterpreter
         private int ResizeHeap()
         {
             int index = variables.Capacity;
-            variables.Capacity += HEAP_ADDITION_CAPACITY;
-            variables.AddRange(GetNullVariables(HEAP_ADDITION_CAPACITY));
+            variables.Capacity += heapAdditionCapacity;
+            variables.AddRange(GetNullVariables(heapAdditionCapacity));
             Size = variables.Capacity;
             return index;
         }
