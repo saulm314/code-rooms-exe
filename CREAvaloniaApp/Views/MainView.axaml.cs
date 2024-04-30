@@ -422,6 +422,26 @@ public partial class MainView : UserControl
             Scope scope = scopes[i];
             foreach (Variable variable in scope.DeclaredVariables)
                 PushToStack(variable);
+
+            // the indexer for the Controls class appears to be broken,
+            //      so to get the last element, we enumerate through the entire collection
+            //      instead of simply referencing stackPanel.Children[^1]
+            // in practice there won't be very many items in this list, so this shouldn't cause performance issues
+            int lastChildIndex = stackPanel.Children.Count - 1;
+            int j = 0;
+            foreach (Control control in stackPanel.Children)
+            {
+                if (j++ != lastChildIndex)
+                    continue;
+                Panel panel = (Panel)control;
+                Panel childPanel = new()
+                {
+                    Height = MainViewModel.STACK_SEPARATOR_HEIGHT / 2,
+                    Width = MainViewModel.STACK_WIDTH
+                };
+                childPanel.Background = new SolidColorBrush(Colors.White);
+                panel.Children.Add(childPanel);
+            }
         }
     }
 
