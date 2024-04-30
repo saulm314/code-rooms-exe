@@ -454,17 +454,13 @@ public partial class MainView : UserControl
             Text = variable.ValueAsString,
             FontSize = GetFontSize(variable),
             FontFamily = new("Cascadia Mono"),
-            FontWeight = variable._VarType!._Storage == VarType.Storage.Value ?
-                FontWeight.UltraBold :
-                FontWeight.Normal,
-            Foreground = variable._VarType._Storage == VarType.Storage.Value ?
-                new SolidColorBrush(Colors.Black) :
-                new SolidColorBrush(Colors.White),
+            FontWeight = GetFontWeight(variable),
+            Foreground = GetForeground(variable),
             TextAlignment = TextAlignment.Center,
-            Height = 20,
-            Width = MainViewModel.STACK_CELL_HEIGHT,
-            HorizontalAlignment = HorizontalAlignment.Center,
-            VerticalAlignment = VerticalAlignment.Center
+            Height = GetHeight(variable),
+            Width = GetWidth(variable),
+            HorizontalAlignment = GetHorizontalAlignment(variable),
+            VerticalAlignment = GetVerticalAlignment(variable)
         };
         Panel imageBox = new()
         {
@@ -485,21 +481,74 @@ public partial class MainView : UserControl
 
     private int GetFontSize(Variable variable)
     {
-        if (variable._VarType == null)
-            return -1;
         int length = variable.ValueAsString.Length;
-        return variable._VarType.Slug switch
+        return variable._VarType!.Slug switch
         {
             "bool" => 16,
             "char" => 16,
-            "int" or "double" when length <= 2 => 16,
-            "int" or "double" when length <= 3 => 12,
+            "int" or "double" when length <= 4 => 16,
+            "int" or "double" when length <= 5 => 12,
             "int" or "double" => 8,
-            "string" when length <= 3 => 12,
+            "string" when length <= 3 => 16,
+            "string" when length <= 4 => 12,
             "string" => 8,
-            _ when length <= 3 => 16,
-            _ when length <= 4 => 12,
+            _ when length <= 4 => 16,
+            _ when length <= 6 => 12,
             _ => 8
+        };
+    }
+
+    private int GetHeight(Variable variable)
+    {
+        int length = variable.ValueAsString.Length;
+        return variable._VarType!.Slug switch
+        {
+            "int" or "double" when length <= 5 => 20,
+            "int" or "double" => 15,
+            _ => 20
+        };
+    }
+
+    private int GetWidth(Variable variable)
+    {
+        return variable._VarType!.Slug switch
+        {
+            "string" => MainViewModel.STACK_CELL_HEIGHT * 9 / 10,
+            _ => MainViewModel.STACK_CELL_HEIGHT
+        };
+    }
+
+    private FontWeight GetFontWeight(Variable variable)
+    {
+        return variable._VarType!._Storage == VarType.Storage.Value ?
+            FontWeight.UltraBold :
+            FontWeight.Normal;
+    }
+
+    private IBrush GetForeground(Variable variable)
+    {
+        return variable._VarType!._Storage == VarType.Storage.Value ?
+            new SolidColorBrush(Colors.Black) :
+            new SolidColorBrush(Colors.White);
+    }
+
+    private HorizontalAlignment GetHorizontalAlignment(Variable variable)
+    {
+        return variable._VarType!.Slug switch
+        {
+            "string" => HorizontalAlignment.Right,
+            _ => HorizontalAlignment.Center
+        };
+    }
+
+    private VerticalAlignment GetVerticalAlignment(Variable variable)
+    {
+        int length = variable.ValueAsString.Length;
+        return variable._VarType!.Slug switch
+        {
+            "int" or "double" when length <= 2 => VerticalAlignment.Center,
+            "int" or "double" => VerticalAlignment.Bottom,
+            _ => VerticalAlignment.Center
         };
     }
 
@@ -544,17 +593,13 @@ public partial class MainView : UserControl
                 Text = variable.ValueAsString,
                 FontSize = GetFontSize(variable),
                 FontFamily = new("Cascadia Mono"),
-                FontWeight = variable._VarType._Storage == VarType.Storage.Value ?
-                    FontWeight.UltraBold :
-                    FontWeight.Normal,
-                Foreground = variable._VarType._Storage == VarType.Storage.Value ?
-                    new SolidColorBrush(Colors.Black) :
-                    new SolidColorBrush(Colors.White),
+                FontWeight = GetFontWeight(variable),
+                Foreground = GetForeground(variable),
                 TextAlignment = TextAlignment.Center,
-                Height = 20,
-                Width = MainViewModel.STACK_CELL_HEIGHT,
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center
+                Height = GetHeight(variable),
+                Width = GetWidth(variable),
+                HorizontalAlignment = GetHorizontalAlignment(variable),
+                VerticalAlignment = GetVerticalAlignment(variable)
             };
             heapCells[i].Children.Add(image);
             heapCells[i].Children.Add(value);
