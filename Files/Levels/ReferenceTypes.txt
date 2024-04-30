@@ -18,4 +18,7 @@ Then we can read the element of an array by writing myBools[0] for the first ele
 
 For 1 star, create a new Boolean array of length 4.
 For 2 stars, set the final value in the array to true, while keeping the rest as false.
-For 3 stars, also create a new character array containing the characters x, y, and z.
+For 3 stars, also create a new character array containing the characters x, y, and z, and reference it from two stack variables.
+For 4 stars, create another character array containing the characters x, y, and z again.
+
+For no stars but a feeling of accomplishment, can you figure out what happens if you compare your character arrays with the == operator? What is being compared? Is it the reference, or the actual items in the array?
