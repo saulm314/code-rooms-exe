@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace CRECSharpInterpreter
 {
@@ -14,11 +15,15 @@ namespace CRECSharpInterpreter
         public void Init()
         {
             Stack = Copy(Memory.Instance!.Stack);
+            ActiveLoops = Copy(Memory.Instance.ActiveLoops);
+            ActiveForHeaders = Copy(Memory.Instance.ActiveForHeaders);
             Heap = Copy(Memory.Instance.Heap);
         }
 
         public Statement? Statement { get; init; }
         public Stack<Scope>? Stack { get; private set; }
+        public Stack<int>? ActiveLoops { get; private set; }
+        public Stack<int>? ActiveForHeaders { get; private set; }
         public Heap? Heap { get; private set; }
 
         public int Index { get; } = Memory.Instance?.Frames.Count ?? 0;
@@ -83,7 +88,17 @@ namespace CRECSharpInterpreter
                 Variable? variable = oldVariable == null ? null : Copy(oldVariable);
                 heap[i] = variable;
             }
+            heap.Size = oldHeap.Size;
             return heap;
+        }
+
+        private Stack<T> Copy<T>(Stack<T> oldStack) where T : struct
+        {
+            T[] oldItems = oldStack.ToArray();
+            Stack<T> stack = new();
+            for (int i = oldItems.Length - 1; i >= 0; i--)
+                stack.Push(oldItems[i]);
+            return stack;
         }
 
         public override string ToString()

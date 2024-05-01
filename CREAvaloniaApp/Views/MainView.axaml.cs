@@ -125,7 +125,12 @@ public partial class MainView : UserControl
             level1Button,
             level2Button,
             level3Button,
-            level4Button
+            level4Button,
+            level5Button,
+            level6Button,
+            level7Button,
+            level8Button,
+            level9Button
         ];
     }
 
@@ -136,7 +141,12 @@ public partial class MainView : UserControl
             level1Text,
             level2Text,
             level3Text,
-            level4Text
+            level4Text,
+            level5Text,
+            level6Text,
+            level7Text,
+            level8Text,
+            level9Text
         ];
     }
 
@@ -148,6 +158,8 @@ public partial class MainView : UserControl
 
     private void ConfigureHeapGrid()
     {
+        heapGrid.Children.Clear();
+        heapCells.Clear();
         RowDefinitions rowDefinitions = heapGrid.RowDefinitions;
         ColumnDefinitions columnDefinitions = heapGrid.ColumnDefinitions;
         int count = 0;
@@ -363,6 +375,41 @@ public partial class MainView : UserControl
         LoadLevel(4);
     }
 
+    public void OnLevel5Pressed(object? sender, RoutedEventArgs? e)
+    {
+        textEditor.Text = string.Empty;
+        OnEditPressed(null, null);
+        LoadLevel(5);
+    }
+
+    public void OnLevel6Pressed(object? sender, RoutedEventArgs? e)
+    {
+        textEditor.Text = string.Empty;
+        OnEditPressed(null, null);
+        LoadLevel(6);
+    }
+
+    public void OnLevel7Pressed(object? sender, RoutedEventArgs? e)
+    {
+        textEditor.Text = string.Empty;
+        OnEditPressed(null, null);
+        LoadLevel(7);
+    }
+
+    public void OnLevel8Pressed(object? sender, RoutedEventArgs? e)
+    {
+        textEditor.Text = string.Empty;
+        OnEditPressed(null, null);
+        LoadLevel(8);
+    }
+
+    public void OnLevel9Pressed(object? sender, RoutedEventArgs? e)
+    {
+        textEditor.Text = string.Empty;
+        OnEditPressed(null, null);
+        LoadLevel(9);
+    }
+
     public void OnSyntaxPressed(object? sender, RoutedEventArgs? e)
     {
         Environment._Syntax = Environment._Syntax switch
@@ -407,14 +454,14 @@ public partial class MainView : UserControl
     {
         OutputClear();
         OutputWriteLine(Frame);
-        DisplayStack(Frame.Stack);
+        DisplayStack(Frame.Stack, Frame.ActiveLoops, Frame.ActiveForHeaders);
         DisplayHeap(Frame.Heap);
     }
 
-    private void DisplayStack(Stack<Scope>? stack)
+    private void DisplayStack(Stack<Scope>? stack, Stack<int>? activeLoops, Stack<int>? activeForHeaders)
     {
         ClearStack();
-        if (stack == null)
+        if (stack == null || activeLoops == null || activeForHeaders == null)
             return;
         Scope[] scopes = stack.ToArray();
         for (int i = scopes.Length - 1; i >= 0; i--)
@@ -422,7 +469,43 @@ public partial class MainView : UserControl
             Scope scope = scopes[i];
             foreach (Variable variable in scope.DeclaredVariables)
                 PushToStack(variable);
+
+            if (i == 0)
+                continue;
+
+            int antiIndex = scopes.Length - 1 - i;
+            bool scopeEndIsActiveForHeader = activeForHeaders.Contains(antiIndex + 1);
+            bool previousScopeEndIsActiveForHeader = activeForHeaders.Contains(antiIndex);
+            bool scopeEndIsActiveLoop = activeLoops.Contains(antiIndex + 1);
+            IBrush separatorBrush = (scopeEndIsActiveForHeader, previousScopeEndIsActiveForHeader, scopeEndIsActiveLoop) switch
+            {
+                (true, _, _) => MainViewModel.GetBrush(MainViewModel.STACK_LOOP_SEPARATOR_BG),
+                (false, true, _) => MainViewModel.GetBrush(MainViewModel.STACK_FOR_HEADER_SEPARATOR_BG),
+                (false, false, true) => MainViewModel.GetBrush(MainViewModel.STACK_LOOP_SEPARATOR_BG),
+                _ => MainViewModel.GetBrush(MainViewModel.STACK_NON_LOOP_SEPARATOR_BG)
+            };
+
+            // the indexer for the Controls class appears to be broken,
+            //      so to get the last element, we enumerate through the entire collection
+            //      instead of simply referencing stackPanel.Children[^1]
+            // in practice there won't be very many items in this list, so this shouldn't cause performance issues
+            int lastChildIndex = stackPanel.Children.Count - 1;
+            int j = 0;
+            foreach (Control control in stackPanel.Children)
+            {
+                if (j++ != lastChildIndex)
+                    continue;
+                Panel panel = (Panel)control;
+                Panel childPanel = new()
+                {
+                    Height = MainViewModel.STACK_SEPARATOR_HEIGHT / 2,
+                    Width = MainViewModel.STACK_WIDTH
+                };
+                childPanel.Background = separatorBrush;
+                panel.Children.Add(childPanel);
+            }
         }
+        stackScroll.ScrollToEnd();
     }
 
     private void PushToStack(Variable variable)
@@ -452,15 +535,15 @@ public partial class MainView : UserControl
         TextBlock value = new()
         {
             Text = variable.ValueAsString,
-            FontSize = 16,
+            FontSize = GetFontSize(variable),
             FontFamily = new("Cascadia Mono"),
-            FontWeight = FontWeight.UltraBold,
-            Foreground = new SolidColorBrush(Colors.Black),
+            FontWeight = GetFontWeight(variable),
+            Foreground = GetForeground(variable),
             TextAlignment = TextAlignment.Center,
-            Height = 20,
-            Width = MainViewModel.STACK_CELL_HEIGHT,
-            HorizontalAlignment = HorizontalAlignment.Center,
-            VerticalAlignment = VerticalAlignment.Center
+            Height = GetHeight(variable),
+            Width = GetWidth(variable),
+            HorizontalAlignment = GetHorizontalAlignment(variable),
+            VerticalAlignment = GetVerticalAlignment(variable)
         };
         Panel imageBox = new()
         {
@@ -479,6 +562,79 @@ public partial class MainView : UserControl
         stackPanel.Children.Add(separator);
     }
 
+    private int GetFontSize(Variable variable)
+    {
+        int length = variable.ValueAsString.Length;
+        return variable._VarType!.Slug switch
+        {
+            "bool" => 16,
+            "char" => 16,
+            "int" or "double" when length <= 4 => 16,
+            "int" or "double" when length <= 5 => 12,
+            "int" or "double" => 8,
+            "string" when length <= 3 => 16,
+            "string" when length <= 4 => 12,
+            "string" => 8,
+            _ when length <= 4 => 16,
+            _ when length <= 6 => 12,
+            _ => 8
+        };
+    }
+
+    private int GetHeight(Variable variable)
+    {
+        int length = variable.ValueAsString.Length;
+        return variable._VarType!.Slug switch
+        {
+            "int" or "double" when length <= 5 => 20,
+            "int" or "double" => 15,
+            _ => 20
+        };
+    }
+
+    private int GetWidth(Variable variable)
+    {
+        return variable._VarType!.Slug switch
+        {
+            "string" => MainViewModel.STACK_CELL_HEIGHT * 9 / 10,
+            _ => MainViewModel.STACK_CELL_HEIGHT
+        };
+    }
+
+    private FontWeight GetFontWeight(Variable variable)
+    {
+        return variable._VarType!._Storage == VarType.Storage.Value ?
+            FontWeight.UltraBold :
+            FontWeight.Normal;
+    }
+
+    private IBrush GetForeground(Variable variable)
+    {
+        return variable._VarType!._Storage == VarType.Storage.Value ?
+            new SolidColorBrush(Colors.Black) :
+            new SolidColorBrush(Colors.White);
+    }
+
+    private HorizontalAlignment GetHorizontalAlignment(Variable variable)
+    {
+        return variable._VarType!.Slug switch
+        {
+            "string" => HorizontalAlignment.Right,
+            _ => HorizontalAlignment.Center
+        };
+    }
+
+    private VerticalAlignment GetVerticalAlignment(Variable variable)
+    {
+        int length = variable.ValueAsString.Length;
+        return variable._VarType!.Slug switch
+        {
+            "int" or "double" when length <= 2 => VerticalAlignment.Center,
+            "int" or "double" => VerticalAlignment.Bottom,
+            _ => VerticalAlignment.Center
+        };
+    }
+
     private void ClearStack()
     {
         stackPanel.Children.Clear();
@@ -490,6 +646,7 @@ public partial class MainView : UserControl
             panel.Children.Clear();
     }
 
+    private int displayedHeapSize = 50;
     private void DisplayHeap(Heap? heap)
     {
         if (heap == null)
@@ -497,7 +654,36 @@ public partial class MainView : UserControl
             ClearHeap();
             return;
         }
-        for (int i = 0; i < 50; i++)
+        int previousDisplayedHeapSize = displayedHeapSize;
+        while (displayedHeapSize < heap.Size)
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                RowDefinition cellRow = new()
+                {
+                    Height = new(MainViewModel.HEAP_CELL_HEIGHT)
+                };
+                RowDefinition separatorRow = new()
+                {
+                    Height = new(MainViewModel.HEAP_HORIZONTAL_SEPARATOR_HEIGHT)
+                };
+                heapGrid.RowDefinitions.Add(cellRow);
+                heapGrid.RowDefinitions.Add(separatorRow);
+            }
+            ConfigureHeapGrid();
+            displayedHeapSize += 50;
+        }
+        while (displayedHeapSize > heap.Size)
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                heapGrid.RowDefinitions.RemoveAt(heapGrid.RowDefinitions.Count - 1);
+                heapGrid.RowDefinitions.RemoveAt(heapGrid.RowDefinitions.Count - 1);
+            }
+            ConfigureHeapGrid();
+            displayedHeapSize -= 50;
+        }
+        for (int i = 0; i < displayedHeapSize; i++)
         {
             heapCells[i].Children.Clear();
             Variable? variable = heap[i];
@@ -518,18 +704,20 @@ public partial class MainView : UserControl
             TextBlock value = new()
             {
                 Text = variable.ValueAsString,
-                FontSize = 16,
+                FontSize = GetFontSize(variable),
                 FontFamily = new("Cascadia Mono"),
-                FontWeight = FontWeight.UltraBold,
-                Foreground = new SolidColorBrush(Colors.Black),
+                FontWeight = GetFontWeight(variable),
+                Foreground = GetForeground(variable),
                 TextAlignment = TextAlignment.Center,
-                Height = 20,
-                Width = MainViewModel.STACK_CELL_HEIGHT,
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center
+                Height = GetHeight(variable),
+                Width = GetWidth(variable),
+                HorizontalAlignment = GetHorizontalAlignment(variable),
+                VerticalAlignment = GetVerticalAlignment(variable)
             };
             heapCells[i].Children.Add(image);
             heapCells[i].Children.Add(value);
         }
+        if (displayedHeapSize != previousDisplayedHeapSize)
+            heapScroll.ScrollToEnd();
     }
 }

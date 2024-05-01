@@ -2,6 +2,6 @@
 {
     public class Save
     {
-        public int[]? starsCollected = new int[4];
+        public int[]? starsCollected = new int[9];
     }
 }

@@ -1,0 +1,25 @@
+Level 3: Read/Write Variables
+
+Once a variable has been declared, we can write to it. The very first time a variable is being written to is called initialisation. This can happen at the same time as declaration, as shown in the previous level, or it can happen after. To write to a variable after it has been declared, we do so the same way as in the previous level, except without specifying a type, as this would count as a double declaration. So to initialise myInteger to a value of 5 after it has been declared, we would write:
+myInteger = 5;
+
+Pre-loaded on the stack is a Boolean variable called iAmTrue, which hasn't been initialised. This is achieved by writing (in C# and Java respectively):
+bool iAmTrue;
+boolean iAmTrue;
+
+(This is already pre-written, so you don't need to do anything there.)
+
+For 1 star, your task is to initialise this variable to a value of true.
+
+We can also read variables. For example, to read the value of myInteger, and write that value to myOtherInteger, we would write:
+myOtherInteger = myInteger;
+
+In English, this reads as "write to myOtherInteger the value obtained by reading myInteger".
+
+Also pre-loaded on the stack is a variable of type double called number.
+
+For 2 stars, your task is to declare a second variable called number2, and write the value of number to it. To ensure that you can't hardcode the value, your code will execute 3 times with different numbers.
+
+For no stars but a feeling of accomplishment, can you figure out what happens if you:
+1) try to read a variable without declaring it?
+2) try to read a variable without initialising it?

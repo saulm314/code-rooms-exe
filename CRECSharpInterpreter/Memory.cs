@@ -26,6 +26,7 @@ namespace CRECSharpInterpreter
         public static Memory? Instance { get; private set; }
 
         public Stack<int> ActiveLoops { get; } = new();
+        public Stack<int> ActiveForHeaders { get; } = new();
 
         public Stack<Scope> Stack { get; } = new();
         public Heap Heap { get; } = new();
@@ -64,6 +65,12 @@ namespace CRECSharpInterpreter
             PushToStack();
         }
 
+        public void PushForHeaderToStack()
+        {
+            ActiveForHeaders.Push(Stack.Count);
+            PushToStack();
+        }
+
         public void PopLoopFromStack()
         {
             int desiredStackCount;
@@ -79,6 +86,12 @@ namespace CRECSharpInterpreter
                 throw new MemoryException(this, "Internal error");
             while (Stack.Count > desiredStackCount)
                 PopFromStack();
+        }
+
+        public void PopForHeaderFromStack()
+        {
+            ActiveForHeaders.Pop();
+            PopFromStack();
         }
 
         public void VerifyPopLoopValid()

@@ -1,0 +1,58 @@
+{
+    "id" : 3,
+    "name" : "Read/Write Variables",
+    "slug" : "ReadWriteVariables",
+    "maxStars" : 2,
+    "initialStacks" : [
+        [
+            {
+                "type" : "bool",
+                "name" : "iAmTrue",
+                "value" : false,
+                "initialised" : false
+            },
+            {
+                "type" : "double",
+                "name" : "number",
+                "value" : 3.2,
+                "initialised" : true
+            }
+        ],
+        [
+            {
+                "type" : "bool",
+                "name" : "iAmTrue",
+                "value" : false,
+                "initialised" : false
+            },
+            {
+                "type" : "double",
+                "name" : "number",
+                "value" : 5.7,
+                "initialised" : true
+            }
+        ],
+        [
+            {
+                "type" : "bool",
+                "name" : "iAmTrue",
+                "value" : false,
+                "initialised" : false
+            },
+            {
+                "type" : "double",
+                "name" : "number",
+                "value" : 63.9,
+                "initialised" : true
+            }
+        ]
+    ],
+    "initialHeaps" : [
+        [
+        ],
+        [
+        ],
+        [
+        ]
+    ]
+}

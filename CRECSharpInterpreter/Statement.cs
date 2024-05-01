@@ -186,7 +186,7 @@ namespace CRECSharpInterpreter
                         Condition = DeclareConditionVariable();
                         break;
                     case Type.For:
-                        Memory.Instance!.PushToStack();
+                        Memory.Instance!.PushForHeaderToStack();
                         Initialiser = CreateInitialiser();
                         Initialiser.Parent = this;
                         Memory.Instance.PushLoopToStack();
@@ -370,7 +370,7 @@ namespace CRECSharpInterpreter
                     if (Executed)
                     {
                         Memory.Instance!.PopLoopFromStack();
-                        Memory.Instance.PopFromStack();
+                        Memory.Instance.PopForHeaderFromStack();
                     }
                     return;
                 case Type.IfElse:
@@ -417,7 +417,7 @@ namespace CRECSharpInterpreter
             for (int i = 0; i < 10; i++)
             {
                 for (int j = 0; j < 10; j++)
-                    Write(string.Format("{0,10}", Memory.Instance.Heap[10 * i + j]?.ValueAsString ?? "x"));
+                    Write(string.Format("{0,10}", Memory.Instance.Heap.Size >= 100 ? Memory.Instance.Heap[10 * i + j]?.ValueAsString ?? "x" : ""));
                 Write("\n");
             }
             WriteLine();
@@ -468,7 +468,7 @@ namespace CRECSharpInterpreter
             {
                 case Type.ForSingleStatement:
                 case Type.ForMultiStatement:
-                    Memory.Instance.PopFromStack();
+                    Memory.Instance.PopForHeaderFromStack();
                     break;
                 default:
                     break;

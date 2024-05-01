@@ -1,0 +1,17 @@
+Level 5: Arithmetic
+
+It would be quite useless to store numbers if we couldn't do any arithmetic with them. There are four arithmetic operators that can be used on ints and doubles: +, -, *, and /. For example, the expression 5 + 3 \* 2 has a value of 11. In the case of division, dividing doubles gives an exact value, whereas dividing ints rounds the answer down to the nearest integer. For example, 10.0 / 4.0 is 2.5, whereas 10/4 is 2. Finally, the % operator can be used on integers to get the remainder after dividing them. For example, 5 % 3 is 2, because 5 / 3 is 1 remainder 2.
+
+Pre-loaded on the stack is some information about two rectangles. For one star, your task is to find the combined area of both rectangles. For another star, round your answer to 1 decimal place.
+
+The pre-loaded stack information is as follows:
+double width
+double height
+double width2
+double height2
+
+You are to store the combined area in a double called combinedArea. For example, if width is 4.14, height is 2.0, width2 is 3.0, and height2 is 5.0, then for one star combinedArea should store the value 23.28. For two stars, combinedArea should store the value 23.3.
+
+Finally, pre-loaded on the stack is an int called myInt. For another star, your task is to find out whether this number is even or odd. Store the result in an int called isOdd, such that if myInt is even, then isOdd should be 0, and if myInt is odd, then isOdd should be 1.
+
+The maximum stars is 3, and the minimum pass mark is 1 star.

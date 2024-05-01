@@ -1,0 +1,29 @@
+Level 6: Booleans
+
+In the previous level, we wanted to find out whether a given number was odd. When we ask the question, "Is this number odd?" the answer is either yes or no. Therefore it is somewhat strange that our answer in the previous question was not yes/no, but a number 1/0. Without further context, it can be difficult to know what exactly 1 or 0 means. Is there a better way to store that value?
+
+As mentioned, the answer to whether a number is odd is yes or no. Can you think of any data type that can have two possible values? It is the Boolean of course! If we store the variable isOdd as a Boolean, it is much more intuitive what it means. If the value of isOdd is true, then clearly the number is odd, whereas if it is false, then clearly the number is even.
+
+So, is there any way to start out with an integer, and convert that to a Boolean? The answer is the == operator, which takes two values of the same type, and produces a Boolean. In English, "==" reads as "does it equal to?". For example, the expression 5 == 5 has a value of true, while the expression 5 == 6 has a value of false. The expression 'a' == 'a' has a value of true, while the expression 'a' == 'b' has a value of false. There is also the != operator, which checks for inequality rather than equality, such that 'a' != 'a' is false, and 'a' != 'b' is true, since "the character a is not equal to the character b" is a true statement.
+
+As in the previous level, pre-loaded on the stack is an int called myInt. For 1 star, your task is to create a bool (or boolean if you're using Java) called isOdd, and store a true/false value depending on whether the number is even or odd.
+
+For 2 stars, create a bool/boolean called isEven which stores the opposite of that value. You may or may not find the ! operator useful, which in English reads as "not". I.e. !true is false and !false is true.
+
+Another useful Boolean operator is &, which in English is read as "and". This operator takes two Boolean values, and produces a Boolean that is true if the first value is true AND the second value is true. All possible combinations of this operator are as follows:
+false & false is false
+false & true is false
+true & false is false
+true & true is true
+
+Similarly, there is the | operator, which in English is read as "or". This operator takes two Boolean values, and produces a Boolean that is true if the first value is true OR the second value is true. All possible combinations of this operator are as follows:
+false | false is false
+false | true is true
+true | false is true
+true | true is true
+
+Pre-loaded on the stack is a second int called myInt2. For 3 stars, your task is to create a bool/boolean called bothAreOdd and store true if both myInt and myInt2 are odd, or false if at least one of them is even. Still for the same star, you should also create a bool/boolean called atLeastOneIsOdd and store true if either myInt or myInt2 (or both) are odd, or false if they are both even.
+
+The last interesting Boolean operators are <, <=, >, and >=. These take two ints or two doubles and compare their sizes. For example, 5 < 7 is true, 7 < 7 is false, and 8 < 7 is false. <= reads as "less than or equal", such that 5 <= 7 is true, 7 <= 7 is true, and 8 <= 7 is false. The opposite is true for the > and >= operators.
+
+For 4 stars, create a bool called firstIsSmallerThanSecond and store true if myInt is less than myInt2, or false otherwise.

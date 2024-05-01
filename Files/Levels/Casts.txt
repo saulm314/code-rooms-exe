@@ -1,0 +1,11 @@
+Level 4: Casts
+
+We have seen two types of numbers: int and double. It is not possible to write an int value to a double variable, and vice versa. A variable of a certain type can only contain that type. However, it is possible to convert an int to a double (or vice versa), by using an operator called a cast. This is done by writing the type you wish to convert to in brackets before the value, for example the value of (double)5 is 5.0, and the value of (int)5.0 is 5. The value of (int)5.7 is also 5. This is because it is impossible to store the precise value of 5.7 in an integer, so some information is lost in the conversion, and only the whole number bit remains. This is why the shape of an int is just a trimmed-down double: the int contains less information than the double.
+
+Pre-loaded on the stack is a double called myDouble, and an int called myInt. For one star, your task is to create an int called myDoubleConverted and write the value of myDouble to it by using a cast. Likewise, you should create a double called myIntConverted and write the value of myInt to it.
+
+Also pre-loaded on the stack is a double called doubleWithDecimal. For another star, your task is to create a double called doubleWithoutDecimal and write the value of doubleWithDecimal, but rounded \*down\* to the nearest integer. I.e. if doubleWithDecimal has a value of 3.6, then doubleWithoutDecimal should have a value of 3.0.
+
+Finally, pre-loaded on the stack is a double called unroundedNumber. For yet another star, your task is to create an int called roundedNumber and write the value of unroundedNumber to it, but rounded to the nearest integer. E.g. if unroundedNumber is 5.7, roundedNumber should be 6. If unroundedNumber is 4.3, roundedNumber should be 4. If unroundedNumber is 7.0, roundedNumber should be 7.
+
+Get one star per task completed as above. At least one star is required to pass the level.
