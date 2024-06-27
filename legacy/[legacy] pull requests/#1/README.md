@@ -1,0 +1,91 @@
+Merge commit: https://github.com/saulm314/code-rooms-exe/commit/65b15c2689987bd3cd25f4a0b3aa36bad04e190f
+
+# Comment
+
+Takes C# code as an input, throws compilation errors where appropriate, then processes the code line by line, displaying every memory value assigned to the stack and the heap.
+
+Although we say that this is a C# interpreter, it does not perfectly reflect C#. For example, unlike C#, the "==" operator for strings compares the references, rather than the values. Also, explicit casts between doubles and ints are required.
+
+The interpreter supports the following features (not exhaustive; some features are potentially bugged and need to undergo testing):
+- variable declaration
+- variable initialisation
+- reading variables
+- writing to variables
+- int data type
+- bool data type
+- double data type
+- char data type
+- string data type
+- array data type for each of the above
+- int literals
+- bool literals
+- double literals
+- char literals (all escape sequences except those beginning with \u, \U, and \x are supported)
+- string literals (no escape sequences)
+- array creation by choosing a length
+- array creation by specifying values
+- reading elements of an array
+- writing to elements of an array
+- reading characters of a string
+- appropriate error if attempting to write characters of a string, since strings are immutable
+- reading characters of an array of strings
+- appropriate error if attempting to write characters of an array of strings
+- reading the length of an array
+- reading the length of a string
+- null literal
+- setting a reference type to null
+- reading a reference type whose value is null
+- empty lines (just a semi-colon)
+- expression evaluation
+- bracket evaluation
+- operation evaluation
+- cast operation with the same input and output type
+- cast operation on null to any reference type
+- cast operation from int to double (explicit casts required)
+- cast operation from double to int (explicit casts required)
+- integer addition
+- integer subtraction
+- integer negation
+- integer confirmation (opposite of negation)
+- integer multiplication
+- integer division
+- integer remainder operator
+- integer "less than" operator
+- integer "less than or equal to" operator
+- integer "greater than" operator
+- integer "greater than or equal to" operator
+- double float addition
+- double float subtraction
+- double float negation
+- double float confirmation
+- double float multiplication
+- double float division
+- double float "less than" operator
+- double float "less than or equal to" operator
+- double float "greater than" operator
+- double float "greater than or equal to" operator
+- Boolean "and" operator
+- Boolean conditional "and" operator
+- Boolean "or" operator
+- Boolean conditional "or" operator
+- Boolean "xor" operator
+- Boolean negation
+- equality operator for all data types (for reference types, the reference is compared)
+- inequality operator for all data types (with the same caveat)
+- correct order of operations when evaluating expressions
+- chaining unary operators
+- single-line if statements
+- multiple-line if statements
+- single-line else statements
+- multiple-line else statements
+- single-line while loops
+- multiple-line while loops
+- single-line for loops
+- multiple-line for loops
+- optional for loop parameters
+- break statement
+- continue statement
+- automatic scope assignment
+- automatic scope dissociation
+- automatic garbage collection
+- automatic resizing of the heap as needed
