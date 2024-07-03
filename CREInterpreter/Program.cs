@@ -27,7 +27,7 @@ public class Program
                 Environment.Instance._Syntax = Syntax.Java;
                 break;
             default:
-                Console.Error.WriteLine($"Unrecognised choice {choice}, setting default value");
+                ConsoleError.WriteWarning($"Unrecognised choice {choice}, setting default value");
                 break;
         }
         Console.WriteLine($"Setting syntax to {Environment.Instance._Syntax}");
