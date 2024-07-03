@@ -4,12 +4,12 @@ namespace CREInterpreter;
 
 public class Interpreter(string Text)
 {
-    public InterpreterException? Compile()
+    public InterpreterException? Compile(Memory memory)
     {
         return null;
     }
 
-    public IEnumerable<InterpreterException?> Run()
+    public IEnumerable<InterpreterException?> Run(Memory memory)
     {
         yield break;
     }
