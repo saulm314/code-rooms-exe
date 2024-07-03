@@ -15,4 +15,15 @@ public class TokenSeparatorTests
 
         Assert.Throws<NullReferenceException>(actual);
     }
+
+    [Fact]
+    public void GetTokens_EmptyString_ReturnsEmptyEnumerable()
+    {
+        string input = string.Empty;
+
+        IToken[] tokens = TokenSeparator.GetTokens(input).ToArray();
+        int actual = tokens.Length;
+
+        Assert.Equal(0, actual);
+    }
 }
