@@ -14,37 +14,10 @@ public class Program
             Debug.WriteLine($"\t{arg}");
         Debug.WriteLine(null);
 
-        Console.WriteLine("Choose syntax: [1-2]");
-        Console.WriteLine("\t1) C#");
-        Console.WriteLine("\t2) Java");
-        Console.Write("> ");
-        string? choice = Console.ReadLine();
-        switch (choice)
-        {
-            case "1":
-                Environment.Instance._Syntax = Syntax.CSharp;
-                break;
-            case "2":
-                Environment.Instance._Syntax = Syntax.Java;
-                break;
-            default:
-                ConsoleError.WriteWarning($"Unrecognised choice {choice}, setting default value");
-                break;
-        }
-        Console.WriteLine($"Setting syntax to {Environment.Instance._Syntax}");
-        Console.WriteLine();
-        Console.ReadLine();
-
-        string fileName = Environment.Instance._Syntax switch
-        {
-            Syntax.CSharp => "Dummy.cs",
-            Syntax.Java => "Dummy.java",
-            _ => throw new Exception("internal error")
-        };
         #if DEBUG
-        string dummyText = File.ReadAllText($@"..\..\..\..\Files\{fileName}");
+        string dummyText = File.ReadAllText($@"..\..\..\..\Files\Dummy.cs");
         #elif RELEASE
-        string dummyText = File.ReadAllText($@"Files\{fileName}");
+        string dummyText = File.ReadAllText($@"Files\Dummy.cs");
         #endif
     }
 }
