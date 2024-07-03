@@ -6,11 +6,11 @@ public class Chunk(string Text)
 {
     public InterpreterException? Compile()
     {
-        throw new System.NotImplementedException();
+        return null;
     }
 
     public IEnumerable<InterpreterException?> Run()
     {
-        throw new System.NotImplementedException();
+        yield break;
     }
 }
