@@ -1,8 +1,7 @@
-﻿namespace CREInterpreter
+﻿namespace CREInterpreter;
+
+public enum Syntax
 {
-    public enum Syntax
-    {
-        CSharp,
-        Java
-    }
+    CSharp,
+    Java
 }

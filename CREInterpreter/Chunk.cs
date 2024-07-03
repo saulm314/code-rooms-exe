@@ -1,6 +1,6 @@
-﻿namespace CREInterpreter;
+﻿using System.Collections.Generic;
 
-using System.Collections.Generic;
+namespace CREInterpreter;
 
 public class Chunk(string Text)
 {

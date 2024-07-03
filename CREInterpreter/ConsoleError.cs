@@ -1,6 +1,6 @@
-﻿namespace CREInterpreter;
+﻿using System;
 
-using System;
+namespace CREInterpreter;
 
 public static class ConsoleError
 {

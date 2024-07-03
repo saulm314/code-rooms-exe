@@ -1,7 +1,7 @@
-﻿namespace CREInterpreter;
-
-using System;
+﻿using System;
 using System.Diagnostics;
+
+namespace CREInterpreter;
 
 public static class DebugError
 {

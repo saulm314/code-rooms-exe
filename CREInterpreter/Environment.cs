@@ -1,11 +1,10 @@
-﻿namespace CREInterpreter
+﻿namespace CREInterpreter;
+
+public class Environment
 {
-    public class Environment
-    {
-        public static Environment Instance { get; } = new();
+    public static Environment Instance { get; } = new();
 
-        protected Environment() { }
+    protected Environment() { }
 
-        public Syntax _Syntax { get; set; } = Syntax.CSharp;
-    }
+    public Syntax _Syntax { get; set; } = Syntax.CSharp;
 }
