@@ -1,6 +1,13 @@
 ﻿namespace CREInterpreter.Tokens;
 
-public class NotEqualsSymbolToken : IToken
+public class NotEqualsSymbolToken(int lineNumber) : IToken
 {
     public string Text => "!=";
+
+    public int LineNumber => lineNumber;
+
+    public InterpreterException? Compile(Memory memory)
+    {
+        throw new System.NotImplementedException();
+    }
 }

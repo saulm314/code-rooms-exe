@@ -1,6 +1,13 @@
 ﻿namespace CREInterpreter.Tokens;
 
-public class OpenSquareBraceSymbolToken : IToken
+public class OpenSquareBraceSymbolToken(int lineNumber) : IToken
 {
     public string Text => "[";
+
+    public int LineNumber => lineNumber;
+
+    public InterpreterException? Compile(Memory memory)
+    {
+        throw new System.NotImplementedException();
+    }
 }

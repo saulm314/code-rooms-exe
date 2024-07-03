@@ -2,8 +2,10 @@
 
 namespace CREInterpreter;
 
-public class Chunk(string Text)
+public class Chunk(string text)
 {
+    public string Text => text;
+
     public InterpreterException? Compile(Memory memory)
     {
         return null;

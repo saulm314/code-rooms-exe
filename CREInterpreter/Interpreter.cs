@@ -2,8 +2,10 @@
 
 namespace CREInterpreter;
 
-public class Interpreter(string Text)
+public class Interpreter(string text)
 {
+    public string Text => text;
+
     public InterpreterException? Compile(Memory memory)
     {
         return null;
