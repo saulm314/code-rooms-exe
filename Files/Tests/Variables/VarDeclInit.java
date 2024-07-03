@@ -1,0 +1,10 @@
+int myInt = 1 ;
+double _myDouble = 1.0 ;
+boolean myB0 = true ;
+char myChar = 'a' ;
+int [ ] intArr = new int [ 0 ] ;
+double [ ] doubleArr = new double [ 0 ] ;
+boolean [ ] bArr = new boolean [ 0 ] ;
+char [ ] charArr = new char [ 0 ] ;
+String myStr = "" ;
+String [ ] strArr = new String [ 0 ] ;

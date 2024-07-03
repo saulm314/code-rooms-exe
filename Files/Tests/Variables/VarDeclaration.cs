@@ -1,0 +1,10 @@
+int myInt ;
+double _myDouble ;
+bool myB0 ;
+char myChar_ ;
+int [ ] intArr ;
+double [ ] doubleArr ;
+bool [ ] bArr ;
+char [ ] charArr ;
+string myStr ;
+string [ ] strArr ;

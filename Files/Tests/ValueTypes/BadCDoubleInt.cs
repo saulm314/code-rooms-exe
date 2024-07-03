@@ -1,0 +1,1 @@
+double myDouble = 0;
