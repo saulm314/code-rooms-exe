@@ -1,10 +1,12 @@
-﻿namespace CREInterpreter
+﻿namespace CREInterpreter;
+
+using System.Diagnostics;
+
+public class Program
 {
-    internal class Program
+    private static void Main(string[] args)
     {
-        static void Main(string[] args)
-        {
-            Console.WriteLine("Hello, World!");
-        }
+        Trace.Listeners.Add(new ConsoleTraceListener());
+        Debug.WriteLine("Hello");
     }
 }
