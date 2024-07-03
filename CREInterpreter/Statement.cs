@@ -2,7 +2,7 @@
 
 using System.Collections.Generic;
 
-public class Interpreter(string Text)
+public class Statement(string Text)
 {
     public InterpreterException? Compile()
     {
