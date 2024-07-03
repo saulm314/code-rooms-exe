@@ -2,6 +2,7 @@
 
 using System;
 using System.Diagnostics;
+using System.IO;
 
 public class Program
 {
@@ -34,6 +35,16 @@ public class Program
         Console.WriteLine();
         Console.ReadLine();
 
-
+        string fileName = Environment.Instance._Syntax switch
+        {
+            Syntax.CSharp => "Dummy.cs",
+            Syntax.Java => "Dummy.java",
+            _ => throw new Exception("internal error")
+        };
+        #if DEBUG
+        string dummyText = File.ReadAllText($@"..\..\..\..\Files\{fileName}");
+        #elif RELEASE
+        string dummyText = File.ReadAllText($@"Files\{fileName}");
+        #endif
     }
 }
