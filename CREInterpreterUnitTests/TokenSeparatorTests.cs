@@ -1,5 +1,6 @@
 using CREInterpreter.Tokens;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace CREInterpreterUnitTests;
@@ -21,9 +22,22 @@ public class TokenSeparatorTests
     {
         string input = string.Empty;
 
-        IToken[] tokens = TokenSeparator.GetTokens(input).ToArray();
-        int actual = tokens.Length;
+        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input);
 
-        Assert.Equal(0, actual);
+        Assert.Empty(tokens);
+    }
+
+    [Fact]
+    public void GetTokens_Semicolon_ReturnsSemicolonSymbolToken()
+    {
+        string input = ";";
+
+        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input);
+        IToken token = tokens.First();
+        int actualLineNumber = token.LineNumber;
+        
+        Assert.Single(tokens);
+        Assert.IsAssignableFrom<SemicolonSymbolToken>(token);
+        Assert.Equal(1, actualLineNumber);
     }
 }
