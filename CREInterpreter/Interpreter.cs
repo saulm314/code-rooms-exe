@@ -13,4 +13,6 @@ public class Interpreter(string Text)
     {
         yield break;
     }
+
+    public override string? ToString() => Text;
 }

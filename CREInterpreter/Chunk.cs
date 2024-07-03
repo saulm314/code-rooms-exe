@@ -13,4 +13,6 @@ public class Chunk(string Text)
     {
         yield break;
     }
+
+    public override string? ToString() => Text;
 }

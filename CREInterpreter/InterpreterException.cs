@@ -2,4 +2,7 @@
 
 using System;
 
-public class InterpreterException(string? message = null) : Exception(message) { }
+public class InterpreterException(string? Message = null) : Exception(Message)
+{
+    public override string ToString() => Message ?? "InterpreterException";
+}
