@@ -8,6 +8,6 @@ public class InvalidToken(string text, int lineNumber, InterpreterException Exce
 
     public InterpreterException? Compile(Memory memory)
     {
-        throw new System.NotImplementedException();
+        return Exception;
     }
 }
