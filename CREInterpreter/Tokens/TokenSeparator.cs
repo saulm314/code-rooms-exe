@@ -10,7 +10,11 @@ public static class TokenSeparator
         int lineNumber = 1;
         while (index < text.Length)
         {
-            yield break;
+            SkipWhiteSpace(text, ref index, ref lineNumber);
+            yield return
+                GetSingleLineCommentToken(text, ref index, ref lineNumber) ??
+                GetMultiLineCommentToken(text, ref index, ref lineNumber) ?? 
+                GetInvalidToken(text, ref index, ref lineNumber);
         }
     }
 
@@ -95,13 +99,14 @@ public static class TokenSeparator
         return new MultiLineCommentToken(text[startIndex..index], originalLineNumber);
     }
 
-    private static IToken? GetInvalidToken(string text, ref int index, ref int lineNumber)
+    private static InvalidToken GetInvalidToken(string text, ref int index, ref int lineNumber)
     {
         int startIndex = index;
-        SkipToWhiteSpace(text, ref index);
+        if (index < text.Length)
+            SkipToWhiteSpace(text, ref index);
         string tokenText = text[startIndex..index];
         return new InvalidToken(tokenText, lineNumber,
-            new($"Invalid token \"{tokenText}\"");
+            new($"Invalid token \"{tokenText}\""));
     }
 
     private static void SkipToWhiteSpace(string text, ref int index)
