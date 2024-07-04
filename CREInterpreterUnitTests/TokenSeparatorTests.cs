@@ -151,4 +151,21 @@ public class TokenSeparatorTests
         Assert.Equal(expectedLineNumber, actualLineNumber);
         Assert.Equal(expectedText, actualText);
     }
+
+    [Theory]
+    [InlineData("true", 1, true)]
+    [InlineData("false", 1, false)]
+    public void GetTokens_BooleanLiteral_ReturnsBooleanLiteralToken(string input, int expectedLineNumber, bool expectedValue)
+    {
+        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input);
+        IToken token = tokens.First();
+        BooleanLiteralToken booleanLiteralToken = (BooleanLiteralToken)token;
+        int actualLineNumber = token.LineNumber;
+        bool actualValue = booleanLiteralToken.Value;
+
+        Assert.Single(tokens);
+        Assert.IsAssignableFrom<BooleanLiteralToken>(token);
+        Assert.Equal(expectedLineNumber, actualLineNumber);
+        Assert.Equal(expectedValue, actualValue);
+    }
 }

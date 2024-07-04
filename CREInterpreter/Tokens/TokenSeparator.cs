@@ -15,7 +15,8 @@ public static class TokenSeparator
                 yield break;
             yield return
                 GetSingleLineCommentToken(text, ref index, ref lineNumber) ??
-                GetMultiLineCommentToken(text, ref index, ref lineNumber) ?? 
+                GetMultiLineCommentToken(text, ref index, ref lineNumber) ??
+                GetLiteralToken(text, ref index, ref lineNumber) ??
                 GetInvalidToken(text, ref index, ref lineNumber);
         }
     }
@@ -100,7 +101,8 @@ public static class TokenSeparator
 
     private static IToken? GetLiteralToken(string text, ref int index, ref int lineNumber)
     {
-        throw new System.NotImplementedException();
+        return
+            GetBooleanLiteralToken(text, ref index, ref lineNumber);
     }
 
     private static IToken? GetBooleanLiteralToken(string text, ref int index, ref int lineNumber)
