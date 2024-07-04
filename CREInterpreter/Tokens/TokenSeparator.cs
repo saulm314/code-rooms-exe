@@ -14,20 +14,21 @@ public static class TokenSeparator
         }
     }
 
-    private static IToken? GetWhiteSpace(string text, ref int index, ref int lineNumber)
+    private static void SkipWhiteSpace(string text, ref int index, ref int lineNumber)
     {
         if (text[index] == '\n')
         {
             index++;
             lineNumber++;
-            return GetWhiteSpace(text, ref index, ref lineNumber);
+            SkipWhiteSpace(text, ref index, ref lineNumber);
+            return;
         }
         if (char.IsWhiteSpace(text[index]))
         {
             index++;
-            return GetWhiteSpace(text, ref index, ref lineNumber);
+            SkipWhiteSpace(text, ref index, ref lineNumber);
+            return;
         }
-        return null;
     }
 
     private static IToken? GetSingleLineCommentToken(string text, ref int index, ref int lineNumber)
@@ -86,10 +87,29 @@ public static class TokenSeparator
             previousIsAsterisk = false;
             i++;
         }
-        if (!closed)
-            return new InvalidToken(text[index..], lineNumber, new($"Multi-line comment starting at line {lineNumber} is never closed"));
         index = i;
         lineNumber = lineNumberTemp;
+        if (!closed)
+            return new InvalidToken(text[startIndex..], originalLineNumber,
+                new($"Multi-line comment starting at line {originalLineNumber} is never closed"));
         return new MultiLineCommentToken(text[startIndex..index], originalLineNumber);
+    }
+
+    private static IToken? GetInvalidToken(string text, ref int index, ref int lineNumber)
+    {
+        int startIndex = index;
+        SkipToWhiteSpace(text, ref index);
+        string tokenText = text[startIndex..index];
+        return new InvalidToken(tokenText, lineNumber,
+            new($"Invalid token \"{tokenText}\"");
+    }
+
+    private static void SkipToWhiteSpace(string text, ref int index)
+    {
+        if (!char.IsWhiteSpace(text[index]))
+        {
+            index++;
+            SkipToWhiteSpace(text, ref index);
+        }
     }
 }
