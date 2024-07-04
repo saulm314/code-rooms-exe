@@ -14,9 +14,10 @@ public static class TokenSeparator
         }
     }
 
-    private static IToken? GetSingleLineCommentToken(string text, int startIndex, out int endIndex, ref int lineNumber)
+    private static IToken? GetSingleLineCommentToken(string text, ref int index, ref int lineNumber)
     {
-        endIndex = startIndex;
+        int startIndex = index;
+        int i;
         int originalLineNumber = lineNumber;
         int lineNumberTemp = lineNumber;
         if (text.Length - startIndex < 2)
@@ -25,19 +26,20 @@ public static class TokenSeparator
             return null;
         if (text[startIndex + 1] != '/')
             return null;
-        int i = startIndex + 2;
+        i = startIndex + 2;
         while (i < text.Length && text[i] != '\n')
             i++;
         if (i < text.Length)
             lineNumberTemp++;
-        endIndex = i;
+        index = i;
         lineNumber = lineNumberTemp;
-        return new SingleLineCommentToken(text[startIndex..endIndex], originalLineNumber);
+        return new SingleLineCommentToken(text[startIndex..index], originalLineNumber);
     }
 
-    private static IToken? GetMultiLineCommentToken(string text, int startIndex, out int endIndex, ref int lineNumber)
+    private static IToken? GetMultiLineCommentToken(string text, ref int index, ref int lineNumber)
     {
-        endIndex = startIndex;
+        int startIndex = index;
+        int i;
         int originalLineNumber = lineNumber;
         int lineNumberTemp = lineNumber;
         if (text.Length - startIndex < 4)
@@ -46,7 +48,7 @@ public static class TokenSeparator
             return null;
         if (text[startIndex + 1] != '*')
             return null;
-        int i = startIndex + 2;
+        i = startIndex + 2;
         bool previousIsAsterisk = false;
         bool closed = false;
         while (i < text.Length)
@@ -70,8 +72,8 @@ public static class TokenSeparator
         }
         if (!closed)
             return null;
-        endIndex = i;
+        index = i;
         lineNumber = lineNumberTemp;
-        return new MultiLineCommentToken(text[startIndex..endIndex], originalLineNumber);
+        return new MultiLineCommentToken(text[startIndex..index], originalLineNumber);
     }
 }
