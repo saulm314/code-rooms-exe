@@ -6,8 +6,9 @@ public static class TokenSeparator
 {
     public static IEnumerable<IToken> GetTokens(string text)
     {
-        int i = 0;
-        while (i < text.Length)
+        int index = 0;
+        int lineNumber = 1;
+        while (index < text.Length)
         {
             yield break;
         }
@@ -29,7 +30,7 @@ public static class TokenSeparator
         return null;
     }
 
-    private static IToken? GetSingleLineCommentToken(string text, ref int index, ref int lineNumber)
+    private static SingleLineCommentToken? GetSingleLineCommentToken(string text, ref int index, ref int lineNumber)
     {
         int startIndex = index;
         int i;
@@ -48,10 +49,10 @@ public static class TokenSeparator
             lineNumberTemp++;
         index = i;
         lineNumber = lineNumberTemp;
-        return new SingleLineCommentToken(text[startIndex..index], originalLineNumber);
+        return new(text[startIndex..index], originalLineNumber);
     }
 
-    private static IToken? GetMultiLineCommentToken(string text, ref int index, ref int lineNumber)
+    private static MultiLineCommentToken? GetMultiLineCommentToken(string text, ref int index, ref int lineNumber)
     {
         int startIndex = index;
         int i;
@@ -86,11 +87,9 @@ public static class TokenSeparator
             i++;
         }
         if (!closed)
-            return null;
+            throw new InterpreterException($"Multi-line comment starting at line {lineNumber} is never closed");
         index = i;
         lineNumber = lineNumberTemp;
-        return new MultiLineCommentToken(text[startIndex..index], originalLineNumber);
+        return new(text[startIndex..index], originalLineNumber);
     }
-
-
 }
