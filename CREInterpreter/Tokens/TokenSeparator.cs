@@ -23,10 +23,9 @@ public static class TokenSeparator
             return null;
         if (text[startIndex + 1] != '/')
             return null;
-        StringBuilder commentBuilder = new("//");
         int i = startIndex + 2;
         while (i < text.Length && text[i] != '\n')
-            commentBuilder.Append(text[i++]);
+            i++;
         endIndex = i;
         SingleLineCommentToken token = new(text[startIndex..endIndex], lineNumber);
         if (i < text.Length)
