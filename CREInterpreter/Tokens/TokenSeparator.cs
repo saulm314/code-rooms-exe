@@ -112,14 +112,14 @@ public static class TokenSeparator
         if (text[index..(index + TrueLength)] == "true")
         {
             index += TrueLength;
-            return new BooleanLiteralToken("true", lineNumber);
+            return new BooleanLiteralToken(true, lineNumber);
         }
         if (text.Length - index < FalseLength)
             return null;
         if (text[index..(index + FalseLength)] == "false")
         {
             index += FalseLength;
-            return new BooleanLiteralToken("false", lineNumber);
+            return new BooleanLiteralToken(false, lineNumber);
         }
         return null;
     }

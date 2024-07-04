@@ -1,13 +1,15 @@
 ﻿namespace CREInterpreter.Tokens;
 
-public class BooleanLiteralToken(string text, int lineNumber) : IToken
+public class BooleanLiteralToken(bool value, int lineNumber) : IToken
 {
-    public string Text => text;
+    public string Text => value ? "true" : "false";
 
     public int LineNumber => lineNumber;
 
+    public bool Value => value;
+
     public InterpreterException? Compile(Memory memory)
     {
-        throw new System.NotImplementedException();
+        return null;
     }
 }
