@@ -134,4 +134,21 @@ public class TokenSeparatorTests
         Assert.Equal(expectedLineNumber, actualLineNumber);
         Assert.Equal(expectedText, actualText);
     }
+
+    [Theory]
+    [InlineData("/*//*/", 1, "/*//*/")]
+    [InlineData("/* // */", 1, "/* // */")]
+    [InlineData("/* \n // \n */", 1, "/* \n // \n */")]
+    public void GetTokens_MultiLineCommentContainsSingleLineComment_ReturnsMultiLineComment(string input, int expectedLineNumber, string expectedText)
+    {
+        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input);
+        IToken token = tokens.First();
+        int actualLineNumber = token.LineNumber;
+        string actualText = token.Text;
+
+        Assert.Single(tokens);
+        Assert.IsAssignableFrom<MultiLineCommentToken>(token);
+        Assert.Equal(expectedLineNumber, actualLineNumber);
+        Assert.Equal(expectedText, actualText);
+    }
 }
