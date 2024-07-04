@@ -62,7 +62,7 @@ public static class TokenSeparator
         int i;
         int originalLineNumber = lineNumber;
         int lineNumberTemp = lineNumber;
-        if (text.Length - startIndex < 4)
+        if (text.Length - startIndex < 2)
             return null;
         if (text[startIndex] != '/')
             return null;
