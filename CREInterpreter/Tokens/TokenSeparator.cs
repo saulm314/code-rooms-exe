@@ -30,7 +30,7 @@ public static class TokenSeparator
         return null;
     }
 
-    private static SingleLineCommentToken? GetSingleLineCommentToken(string text, ref int index, ref int lineNumber)
+    private static IToken? GetSingleLineCommentToken(string text, ref int index, ref int lineNumber)
     {
         int startIndex = index;
         int i;
@@ -49,10 +49,10 @@ public static class TokenSeparator
             lineNumberTemp++;
         index = i;
         lineNumber = lineNumberTemp;
-        return new(text[startIndex..index], originalLineNumber);
+        return new SingleLineCommentToken(text[startIndex..index], originalLineNumber);
     }
 
-    private static MultiLineCommentToken? GetMultiLineCommentToken(string text, ref int index, ref int lineNumber)
+    private static IToken? GetMultiLineCommentToken(string text, ref int index, ref int lineNumber)
     {
         int startIndex = index;
         int i;
@@ -87,9 +87,9 @@ public static class TokenSeparator
             i++;
         }
         if (!closed)
-            throw new InterpreterException($"Multi-line comment starting at line {lineNumber} is never closed");
+            return new InvalidToken(text[index..], lineNumber, new($"Multi-line comment starting at line {lineNumber} is never closed"));
         index = i;
         lineNumber = lineNumberTemp;
-        return new(text[startIndex..index], originalLineNumber);
+        return new MultiLineCommentToken(text[startIndex..index], originalLineNumber);
     }
 }

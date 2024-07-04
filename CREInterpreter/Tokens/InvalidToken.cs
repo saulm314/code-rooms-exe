@@ -1,6 +1,6 @@
 ﻿namespace CREInterpreter.Tokens;
 
-public class InvalidToken(string text, int lineNumber) : IToken
+public class InvalidToken(string text, int lineNumber, InterpreterException Exception) : IToken
 {
     public string Text => text;
 
