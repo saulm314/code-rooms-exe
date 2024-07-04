@@ -1,6 +1,6 @@
 ﻿namespace CREInterpreter.Tokens;
 
-public class InvalidToken(string text, int lineNumber, InterpreterException Exception) : IToken
+public class InvalidToken(string text, int lineNumber, InterpreterException exception) : IToken
 {
     public string Text => text;
 
@@ -8,6 +8,6 @@ public class InvalidToken(string text, int lineNumber, InterpreterException Exce
 
     public InterpreterException? Compile(Memory memory)
     {
-        return Exception;
+        return exception;
     }
 }

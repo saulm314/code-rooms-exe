@@ -98,6 +98,32 @@ public static class TokenSeparator
         return new MultiLineCommentToken(text[startIndex..index], originalLineNumber);
     }
 
+    private static IToken? GetLiteralToken(string text, ref int index, ref int lineNumber)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    private static IToken? GetBooleanLiteralToken(string text, ref int index, ref int lineNumber)
+    {
+        const int TrueLength = 4;
+        const int FalseLength = 5;
+        if (text.Length - index < TrueLength)
+            return null;
+        if (text[index..(index + TrueLength)] == "true")
+        {
+            index += TrueLength;
+            return new BooleanLiteralToken("true", lineNumber);
+        }
+        if (text.Length - index < FalseLength)
+            return null;
+        if (text[index..(index + FalseLength)] == "false")
+        {
+            index += FalseLength;
+            return new BooleanLiteralToken("false", lineNumber);
+        }
+        return null;
+    }
+
     private static InvalidToken GetInvalidToken(string text, ref int index, ref int lineNumber)
     {
         int startIndex = index;
