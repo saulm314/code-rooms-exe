@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Text;
 
 namespace CREInterpreter.Tokens;
 
@@ -10,8 +9,24 @@ public static class TokenSeparator
         int i = 0;
         while (i < text.Length)
         {
-
+            yield break;
         }
+    }
+
+    private static IToken? GetWhiteSpace(string text, ref int index, ref int lineNumber)
+    {
+        if (text[index] == '\n')
+        {
+            index++;
+            lineNumber++;
+            return GetWhiteSpace(text, ref index, ref lineNumber);
+        }
+        if (char.IsWhiteSpace(text[index]))
+        {
+            index++;
+            return GetWhiteSpace(text, ref index, ref lineNumber);
+        }
+        return null;
     }
 
     private static IToken? GetSingleLineCommentToken(string text, ref int index, ref int lineNumber)
@@ -76,4 +91,6 @@ public static class TokenSeparator
         lineNumber = lineNumberTemp;
         return new MultiLineCommentToken(text[startIndex..index], originalLineNumber);
     }
+
+
 }
