@@ -30,6 +30,7 @@ public class TokenSeparatorTests
     [Theory]
     [InlineData("//", "//")]
     [InlineData("// ", "// ")]
+    [InlineData(" // ", "// ")]
     [InlineData("// hello", "// hello")]
     [InlineData("// hello ", "// hello ")]
     [InlineData("//hello", "//hello")]
@@ -50,27 +51,28 @@ public class TokenSeparatorTests
     }
 
     [Theory]
-    [InlineData("//\n//", 2, "//", "//")]
-    [InlineData("//\n\n//", 3, "//", "//")]
-    [InlineData("//hello\n//", 2, "//hello", "//")]
-    [InlineData("//hello\n//hello\n", 2, "//hello", "//hello")]
-    public void GetTokens_TwoSingleLineComments_ReturnsTwoSingleLineCommentTokens(string input, int secondCommentExpectedLineNumber, string expectedText1,
-        string expectedText2)
+    [InlineData("//\n//", 1, 2, "//", "//")]
+    [InlineData("\n//\n//", 2, 3, "//", "//")]
+    [InlineData("//\n\n//", 1, 3, "//", "//")]
+    [InlineData("//hello\n//", 1, 2, "//hello", "//")]
+    [InlineData("//hello\n//hello\n", 1, 2, "//hello", "//hello")]
+    public void GetTokens_TwoSingleLineComments_ReturnsTwoSingleLineCommentTokens(string input, int expectedLineNumber1, int expectedLineNumber2,
+        string expectedText1, string expectedText2)
     {
         IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input);
         int size = tokens.Count();
         IToken firstToken = tokens.First();
-        int actualFirstLineNumber = firstToken.LineNumber;
+        int actualLineNumber1 = firstToken.LineNumber;
         string actualText1 = firstToken.Text;
         IToken secondToken = tokens.Last();
-        int actualSecondLineNumber = secondToken.LineNumber;
+        int actualLineNumber2 = secondToken.LineNumber;
         string actualText2 = secondToken.Text;
 
         Assert.Equal(2, size);
         Assert.IsAssignableFrom<SingleLineCommentToken>(firstToken);
         Assert.IsAssignableFrom<SingleLineCommentToken>(secondToken);
-        Assert.Equal(1, actualFirstLineNumber);
-        Assert.Equal(secondCommentExpectedLineNumber, actualSecondLineNumber);
+        Assert.Equal(expectedLineNumber1, actualLineNumber1);
+        Assert.Equal(expectedLineNumber2, actualLineNumber2);
         Assert.Equal(expectedText1, actualText1);
         Assert.Equal(expectedText2, actualText2);
     }
