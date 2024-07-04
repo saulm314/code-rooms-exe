@@ -11,6 +11,8 @@ public static class TokenSeparator
         while (index < text.Length)
         {
             SkipWhiteSpace(text, ref index, ref lineNumber);
+            if (index >= text.Length)
+                yield break;
             yield return
                 GetSingleLineCommentToken(text, ref index, ref lineNumber) ??
                 GetMultiLineCommentToken(text, ref index, ref lineNumber) ?? 
@@ -20,6 +22,8 @@ public static class TokenSeparator
 
     private static void SkipWhiteSpace(string text, ref int index, ref int lineNumber)
     {
+        if (index >= text.Length)
+            return;
         if (text[index] == '\n')
         {
             index++;
@@ -39,8 +43,6 @@ public static class TokenSeparator
     {
         int startIndex = index;
         int i;
-        int originalLineNumber = lineNumber;
-        int lineNumberTemp = lineNumber;
         if (text.Length - startIndex < 2)
             return null;
         if (text[startIndex] != '/')
@@ -50,11 +52,8 @@ public static class TokenSeparator
         i = startIndex + 2;
         while (i < text.Length && text[i] != '\n')
             i++;
-        if (i < text.Length)
-            lineNumberTemp++;
         index = i;
-        lineNumber = lineNumberTemp;
-        return new SingleLineCommentToken(text[startIndex..index], originalLineNumber);
+        return new SingleLineCommentToken(text[startIndex..index], lineNumber);
     }
 
     private static IToken? GetMultiLineCommentToken(string text, ref int index, ref int lineNumber)
@@ -102,8 +101,7 @@ public static class TokenSeparator
     private static InvalidToken GetInvalidToken(string text, ref int index, ref int lineNumber)
     {
         int startIndex = index;
-        if (index < text.Length)
-            SkipToWhiteSpace(text, ref index);
+        SkipToWhiteSpace(text, ref index);
         string tokenText = text[startIndex..index];
         return new InvalidToken(tokenText, lineNumber,
             new($"Invalid token \"{tokenText}\""));
@@ -111,6 +109,8 @@ public static class TokenSeparator
 
     private static void SkipToWhiteSpace(string text, ref int index)
     {
+        if (index >= text.Length)
+            return;
         if (!char.IsWhiteSpace(text[index]))
         {
             index++;
