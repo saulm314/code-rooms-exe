@@ -2,7 +2,7 @@
 
 public class BooleanLiteralToken(bool value, int lineNumber) : IToken, IValueTypeLiteral
 {
-    public string Text => value ? "true" : "false";
+    public string Text => Value ? "true" : "false";
 
     public int LineNumber => lineNumber;
 
