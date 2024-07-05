@@ -14,6 +14,6 @@ public class IntegerLiteralToken(string text, int value, int lineNumber) : IToke
 
     public InterpreterException? Compile(Memory memory)
     {
-        throw new System.NotImplementedException();
+        return null;
     }
 }

@@ -175,6 +175,9 @@ public class TokenSeparatorTests
     [InlineData("0", "0", 1, 0)]
     [InlineData("1", "1", 1, 1)]
     [InlineData("2147483647", "2147483647", 1, 2147483647)]
+    [InlineData("000", "000", 1, 0)]
+    [InlineData("001", "001", 1, 1)]
+    [InlineData("010", "010", 1, 10)]
     public void GetTokens_IntegerLiteral_ReturnsIntegerLiteralToken(string input, string expectedText, int expectedLineNumber, int expectedValue)
     {
         IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input);
@@ -186,6 +189,28 @@ public class TokenSeparatorTests
 
         Assert.Single(tokens);
         Assert.IsAssignableFrom<IntegerLiteralToken>(token);
+        Assert.Equal(expectedText, actualText);
+        Assert.Equal(expectedLineNumber, actualLineNumber);
+        Assert.Equal(expectedValue, actualValue);
+    }
+
+    [Theory]
+    [InlineData("0.0", "0.0", 1, 0.0)]
+    [InlineData("0.5", "0.5", 1, 0.5)]
+    [InlineData("1.0", "1.0", 1, 1.0)]
+    [InlineData("1.5", "1.5", 1, 1.5)]
+    [InlineData("01.50", "01.50", 1, 1.5)]
+    public void GetTokens_DoubleFloatLiteral_ReturnsDoubleFloatLiteralToken(string input, string expectedText, int expectedLineNumber, double expectedValue)
+    {
+        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input);
+        IToken token = tokens.First();
+        DoubleFloatLiteralToken doubleFloatLiteralToken = (DoubleFloatLiteralToken)token;
+        string actualText = token.Text;
+        int actualLineNumber = token.LineNumber;
+        double actualValue = doubleFloatLiteralToken.Value;
+
+        Assert.Single(tokens);
+        Assert.IsAssignableFrom<DoubleFloatLiteralToken>(token);
         Assert.Equal(expectedText, actualText);
         Assert.Equal(expectedLineNumber, actualLineNumber);
         Assert.Equal(expectedValue, actualValue);
