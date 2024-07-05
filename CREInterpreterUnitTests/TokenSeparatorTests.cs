@@ -153,36 +153,40 @@ public class TokenSeparatorTests
     }
 
     [Theory]
-    [InlineData("true", 1, true)]
-    [InlineData("false", 1, false)]
-    public void GetTokens_BooleanLiteral_ReturnsBooleanLiteralToken(string input, int expectedLineNumber, bool expectedValue)
+    [InlineData("true", "true", 1, true)]
+    [InlineData("false", "false", 1, false)]
+    public void GetTokens_BooleanLiteral_ReturnsBooleanLiteralToken(string input, string expectedText, int expectedLineNumber, bool expectedValue)
     {
         IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input);
         IToken token = tokens.First();
         BooleanLiteralToken booleanLiteralToken = (BooleanLiteralToken)token;
+        string actualText = token.Text;
         int actualLineNumber = token.LineNumber;
         bool actualValue = booleanLiteralToken.Value;
 
         Assert.Single(tokens);
         Assert.IsAssignableFrom<BooleanLiteralToken>(token);
+        Assert.Equal(expectedText, actualText);
         Assert.Equal(expectedLineNumber, actualLineNumber);
         Assert.Equal(expectedValue, actualValue);
     }
 
     [Theory]
-    [InlineData("0", 1, 0)]
-    [InlineData("1", 1, 1)]
-    [InlineData("2147483647", 1, 2147483647)]
-    public void GetTokens_IntegerLiteral_ReturnsIntegerLiteralToken(string input, int expectedLineNumber, int expectedValue)
+    [InlineData("0", "0", 1, 0)]
+    [InlineData("1", "1", 1, 1)]
+    [InlineData("2147483647", "2147483647", 1, 2147483647)]
+    public void GetTokens_IntegerLiteral_ReturnsIntegerLiteralToken(string input, string expectedText, int expectedLineNumber, int expectedValue)
     {
         IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input);
         IToken token = tokens.First();
         IntegerLiteralToken integerLiteralToken = (IntegerLiteralToken)token;
+        string actualText = token.Text;
         int actualLineNumber = token.LineNumber;
         int actualValue = integerLiteralToken.Value;
 
         Assert.Single(tokens);
         Assert.IsAssignableFrom<IntegerLiteralToken>(token);
+        Assert.Equal(expectedText, actualText);
         Assert.Equal(expectedLineNumber, actualLineNumber);
         Assert.Equal(expectedValue, actualValue);
     }

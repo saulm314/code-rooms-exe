@@ -1,8 +1,8 @@
 ﻿namespace CREInterpreter.Tokens;
 
-public class BooleanLiteralToken(bool value, int lineNumber) : IToken, IValueTypeLiteral
+public class BooleanLiteralToken(string text, bool value, int lineNumber) : IToken, IValueTypeLiteral
 {
-    public string Text => Value ? "true" : "false";
+    public string Text => text;
 
     public int LineNumber => lineNumber;
 

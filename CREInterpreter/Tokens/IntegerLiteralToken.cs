@@ -1,8 +1,8 @@
 ﻿namespace CREInterpreter.Tokens;
 
-public class IntegerLiteralToken(int value, int lineNumber) : IToken, IValueTypeLiteral
+public class IntegerLiteralToken(string text, int value, int lineNumber) : IToken, IValueTypeLiteral
 {
-    public string Text => Value.ToString();
+    public string Text => text;
 
     public int LineNumber => lineNumber;
 

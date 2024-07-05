@@ -115,14 +115,14 @@ public static class TokenSeparator
         if (text[index..(index + TrueLength)] == "true")
         {
             index += TrueLength;
-            return new BooleanLiteralToken(true, lineNumber);
+            return new BooleanLiteralToken("true", true, lineNumber);
         }
         if (text.Length - index < FalseLength)
             return null;
         if (text[index..(index + FalseLength)] == "false")
         {
             index += FalseLength;
-            return new BooleanLiteralToken(false, lineNumber);
+            return new BooleanLiteralToken("false", false, lineNumber);
         }
         return null;
     }
@@ -136,11 +136,12 @@ public static class TokenSeparator
                 break;
             i++;
         }
-        bool success = int.TryParse(text[index..i], out int result);
+        string tokenText = text[index..i];
+        bool success = int.TryParse(tokenText, out int result);
         if (!success)
             return null;
         index = i;
-        return new IntegerLiteralToken(result, lineNumber);
+        return new IntegerLiteralToken(tokenText, result, lineNumber);
     }
 
     private static InvalidToken GetInvalidToken(string text, ref int index, ref int lineNumber)
