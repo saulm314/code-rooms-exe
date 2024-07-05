@@ -8,6 +8,6 @@ public class OpenSquareBraceSymbolToken(int lineNumber) : IToken
 
     public InterpreterException? Compile(Memory memory)
     {
-        throw new System.NotImplementedException();
+        return null;
     }
 }
