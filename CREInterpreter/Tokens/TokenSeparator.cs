@@ -102,7 +102,8 @@ public static class TokenSeparator
     private static IToken? GetLiteralToken(string text, ref int index, ref int lineNumber)
     {
         return
-            GetBooleanLiteralToken(text, ref index, ref lineNumber);
+            GetBooleanLiteralToken(text, ref index, ref lineNumber) ??
+            GetIntegerLiteralToken(text, ref index, ref lineNumber);
     }
 
     private static IToken? GetBooleanLiteralToken(string text, ref int index, ref int lineNumber)
@@ -124,6 +125,22 @@ public static class TokenSeparator
             return new BooleanLiteralToken(false, lineNumber);
         }
         return null;
+    }
+
+    private static IToken? GetIntegerLiteralToken(string text, ref int index, ref int lineNumber)
+    {
+        int i = index;
+        while (i < text.Length)
+        {
+            if (!char.IsDigit(text[i]))
+                break;
+            i++;
+        }
+        bool success = int.TryParse(text[index..i], out int result);
+        if (!success)
+            return null;
+        index = i;
+        return new IntegerLiteralToken(result, lineNumber);
     }
 
     private static InvalidToken GetInvalidToken(string text, ref int index, ref int lineNumber)

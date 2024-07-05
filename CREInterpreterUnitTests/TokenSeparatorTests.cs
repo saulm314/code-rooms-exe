@@ -168,4 +168,22 @@ public class TokenSeparatorTests
         Assert.Equal(expectedLineNumber, actualLineNumber);
         Assert.Equal(expectedValue, actualValue);
     }
+
+    [Theory]
+    [InlineData("0", 1, 0)]
+    [InlineData("1", 1, 1)]
+    [InlineData("2147483647", 1, 2147483647)]
+    public void GetTokens_IntegerLiteral_ReturnsIntegerLiteralToken(string input, int expectedLineNumber, int expectedValue)
+    {
+        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input);
+        IToken token = tokens.First();
+        IntegerLiteralToken integerLiteralToken = (IntegerLiteralToken)token;
+        int actualLineNumber = token.LineNumber;
+        int actualValue = integerLiteralToken.Value;
+
+        Assert.Single(tokens);
+        Assert.IsAssignableFrom<IntegerLiteralToken>(token);
+        Assert.Equal(expectedLineNumber, actualLineNumber);
+        Assert.Equal(expectedValue, actualValue);
+    }
 }
