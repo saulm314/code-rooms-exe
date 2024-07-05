@@ -177,26 +177,26 @@ public static class TokenSeparator
             text[index + 2] == '\'' ? index + 2 :
             -1;
         if (closingQuoteIndex == -1)
-            return new InvalidToken(text[index..(index + 3)], lineNumber,
+            return new InvalidToken(text[index..(index += 3)], lineNumber,
                 new($"Quote not closed or too many characters in quote at line {lineNumber}"));
         if (closingQuoteIndex == index + 2)
         {
             char value = text[index + 1];
             if ((new char[] { '\'', '\\', '\n', '\r', '\t', '\v' }).Contains(value))
-                return new InvalidToken(text[index..(index + 3)], lineNumber,
+                return new InvalidToken(text[index..(index += 3)], lineNumber,
                     new($"Cannot have single character {value} in char quote (line {lineNumber})"));
             string tokenText = text[index..(index + 3)];
             index += 3;
             return new CharacterLiteralToken(tokenText, value, lineNumber);
         }
         if (text[index + 1] != '\\')
-            return new InvalidToken(text[index..(index + 4)], lineNumber,
+            return new InvalidToken(text[index..(index += 4)], lineNumber,
                 new($"First character in quote must be \\ (line {lineNumber})"));
         if (!CharUtils.BasicEscapeCharacters.ContainsKey(text[(index + 1)..(index + 3)]))
         {
             char value = text[index + 2];
             if ((new char[] { '\n', '\r', '\t', '\v' }).Contains(value))
-                return new InvalidToken(text[index..(index + 4)], lineNumber,
+                return new InvalidToken(text[index..(index += 4)], lineNumber,
                     new($"Cannot have character {value} after \\ in quote (line {lineNumber})"));
             string tokenText = text[index..(index + 4)];
             index += 4;
