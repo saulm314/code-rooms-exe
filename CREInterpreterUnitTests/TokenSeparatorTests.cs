@@ -215,4 +215,23 @@ public class TokenSeparatorTests
         Assert.Equal(expectedLineNumber, actualLineNumber);
         Assert.Equal(expectedValue, actualValue);
     }
+
+    [Theory]
+    [InlineData("0.0.0", 1, "0.0.0")]
+    [InlineData("0.1.0", 1, "0.1.0")]
+    [InlineData("0.1.1", 1, "0.1.1")]
+    [InlineData("1.1.1", 1, "1.1.1")]
+    [InlineData("1.1.0", 1, "1.1.0")]
+    public void GetTokens_TwoDecimalPoints_ReturnsInvalidToken(string input, int expectedLineNumber, string expectedText)
+    {
+        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input);
+        IToken token = tokens.First();
+        int actualLineNumber = token.LineNumber;
+        string actualText = token.Text;
+
+        Assert.Single(tokens);
+        Assert.IsAssignableFrom<InvalidToken>(token);
+        Assert.Equal(expectedLineNumber, actualLineNumber);
+        Assert.Equal(expectedText, actualText);
+    }
 }
