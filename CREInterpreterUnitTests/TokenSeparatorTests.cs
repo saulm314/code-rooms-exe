@@ -234,4 +234,43 @@ public class TokenSeparatorTests
         Assert.Equal(expectedLineNumber, actualLineNumber);
         Assert.Equal(expectedText, actualText);
     }
+
+    [Theory]
+    [InlineData(@"'\0'", @"'\0'", 1, '\0')]
+    [InlineData(@"'\''", @"'\''", 1, '\'')]
+    [InlineData("'\\\"\'", "'\\\"\'", 1, '"')]
+    [InlineData(@"'\\'", @"'\\'", 1, '\\')]
+    [InlineData(@"'\a'", @"'\a'", 1, '\a')]
+    [InlineData(@"'\b'", @"'\b'", 1, '\b')]
+    [InlineData(@"'\f'", @"'\f'", 1, '\f')]
+    [InlineData(@"'\n'", @"'\n'", 1, '\n')]
+    [InlineData(@"'\r'", @"'\r'", 1, '\r')]
+    [InlineData(@"'\t'", @"'\t'", 1, '\t')]
+    [InlineData(@"'\v'", @"'\v'", 1, '\v')]
+    [InlineData("'a'", "'a'", 1, 'a')]
+    [InlineData("'3'", "'3'", 1, '3')]
+    [InlineData("' '", "' '", 1, ' ')]
+    [InlineData("'\"'", "'\"'", 1, '"')]
+    [InlineData("';'", "';'", 1, ';')]
+    [InlineData("'{'", "'{'", 1, '{')]
+    [InlineData("'}'", "'}'", 1, '}')]
+    [InlineData("'('", "'('", 1, '(')]
+    [InlineData("')'", "')'", 1, ')')]
+    [InlineData("'['", "'['", 1, '[')]
+    [InlineData("']'", "']'", 1, ']')]
+    public void GetTokens_CharacterLiteral_ReturnsCharacterLiteralToken(string input, string expectedText, int expectedLineNumber, char expectedValue)
+    {
+        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input);
+        IToken token = tokens.First();
+        CharacterLiteralToken characterLiteralToken = (CharacterLiteralToken)token;
+        string actualText = token.Text;
+        int actualLineNumber = token.LineNumber;
+        char actualValue = characterLiteralToken.Value;
+
+        Assert.Single(tokens);
+        Assert.IsAssignableFrom<CharacterLiteralToken>(token);
+        Assert.Equal(expectedText, actualText);
+        Assert.Equal(expectedLineNumber, actualLineNumber);
+        Assert.Equal(expectedValue, actualValue);
+    }
 }

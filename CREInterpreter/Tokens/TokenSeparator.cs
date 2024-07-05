@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace CREInterpreter.Tokens;
 
@@ -104,7 +105,8 @@ public static class TokenSeparator
         return
             GetBooleanLiteralToken(text, ref index, ref lineNumber) ??
             GetIntegerLiteralToken(text, ref index, ref lineNumber) ??
-            GetDoubleFloatLiteralToken(text, ref index, ref lineNumber);
+            GetDoubleFloatLiteralToken(text, ref index, ref lineNumber) ??
+            GetCharacterLiteralToken(text, ref index, ref lineNumber);
     }
 
     private static IToken? GetBooleanLiteralToken(string text, ref int index, ref int lineNumber)
@@ -162,6 +164,48 @@ public static class TokenSeparator
             return null;
         index = i;
         return new DoubleFloatLiteralToken(tokenText, result, lineNumber);
+    }
+
+    private static IToken? GetCharacterLiteralToken(string text, ref int index, ref int lineNumber)
+    {
+        if (text.Length - index < 3)
+            return null;
+        if (text[index] != '\'')
+            return null;
+        int closingQuoteIndex =
+            (text.Length - index >= 4 && text[index + 3] == '\'') ? index + 3 :
+            text[index + 2] == '\'' ? index + 2 :
+            -1;
+        if (closingQuoteIndex == -1)
+            return new InvalidToken(text[index..(index + 3)], lineNumber,
+                new($"Quote not closed or too many characters in quote at line {lineNumber}"));
+        if (closingQuoteIndex == index + 2)
+        {
+            char value = text[index + 1];
+            if ((new char[] { '\'', '\\', '\n', '\r', '\t', '\v' }).Contains(value))
+                return new InvalidToken(text[index..(index + 3)], lineNumber,
+                    new($"Cannot have single character {value} in char quote (line {lineNumber})"));
+            string tokenText = text[index..(index + 3)];
+            index += 3;
+            return new CharacterLiteralToken(tokenText, value, lineNumber);
+        }
+        if (text[index + 1] != '\\')
+            return new InvalidToken(text[index..(index + 4)], lineNumber,
+                new($"First character in quote must be \\ (line {lineNumber})"));
+        if (!CharUtils.BasicEscapeCharacters.ContainsKey(text[(index + 1)..(index + 3)]))
+        {
+            char value = text[index + 2];
+            if ((new char[] { '\n', '\r', '\t', '\v' }).Contains(value))
+                return new InvalidToken(text[index..(index + 4)], lineNumber,
+                    new($"Cannot have character {value} after \\ in quote (line {lineNumber})"));
+            string tokenText = text[index..(index + 4)];
+            index += 4;
+            return new CharacterLiteralToken(tokenText, value, lineNumber);
+        }
+        char value_ = CharUtils.BasicEscapeCharacters[text[(index + 1)..(index + 3)]];
+        string tokenText_ = text[index..(index + 4)];
+        index += 4;
+        return new CharacterLiteralToken(tokenText_, value_, lineNumber);
     }
 
     private static InvalidToken GetInvalidToken(string text, ref int index, ref int lineNumber)

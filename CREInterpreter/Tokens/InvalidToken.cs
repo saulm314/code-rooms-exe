@@ -6,6 +6,8 @@ public class InvalidToken(string text, int lineNumber, InterpreterException exce
 
     public int LineNumber => lineNumber;
 
+    public InterpreterException Exception => exception;
+
     public InterpreterException? Compile(Memory memory)
     {
         return exception;
