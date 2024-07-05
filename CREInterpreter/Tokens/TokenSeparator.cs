@@ -106,7 +106,8 @@ public static class TokenSeparator
             GetBooleanLiteralToken(text, ref index, ref lineNumber) ??
             GetIntegerLiteralToken(text, ref index, ref lineNumber) ??
             GetDoubleFloatLiteralToken(text, ref index, ref lineNumber) ??
-            GetCharacterLiteralToken(text, ref index, ref lineNumber);
+            GetCharacterLiteralToken(text, ref index, ref lineNumber) ??
+            GetStringLiteralToken(text, ref index, ref lineNumber);
     }
 
     private static IToken? GetBooleanLiteralToken(string text, ref int index, ref int lineNumber)
@@ -206,6 +207,28 @@ public static class TokenSeparator
         string tokenText_ = text[index..(index + 4)];
         index += 4;
         return new CharacterLiteralToken(tokenText_, value_, lineNumber);
+    }
+
+    private static IToken? GetStringLiteralToken(string text, ref int index, ref int lineNumber)
+    {
+        int startIndex = index;
+        int i;
+        if (text.Length - startIndex < 2)
+            return null;
+        if (text[startIndex] != '"')
+            return null;
+        i = startIndex + 1;
+        while (i < text.Length && text[i] != '\n' && text[i] != '"')
+            i++;
+        index = i;
+        if (i == text.Length)
+            return new InvalidToken(text[startIndex..index], lineNumber,
+                new InterpreterException($"Quote at line {lineNumber} never closed"));
+        if (text[i] == '\n')
+            return new InvalidToken(text[startIndex..index], lineNumber,
+                new InterpreterException($"Cannot have a newline mid-quote (line {lineNumber})"));
+        index++;
+        return new StringLiteralToken(text[startIndex..index], text[(startIndex + 1)..(index - 1)], lineNumber);
     }
 
     private static InvalidToken GetInvalidToken(string text, ref int index, ref int lineNumber)

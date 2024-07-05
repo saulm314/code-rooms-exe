@@ -303,4 +303,26 @@ public class TokenSeparatorTests
         Assert.Equal(expectedText, actualText);
         Assert.Equal(expectedLineNumber, actualLineNumber);
     }
+
+    [Theory]
+    [InlineData("\"\"", "\"\"", 1, "")]
+    [InlineData("\"a\"", "\"a\"", 1, "a")]
+    [InlineData("\"abc\"", "\"abc\"", 1, "abc")]
+    [InlineData("\"\\a\\b\\c\"", "\"\\a\\b\\c\"", 1, "\\a\\b\\c")]
+    [InlineData("\"';{([[)}]\\n // /* \"", "\"';{([[)}]\\n // /* \"", 1, "';{([[)}]\\n // /* ")]
+    public void GetTokens_StringLiteral_ReturnsStringLiteralToken(string input, string expectedText, int expectedLineNumber, string expectedValue)
+    {
+        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input);
+        IToken token = tokens.First();
+        StringLiteralToken stringLiteralToken = (StringLiteralToken)token;
+        string actualText = token.Text;
+        int actualLineNumber = token.LineNumber;
+        string actualValue = stringLiteralToken.Value;
+
+        Assert.Single(tokens);
+        Assert.IsAssignableFrom<StringLiteralToken>(token);
+        Assert.Equal(expectedText, actualText);
+        Assert.Equal(expectedLineNumber, actualLineNumber);
+        Assert.Equal(expectedValue, actualValue);
+    }
 }

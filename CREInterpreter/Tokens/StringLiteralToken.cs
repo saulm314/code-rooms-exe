@@ -1,13 +1,15 @@
 ﻿namespace CREInterpreter.Tokens;
 
-public class StringLiteralToken(string text, int lineNumber) : IToken
+public class StringLiteralToken(string text, string value, int lineNumber) : IToken
 {
     public string Text => text;
 
     public int LineNumber => lineNumber;
 
+    public string Value => value;
+
     public InterpreterException? Compile(Memory memory)
     {
-        throw new System.NotImplementedException();
+        return null;
     }
 }
