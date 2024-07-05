@@ -278,12 +278,20 @@ public class TokenSeparatorTests
     [Theory]
     [InlineData("'/**/a'", "'/*", 1)]
     [InlineData("'\n'", "'\n'", 1)]
+    [InlineData("'\''", "'\''", 1)]
+    [InlineData("'\r'", "'\r'", 1)]
+    [InlineData("'\t'", "'\t'", 1)]
+    [InlineData("'\v'", "'\v'", 1)]
     [InlineData("'\na'", "'\na'", 1)]
     [InlineData("'a", "'a", 1)]
     [InlineData("a'", "a'", 1)]
     [InlineData("'\\'", "'\\'", 1)]
     [InlineData("'//\na'", "'//", 1)]
     [InlineData("'aa'", "'aa'", 1)]
+    [InlineData("'\\\n'", "'\\\n'", 1)]
+    [InlineData("'\\\r'", "'\\\r'", 1)]
+    [InlineData("'\\\t'", "'\\\t'", 1)]
+    [InlineData("'\\\v'", "'\\\v'", 1)]
     public void GetTokens_InvalidCharacter_ReturnsInvalidToken(string input, string expectedText, int expectedLineNumber)
     {
         IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input);
