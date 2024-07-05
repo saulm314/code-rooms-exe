@@ -258,6 +258,7 @@ public class TokenSeparatorTests
     [InlineData("')'", "')'", 1, ')')]
     [InlineData("'['", "'['", 1, '[')]
     [InlineData("']'", "']'", 1, ']')]
+    [InlineData(@"'\q'", @"'\q'", 1, 'q')]
     public void GetTokens_CharacterLiteral_ReturnsCharacterLiteralToken(string input, string expectedText, int expectedLineNumber, char expectedValue)
     {
         IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input);
