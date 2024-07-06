@@ -285,7 +285,6 @@ public class TokenSeparatorTests
     [InlineData("'\v'", "'\v'", 1)]
     [InlineData("'\na'", "'\na'", 1)]
     [InlineData("'a", "'a", 1)]
-    [InlineData("a'", "a'", 1)]
     [InlineData("'\\'", "'\\'", 1)]
     [InlineData("'//\na'", "'//", 1)]
     [InlineData("'aa'", "'aa'", 1)]
@@ -330,7 +329,6 @@ public class TokenSeparatorTests
     [Theory]
     [InlineData("\"", "\"", 1)]
     [InlineData("\"a", "\"a", 1)]
-    [InlineData("a\"", "a\"", 1)]
     [InlineData("\"\n\"", "\"", 1)]
     public void GetTokens_InvalidStringLiteral_ReturnsInvalidToken(string input, string expectedText, int expectedLineNumber)
     {
@@ -455,5 +453,38 @@ public class TokenSeparatorTests
         Assert.Equal(expectedText, actualText);
         Assert.Equal(expectedLineNumber, actualLineNumber);
         Assert.Equal(expectedType, actualType);
+    }
+
+    [Theory]
+    [InlineData("a", "a", 1)]
+    [InlineData("A", "A", 1)]
+    [InlineData("_", "_", 1)]
+    [InlineData("a0", "a0", 1)]
+    [InlineData("A0", "A0", 1)]
+    [InlineData("_0", "_0", 1)]
+    [InlineData("aa", "aa", 1)]
+    [InlineData("Aa", "Aa", 1)]
+    [InlineData("_a", "_a", 1)]
+    [InlineData("aA", "aA", 1)]
+    [InlineData("AA", "AA", 1)]
+    [InlineData("_A", "_A", 1)]
+    [InlineData("a_", "a_", 1)]
+    [InlineData("A_", "A_", 1)]
+    [InlineData("__", "__", 1)]
+    [InlineData("new_", "new_", 1)]
+    [InlineData("_new", "_new", 1)]
+    [InlineData("int_", "int_", 1)]
+    [InlineData("_int", "_int", 1)]
+    public void GetTokens_VariableName_ReturnsVariableNameToken(string input, string expectedText, int expectedLineNumber)
+    {
+        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input);
+        IToken token = tokens.First();
+        string actualText = token.Text;
+        int actualLineNumber = token.LineNumber;
+
+        Assert.Single(tokens);
+        Assert.IsAssignableFrom<VariableNameToken>(token);
+        Assert.Equal(expectedText, actualText);
+        Assert.Equal(expectedLineNumber, actualLineNumber);
     }
 }

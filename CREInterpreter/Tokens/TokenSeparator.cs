@@ -23,6 +23,7 @@ public static class TokenSeparator
                 GetSymbolToken(text, ref index, ref lineNumber) ??
                 GetKeywordToken(text, ref index, ref lineNumber) ??
                 GetTypeNameToken(text, ref index, ref lineNumber) ??
+                GetVariableNameToken(text, ref index, ref lineNumber) ??
                 GetInvalidToken(text, ref index, ref lineNumber);
         }
     }
@@ -355,6 +356,22 @@ public static class TokenSeparator
         }
         index += varType.Name.Length;
         return new TypeNameToken(varType.Name, varType, lineNumber);
+    }
+
+    private static IToken? GetVariableNameToken(string text, ref int index, ref int lineNumber)
+    {
+        if (!char.IsLetter(text[index]) && text[index] != '_')
+            return null;
+        int i = index;
+        while (i < text.Length && (char.IsLetterOrDigit(text[i]) || text[i] == '_'))
+            i++;
+        string tokenText = text[index..i];
+        if (KeywordMappings.ContainsKey(tokenText))
+            return null;
+        if (VarType.GetVarType(tokenText) != null)
+            return null;
+        index = i;
+        return new VariableNameToken(tokenText, lineNumber);
     }
 
     private static InvalidToken GetInvalidToken(string text, ref int index, ref int lineNumber)

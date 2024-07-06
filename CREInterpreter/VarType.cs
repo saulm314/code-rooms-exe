@@ -12,6 +12,11 @@ public class VarType
         "Boolean" => "bool",
         "Char" => "char",
         "String" => "string",
+        "Int32[]" => "int[]",
+        "Double[]" => "double[]",
+        "Boolean[]" => "bool[]",
+        "Char[]" => "char[]",
+        "String[]" => "string[]",
         _ => throw new InterpreterException($"Internal error: cannot find name for systemtype {SystemType.Name}")
     };
 
