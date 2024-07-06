@@ -342,4 +342,45 @@ public class TokenSeparatorTests
         Assert.Equal(expectedText, actualText);
         Assert.Equal(expectedLineNumber, actualLineNumber);
     }
+
+    [Theory]
+    [InlineData("<=", "<=", 1, typeof(LessThanOrEqualToSymbolToken))]
+    [InlineData(">=", ">=", 1, typeof(GreaterThanOrEqualToSymbolToken))]
+    [InlineData("&&", "&&", 1, typeof(ConditionalAndSymbolToken))]
+    [InlineData("||", "||", 1, typeof(ConditionalOrSymbolToken))]
+    [InlineData("==", "==", 1, typeof(EqualsEqualsSymbolToken))]
+    [InlineData("!=", "!=", 1, typeof(NotEqualsSymbolToken))]
+    [InlineData("=", "=", 1, typeof(EqualsSymbolToken))]
+    [InlineData("{", "{", 1, typeof(OpenCurlyBraceSymbolToken))]
+    [InlineData("}", "}", 1, typeof(CloseCurlyBraceSymbolToken))]
+    [InlineData(",", ",", 1, typeof(CommaSymbolToken))]
+    [InlineData(".", ".", 1, typeof(DotSymbolToken))]
+    [InlineData("+", "+", 1, typeof(PlusSymbolToken))]
+    [InlineData("-", "-", 1, typeof(MinusSymbolToken))]
+    [InlineData("*", "*", 1, typeof(MultiplySymbolToken))]
+    [InlineData("/", "/", 1, typeof(DivideSymbolToken))]
+    [InlineData("<", "<", 1, typeof(LessThanSymbolToken))]
+    [InlineData(">", ">", 1, typeof(GreaterThanSymbolToken))]
+    [InlineData("(", "(", 1, typeof(OpenBracketSymbolToken))]
+    [InlineData(")", ")", 1, typeof(CloseBracketSymbolToken))]
+    [InlineData("!", "!", 1, typeof(NotSymbolToken))]
+    [InlineData("&", "&", 1, typeof(AndSymbolToken))]
+    [InlineData("|", "|", 1, typeof(OrSymbolToken))]
+    [InlineData("^", "^", 1, typeof(XorSymbolToken))]
+    [InlineData("%", "%", 1, typeof(RemainderSymbolToken))]
+    [InlineData(";", ";", 1, typeof(SemicolonSymbolToken))]
+    [InlineData("[", "[", 1, typeof(OpenSquareBraceSymbolToken))]
+    [InlineData("]", "]", 1, typeof(CloseSquareBraceSymbolToken))]
+    public void GetTokens_Symbol_ReturnsSymbolToken(string input, string expectedText, int expectedLineNumber, Type expectedTokenType)
+    {
+        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input);
+        IToken token = tokens.First();
+        string actualText = token.Text;
+        int actualLineNumber = token.LineNumber;
+
+        Assert.Single(tokens);
+        Assert.IsAssignableFrom(expectedTokenType, token);
+        Assert.Equal(expectedText, actualText);
+        Assert.Equal(expectedLineNumber, actualLineNumber);
+    }
 }
