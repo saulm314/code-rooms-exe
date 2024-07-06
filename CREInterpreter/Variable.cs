@@ -15,10 +15,4 @@ public class Variable(VarType? varType, string? name = null)
             _VarType?.ToString() ?? "*",
             Name?.ToString() ?? "*",
             string.IsNullOrEmpty(FormattedValue) ? "*" : FormattedValue);
-
-    public static IEnumerable<Variable> GetBlankVariables(VarType varType, int count)
-    {
-        for (int i = 0; i < count; i++)
-            yield return new(varType);
-    }
 }
