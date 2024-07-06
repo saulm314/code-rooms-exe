@@ -1,6 +1,6 @@
 ﻿namespace CREInterpreter.Tokens;
 
-public class PlusSymbolToken(int lineNumber) : IToken
+public class PlusSymbolToken(int lineNumber) : IToken, ISymbol
 {
     public string Text => "+";
 

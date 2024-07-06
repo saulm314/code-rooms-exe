@@ -1,6 +1,6 @@
 ﻿namespace CREInterpreter.Tokens;
 
-public class CommaSymbolToken(int lineNumber) : IToken
+public class CommaSymbolToken(int lineNumber) : IToken, ISymbol
 {
     public string Text => ",";
 

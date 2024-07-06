@@ -1,3 +1,4 @@
+using CREInterpreter;
 using CREInterpreter.Tokens;
 using System;
 using System.Collections.Generic;
@@ -380,6 +381,7 @@ public class TokenSeparatorTests
 
         Assert.Single(tokens);
         Assert.IsAssignableFrom(expectedTokenType, token);
+        Assert.IsAssignableFrom<ISymbol>(token);
         Assert.Equal(expectedText, actualText);
         Assert.Equal(expectedLineNumber, actualLineNumber);
     }

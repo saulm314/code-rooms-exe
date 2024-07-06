@@ -1,6 +1,6 @@
 ﻿namespace CREInterpreter.Tokens;
 
-public class RemainderSymbolToken(int lineNumber) : IToken
+public class RemainderSymbolToken(int lineNumber) : IToken, ISymbol
 {
     public string Text => "%";
 

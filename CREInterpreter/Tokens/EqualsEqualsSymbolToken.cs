@@ -1,6 +1,6 @@
 ﻿namespace CREInterpreter.Tokens;
 
-public class EqualsEqualsSymbolToken(int lineNumber) : IToken
+public class EqualsEqualsSymbolToken(int lineNumber) : IToken, ISymbol
 {
     public string Text => "==";
 

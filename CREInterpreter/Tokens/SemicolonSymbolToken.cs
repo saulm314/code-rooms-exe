@@ -1,6 +1,6 @@
 ﻿namespace CREInterpreter.Tokens;
 
-public class SemicolonSymbolToken(int lineNumber) : IToken
+public class SemicolonSymbolToken(int lineNumber) : IToken, ISymbol
 {
     public string Text => ";";
 

@@ -1,6 +1,6 @@
 ﻿namespace CREInterpreter.Tokens;
 
-public class CloseSquareBraceSymbolToken(int lineNumber) : IToken
+public class CloseSquareBraceSymbolToken(int lineNumber) : IToken, ISymbol
 {
     public string Text => "]";
 

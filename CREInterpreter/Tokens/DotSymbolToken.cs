@@ -1,6 +1,6 @@
 ﻿namespace CREInterpreter.Tokens;
 
-public class DotSymbolToken(int lineNumber) : IToken
+public class DotSymbolToken(int lineNumber) : IToken, ISymbol
 {
     public string Text => ".";
 

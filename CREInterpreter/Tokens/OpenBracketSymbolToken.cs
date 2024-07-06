@@ -1,6 +1,6 @@
 ﻿namespace CREInterpreter.Tokens;
 
-public class OpenBracketSymbolToken(int lineNumber) : IToken
+public class OpenBracketSymbolToken(int lineNumber) : IToken, ISymbol
 {
     public string Text => "(";
 

@@ -1,6 +1,6 @@
 ﻿namespace CREInterpreter.Tokens;
 
-public class MinusSymbolToken(int lineNumber) : IToken
+public class MinusSymbolToken(int lineNumber) : IToken, ISymbol
 {
     public string Text => "-";
 

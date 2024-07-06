@@ -1,6 +1,6 @@
 ﻿namespace CREInterpreter.Tokens;
 
-public class ConditionalOrSymbolToken(int lineNumber) : IToken
+public class ConditionalOrSymbolToken(int lineNumber) : IToken, ISymbol
 {
     public string Text => "||";
 

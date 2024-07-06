@@ -1,6 +1,6 @@
 ﻿namespace CREInterpreter.Tokens;
 
-public class NotSymbolToken(int lineNumber) : IToken
+public class NotSymbolToken(int lineNumber) : IToken, ISymbol
 {
     public string Text => "!";
 

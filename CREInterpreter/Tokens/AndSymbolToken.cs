@@ -1,6 +1,6 @@
 ﻿namespace CREInterpreter.Tokens;
 
-public class AndSymbolToken(int lineNumber) : IToken
+public class AndSymbolToken(int lineNumber) : IToken, ISymbol
 {
     public string Text => "&";
 

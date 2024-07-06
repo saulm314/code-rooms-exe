@@ -1,6 +1,6 @@
 ﻿namespace CREInterpreter.Tokens;
 
-public class LessThanSymbolToken(int lineNumber) : IToken
+public class LessThanSymbolToken(int lineNumber) : IToken, ISymbol
 {
     public string Text => "<";
 

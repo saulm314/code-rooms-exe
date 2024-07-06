@@ -1,6 +1,6 @@
 ﻿namespace CREInterpreter.Tokens;
 
-public class XorSymbolToken(int lineNumber) : IToken
+public class XorSymbolToken(int lineNumber) : IToken, ISymbol
 {
     public string Text => "^";
 

@@ -1,6 +1,6 @@
 ﻿namespace CREInterpreter.Tokens;
 
-public class DivideSymbolToken(int lineNumber) : IToken
+public class DivideSymbolToken(int lineNumber) : IToken, ISymbol
 {
     public string Text => "/";
 
