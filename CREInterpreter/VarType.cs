@@ -17,14 +17,7 @@ public class VarType
 
     public Type SystemType { get; init; }
     public bool IsArray { get; init; }
-
-    public VarType Array =>
-        _array ??=
-        !IsArray ?
-        new(SystemType.MakeArrayType(), this) :
-        throw new NotImplementedException("2D arrays are not supported in this version");
-    private VarType? _array;
-
+    public VarType? Array { get; init; }
     public VarType? Unarray { get; init; }
 
     public object? DefaultValue => Name switch
@@ -44,6 +37,8 @@ public class VarType
         SystemType = systemType;
         IsArray = unarray != null;
         Unarray = unarray;
+
+        Array = !IsArray ? new(SystemType.MakeArrayType(), this) : null;
 
         VarTypes.Add(this);
     }
