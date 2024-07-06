@@ -1,6 +1,6 @@
 ﻿namespace CREInterpreter.Tokens;
 
-public class ContinueKeywordToken(int lineNumber) : IToken
+public class ContinueKeywordToken(int lineNumber) : IToken, IKeyword
 {
     public string Text => "continue";
 
@@ -8,6 +8,6 @@ public class ContinueKeywordToken(int lineNumber) : IToken
 
     public InterpreterException? Compile(Memory memory)
     {
-        throw new System.NotImplementedException();
+        return null;
     }
 }

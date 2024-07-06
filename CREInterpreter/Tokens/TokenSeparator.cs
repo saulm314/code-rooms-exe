@@ -21,6 +21,7 @@ public static class TokenSeparator
                 GetMultiLineCommentToken(text, ref index, ref lineNumber) ??
                 GetLiteralToken(text, ref index, ref lineNumber) ??
                 GetSymbolToken(text, ref index, ref lineNumber) ??
+                GetKeywordToken(text, ref index, ref lineNumber) ??
                 GetInvalidToken(text, ref index, ref lineNumber);
         }
     }
@@ -236,17 +237,12 @@ public static class TokenSeparator
 
     private static IToken? GetSymbolToken(string text, ref int index, ref int lineNumber)
     {
-        System.Diagnostics.Debug.WriteLine("Hello");
         int i = index;
         string[] possibleSymbols = SymbolMappings.Keys.ToArray();
         Array.Sort(possibleSymbols, new StringSizeComp());
-        foreach (string possibleSymbol in possibleSymbols)
-            System.Diagnostics.Debug.WriteLine(possibleSymbol);
         string? symbol = Array.Find(possibleSymbols, _symbol =>
             i + _symbol.Length <= text.Length &&
             text[i..(i + _symbol.Length)] == _symbol);
-        System.Diagnostics.Debug.WriteLine(symbol);
-        System.Diagnostics.Debug.WriteLine("Hello2");
         if (symbol == null)
             return null;
         Func<int, IToken> tokenCreator = SymbolMappings[symbol];
@@ -303,6 +299,41 @@ public static class TokenSeparator
                 [";"] = l => new SemicolonSymbolToken(l),
                 ["["] = l => new OpenSquareBraceSymbolToken(l),
                 ["]"] = l => new CloseSquareBraceSymbolToken(l)
+            });
+
+    private static IToken? GetKeywordToken(string text, ref int index, ref int lineNumber)
+    {
+        int i = index;
+        string[] possibleKeywords = KeywordMappings.Keys.ToArray();
+        string? keyword = Array.Find(possibleKeywords, _keyword =>
+            i + _keyword.Length <= text.Length &&
+            text[i..(i + _keyword.Length)] == _keyword);
+        if (keyword == null)
+            return null;
+        if (i + keyword.Length < text.Length)
+        {
+            char nextChar = text[i + keyword.Length];
+            if (char.IsLetterOrDigit(nextChar) || nextChar == '_')
+                return null;
+        }
+        Func<int, IToken> tokenCreator = KeywordMappings[keyword];
+        index += keyword.Length;
+        return tokenCreator(lineNumber);
+    }
+
+    private static ImmutableDictionary<string, Func<int, IToken>> KeywordMappings { get; } =
+        ImmutableDictionary<string, Func<int, IToken>>.Empty.AddRange(
+            new Dictionary<string, Func<int, IToken>>()
+            {
+                ["new"] = l => new NewKeywordToken(l),
+                ["null"] = l => new NullKeywordToken(l),
+                ["if"] = l => new IfKeywordToken(l),
+                ["else"] = l => new ElseKeywordToken(l),
+                ["while"] = l => new WhileKeywordToken(l),
+                ["for"] = l => new ForKeywordToken(l),
+                ["break"] = l => new BreakKeywordToken(l),
+                ["continue"] = l => new ContinueKeywordToken(l),
+                ["Length"] = l => new LengthKeywordToken(l)
             });
 
     private static InvalidToken GetInvalidToken(string text, ref int index, ref int lineNumber)

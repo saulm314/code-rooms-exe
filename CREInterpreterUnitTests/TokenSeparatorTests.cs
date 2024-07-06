@@ -385,4 +385,28 @@ public class TokenSeparatorTests
         Assert.Equal(expectedText, actualText);
         Assert.Equal(expectedLineNumber, actualLineNumber);
     }
+
+    [Theory]
+    [InlineData("new", "new", 1, typeof(NewKeywordToken))]
+    [InlineData("null", "null", 1, typeof(NullKeywordToken))]
+    [InlineData("if", "if", 1, typeof(IfKeywordToken))]
+    [InlineData("else", "else", 1, typeof(ElseKeywordToken))]
+    [InlineData("while", "while", 1, typeof(WhileKeywordToken))]
+    [InlineData("for", "for", 1, typeof(ForKeywordToken))]
+    [InlineData("break", "break", 1, typeof(BreakKeywordToken))]
+    [InlineData("continue", "continue", 1, typeof(ContinueKeywordToken))]
+    [InlineData("Length", "Length", 1, typeof(LengthKeywordToken))]
+    public void GetTokens_Keyword_ReturnsKeywordToken(string input, string expectedText, int expectedLineNumber, Type expectedTokenType)
+    {
+        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input);
+        IToken token = tokens.First();
+        string actualText = token.Text;
+        int actualLineNumber = token.LineNumber;
+
+        Assert.Single(tokens);
+        Assert.IsAssignableFrom(expectedTokenType, token);
+        Assert.IsAssignableFrom<IKeyword>(token);
+        Assert.Equal(expectedText, actualText);
+        Assert.Equal(expectedLineNumber, actualLineNumber);
+    }
 }

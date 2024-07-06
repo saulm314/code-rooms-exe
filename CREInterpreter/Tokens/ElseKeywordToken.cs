@@ -1,6 +1,6 @@
 ﻿namespace CREInterpreter.Tokens;
 
-public class ElseKeywordToken(int lineNumber) : IToken
+public class ElseKeywordToken(int lineNumber) : IToken, IKeyword
 {
     public string Text => "else";
 
@@ -8,6 +8,6 @@ public class ElseKeywordToken(int lineNumber) : IToken
 
     public InterpreterException? Compile(Memory memory)
     {
-        throw new System.NotImplementedException();
+        return null;
     }
 }

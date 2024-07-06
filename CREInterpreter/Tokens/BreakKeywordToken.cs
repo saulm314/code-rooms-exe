@@ -1,6 +1,6 @@
 ﻿namespace CREInterpreter.Tokens;
 
-public class BreakKeywordToken(int lineNumber) : IToken
+public class BreakKeywordToken(int lineNumber) : IToken, IKeyword
 {
     public string Text => "break";
 
@@ -8,6 +8,6 @@ public class BreakKeywordToken(int lineNumber) : IToken
 
     public InterpreterException? Compile(Memory memory)
     {
-        throw new System.NotImplementedException();
+        return null;
     }
 }

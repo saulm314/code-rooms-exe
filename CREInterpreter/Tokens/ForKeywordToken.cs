@@ -1,6 +1,6 @@
 ﻿namespace CREInterpreter.Tokens;
 
-public class ForKeywordToken(int lineNumber) : IToken
+public class ForKeywordToken(int lineNumber) : IToken, IKeyword
 {
     public string Text => "for";
 
@@ -8,6 +8,6 @@ public class ForKeywordToken(int lineNumber) : IToken
 
     public InterpreterException? Compile(Memory memory)
     {
-        throw new System.NotImplementedException();
+        return null;
     }
 }

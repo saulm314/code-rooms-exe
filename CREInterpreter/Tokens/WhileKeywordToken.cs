@@ -1,6 +1,6 @@
 ﻿namespace CREInterpreter.Tokens;
 
-public class WhileKeywordToken(int lineNumber) : IToken
+public class WhileKeywordToken(int lineNumber) : IToken, IKeyword
 {
     public string Text => "while";
 
@@ -8,6 +8,6 @@ public class WhileKeywordToken(int lineNumber) : IToken
 
     public InterpreterException? Compile(Memory memory)
     {
-        throw new System.NotImplementedException();
+        return null;
     }
 }

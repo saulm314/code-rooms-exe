@@ -1,6 +1,6 @@
 ﻿namespace CREInterpreter.Tokens;
 
-public class LengthKeywordToken(int lineNumber) : IToken
+public class LengthKeywordToken(int lineNumber) : IToken, IKeyword
 {
     public string Text => "Length";
 
@@ -8,6 +8,6 @@ public class LengthKeywordToken(int lineNumber) : IToken
 
     public InterpreterException? Compile(Memory memory)
     {
-        throw new System.NotImplementedException();
+        return null;
     }
 }
