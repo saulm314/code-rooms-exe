@@ -2,10 +2,16 @@
 
 namespace CREInterpreter;
 
-public class Memory(int initialHeapCapacity)
+public class Memory
 {
+    public Memory(int initialHeapCapacity)
+    {
+        PushToStack();
+        Heap = new(initialHeapCapacity);
+    }
+
     public Stack<Scope> Stack { get; } = new();
-    public Heap Heap { get; } = new(initialHeapCapacity);
+    public Heap Heap { get; init; }
 
     public void PushToStack()
     {
