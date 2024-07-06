@@ -7,9 +7,4 @@ public class TypeNameToken(string text, VarType varType, int lineNumber) : IToke
     public int LineNumber => lineNumber;
 
     public VarType _VarType => varType;
-
-    public InterpreterException? Compile(Memory memory)
-    {
-        return null;
-    }
 }

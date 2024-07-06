@@ -11,9 +11,4 @@ public class IntegerLiteralToken(string text, int value, int lineNumber) : IToke
     public VarType _VarType => VarType.@int;
 
     object IValueTypeLiteral.Value => Value;
-
-    public InterpreterException? Compile(Memory memory)
-    {
-        return null;
-    }
 }

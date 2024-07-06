@@ -6,7 +6,5 @@ public interface IToken
 
     int LineNumber { get; }
 
-    InterpreterException? Compile(Memory memory);
-
     string? ToString() => Text;
 }

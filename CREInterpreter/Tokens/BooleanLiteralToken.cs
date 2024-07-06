@@ -11,9 +11,4 @@ public class BooleanLiteralToken(string text, bool value, int lineNumber) : ITok
     public VarType _VarType => VarType.@bool;
 
     object IValueTypeLiteral.Value => Value;
-
-    public InterpreterException? Compile(Memory memory)
-    {
-        return null;
-    }
 }

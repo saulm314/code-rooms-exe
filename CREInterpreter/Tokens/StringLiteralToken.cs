@@ -7,9 +7,4 @@ public class StringLiteralToken(string text, string value, int lineNumber) : ITo
     public int LineNumber => lineNumber;
 
     public string Value => value;
-
-    public InterpreterException? Compile(Memory memory)
-    {
-        return null;
-    }
 }

@@ -11,9 +11,4 @@ public class DoubleFloatLiteralToken(string text, double value, int lineNumber) 
     public VarType _VarType => VarType.@double;
 
     object IValueTypeLiteral.Value => Value;
-
-    public InterpreterException? Compile(Memory memory)
-    {
-        return null;
-    }
 }

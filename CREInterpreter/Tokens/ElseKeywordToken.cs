@@ -5,9 +5,4 @@ public class ElseKeywordToken(int lineNumber) : IToken, IKeyword
     public string Text => "else";
 
     public int LineNumber => lineNumber;
-
-    public InterpreterException? Compile(Memory memory)
-    {
-        return null;
-    }
 }

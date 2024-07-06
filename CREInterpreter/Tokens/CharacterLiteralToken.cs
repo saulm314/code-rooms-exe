@@ -11,9 +11,4 @@ public class CharacterLiteralToken(string text, char value, int lineNumber) : IT
     public VarType _VarType => VarType.@char;
 
     object IValueTypeLiteral.Value => Value;
-
-    public InterpreterException? Compile(Memory memory)
-    {
-        return null;
-    }
 }
