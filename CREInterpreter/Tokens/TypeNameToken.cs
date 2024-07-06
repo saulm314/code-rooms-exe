@@ -1,13 +1,15 @@
 ﻿namespace CREInterpreter.Tokens;
 
-public class TypeNameToken(string text, int lineNumber) : IToken
+public class TypeNameToken(string text, VarType varType, int lineNumber) : IToken
 {
     public string Text => text;
 
     public int LineNumber => lineNumber;
 
+    public VarType _VarType => varType;
+
     public InterpreterException? Compile(Memory memory)
     {
-        throw new System.NotImplementedException();
+        return null;
     }
 }

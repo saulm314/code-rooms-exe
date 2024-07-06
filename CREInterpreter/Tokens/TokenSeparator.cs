@@ -22,6 +22,7 @@ public static class TokenSeparator
                 GetLiteralToken(text, ref index, ref lineNumber) ??
                 GetSymbolToken(text, ref index, ref lineNumber) ??
                 GetKeywordToken(text, ref index, ref lineNumber) ??
+                GetTypeNameToken(text, ref index, ref lineNumber) ??
                 GetInvalidToken(text, ref index, ref lineNumber);
         }
     }
@@ -335,6 +336,26 @@ public static class TokenSeparator
                 ["continue"] = l => new ContinueKeywordToken(l),
                 ["Length"] = l => new LengthKeywordToken(l)
             });
+
+    private static IToken? GetTypeNameToken(string text, ref int index, ref int lineNumber)
+    {
+        int i = index;
+        VarType? varType = VarType.VarTypes
+            .Where(varType => !varType.IsArray)
+            .SingleOrDefault(varType =>
+                i + varType.Name.Length <= text.Length &&
+                text[i..(i + varType.Name.Length)] == varType.Name);
+        if (varType == null)
+            return null;
+        if (i + varType.Name.Length < text.Length)
+        {
+            char nextChar = text[i + varType.Name.Length];
+            if (char.IsLetterOrDigit(nextChar) || nextChar == '_')
+                return null;
+        }
+        index += varType.Name.Length;
+        return new TypeNameToken(varType.Name, varType, lineNumber);
+    }
 
     private static InvalidToken GetInvalidToken(string text, ref int index, ref int lineNumber)
     {

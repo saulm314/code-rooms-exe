@@ -409,4 +409,51 @@ public class TokenSeparatorTests
         Assert.Equal(expectedText, actualText);
         Assert.Equal(expectedLineNumber, actualLineNumber);
     }
+
+    [Theory]
+    [InlineData("int", "int", 1, typeof(int))]
+    [InlineData("double", "double", 1, typeof(double))]
+    [InlineData("bool", "bool", 1, typeof(bool))]
+    [InlineData("char", "char", 1, typeof(char))]
+    [InlineData("string", "string", 1, typeof(string))]
+    public void GetTokens_TypeName_ReturnsTypeNameToken(string input, string expectedText, int expectedLineNumber, Type expectedType)
+    {
+        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input);
+        IToken token = tokens.First();
+        TypeNameToken typeNameToken = (TypeNameToken)token;
+        string actualText = token.Text;
+        int actualLineNumber = token.LineNumber;
+        Type actualType = typeNameToken._VarType.SystemType;
+
+        Assert.Single(tokens);
+        Assert.IsAssignableFrom<TypeNameToken>(token);
+        Assert.Equal(expectedText, actualText);
+        Assert.Equal(expectedLineNumber, actualLineNumber);
+        Assert.Equal(expectedType, actualType);
+    }
+
+    [Theory]
+    [InlineData("int[]", "int", 1, typeof(int))]
+    [InlineData("double[]", "double", 1, typeof(double))]
+    [InlineData("bool[]", "bool", 1, typeof(bool))]
+    [InlineData("char[]", "char", 1, typeof(char))]
+    [InlineData("string[]", "string", 1, typeof(string))]
+    public void GetTokens_ArrayTypeName_ReturnsTypeNameTokenAndSquareBraceTokens(string input, string expectedText, int expectedLineNumber, Type expectedType)
+    {
+        IToken[] tokens = TokenSeparator.GetTokens(input).ToArray();
+        TypeNameToken firstToken = (TypeNameToken)tokens[0];
+        IToken secondToken = tokens[1];
+        IToken thirdToken = tokens[2];
+        string actualText = firstToken.Text;
+        int actualLineNumber = firstToken.LineNumber;
+        Type actualType = firstToken._VarType.SystemType;
+
+        Assert.Equal(3, tokens.Length);
+        Assert.IsAssignableFrom<TypeNameToken>(firstToken);
+        Assert.IsAssignableFrom<OpenSquareBraceSymbolToken>(secondToken);
+        Assert.IsAssignableFrom<CloseSquareBraceSymbolToken>(thirdToken);
+        Assert.Equal(expectedText, actualText);
+        Assert.Equal(expectedLineNumber, actualLineNumber);
+        Assert.Equal(expectedType, actualType);
+    }
 }
