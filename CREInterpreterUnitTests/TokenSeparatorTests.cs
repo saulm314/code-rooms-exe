@@ -475,6 +475,8 @@ public class TokenSeparatorTests
     [InlineData("_new", "_new", 1)]
     [InlineData("int_", "int_", 1)]
     [InlineData("_int", "_int", 1)]
+    [InlineData("New", "New", 1)]
+    [InlineData("Int", "Int", 1)]
     public void GetTokens_VariableName_ReturnsVariableNameToken(string input, string expectedText, int expectedLineNumber)
     {
         IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input);
@@ -486,5 +488,33 @@ public class TokenSeparatorTests
         Assert.IsAssignableFrom<VariableNameToken>(token);
         Assert.Equal(expectedText, actualText);
         Assert.Equal(expectedLineNumber, actualLineNumber);
+    }
+
+    [Theory]
+    [InlineData("0a", "0", "a", 0, 1, 1)]
+    [InlineData("0_", "0", "_", 0, 1, 1)]
+    [InlineData("1a", "1", "a", 1, 1, 1)]
+    [InlineData("1_", "1", "_", 1, 1, 1)]
+    public void GetTokens_VariableNameStartsWithNumber_ReturnsTwoTokens(string input, string expectedText1, string expectedText2,
+        int expectedValue1,
+        int expectedLineNumber1, int expectedLineNumber2)
+    {
+        IToken[] tokens = TokenSeparator.GetTokens(input).ToArray();
+        IntegerLiteralToken token1 = (IntegerLiteralToken)tokens[0];
+        IToken token2 = tokens[1];
+        string actualText1 = token1.Text;
+        string actualText2 = token2.Text;
+        int actualValue1 = token1.Value;
+        int actualLineNumber1 = token1.LineNumber;
+        int actualLineNumber2 = token2.LineNumber;
+
+        Assert.Equal(2, tokens.Length);
+        Assert.IsAssignableFrom<IntegerLiteralToken>(token1);
+        Assert.IsAssignableFrom<VariableNameToken>(token2);
+        Assert.Equal(expectedText1, actualText1);
+        Assert.Equal(expectedText2, actualText2);
+        Assert.Equal(expectedValue1, actualValue1);
+        Assert.Equal(expectedLineNumber1, actualLineNumber1);
+        Assert.Equal(expectedLineNumber2, actualLineNumber2);
     }
 }
