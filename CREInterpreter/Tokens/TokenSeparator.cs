@@ -61,7 +61,7 @@ public static class TokenSeparator
         while (i < text.Length && text[i] != '\n')
             i++;
         index = i;
-        return new SingleLineCommentToken(text[startIndex..index], lineNumber);
+        return new SingleLineCommentToken(text[startIndex..index], lineNumber, startIndex);
     }
 
     private static IToken? GetMultiLineCommentToken(string text, ref int index, ref int lineNumber)
@@ -101,9 +101,9 @@ public static class TokenSeparator
         index = i;
         lineNumber = lineNumberTemp;
         if (!closed)
-            return new InvalidToken(text[startIndex..], originalLineNumber,
+            return new InvalidToken(text[startIndex..], originalLineNumber, startIndex,
                 new($"Multi-line comment starting at line {originalLineNumber} is never closed"));
-        return new MultiLineCommentToken(text[startIndex..index], originalLineNumber);
+        return new MultiLineCommentToken(text[startIndex..index], originalLineNumber, startIndex);
     }
 
     private static IToken? GetLiteralToken(string text, ref int index, ref int lineNumber)
@@ -118,6 +118,7 @@ public static class TokenSeparator
 
     private static IToken? GetBooleanLiteralToken(string text, ref int index, ref int lineNumber)
     {
+        int startIndex = index;
         const int TrueLength = 4;
         const int FalseLength = 5;
         if (text.Length - index < TrueLength)
@@ -125,20 +126,21 @@ public static class TokenSeparator
         if (text[index..(index + TrueLength)] == "true")
         {
             index += TrueLength;
-            return new BooleanLiteralToken("true", true, lineNumber);
+            return new BooleanLiteralToken("true", true, lineNumber, startIndex);
         }
         if (text.Length - index < FalseLength)
             return null;
         if (text[index..(index + FalseLength)] == "false")
         {
             index += FalseLength;
-            return new BooleanLiteralToken("false", false, lineNumber);
+            return new BooleanLiteralToken("false", false, lineNumber, startIndex);
         }
         return null;
     }
 
     private static IToken? GetIntegerLiteralToken(string text, ref int index, ref int lineNumber)
     {
+        int startIndex = index;
         int i = index;
         while (i < text.Length)
         {
@@ -153,11 +155,12 @@ public static class TokenSeparator
         if (!success)
             return null;
         index = i;
-        return new IntegerLiteralToken(tokenText, result, lineNumber);
+        return new IntegerLiteralToken(tokenText, result, lineNumber, startIndex);
     }
 
     private static IToken? GetDoubleFloatLiteralToken(string text, ref int index, ref int lineNumber)
     {
+        int startIndex = index;
         int i = index;
         while (i < text.Length)
         {
@@ -170,11 +173,12 @@ public static class TokenSeparator
         if (!success)
             return null;
         index = i;
-        return new DoubleFloatLiteralToken(tokenText, result, lineNumber);
+        return new DoubleFloatLiteralToken(tokenText, result, lineNumber, startIndex);
     }
 
     private static IToken? GetCharacterLiteralToken(string text, ref int index, ref int lineNumber)
     {
+        int startIndex = index;
         if (text.Length - index < 3)
             return null;
         if (text[index] != '\'')
@@ -184,35 +188,35 @@ public static class TokenSeparator
             text[index + 2] == '\'' ? index + 2 :
             -1;
         if (closingQuoteIndex == -1)
-            return new InvalidToken(text[index..(index += 3)], lineNumber,
+            return new InvalidToken(text[index..(index += 3)], lineNumber, startIndex,
                 new($"Quote not closed or too many characters in quote at line {lineNumber}"));
         if (closingQuoteIndex == index + 2)
         {
             char value = text[index + 1];
             if ((new char[] { '\'', '\\', '\n', '\r', '\t', '\v' }).Contains(value))
-                return new InvalidToken(text[index..(index += 3)], lineNumber,
+                return new InvalidToken(text[index..(index += 3)], lineNumber, startIndex,
                     new($"Cannot have single character {value} in char quote (line {lineNumber})"));
             string tokenText = text[index..(index + 3)];
             index += 3;
-            return new CharacterLiteralToken(tokenText, value, lineNumber);
+            return new CharacterLiteralToken(tokenText, value, lineNumber, startIndex);
         }
         if (text[index + 1] != '\\')
-            return new InvalidToken(text[index..(index += 4)], lineNumber,
+            return new InvalidToken(text[index..(index += 4)], lineNumber, startIndex,
                 new($"First character in quote must be \\ (line {lineNumber})"));
         if (!CharUtils.BasicEscapeCharacters.ContainsKey(text[(index + 1)..(index + 3)]))
         {
             char value = text[index + 2];
             if ((new char[] { '\n', '\r', '\t', '\v' }).Contains(value))
-                return new InvalidToken(text[index..(index += 4)], lineNumber,
+                return new InvalidToken(text[index..(index += 4)], lineNumber, startIndex,
                     new($"Cannot have character {value} after \\ in quote (line {lineNumber})"));
             string tokenText = text[index..(index + 4)];
             index += 4;
-            return new CharacterLiteralToken(tokenText, value, lineNumber);
+            return new CharacterLiteralToken(tokenText, value, lineNumber, startIndex);
         }
         char value_ = CharUtils.BasicEscapeCharacters[text[(index + 1)..(index + 3)]];
         string tokenText_ = text[index..(index + 4)];
         index += 4;
-        return new CharacterLiteralToken(tokenText_, value_, lineNumber);
+        return new CharacterLiteralToken(tokenText_, value_, lineNumber, startIndex);
     }
 
     private static IToken? GetStringLiteralToken(string text, ref int index, ref int lineNumber)
@@ -228,17 +232,18 @@ public static class TokenSeparator
             i++;
         index = i;
         if (i == text.Length)
-            return new InvalidToken(text[startIndex..index], lineNumber,
+            return new InvalidToken(text[startIndex..index], lineNumber, startIndex,
                 new InterpreterException($"Quote at line {lineNumber} never closed"));
         if (text[i] == '\n')
-            return new InvalidToken(text[startIndex..index], lineNumber,
+            return new InvalidToken(text[startIndex..index], lineNumber, startIndex,
                 new InterpreterException($"Cannot have a newline mid-quote (line {lineNumber})"));
         index++;
-        return new StringLiteralToken(text[startIndex..index], text[(startIndex + 1)..(index - 1)], lineNumber);
+        return new StringLiteralToken(text[startIndex..index], text[(startIndex + 1)..(index - 1)], lineNumber, startIndex);
     }
 
     private static IToken? GetSymbolToken(string text, ref int index, ref int lineNumber)
     {
+        int startIndex = index;
         int i = index;
         string[] possibleSymbols = SymbolMappings.Keys.ToArray();
         Array.Sort(possibleSymbols, new StringSizeComp());
@@ -247,9 +252,9 @@ public static class TokenSeparator
             text[i..(i + _symbol.Length)] == _symbol);
         if (symbol == null)
             return null;
-        Func<int, IToken> tokenCreator = SymbolMappings[symbol];
+        Func<int, int, IToken> tokenCreator = SymbolMappings[symbol];
         index += symbol.Length;
-        return tokenCreator(lineNumber);
+        return tokenCreator(lineNumber, startIndex);
     }
 
     private class StringSizeComp : IComparer<string>
@@ -270,41 +275,42 @@ public static class TokenSeparator
     //      one may think that the whole symbol is "<"
     // therefore we check if the symbol is "<=" before checking if it is "<" to obtain the correct symbol
     // the symbols below are already ordered in this way, however the StringSizeComp adds another runtime sort to ensure this
-    private static ImmutableDictionary<string, Func<int, IToken>> SymbolMappings { get; } =
-        ImmutableDictionary<string, Func<int, IToken>>.Empty.AddRange(
-            new Dictionary<string, Func<int, IToken>>()
+    private static ImmutableDictionary<string, Func<int, int, IToken>> SymbolMappings { get; } =
+        ImmutableDictionary<string, Func<int, int, IToken>>.Empty.AddRange(
+            new Dictionary<string, Func<int, int, IToken>>()
             {
-                ["<="] = l => new LessThanOrEqualToSymbolToken(l),
-                [">="] = l => new GreaterThanOrEqualToSymbolToken(l),
-                ["&&"] = l => new ConditionalAndSymbolToken(l),
-                ["||"] = l => new ConditionalOrSymbolToken(l),
-                ["=="] = l => new EqualsEqualsSymbolToken(l),
-                ["!="] = l => new NotEqualsSymbolToken(l),
-                ["="] = l => new EqualsSymbolToken(l),
-                ["{"] = l => new OpenCurlyBraceSymbolToken(l),
-                ["}"] = l => new CloseCurlyBraceSymbolToken(l),
-                [","] = l => new CommaSymbolToken(l),
-                ["."] = l => new DotSymbolToken(l),
-                ["+"] = l => new PlusSymbolToken(l),
-                ["-"] = l => new MinusSymbolToken(l),
-                ["*"] = l => new MultiplySymbolToken(l),
-                ["/"] = l => new DivideSymbolToken(l),
-                ["<"] = l => new LessThanSymbolToken(l),
-                [">"] = l => new GreaterThanSymbolToken(l),
-                ["("] = l => new OpenBracketSymbolToken(l),
-                [")"] = l => new CloseBracketSymbolToken(l),
-                ["!"] = l => new NotSymbolToken(l),
-                ["&"] = l => new AndSymbolToken(l),
-                ["|"] = l => new OrSymbolToken(l),
-                ["^"] = l => new XorSymbolToken(l),
-                ["%"] = l => new RemainderSymbolToken(l),
-                [";"] = l => new SemicolonSymbolToken(l),
-                ["["] = l => new OpenSquareBraceSymbolToken(l),
-                ["]"] = l => new CloseSquareBraceSymbolToken(l)
+                ["<="] =    (l, i) => new LessThanOrEqualToSymbolToken(l, i),
+                [">="] =    (l, i) => new GreaterThanOrEqualToSymbolToken(l, i),
+                ["&&"] =    (l, i) => new ConditionalAndSymbolToken(l, i),
+                ["||"] =    (l, i) => new ConditionalOrSymbolToken(l, i),
+                ["=="] =    (l, i) => new EqualsEqualsSymbolToken(l, i),
+                ["!="] =    (l, i) => new NotEqualsSymbolToken(l, i),
+                ["="] =     (l, i) => new EqualsSymbolToken(l, i),
+                ["{"] =     (l, i) => new OpenCurlyBraceSymbolToken(l, i),
+                ["}"] =     (l, i) => new CloseCurlyBraceSymbolToken(l, i),
+                [","] =     (l, i) => new CommaSymbolToken(l, i),
+                ["."] =     (l, i) => new DotSymbolToken(l, i),
+                ["+"] =     (l, i) => new PlusSymbolToken(l, i),
+                ["-"] =     (l, i) => new MinusSymbolToken(l, i),
+                ["*"] =     (l, i) => new MultiplySymbolToken(l, i),
+                ["/"] =     (l, i) => new DivideSymbolToken(l, i),
+                ["<"] =     (l, i) => new LessThanSymbolToken(l, i),
+                [">"] =     (l, i) => new GreaterThanSymbolToken(l, i),
+                ["("] =     (l, i) => new OpenBracketSymbolToken(l, i),
+                [")"] =     (l, i) => new CloseBracketSymbolToken(l, i),
+                ["!"] =     (l, i) => new NotSymbolToken(l, i),
+                ["&"] =     (l, i) => new AndSymbolToken(l, i),
+                ["|"] =     (l, i) => new OrSymbolToken(l, i),
+                ["^"] =     (l, i) => new XorSymbolToken(l, i),
+                ["%"] =     (l, i) => new RemainderSymbolToken(l, i),
+                [";"] =     (l, i) => new SemicolonSymbolToken(l, i),
+                ["["] =     (l, i) => new OpenSquareBraceSymbolToken(l, i),
+                ["]"] =     (l, i) => new CloseSquareBraceSymbolToken(l, i)
             });
 
     private static IToken? GetKeywordToken(string text, ref int index, ref int lineNumber)
     {
+        int startIndex = index;
         int i = index;
         string[] possibleKeywords = KeywordMappings.Keys.ToArray();
         string? keyword = Array.Find(possibleKeywords, _keyword =>
@@ -318,28 +324,29 @@ public static class TokenSeparator
             if (char.IsLetterOrDigit(nextChar) || nextChar == '_')
                 return null;
         }
-        Func<int, IToken> tokenCreator = KeywordMappings[keyword];
+        Func<int, int, IToken> tokenCreator = KeywordMappings[keyword];
         index += keyword.Length;
-        return tokenCreator(lineNumber);
+        return tokenCreator(lineNumber, startIndex);
     }
 
-    private static ImmutableDictionary<string, Func<int, IToken>> KeywordMappings { get; } =
-        ImmutableDictionary<string, Func<int, IToken>>.Empty.AddRange(
-            new Dictionary<string, Func<int, IToken>>()
+    private static ImmutableDictionary<string, Func<int, int, IToken>> KeywordMappings { get; } =
+        ImmutableDictionary<string, Func<int, int, IToken>>.Empty.AddRange(
+            new Dictionary<string, Func<int, int, IToken>>()
             {
-                ["new"] = l => new NewKeywordToken(l),
-                ["null"] = l => new NullKeywordToken(l),
-                ["if"] = l => new IfKeywordToken(l),
-                ["else"] = l => new ElseKeywordToken(l),
-                ["while"] = l => new WhileKeywordToken(l),
-                ["for"] = l => new ForKeywordToken(l),
-                ["break"] = l => new BreakKeywordToken(l),
-                ["continue"] = l => new ContinueKeywordToken(l),
-                ["Length"] = l => new LengthKeywordToken(l)
+                ["new"] =       (l, i) => new NewKeywordToken(l, i),
+                ["null"] =      (l, i) => new NullKeywordToken(l, i),
+                ["if"] =        (l, i) => new IfKeywordToken(l, i),
+                ["else"] =      (l, i) => new ElseKeywordToken(l, i),
+                ["while"] =     (l, i) => new WhileKeywordToken(l, i),
+                ["for"] =       (l, i) => new ForKeywordToken(l, i),
+                ["break"] =     (l, i) => new BreakKeywordToken(l, i),
+                ["continue"] =  (l, i) => new ContinueKeywordToken(l, i),
+                ["Length"] =    (l, i) => new LengthKeywordToken(l, i)
             });
 
     private static IToken? GetTypeNameToken(string text, ref int index, ref int lineNumber)
     {
+        int startIndex = index;
         int i = index;
         VarType? varType = VarType.VarTypes
             .Where(varType => !varType.IsArray)
@@ -355,11 +362,12 @@ public static class TokenSeparator
                 return null;
         }
         index += varType.Name.Length;
-        return new TypeNameToken(varType.Name, varType, lineNumber);
+        return new TypeNameToken(varType.Name, varType, lineNumber, startIndex);
     }
 
     private static IToken? GetVariableNameToken(string text, ref int index, ref int lineNumber)
     {
+        int startIndex = index;
         if (!char.IsLetter(text[index]) && text[index] != '_')
             return null;
         int i = index;
@@ -371,7 +379,7 @@ public static class TokenSeparator
         if (VarType.GetVarType(tokenText) != null)
             return null;
         index = i;
-        return new VariableNameToken(tokenText, lineNumber);
+        return new VariableNameToken(tokenText, lineNumber, startIndex);
     }
 
     private static InvalidToken GetInvalidToken(string text, ref int index, ref int lineNumber)
@@ -379,7 +387,7 @@ public static class TokenSeparator
         int startIndex = index;
         SkipToWhiteSpace(text, ref index);
         string tokenText = text[startIndex..index];
-        return new InvalidToken(tokenText, lineNumber,
+        return new InvalidToken(tokenText, lineNumber, startIndex,
             new($"Invalid token \"{tokenText}\""));
     }
 

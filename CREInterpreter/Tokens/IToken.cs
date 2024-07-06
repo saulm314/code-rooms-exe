@@ -6,5 +6,8 @@ public interface IToken
 
     int LineNumber { get; }
 
+    // index of first character where token starts in the chunk's text
+    int Index { get; }
+
     string? ToString() => Text;
 }

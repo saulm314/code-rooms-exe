@@ -1,8 +1,10 @@
 ﻿namespace CREInterpreter.Tokens;
 
-public class MultiplySymbolToken(int lineNumber) : IToken, ISymbol
+public class MultiplySymbolToken(int lineNumber, int index) : IToken, ISymbol
 {
     public string Text => "*";
 
     public int LineNumber => lineNumber;
+
+    public int Index => index;
 }
