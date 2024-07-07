@@ -1,0 +1,1 @@
+int i=0;int j=0;int k=0;if(true){i=1;}else{i=2;}if(false){j=1;}else{j=2;}if(true){}else{}if(true);else;

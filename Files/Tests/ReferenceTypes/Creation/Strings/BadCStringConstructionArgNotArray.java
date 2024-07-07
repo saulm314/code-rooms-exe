@@ -1,0 +1,1 @@
+String myStr = new String('a');

@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34728.123
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CREInterpreter", "CREInterpreter\CREInterpreter.csproj", "{682A3C36-946D-4C3A-BCD5-E14DBBC1F7A5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CREInterpreterUnitTests", "CREInterpreterUnitTests\CREInterpreterUnitTests.csproj", "{8429059B-EF83-449D-B93B-AF43CF083DC5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{682A3C36-946D-4C3A-BCD5-E14DBBC1F7A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{682A3C36-946D-4C3A-BCD5-E14DBBC1F7A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{682A3C36-946D-4C3A-BCD5-E14DBBC1F7A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{682A3C36-946D-4C3A-BCD5-E14DBBC1F7A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8429059B-EF83-449D-B93B-AF43CF083DC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8429059B-EF83-449D-B93B-AF43CF083DC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8429059B-EF83-449D-B93B-AF43CF083DC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8429059B-EF83-449D-B93B-AF43CF083DC5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BB9728E9-67D3-416D-9534-2B1B83EB1813}
+	EndGlobalSection
+EndGlobal
