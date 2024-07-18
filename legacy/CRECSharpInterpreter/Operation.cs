@@ -4,8 +4,10 @@ using CRECSharpInterpreter.Collections.Generic;
 
 namespace CRECSharpInterpreter
 {
+    // strategy pattern used by implementing this interface
     public class Operation : IEvaluable
     {
+        // private constructor provides support for static factory pattern
         private Operation(IEvaluable? leftEvaluable, Operator @operator, IEvaluable? rightEvaluable)
         {
             LeftEvaluable = leftEvaluable;
@@ -16,9 +18,12 @@ namespace CRECSharpInterpreter
             SpecificOperator = specificOperator;
         }
 
+        // only if the two evaluables are expressions is the user allowed to directly construct an Operation object
         public Operation(Expression? leftExpression, Operator @operator, Expression? rightExpression)
             : this((IEvaluable?)leftExpression, @operator, rightExpression) { }
 
+        // dependency injection: these variables are injected when calling the constructor
+        // dependency inversion: we depend on abstract interfaces instead of concrete classes
         public IEvaluable? LeftEvaluable { get; init; }
         public Operator _Operator { get; init; }
         public IEvaluable? RightEvaluable { get; init; }
@@ -26,6 +31,8 @@ namespace CRECSharpInterpreter
         public VarType? _VarType { get; init; }
         public object? Value { get; private set; }
 
+        // dependency inversion: we depend on an abstract interface which is built with the static factory pattern
+        // (see ComputeVarType method)
         public ISpecificOperator SpecificOperator { get; init; }
 
         private VarType? ComputeVarType(out ISpecificOperator specificOperator)
@@ -87,6 +94,8 @@ namespace CRECSharpInterpreter
             Value = SpecificOperator.Calculate(LeftEvaluable.Value, RightEvaluable.Value);
         }
 
+        // static factory pattern here
+        //
         // returns null if impossible to determine from the evaluables immediately next to the operator
         // e.g. for the expression "5 * 2 + 3 * 7", if the operatorIndex is 3 (i.e. corresponds to the "+")
         // then an operation cannot be provided because its data type or value cannot be computed
