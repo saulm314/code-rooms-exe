@@ -5,11 +5,11 @@ namespace CREInterpreter.Statements;
 
 public class WriteElementElementStatement(IToken[] tokens, string chunkText, string variableName,
     IToken[] element1ExpressionTokens, IToken[] element2ExpressionTokens, IToken[] expressionTokens)
-    : Statement
+    : IStatement
 {
-    public override IToken[] Tokens => tokens;
+    public IToken[] Tokens => tokens;
 
-    public override string ChunkText => chunkText;
+    public string ChunkText => chunkText;
 
     public string VariableName => variableName;
 
@@ -19,13 +19,21 @@ public class WriteElementElementStatement(IToken[] tokens, string chunkText, str
 
     public IToken[] ExpressionTokens => expressionTokens;
 
-    public override InterpreterException? Compile(Memory memory)
+    public string Text => ((IStatement)this).Text;
+
+    public int LineNumber => ((IStatement)this).LineNumber;
+
+    public InterpreterException? Compile(Memory memory)
     {
         throw new System.NotImplementedException();
     }
 
-    public override IEnumerable<InterpreterException?> Run(Memory memory)
+    public IEnumerable<InterpreterException?> Run(Memory memory)
     {
         throw new System.NotImplementedException();
     }
+
+    string? IStatement._Text { get; set; }
+
+    int? IStatement._LineNumber { get; set; }
 }

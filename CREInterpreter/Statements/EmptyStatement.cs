@@ -3,19 +3,27 @@ using System.Collections.Generic;
 
 namespace CREInterpreter.Statements;
 
-public class EmptyStatement(IToken[] tokens, string chunkText) : Statement
+public class EmptyStatement(IToken[] tokens, string chunkText) : IStatement
 {
-    public override IToken[] Tokens => tokens;
+    public IToken[] Tokens => tokens;
 
-    public override string ChunkText => chunkText;
+    public string ChunkText => chunkText;
 
-    public override InterpreterException? Compile(Memory memory)
+    public string Text => ((IStatement)this).Text;
+
+    public int LineNumber => ((IStatement)this).LineNumber;
+
+    public InterpreterException? Compile(Memory memory)
     {
         throw new System.NotImplementedException();
     }
 
-    public override IEnumerable<InterpreterException?> Run(Memory memory)
+    public IEnumerable<InterpreterException?> Run(Memory memory)
     {
         throw new System.NotImplementedException();
     }
+
+    string? IStatement._Text { get; set; }
+
+    int? IStatement._LineNumber { get; set; }
 }

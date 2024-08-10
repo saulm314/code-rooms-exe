@@ -4,11 +4,11 @@ using System.Collections.Generic;
 namespace CREInterpreter.Statements;
 
 public class DeclarationInitialisationStatement(IToken[] tokens, string chunkText, VarType varType, string variableName, IToken[] expressionTokens)
-    : Statement
+    : IStatement
 {
-    public override IToken[] Tokens => tokens;
+    public IToken[] Tokens => tokens;
 
-    public override string ChunkText => chunkText;
+    public string ChunkText => chunkText;
 
     public VarType _VarType => varType;
 
@@ -16,13 +16,21 @@ public class DeclarationInitialisationStatement(IToken[] tokens, string chunkTex
 
     public IToken[] ExpressionTokens => expressionTokens;
 
-    public override InterpreterException? Compile(Memory memory)
+    public string Text => ((IStatement)this).Text;
+
+    public int LineNumber => ((IStatement)this).LineNumber;
+
+    public InterpreterException? Compile(Memory memory)
     {
         throw new System.NotImplementedException();
     }
 
-    public override IEnumerable<InterpreterException?> Run(Memory memory)
+    public IEnumerable<InterpreterException?> Run(Memory memory)
     {
         throw new System.NotImplementedException();
     }
+
+    string? IStatement._Text { get; set; }
+
+    int? IStatement._LineNumber { get; set; }
 }
