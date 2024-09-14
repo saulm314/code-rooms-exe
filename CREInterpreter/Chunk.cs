@@ -10,7 +10,7 @@ public class Chunk(string text)
 {
     public string Text => text;
 
-    public ImmutableArray<IToken> Tokens { get; }
+    public ImmutableArray<IToken> Tokens { get; } = TokenSeparator.GetTokens(text.AsMemory()).ToImmutableArray();
 
     public ImmutableArray<IStatement> Statements { get; }
 
