@@ -122,18 +122,19 @@ public static class TokenSeparator
     private static IToken? GetBooleanLiteralToken(ReadOnlyMemory<char> text, ref int index, ref int lineNumber)
     {
         int startIndex = index;
+        ReadOnlySpan<char> textSpan = text.Span;
         const int TrueLength = 4;
         const int FalseLength = 5;
         if (text.Length - index < TrueLength)
             return null;
-        if (text[index..(index + TrueLength)].Equals("true".AsMemory()))
+        if (textSpan[index..(index + TrueLength)].Equals("true".AsSpan(), default))
         {
             index += TrueLength;
             return new BooleanLiteralToken(text[startIndex..index], true, lineNumber, startIndex);
         }
         if (text.Length - index < FalseLength)
             return null;
-        if (text[index..(index + FalseLength)].Equals("false".AsMemory()))
+        if (textSpan[index..(index + FalseLength)].Equals("false".AsSpan(), default))
         {
             index += FalseLength;
             return new BooleanLiteralToken(text[startIndex..index], false, lineNumber, startIndex);
@@ -260,7 +261,7 @@ public static class TokenSeparator
         Array.Sort(possibleSymbols, new StringSizeComp());
         string? symbol = Array.Find(possibleSymbols, _symbol =>
             i + _symbol.Length <= text.Length &&
-            text[i..(i + _symbol.Length)].Equals(_symbol.AsMemory()));
+            text[i..(i + _symbol.Length)].ToString() == _symbol);
         if (symbol == null)
             return null;
         Func<ReadOnlyMemory<char>, int, int, IToken> tokenCreator = SymbolMappings[symbol];
@@ -327,7 +328,7 @@ public static class TokenSeparator
         string[] possibleKeywords = KeywordMappings.Keys.ToArray();
         string? keyword = Array.Find(possibleKeywords, _keyword =>
             i + _keyword.Length <= text.Length &&
-            text[i..(i + _keyword.Length)].Equals(_keyword.AsMemory()));
+            text[i..(i + _keyword.Length)].ToString() == _keyword);
         if (keyword == null)
             return null;
         if (i + keyword.Length < text.Length)
@@ -365,7 +366,7 @@ public static class TokenSeparator
             .Where(varType => !varType.IsArray)
             .SingleOrDefault(varType =>
                 i + varType.Name.Length <= text.Length &&
-                text[i..(i + varType.Name.Length)].Equals(varType.Name.AsMemory()));
+                text[i..(i + varType.Name.Length)].ToString() == varType.Name);
         if (varType == null)
             return null;
         if (i + varType.Name.Length < text.Length)
