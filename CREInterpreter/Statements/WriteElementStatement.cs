@@ -1,36 +1,26 @@
 ﻿using CREInterpreter.Tokens;
+using System;
 using System.Collections.Generic;
 
 namespace CREInterpreter.Statements;
 
-public class WriteElementStatement(IToken[] tokens, string chunkText, string variableName, IToken[] elementExpressionTokens, IToken[] expressionTokens)
-    : IStatement
+public class WriteElementStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> tokens, ReadOnlyMemory<char> variableName,
+    ReadOnlyMemory<IToken> elementExpressionTokens, ReadOnlyMemory<IToken> expressionTokens)
+    : Statement(chunkText, tokens)
 {
-    public IToken[] Tokens => tokens;
+    public ReadOnlyMemory<char> VariableName => variableName;
 
-    public string ChunkText => chunkText;
+    public ReadOnlyMemory<IToken> ElementExpressionTokens => elementExpressionTokens;
 
-    public string VariableName => variableName;
+    public ReadOnlyMemory<IToken> ExpressionTokens => expressionTokens;
 
-    public IToken[] ElementExpressionTokens => elementExpressionTokens;
-
-    public IToken[] ExpressionTokens => expressionTokens;
-
-    public string Text => ((IStatement)this).Text;
-
-    public int LineNumber => ((IStatement)this).LineNumber;
-
-    public InterpreterException? Compile(Memory memory)
+    public override InterpreterException? Compile(Memory memory)
     {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
 
-    public IEnumerable<InterpreterException?> Run(Memory memory)
+    public override IEnumerable<InterpreterException?> Run(Memory memory)
     {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
-
-    string? IStatement._Text { get; set; }
-
-    int? IStatement._LineNumber { get; set; }
 }

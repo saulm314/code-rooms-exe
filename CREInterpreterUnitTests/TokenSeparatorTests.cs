@@ -9,21 +9,11 @@ namespace CREInterpreterUnitTests;
 public class TokenSeparatorTests
 {
     [Fact]
-    public void GetTokens_Null_ThrowsNullReferenceException()
-    {
-        string input = null!;
-
-        Action actual = () => TokenSeparator.GetTokens(input).ToArray();
-
-        Assert.Throws<NullReferenceException>(actual);
-    }
-
-    [Fact]
     public void GetTokens_EmptyString_ReturnsEmptyEnumerable()
     {
         string input = string.Empty;
 
-        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input);
+        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input.AsMemory());
 
         Assert.Empty(tokens);
     }
@@ -40,11 +30,11 @@ public class TokenSeparatorTests
     [InlineData("//hello \n\n", "//hello ", 0)]
     public void GetTokens_SingleLineComment_ReturnsSingleLineCommentToken(string input, string expectedText, int expectedIndex)
     {
-        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input);
+        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input.AsMemory());
         IToken token = tokens.First();
         int actualLineNumber = token.LineNumber;
         int actualIndex = token.Index;
-        string actualText = token.Text;
+        string actualText = token.Text.ToString();
         
         Assert.Single(tokens);
         Assert.IsAssignableFrom<SingleLineCommentToken>(token);
@@ -63,16 +53,16 @@ public class TokenSeparatorTests
         int expectedIndex1, int expectedIndex2,
         string expectedText1, string expectedText2)
     {
-        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input);
+        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input.AsMemory());
         int size = tokens.Count();
         IToken firstToken = tokens.First();
         int actualLineNumber1 = firstToken.LineNumber;
         int actualIndex1 = firstToken.Index;
-        string actualText1 = firstToken.Text;
+        string actualText1 = firstToken.Text.ToString();
         IToken secondToken = tokens.Last();
         int actualLineNumber2 = secondToken.LineNumber;
         int actualIndex2 = secondToken.Index;
-        string actualText2 = secondToken.Text;
+        string actualText2 = secondToken.Text.ToString();
 
         Assert.Equal(2, size);
         Assert.IsAssignableFrom<SingleLineCommentToken>(firstToken);
@@ -93,11 +83,11 @@ public class TokenSeparatorTests
     [InlineData("\n/* hello\n */\n", 2, 1, "/* hello\n */")]
     public void GetTokens_MultiLineComment_ReturnsMultiLineCommentToken(string input, int expectedLineNumber, int expectedIndex, string expectedText)
     {
-        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input);
+        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input.AsMemory());
         IToken token = tokens.First();
         int actualLineNumber = token.LineNumber;
         int actualIndex = token.Index;
-        string actualText = token.Text;
+        string actualText = token.Text.ToString();
 
         Assert.Single(tokens);
         Assert.IsAssignableFrom<MultiLineCommentToken>(token);
@@ -117,11 +107,11 @@ public class TokenSeparatorTests
     [InlineData("\n\n/* hello\n\nhello", 3, 2, "/* hello\n\nhello")]
     public void GetTokens_UnclosedMultiLineComment_ReturnsInvalidToken(string input, int expectedLineNumber, int expectedIndex, string expectedText)
     {
-        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input);
+        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input.AsMemory());
         IToken token = tokens.First();
         int actualLineNumber = token.LineNumber;
         int actualIndex = token.Index;
-        string actualText = token.Text;
+        string actualText = token.Text.ToString();
 
         Assert.Single(tokens);
         Assert.IsAssignableFrom<InvalidToken>(token);
@@ -137,11 +127,11 @@ public class TokenSeparatorTests
     public void GetTokens_SingleLineCommentContainsMultiLineComment_ReturnsSingleLineComment(string input, int expectedLineNumber, int expectedIndex,
         string expectedText)
     {
-        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input);
+        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input.AsMemory());
         IToken token = tokens.First();
         int actualLineNumber = token.LineNumber;
         int actualIndex = token.Index;
-        string actualText = token.Text;
+        string actualText = token.Text.ToString();
 
         Assert.Single(tokens);
         Assert.IsAssignableFrom<SingleLineCommentToken>(token);
@@ -157,11 +147,11 @@ public class TokenSeparatorTests
     public void GetTokens_MultiLineCommentContainsSingleLineComment_ReturnsMultiLineComment(string input, int expectedLineNumber, int expectedIndex,
         string expectedText)
     {
-        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input);
+        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input.AsMemory());
         IToken token = tokens.First();
         int actualLineNumber = token.LineNumber;
         int actualIndex = token.Index;
-        string actualText = token.Text;
+        string actualText = token.Text.ToString();
 
         Assert.Single(tokens);
         Assert.IsAssignableFrom<MultiLineCommentToken>(token);
@@ -176,10 +166,10 @@ public class TokenSeparatorTests
     public void GetTokens_BooleanLiteral_ReturnsBooleanLiteralToken(string input, string expectedText, int expectedLineNumber, int expectedIndex,
         bool expectedValue)
     {
-        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input);
+        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input.AsMemory());
         IToken token = tokens.First();
         BooleanLiteralToken booleanLiteralToken = (BooleanLiteralToken)token;
-        string actualText = token.Text;
+        string actualText = token.Text.ToString();
         int actualLineNumber = token.LineNumber;
         int actualIndex = token.Index;
         bool actualValue = booleanLiteralToken.Value;
@@ -202,10 +192,10 @@ public class TokenSeparatorTests
     public void GetTokens_IntegerLiteral_ReturnsIntegerLiteralToken(string input, string expectedText, int expectedLineNumber, int expectedIndex,
         int expectedValue)
     {
-        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input);
+        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input.AsMemory());
         IToken token = tokens.First();
         IntegerLiteralToken integerLiteralToken = (IntegerLiteralToken)token;
-        string actualText = token.Text;
+        string actualText = token.Text.ToString();
         int actualLineNumber = token.LineNumber;
         int actualIndex = token.Index;
         int actualValue = integerLiteralToken.Value;
@@ -227,10 +217,10 @@ public class TokenSeparatorTests
     public void GetTokens_DoubleFloatLiteral_ReturnsDoubleFloatLiteralToken(string input, string expectedText, int expectedLineNumber, int expectedIndex,
         double expectedValue)
     {
-        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input);
+        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input.AsMemory());
         IToken token = tokens.First();
         DoubleFloatLiteralToken doubleFloatLiteralToken = (DoubleFloatLiteralToken)token;
-        string actualText = token.Text;
+        string actualText = token.Text.ToString();
         int actualLineNumber = token.LineNumber;
         int actualIndex = token.Index;
         double actualValue = doubleFloatLiteralToken.Value;
@@ -251,11 +241,11 @@ public class TokenSeparatorTests
     [InlineData("1.1.0", 1, 0, "1.1.0")]
     public void GetTokens_TwoDecimalPoints_ReturnsInvalidToken(string input, int expectedLineNumber, int expectedIndex, string expectedText)
     {
-        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input);
+        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input.AsMemory());
         IToken token = tokens.First();
         int actualLineNumber = token.LineNumber;
         int actualIndex = token.Index;
-        string actualText = token.Text;
+        string actualText = token.Text.ToString();
 
         Assert.Single(tokens);
         Assert.IsAssignableFrom<InvalidToken>(token);
@@ -291,10 +281,10 @@ public class TokenSeparatorTests
     public void GetTokens_CharacterLiteral_ReturnsCharacterLiteralToken(string input, string expectedText, int expectedLineNumber, int expectedIndex,
         char expectedValue)
     {
-        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input);
+        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input.AsMemory());
         IToken token = tokens.First();
         CharacterLiteralToken characterLiteralToken = (CharacterLiteralToken)token;
-        string actualText = token.Text;
+        string actualText = token.Text.ToString();
         int actualLineNumber = token.LineNumber;
         int actualIndex = token.Index;
         char actualValue = characterLiteralToken.Value;
@@ -325,9 +315,9 @@ public class TokenSeparatorTests
     [InlineData("'\\\v'", "'\\\v'", 1, 0)]
     public void GetTokens_InvalidCharacter_ReturnsInvalidToken(string input, string expectedText, int expectedLineNumber, int expectedIndex)
     {
-        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input);
+        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input.AsMemory());
         IToken token = tokens.First();
-        string actualText = token.Text;
+        string actualText = token.Text.ToString();
         int actualLineNumber = token.LineNumber;
         int actualIndex = token.Index;
 
@@ -346,13 +336,13 @@ public class TokenSeparatorTests
     public void GetTokens_StringLiteral_ReturnsStringLiteralToken(string input, string expectedText, int expectedLineNumber, int expectedIndex,
         string expectedValue)
     {
-        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input);
+        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input.AsMemory());
         IToken token = tokens.First();
         StringLiteralToken stringLiteralToken = (StringLiteralToken)token;
-        string actualText = token.Text;
+        string actualText = token.Text.ToString();
         int actualLineNumber = token.LineNumber;
         int actualIndex = token.Index;
-        string actualValue = stringLiteralToken.Value;
+        string actualValue = stringLiteralToken.Value.ToString();
 
         Assert.Single(tokens);
         Assert.IsAssignableFrom<StringLiteralToken>(token);
@@ -368,9 +358,9 @@ public class TokenSeparatorTests
     [InlineData("\"\n\"", "\"", 1, 0)]
     public void GetTokens_InvalidStringLiteral_ReturnsInvalidToken(string input, string expectedText, int expectedLineNumber, int expectedIndex)
     {
-        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input);
+        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input.AsMemory());
         IToken token = tokens.First();
-        string actualText = token.Text;
+        string actualText = token.Text.ToString();
         int actualLineNumber = token.LineNumber;
         int actualIndex = token.Index;
 
@@ -410,9 +400,9 @@ public class TokenSeparatorTests
     [InlineData("]", "]", 1, 0, typeof(CloseSquareBraceSymbolToken))]
     public void GetTokens_Symbol_ReturnsSymbolToken(string input, string expectedText, int expectedLineNumber, int expectedIndex, Type expectedTokenType)
     {
-        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input);
+        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input.AsMemory());
         IToken token = tokens.First();
-        string actualText = token.Text;
+        string actualText = token.Text.ToString();
         int actualLineNumber = token.LineNumber;
         int actualIndex = token.Index;
 
@@ -436,9 +426,9 @@ public class TokenSeparatorTests
     [InlineData("Length", "Length", 1, 0, typeof(LengthKeywordToken))]
     public void GetTokens_Keyword_ReturnsKeywordToken(string input, string expectedText, int expectedLineNumber, int expectedIndex, Type expectedTokenType)
     {
-        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input);
+        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input.AsMemory());
         IToken token = tokens.First();
-        string actualText = token.Text;
+        string actualText = token.Text.ToString();
         int actualLineNumber = token.LineNumber;
         int actualIndex = token.Index;
 
@@ -458,10 +448,10 @@ public class TokenSeparatorTests
     [InlineData("string", "string", 1, 0, typeof(string))]
     public void GetTokens_TypeName_ReturnsTypeNameToken(string input, string expectedText, int expectedLineNumber, int expectedIndex, Type expectedType)
     {
-        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input);
+        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input.AsMemory());
         IToken token = tokens.First();
         TypeNameToken typeNameToken = (TypeNameToken)token;
-        string actualText = token.Text;
+        string actualText = token.Text.ToString();
         int actualLineNumber = token.LineNumber;
         int actualIndex = token.Index;
         Type actualType = typeNameToken._VarType.SystemType;
@@ -483,11 +473,11 @@ public class TokenSeparatorTests
     public void GetTokens_ArrayTypeName_ReturnsTypeNameTokenAndSquareBraceTokens(string input, string expectedText, int expectedLineNumber, int expectedIndex,
         Type expectedType)
     {
-        IToken[] tokens = TokenSeparator.GetTokens(input).ToArray();
+        IToken[] tokens = TokenSeparator.GetTokens(input.AsMemory()).ToArray();
         TypeNameToken firstToken = (TypeNameToken)tokens[0];
         IToken secondToken = tokens[1];
         IToken thirdToken = tokens[2];
-        string actualText = firstToken.Text;
+        string actualText = firstToken.Text.ToString();
         int actualLineNumber = firstToken.LineNumber;
         int actualIndex = firstToken.Index;
         Type actualType = firstToken._VarType.SystemType;
@@ -526,9 +516,9 @@ public class TokenSeparatorTests
     [InlineData("Int", "Int", 1, 0)]
     public void GetTokens_VariableName_ReturnsVariableNameToken(string input, string expectedText, int expectedLineNumber, int expectedIndex)
     {
-        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input);
+        IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input.AsMemory());
         IToken token = tokens.First();
-        string actualText = token.Text;
+        string actualText = token.Text.ToString();
         int actualLineNumber = token.LineNumber;
         int actualIndex = token.Index;
 
@@ -549,11 +539,11 @@ public class TokenSeparatorTests
         int expectedLineNumber1, int expectedLineNumber2,
         int expectedIndex1, int expectedIndex2)
     {
-        IToken[] tokens = TokenSeparator.GetTokens(input).ToArray();
+        IToken[] tokens = TokenSeparator.GetTokens(input.AsMemory()).ToArray();
         IntegerLiteralToken token1 = (IntegerLiteralToken)tokens[0];
         IToken token2 = tokens[1];
-        string actualText1 = token1.Text;
-        string actualText2 = token2.Text;
+        string actualText1 = token1.Text.ToString();
+        string actualText2 = token2.Text.ToString();
         int actualValue1 = token1.Value;
         int actualLineNumber1 = token1.LineNumber;
         int actualLineNumber2 = token2.LineNumber;

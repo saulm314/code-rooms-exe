@@ -57,6 +57,7 @@ public class VarType
     public static VarType @string { get; } = new(typeof(string));
 
     public static VarType? GetVarType(string name) => VarTypes.Find(varType => varType.Name == name);
+    public static VarType? GetVarType(ReadOnlyMemory<char> name) => VarTypes.Find(varType => name.Span.Equals(varType.Name.AsSpan(), default));
     public static VarType? GetVarType(Type systemType) => VarTypes.Find(varType => varType.SystemType == systemType);
     public static VarType? GetVarType(object value) => VarTypes.Find(varType => varType.SystemType == value.GetType());
 

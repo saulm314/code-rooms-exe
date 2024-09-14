@@ -1,12 +1,14 @@
-﻿namespace CREInterpreter.Tokens;
+﻿using System;
 
-public class StringLiteralToken(string text, string value, int lineNumber, int index) : IToken
+namespace CREInterpreter.Tokens;
+
+public class StringLiteralToken(ReadOnlyMemory<char> text, ReadOnlyMemory<char> value, int lineNumber, int index) : IToken
 {
-    public string Text => text;
+    public ReadOnlyMemory<char> Text => text;
 
     public int LineNumber => lineNumber;
 
     public int Index => index;
 
-    public string Value => value;
+    public ReadOnlyMemory<char> Value => value;
 }
