@@ -12,7 +12,7 @@ public class Chunk(string text)
 
     public ImmutableArray<IToken> Tokens { get; } = TokenSeparator.GetTokens(text.AsMemory()).ToImmutableArray();
 
-    public ImmutableArray<IStatement> Statements { get; }
+    public ImmutableArray<Statement> Statements { get; }
 
     public InterpreterException? Compile(Memory memory)
     {

@@ -1,39 +1,28 @@
 ﻿using CREInterpreter.Tokens;
+using System;
 using System.Collections.Generic;
 
 namespace CREInterpreter.Statements;
 
-public class WriteElementElementStatement(IToken[] tokens, string chunkText, string variableName,
-    IToken[] element1ExpressionTokens, IToken[] element2ExpressionTokens, IToken[] expressionTokens)
-    : IStatement
+public class WriteElementElementStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> tokens, ReadOnlyMemory<char> variableName,
+    ReadOnlyMemory<IToken> element1ExpressionTokens, ReadOnlyMemory<IToken> element2ExpressionTokens, ReadOnlyMemory<IToken> expressionTokens)
+    : Statement(chunkText, tokens)
 {
-    public IToken[] Tokens => tokens;
+    public ReadOnlyMemory<char> VariableName => variableName;
 
-    public string ChunkText => chunkText;
+    public ReadOnlyMemory<IToken> Element1ExpressionTokens => element1ExpressionTokens;
 
-    public string VariableName => variableName;
+    public ReadOnlyMemory<IToken> Element2ExpressionTokens => element2ExpressionTokens;
 
-    public IToken[] Element1ExpressionTokens => element1ExpressionTokens;
+    public ReadOnlyMemory<IToken> ExpressionTokens => expressionTokens;
 
-    public IToken[] Element2ExpressionTokens => element2ExpressionTokens;
-
-    public IToken[] ExpressionTokens => expressionTokens;
-
-    public string Text => ((IStatement)this).Text;
-
-    public int LineNumber => ((IStatement)this).LineNumber;
-
-    public InterpreterException? Compile(Memory memory)
+    public override InterpreterException? Compile(Memory memory)
     {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
 
-    public IEnumerable<InterpreterException?> Run(Memory memory)
+    public override IEnumerable<InterpreterException?> Run(Memory memory)
     {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
-
-    string? IStatement._Text { get; set; }
-
-    int? IStatement._LineNumber { get; set; }
 }

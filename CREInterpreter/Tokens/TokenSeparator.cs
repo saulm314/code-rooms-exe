@@ -389,10 +389,9 @@ public static class TokenSeparator
         while (i < text.Length && (char.IsLetterOrDigit(textSpan[i]) || textSpan[i] == '_'))
             i++;
         ReadOnlyMemory<char> tokenText = text[index..i];
-        string tokenTextStr = tokenText.ToString();
-        if (KeywordMappings.ContainsKey(tokenTextStr))
+        if (KeywordMappings.ContainsKey(tokenText.ToString()))
             return null;
-        if (VarType.GetVarType(tokenTextStr) != null)
+        if (VarType.GetVarType(tokenText) != null)
             return null;
         index = i;
         return new VariableNameToken(tokenText, lineNumber, startIndex);

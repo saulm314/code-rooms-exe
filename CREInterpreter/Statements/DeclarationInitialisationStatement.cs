@@ -1,36 +1,26 @@
 ﻿using CREInterpreter.Tokens;
+using System;
 using System.Collections.Generic;
 
 namespace CREInterpreter.Statements;
 
-public class DeclarationInitialisationStatement(IToken[] tokens, string chunkText, VarType varType, string variableName, IToken[] expressionTokens)
-    : IStatement
+public class DeclarationInitialisationStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> tokens, VarType varType,
+    ReadOnlyMemory<char> variableName, ReadOnlyMemory<IToken> expressionTokens)
+    : Statement(chunkText, tokens)
 {
-    public IToken[] Tokens => tokens;
-
-    public string ChunkText => chunkText;
-
     public VarType _VarType => varType;
 
-    public string VariableName => variableName;
+    public ReadOnlyMemory<char> VariableName => variableName;
 
-    public IToken[] ExpressionTokens => expressionTokens;
+    public ReadOnlyMemory<IToken> ExpressionTokens => expressionTokens;
 
-    public string Text => ((IStatement)this).Text;
-
-    public int LineNumber => ((IStatement)this).LineNumber;
-
-    public InterpreterException? Compile(Memory memory)
+    public override InterpreterException? Compile(Memory memory)
     {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
 
-    public IEnumerable<InterpreterException?> Run(Memory memory)
+    public override IEnumerable<InterpreterException?> Run(Memory memory)
     {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
-
-    string? IStatement._Text { get; set; }
-
-    int? IStatement._LineNumber { get; set; }
 }
