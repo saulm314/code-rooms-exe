@@ -1,8 +1,10 @@
-﻿namespace CREInterpreter.Tokens;
+﻿using System;
 
-public class SingleLineCommentToken(string text, int lineNumber, int index) : IToken
+namespace CREInterpreter.Tokens;
+
+public class SingleLineCommentToken(ReadOnlyMemory<char> text, int lineNumber, int index) : IToken
 {
-    public string Text => text;
+    public ReadOnlyMemory<char> Text => text;
 
     public int LineNumber => lineNumber;
 

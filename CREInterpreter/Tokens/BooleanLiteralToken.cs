@@ -1,8 +1,10 @@
-﻿namespace CREInterpreter.Tokens;
+﻿using System;
 
-public class BooleanLiteralToken(string text, bool value, int lineNumber, int index) : IToken, IValueTypeLiteral
+namespace CREInterpreter.Tokens;
+
+public class BooleanLiteralToken(ReadOnlyMemory<char> text, bool value, int lineNumber, int index) : IToken, IValueTypeLiteral
 {
-    public string Text => text;
+    public ReadOnlyMemory<char> Text => text;
 
     public int LineNumber => lineNumber;
 
@@ -12,5 +14,5 @@ public class BooleanLiteralToken(string text, bool value, int lineNumber, int in
 
     public VarType _VarType => VarType.@bool;
 
-    object IValueTypeLiteral.Value => Value;
+    object IValueTypeLiteral.Value => value;
 }

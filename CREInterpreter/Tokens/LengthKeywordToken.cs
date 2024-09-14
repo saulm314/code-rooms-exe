@@ -1,10 +1,14 @@
-﻿namespace CREInterpreter.Tokens;
+﻿using System;
 
-public class LengthKeywordToken(int lineNumber, int index) : IToken, IKeyword
+namespace CREInterpreter.Tokens;
+
+public class LengthKeywordToken(ReadOnlyMemory<char> text, int lineNumber, int index) : IToken, IKeyword
 {
-    public string Text => "Length";
+    public ReadOnlyMemory<char> Text => text;
 
     public int LineNumber => lineNumber;
 
     public int Index => index;
+
+    string IKeyword.Text { get; } = text.ToString();
 }

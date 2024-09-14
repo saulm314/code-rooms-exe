@@ -1,4 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using CREInterpreter.Statements;
+using CREInterpreter.Tokens;
+using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace CREInterpreter;
 
@@ -6,15 +10,19 @@ public class Chunk(string text)
 {
     public string Text => text;
 
+    public ImmutableArray<IToken> Tokens { get; }
+
+    public ImmutableArray<IStatement> Statements { get; }
+
     public InterpreterException? Compile(Memory memory)
     {
-        return null;
+        throw new NotImplementedException();
     }
 
     public IEnumerable<InterpreterException?> Run(Memory memory)
     {
-        yield break;
+        throw new NotImplementedException();
     }
 
-    public override string? ToString() => Text;
+    public override string? ToString() => Text.ToString();
 }

@@ -1,8 +1,10 @@
-﻿namespace CREInterpreter.Tokens;
+﻿using System;
 
-public class TypeNameToken(string text, VarType varType, int lineNumber, int index) : IToken
+namespace CREInterpreter.Tokens;
+
+public class TypeNameToken(ReadOnlyMemory<char> text, VarType varType, int lineNumber, int index) : IToken
 {
-    public string Text => text;
+    public ReadOnlyMemory<char> Text => text;
 
     public int LineNumber => lineNumber;
 

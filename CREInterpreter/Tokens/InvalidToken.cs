@@ -1,8 +1,10 @@
-﻿namespace CREInterpreter.Tokens;
+﻿using System;
 
-public class InvalidToken(string text, int lineNumber, int index, InterpreterException exception) : IToken
+namespace CREInterpreter.Tokens;
+
+public class InvalidToken(ReadOnlyMemory<char> text, int lineNumber, int index, InterpreterException exception) : IToken
 {
-    public string Text => text;
+    public ReadOnlyMemory<char> Text => text;
 
     public int LineNumber => lineNumber;
 

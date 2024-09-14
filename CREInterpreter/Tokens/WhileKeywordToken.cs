@@ -1,10 +1,14 @@
-﻿namespace CREInterpreter.Tokens;
+﻿using System;
 
-public class WhileKeywordToken(int lineNumber, int index) : IToken, IKeyword
+namespace CREInterpreter.Tokens;
+
+public class WhileKeywordToken(ReadOnlyMemory<char> text, int lineNumber, int index) : IToken, IKeyword
 {
-    public string Text => "while";
+    public ReadOnlyMemory<char> Text => text;
 
     public int LineNumber => lineNumber;
 
     public int Index => index;
+
+    string IKeyword.Text { get; } = text.ToString();
 }

@@ -1,8 +1,10 @@
-﻿namespace CREInterpreter.Tokens;
+﻿using System;
 
-public class IntegerLiteralToken(string text, int value, int lineNumber, int index) : IToken, IValueTypeLiteral
+namespace CREInterpreter.Tokens;
+
+public class IntegerLiteralToken(ReadOnlyMemory<char> text, int value, int lineNumber, int index) : IToken, IValueTypeLiteral
 {
-    public string Text => text;
+    public ReadOnlyMemory<char> Text => text;
 
     public int LineNumber => lineNumber;
 
@@ -12,5 +14,5 @@ public class IntegerLiteralToken(string text, int value, int lineNumber, int ind
 
     public VarType _VarType => VarType.@int;
 
-    object IValueTypeLiteral.Value => Value;
+    object IValueTypeLiteral.Value => value;
 }
