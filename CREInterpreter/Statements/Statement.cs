@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace CREInterpreter.Statements;
 
-public abstract class Statement
+public abstract class Statement : IStatement
 {
     public Statement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> tokens)
     {
@@ -33,7 +33,7 @@ public abstract class Statement
 
     public abstract InterpreterException? Compile(Memory memory);
 
-    public abstract IEnumerable<InterpreterException?> Run(Memory memory);
+    public abstract IEnumerable<StatementExecution> Execute(Memory memory);
 
     public override string? ToString() => Text.ToString();
 }

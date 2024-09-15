@@ -4,12 +4,10 @@ using System.Collections.Generic;
 
 namespace CREInterpreter.Statements;
 
-public class DeclarationStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> tokens, VarType varType, ReadOnlyMemory<char> variableName)
+public class BlockStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> tokens, ReadOnlyMemory<IToken> blockTokens)
     : Statement(chunkText, tokens)
 {
-    public VarType _VarType => varType;
-
-    public ReadOnlyMemory<char> VariableName => variableName;
+    public ReadOnlyMemory<IToken> BlockTokens => blockTokens;
 
     public override InterpreterException? Compile(Memory memory)
     {

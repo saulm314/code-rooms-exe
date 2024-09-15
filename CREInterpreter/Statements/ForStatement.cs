@@ -4,15 +4,15 @@ using System.Collections.Generic;
 
 namespace CREInterpreter.Statements;
 
-public class DeclarationInitialisationStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> tokens, VarType varType,
-    ReadOnlyMemory<char> variableName, ReadOnlyMemory<IToken> expressionTokens)
-    : Statement(chunkText, tokens), IInitialiserStatement
+public class ForStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> tokens,
+    ReadOnlyMemory<IToken> intialiserStatementTokens, ReadOnlyMemory<IToken> expressionTokens, ReadOnlyMemory<IToken> iteratorStatementTokens)
+    : Statement(chunkText, tokens)
 {
-    public VarType _VarType => varType;
-
-    public ReadOnlyMemory<char> VariableName => variableName;
+    public ReadOnlyMemory<IToken> InitialiserStatementTokens => intialiserStatementTokens;
 
     public ReadOnlyMemory<IToken> ExpressionTokens => expressionTokens;
+
+    public ReadOnlyMemory<IToken> IteratorStatementTokens => iteratorStatementTokens;
 
     public override InterpreterException? Compile(Memory memory)
     {

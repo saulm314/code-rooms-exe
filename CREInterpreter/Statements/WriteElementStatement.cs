@@ -6,7 +6,7 @@ namespace CREInterpreter.Statements;
 
 public class WriteElementStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> tokens, ReadOnlyMemory<char> variableName,
     ReadOnlyMemory<IToken> elementExpressionTokens, ReadOnlyMemory<IToken> expressionTokens)
-    : Statement(chunkText, tokens)
+    : Statement(chunkText, tokens), IInitialiserStatement, IIteratorStatement
 {
     public ReadOnlyMemory<char> VariableName => variableName;
 
@@ -19,7 +19,7 @@ public class WriteElementStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemor
         throw new NotImplementedException();
     }
 
-    public override IEnumerable<InterpreterException?> Run(Memory memory)
+    public override IEnumerable<StatementExecution> Execute(Memory memory)
     {
         throw new NotImplementedException();
     }
