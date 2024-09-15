@@ -6,7 +6,7 @@ namespace CREInterpreter.Statements;
 
 public class DeclarationInitialisationStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> tokens, VarType varType,
     ReadOnlyMemory<char> variableName, ReadOnlyMemory<IToken> expressionTokens)
-    : Statement(chunkText, tokens)
+    : Statement(chunkText, tokens), IInitialiserStatement
 {
     public VarType _VarType => varType;
 

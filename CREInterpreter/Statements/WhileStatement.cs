@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace CREInterpreter.Statements;
 
 public class WhileStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> tokens, ReadOnlyMemory<char> expressionTokens)
-    : Statement(chunkText, tokens)
+    : Statement(chunkText, tokens), IInitialiserStatement
 {
     public ReadOnlyMemory<char> ExpressionTokens => expressionTokens;
 
