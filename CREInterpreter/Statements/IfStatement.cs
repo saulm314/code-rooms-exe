@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace CREInterpreter.Statements;
 
-public class IfHeaderStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> tokens, ReadOnlyMemory<IToken> expressionTokens)
+public class IfStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> tokens, ReadOnlyMemory<IToken> expressionTokens)
     : Statement(chunkText, tokens)
 {
     public ReadOnlyMemory<IToken> ExpressionTokens => expressionTokens;
