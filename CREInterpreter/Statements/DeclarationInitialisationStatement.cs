@@ -19,7 +19,7 @@ public class DeclarationInitialisationStatement(ReadOnlyMemory<char> chunkText, 
         throw new NotImplementedException();
     }
 
-    public override IEnumerable<InterpreterException?> Run(Memory memory)
+    public override IEnumerable<StatementExecution> Execute(Memory memory)
     {
         throw new NotImplementedException();
     }

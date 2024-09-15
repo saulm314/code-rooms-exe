@@ -33,7 +33,7 @@ public abstract class Statement : IStatement
 
     public abstract InterpreterException? Compile(Memory memory);
 
-    public abstract IEnumerable<InterpreterException?> Run(Memory memory);
+    public abstract IEnumerable<StatementExecution> Execute(Memory memory);
 
     public override string? ToString() => Text.ToString();
 }

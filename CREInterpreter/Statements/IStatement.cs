@@ -16,7 +16,7 @@ public interface IStatement
 
     InterpreterException? Compile(Memory memory);
 
-    IEnumerable<InterpreterException?> Run(Memory memory);
+    IEnumerable<StatementExecution> Execute(Memory memory);
 
     string? ToString() => Text.ToString();
 }
