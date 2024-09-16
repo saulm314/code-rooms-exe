@@ -51,18 +51,17 @@ public static class TokenSeparator
     private static IToken? GetSingleLineCommentToken(ReadOnlyMemory<char> chunkText, ref int index, ref int lineNumber)
     {
         int startIndex = index;
-        ReadOnlyMemory<char> text = chunkText[index..];
-        ReadOnlySpan<char> textSpan = text.Span;
+        ReadOnlySpan<char> textSpan = chunkText.Span[index..];
         if (textSpan is not ['/', '/', ..])
             return null;
         int newlineOffset = textSpan.IndexOf('\n');
         if (newlineOffset == -1)
         {
             index = chunkText.Length;
-            return new SingleLineCommentToken(text, lineNumber, startIndex);
+            return new SingleLineCommentToken(chunkText[startIndex..], lineNumber, startIndex);
         }
         index += newlineOffset;
-        return new SingleLineCommentToken(text[..newlineOffset], lineNumber, startIndex);
+        return new SingleLineCommentToken(chunkText.Slice(startIndex, newlineOffset), lineNumber, startIndex);
     }
 
     private static IToken? GetMultiLineCommentToken(ReadOnlyMemory<char> text, ref int index, ref int lineNumber)
