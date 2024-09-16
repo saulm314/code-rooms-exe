@@ -12,6 +12,7 @@ public static class StatementSeparator
         while (index < tokens.Length)
             yield return
                 GetEmptyStatement(text, tokens, ref index) ??
+                GetDeclarationStatement(text, tokens, ref index) ??
                 GetInvalidStatement(text, tokens, ref index);
     }
 
