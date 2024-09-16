@@ -4,8 +4,21 @@ using System.Collections.Generic;
 
 namespace CREInterpreter.Statements;
 
-public class InvalidStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> tokens) : Statement(chunkText, tokens)
+public class InvalidStatement : Statement
 {
+    public InvalidStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> tokens) : base(chunkText, tokens)
+    {
+        Exception = new($"Invalid statement: {Text}");
+    }
+
+    public InvalidStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> tokens, InterpreterException exception)
+        : base(chunkText, tokens)
+    {
+        Exception = exception;
+    }
+
+    public InterpreterException Exception { get; init; }
+
     public override InterpreterException? Compile(Memory memory)
     {
         throw new NotImplementedException();
