@@ -2,7 +2,7 @@
 
 namespace CREInterpreter.Tokens;
 
-public class CloseSquareBraceSymbolToken(ReadOnlyMemory<char> text, int lineNumber, int index) : IToken, ISymbol
+public class CloseSquareBraceSymbolToken(ReadOnlyMemory<char> text, int lineNumber, int index) : IToken, ICloseToken, ISymbol
 {
     public ReadOnlyMemory<char> Text => text;
 

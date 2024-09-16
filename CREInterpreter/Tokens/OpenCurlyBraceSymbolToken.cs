@@ -2,7 +2,7 @@
 
 namespace CREInterpreter.Tokens;
 
-public class OpenCurlyBraceSymbolToken(ReadOnlyMemory<char> text, int lineNumber, int index) : IToken, ISymbol
+public class OpenCurlyBraceSymbolToken(ReadOnlyMemory<char> text, int lineNumber, int index) : IToken, IOpenToken, ISymbol
 {
     public ReadOnlyMemory<char> Text => text;
 
