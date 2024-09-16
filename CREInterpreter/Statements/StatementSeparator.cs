@@ -27,23 +27,37 @@ public static class StatementSeparator
     private static IStatement? GetDeclarationStatement(ReadOnlyMemory<char> text, ReadOnlyMemory<IToken> tokens, ref int index)
     {
         int startIndex = index;
+        int i = index;
         ReadOnlySpan<IToken> tokenSpan = tokens.Span;
-        if (tokens.Length < index + 3)
+        if (tokens.Length < startIndex + 3)
             return null;
-        if (tokenSpan[index] is not TypeNameToken typeNameToken)
+        if (tokenSpan[i++] is not TypeNameToken typeNameToken)
             return null;
-        if (tokenSpan[index + 1] is not VariableNameToken variableNameToken)
+        bool isArray =
+            tokenSpan[i] is OpenSquareBraceSymbolToken &&
+            tokenSpan[i + 1] is CloseSquareBraceSymbolToken;
+        if (isArray)
+        {
+            i += 2;
+            if (tokens.Length < startIndex + 5)
+                return null;
+        }
+        VarType varType = isArray ? typeNameToken._VarType.Array! : typeNameToken._VarType;
+        if (tokenSpan[i++] is not VariableNameToken variableNameToken)
             return null;
-        if (tokenSpan[index + 2] is not SemicolonSymbolToken)
+        if (tokenSpan[i] is not SemicolonSymbolToken)
             return GetDeclarationInitialisationStatement(tokenSpan, ref index);
-        return new DeclarationStatement(text, tokens[index..(index += 3)], typeNameToken._VarType, variableNameToken.Text);
+        i++;
+        index = i;
+        return new DeclarationStatement(text, tokens[startIndex..index], varType, variableNameToken.Text);
 
         IStatement? GetDeclarationInitialisationStatement(ReadOnlySpan<IToken> tokenSpan, ref int index)
         {
-            if (tokens.Length < index + 5)
+            if (tokens.Length < i + 2)
                 return null;
-            if (tokenSpan[index + 2] is not EqualsSymbolToken)
+            if (tokenSpan[i++] is not EqualsSymbolToken)
                 return null;
+            index = i;
             if (!SkipPastFirstSpecificToken<SemicolonSymbolToken>(tokenSpan, ref index))
                 return new InvalidStatement(text, tokens[startIndex..], new($"Declaration-initialisation statement not followed up by a semicolon"));
             return new DeclarationInitialisationStatement
