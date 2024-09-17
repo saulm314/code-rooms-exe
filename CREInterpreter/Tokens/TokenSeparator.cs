@@ -61,7 +61,7 @@ public static class TokenSeparator
             return new SingleLineCommentToken(chunkText[startIndex..], lineNumber, startIndex);
         }
         index += newlineOffset;
-        return new SingleLineCommentToken(chunkText.Slice(startIndex, newlineOffset), lineNumber, startIndex);
+        return new SingleLineCommentToken(chunkText[startIndex..index], lineNumber, startIndex);
     }
 
     private static IToken? GetMultiLineCommentToken(ReadOnlyMemory<char> chunkText, ref int index, ref int lineNumber)
@@ -86,7 +86,7 @@ public static class TokenSeparator
             {
                 int offset = i + 1;
                 index += offset;
-                return new MultiLineCommentToken(chunkText.Slice(startIndex, offset), startLineNumber, startIndex);
+                return new MultiLineCommentToken(chunkText[startIndex..index], startLineNumber, startIndex);
             }
         }
         index = chunkText.Length;
@@ -120,12 +120,12 @@ public static class TokenSeparator
         return null;
     }
 
-    private static IToken? GetIntegerLiteralToken(ReadOnlyMemory<char> text, ref int index, ref int lineNumber)
+    private static IToken? GetIntegerLiteralToken(ReadOnlyMemory<char> chunkText, ref int index, ref int lineNumber)
     {
         int startIndex = index;
-        int i = index;
-        ReadOnlySpan<char> textSpan = text.Span;
-        while (i < text.Length)
+        ReadOnlySpan<char> textSpan = chunkText.Span[index..];
+        int i = 0;
+        while (i < textSpan.Length)
         {
             if (textSpan[i] == '.')
                 return null;
@@ -133,13 +133,12 @@ public static class TokenSeparator
                 break;
             i++;
         }
-        ReadOnlyMemory<char> tokenText = text[index..i];
-        ReadOnlySpan<char> tokenTextSpan = tokenText.Span;
-        bool success = int.TryParse(tokenTextSpan, out int result);
+        ReadOnlySpan<char> reducedTextSpan = textSpan[..i];
+        bool success = int.TryParse(reducedTextSpan, out int result);
         if (!success)
             return null;
-        index = i;
-        return new IntegerLiteralToken(tokenText, result, lineNumber, startIndex);
+        index += i;
+        return new IntegerLiteralToken(chunkText[startIndex..index], result, lineNumber, startIndex);
     }
 
     private static IToken? GetDoubleFloatLiteralToken(ReadOnlyMemory<char> text, ref int index, ref int lineNumber)
