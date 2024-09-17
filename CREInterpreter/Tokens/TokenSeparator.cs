@@ -227,20 +227,22 @@ public static class TokenSeparator
         return new StringLiteralToken(chunkText[startIndex..index], chunkText[(startIndex + 1)..(index - 1)], lineNumber, startIndex);
     }
 
-    private static IToken? GetSymbolToken(ReadOnlyMemory<char> text, ref int index, ref int lineNumber)
+    private static IToken? GetSymbolToken(ReadOnlyMemory<char> chunkText, ref int index, ref int lineNumber)
     {
         int startIndex = index;
-        int i = index;
-        string[] possibleSymbols = SymbolMappings.Keys.ToArray();
-        Array.Sort(possibleSymbols, new StringSizeComp());
-        string? symbol = Array.Find(possibleSymbols, _symbol =>
-            i + _symbol.Length <= text.Length &&
-            text[i..(i + _symbol.Length)].ToString() == _symbol);
+        ReadOnlySpan<char> textSpan = chunkText.Span[index..];
+        string? symbol = null;
+        foreach (string _symbol in SymbolMappings.Keys)
+            if (textSpan.StartsWith(_symbol))
+            {
+                symbol = _symbol;
+                break;
+            }
         if (symbol == null)
             return null;
         Func<ReadOnlyMemory<char>, int, int, IToken> tokenCreator = SymbolMappings[symbol];
         index += symbol.Length;
-        return tokenCreator(text[startIndex..index], lineNumber, startIndex);
+        return tokenCreator(chunkText[startIndex..index], lineNumber, startIndex);
     }
 
     private class StringSizeComp : IComparer<string>
@@ -251,7 +253,10 @@ public static class TokenSeparator
             (null, null) => 0,
             (null, not null) => -1,
             (not null, null) => 1,
-            (not null, not null) => y.Length - x.Length
+            (not null, not null) =>
+                y.Length != x.Length ?
+                y.Length - x.Length :
+                x.CompareTo(y)
         };
     }
 
@@ -261,8 +266,8 @@ public static class TokenSeparator
     //      one may think that the whole symbol is "<"
     // therefore we check if the symbol is "<=" before checking if it is "<" to obtain the correct symbol
     // the symbols below are already ordered in this way, however the StringSizeComp adds another runtime sort to ensure this
-    private static ImmutableDictionary<string, Func<ReadOnlyMemory<char>, int, int, IToken>> SymbolMappings { get; } =
-        ImmutableDictionary<string, Func<ReadOnlyMemory<char>, int, int, IToken>>.Empty.AddRange(
+    private static ImmutableSortedDictionary<string, Func<ReadOnlyMemory<char>, int, int, IToken>> SymbolMappings { get; } =
+        ImmutableSortedDictionary.CreateRange(new StringSizeComp(),
             new Dictionary<string, Func<ReadOnlyMemory<char>, int, int, IToken>>()
             {
                 ["<="] =    (s, l, i) => new LessThanOrEqualToSymbolToken(s, l, i),
@@ -316,8 +321,8 @@ public static class TokenSeparator
         return tokenCreator(text[startIndex..index], lineNumber, startIndex);
     }
 
-    private static ImmutableDictionary<string, Func<ReadOnlyMemory<char>, int, int, IToken>> KeywordMappings { get; } =
-        ImmutableDictionary<string, Func<ReadOnlyMemory<char>, int, int, IToken>>.Empty.AddRange(
+    private static ImmutableSortedDictionary<string, Func<ReadOnlyMemory<char>, int, int, IToken>> KeywordMappings { get; } =
+        ImmutableSortedDictionary.CreateRange(new StringSizeComp(),
             new Dictionary<string, Func<ReadOnlyMemory<char>, int, int, IToken>>()
             {
                 ["new"] =       (s, l, i) => new NewKeywordToken(s, l, i),
