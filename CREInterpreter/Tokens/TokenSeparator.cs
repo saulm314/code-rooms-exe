@@ -64,47 +64,33 @@ public static class TokenSeparator
         return new SingleLineCommentToken(chunkText.Slice(startIndex, newlineOffset), lineNumber, startIndex);
     }
 
-    private static IToken? GetMultiLineCommentToken(ReadOnlyMemory<char> text, ref int index, ref int lineNumber)
+    private static IToken? GetMultiLineCommentToken(ReadOnlyMemory<char> chunkText, ref int index, ref int lineNumber)
     {
         int startIndex = index;
-        int i;
-        int originalLineNumber = lineNumber;
-        int lineNumberTemp = lineNumber;
-        ReadOnlySpan<char> textSpan = text.Span;
-        if (text.Length - startIndex < 2)
+        int startLineNumber = lineNumber;
+        ReadOnlySpan<char> textSpan = chunkText.Span[index..];
+        if (textSpan is not ['/', '*', ..])
             return null;
-        if (textSpan[startIndex] != '/')
-            return null;
-        if (textSpan[startIndex + 1] != '*')
-            return null;
-        i = startIndex + 2;
-        bool previousIsAsterisk = false;
-        bool closed = false;
-        while (i < text.Length)
+        for (int i = 2; i < textSpan.Length; i++)
         {
-            if (textSpan[i] == '*')
+            if (textSpan[i] == '\n')
             {
-                previousIsAsterisk = true;
-                i++;
+                lineNumber++;
                 continue;
             }
-            if (textSpan[i] == '/' && previousIsAsterisk)
+            bool isClosingSlash =
+                i >= 3 &&
+                textSpan[i] == '/' &&
+                textSpan[i - 1] == '*';
+            if (isClosingSlash)
             {
-                i++;
-                closed = true;
-                break;
+                int offset = i + 1;
+                index += offset;
+                return new MultiLineCommentToken(chunkText.Slice(startIndex, offset), startLineNumber, startIndex);
             }
-            if (textSpan[i] == '\n')
-                lineNumberTemp++;
-            previousIsAsterisk = false;
-            i++;
         }
-        index = i;
-        lineNumber = lineNumberTemp;
-        if (!closed)
-            return new InvalidToken(text[startIndex..], originalLineNumber, startIndex,
-                new($"Multi-line comment starting at line {originalLineNumber} is never closed"));
-        return new MultiLineCommentToken(text[startIndex..index], originalLineNumber, startIndex);
+        index = chunkText.Length;
+        return new InvalidToken(chunkText[startIndex..], startLineNumber, startIndex, new("Multi-line comment never closed"));
     }
 
     private static IToken? GetLiteralToken(ReadOnlyMemory<char> text, ref int index, ref int lineNumber)
