@@ -196,27 +196,35 @@ public static class TokenSeparator
             new(chunkText[startIndex..(index += length)], lineNumber, startIndex, new(message));
     }
 
-    private static IToken? GetStringLiteralToken(ReadOnlyMemory<char> text, ref int index, ref int lineNumber)
+    private static IToken? GetStringLiteralToken(ReadOnlyMemory<char> chunkText, ref int index, ref int lineNumber)
     {
         int startIndex = index;
-        int i;
-        ReadOnlySpan<char> textSpan = text.Span;
-        if (text.Length - startIndex < 2)
+        ReadOnlySpan<char> textSpan = chunkText.Span[index..];
+        if (textSpan.Length < 2)
             return null;
-        if (textSpan[startIndex] != '"')
+        if (textSpan[0] != '"')
             return null;
-        i = startIndex + 1;
-        while (i < text.Length && textSpan[i] != '\n' && textSpan[i] != '"')
-            i++;
-        index = i;
-        if (i == text.Length)
-            return new InvalidToken(text[startIndex..index], lineNumber, startIndex,
-                new InterpreterException($"Quote at line {lineNumber} never closed"));
-        if (textSpan[i] == '\n')
-            return new InvalidToken(text[startIndex..index], lineNumber, startIndex,
-                new InterpreterException($"Cannot have a newline mid-quote (line {lineNumber})"));
-        index++;
-        return new StringLiteralToken(text[startIndex..index], text[(startIndex + 1)..(index - 1)], lineNumber, startIndex);
+        int i = 1;
+        for (; i < textSpan.Length; i++)
+        {
+            if (textSpan[i] == '"')
+                break;
+            bool badChar = textSpan[i] switch
+            {
+                '\0' or '\a' or '\b' or '\f' or '\n' or '\r' or '\t' or '\v' => true,
+                _ => false
+            };
+            if (badChar)
+                return new InvalidToken(chunkText[startIndex..(index += i)], lineNumber, startIndex,
+                    new("String literal contains invalid character (such as a newline)"));
+        }
+        if (i == textSpan.Length)
+        {
+            index = i;
+            return new InvalidToken(chunkText[startIndex..], lineNumber, startIndex, new("Quote never closed"));
+        }
+        index = i + 1;
+        return new StringLiteralToken(chunkText[startIndex..index], chunkText[(startIndex + 1)..(index - 1)], lineNumber, startIndex);
     }
 
     private static IToken? GetSymbolToken(ReadOnlyMemory<char> text, ref int index, ref int lineNumber)
