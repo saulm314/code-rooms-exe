@@ -93,35 +93,29 @@ public static class TokenSeparator
         return new InvalidToken(chunkText[startIndex..], startLineNumber, startIndex, new("Multi-line comment never closed"));
     }
 
-    private static IToken? GetLiteralToken(ReadOnlyMemory<char> text, ref int index, ref int lineNumber)
+    private static IToken? GetLiteralToken(ReadOnlyMemory<char> chunkText, ref int index, ref int lineNumber)
     {
         return
-            GetBooleanLiteralToken(text, ref index, ref lineNumber) ??
-            GetIntegerLiteralToken(text, ref index, ref lineNumber) ??
-            GetDoubleFloatLiteralToken(text, ref index, ref lineNumber) ??
-            GetCharacterLiteralToken(text, ref index, ref lineNumber) ??
-            GetStringLiteralToken(text, ref index, ref lineNumber);
+            GetBooleanLiteralToken(chunkText, ref index, ref lineNumber) ??
+            GetIntegerLiteralToken(chunkText, ref index, ref lineNumber) ??
+            GetDoubleFloatLiteralToken(chunkText, ref index, ref lineNumber) ??
+            GetCharacterLiteralToken(chunkText, ref index, ref lineNumber) ??
+            GetStringLiteralToken(chunkText, ref index, ref lineNumber);
     }
 
-    private static IToken? GetBooleanLiteralToken(ReadOnlyMemory<char> text, ref int index, ref int lineNumber)
+    private static IToken? GetBooleanLiteralToken(ReadOnlyMemory<char> chunkText, ref int index, ref int lineNumber)
     {
         int startIndex = index;
-        ReadOnlySpan<char> textSpan = text.Span;
-        const int TrueLength = 4;
-        const int FalseLength = 5;
-        if (text.Length - index < TrueLength)
-            return null;
-        if (textSpan[index..(index + TrueLength)].Equals("true".AsSpan(), default))
+        ReadOnlySpan<char> textSpan = chunkText.Span[index..];
+        if (textSpan is ['t', 'r', 'u', 'e', ..])
         {
-            index += TrueLength;
-            return new BooleanLiteralToken(text[startIndex..index], true, lineNumber, startIndex);
+            index += 4;
+            return new BooleanLiteralToken(chunkText[startIndex..index], true, lineNumber, startIndex);
         }
-        if (text.Length - index < FalseLength)
-            return null;
-        if (textSpan[index..(index + FalseLength)].Equals("false".AsSpan(), default))
+        if (textSpan is ['f', 'a', 'l', 's', 'e', ..])
         {
-            index += FalseLength;
-            return new BooleanLiteralToken(text[startIndex..index], false, lineNumber, startIndex);
+            index += 5;
+            return new BooleanLiteralToken(chunkText[startIndex..index], false, lineNumber, startIndex);
         }
         return null;
     }
