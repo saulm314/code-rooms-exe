@@ -365,22 +365,19 @@ public static class TokenSeparator
             new(chunkText[index..(index += varType.Name.Length)], varType, lineNumber, startIndex);
     }
 
-    private static IToken? GetVariableNameToken(ReadOnlyMemory<char> text, ref int index, ref int lineNumber)
+    private static IToken? GetVariableNameToken(ReadOnlyMemory<char> chunkText, ref int index, ref int lineNumber)
     {
         int startIndex = index;
-        ReadOnlySpan<char> textSpan = text.Span;
-        if (!char.IsLetter(textSpan[index]) && textSpan[index] != '_')
+        ReadOnlySpan<char> textSpan = chunkText.Span[index..];
+        if (!char.IsLetter(textSpan[0]) && textSpan[0] != '_')
             return null;
-        int i = index;
-        while (i < text.Length && (char.IsLetterOrDigit(textSpan[i]) || textSpan[i] == '_'))
-            i++;
-        ReadOnlyMemory<char> tokenText = text[index..i];
-        if (KeywordMappings.ContainsKey(tokenText.ToString()))
-            return null;
-        if (VarType.GetVarType(tokenText) != null)
-            return null;
-        index = i;
-        return new VariableNameToken(tokenText, lineNumber, startIndex);
+        int i = 1;
+        for (; i < textSpan.Length; i++)
+            if (!char.IsLetterOrDigit(textSpan[i]) && textSpan[i] != '_')
+                break;
+        ReadOnlySpan<char> reducedTextSpan = textSpan[..i];
+        index += i;
+        return new VariableNameToken(chunkText[startIndex..index], lineNumber, startIndex);
     }
 
     private static InvalidToken GetInvalidToken(ReadOnlyMemory<char> text, ref int index, ref int lineNumber)
