@@ -160,50 +160,40 @@ public static class TokenSeparator
         return new DoubleFloatLiteralToken(chunkText[startIndex..index], result, lineNumber, startIndex);
     }
 
-    // this code is horrible
-    private static IToken? GetCharacterLiteralToken(ReadOnlyMemory<char> text, ref int index, ref int lineNumber)
+    private static IToken? GetCharacterLiteralToken(ReadOnlyMemory<char> chunkText, ref int index, ref int lineNumber)
     {
         int startIndex = index;
-        ReadOnlySpan<char> textSpan = text.Span;
-        if (text.Length - index < 3)
-            return null;
-        if (textSpan[index] != '\'')
-            return null;
-        int closingQuoteIndex =
-            (text.Length - index >= 4 && textSpan[index + 3] == '\'') ? index + 3 :
-            textSpan[index + 2] == '\'' ? index + 2 :
-            -1;
-        if (closingQuoteIndex == -1)
-            return new InvalidToken(text[index..(index += 3)], lineNumber, startIndex,
-                new($"Quote not closed or too many characters in quote at line {lineNumber}"));
-        if (closingQuoteIndex == index + 2)
+        ReadOnlySpan<char> textSpan = chunkText.Span[index..];
+        return textSpan switch
         {
-            char value = textSpan[index + 1];
-            if ((new char[] { '\'', '\\', '\n', '\r', '\t', '\v' }).Contains(value))
-                return new InvalidToken(text[index..(index += 3)], lineNumber, startIndex,
-                    new($"Cannot have single character {value} in char quote (line {lineNumber})"));
-            ReadOnlyMemory<char> tokenText = text[index..(index + 3)];
-            index += 3;
-            return new CharacterLiteralToken(tokenText, value, lineNumber, startIndex);
-        }
-        if (textSpan[index + 1] != '\\')
-            return new InvalidToken(text[index..(index += 4)], lineNumber, startIndex,
-                new($"First character in quote must be \\ (line {lineNumber})"));
-        string basicEscapeCharacter = text[(index + 1)..(index + 3)].ToString();
-        if (!CharUtils.BasicEscapeCharacters.ContainsKey(basicEscapeCharacter))
-        {
-            char value = textSpan[index + 2];
-            if ((new char[] { '\n', '\r', '\t', '\v' }).Contains(value))
-                return new InvalidToken(text[index..(index += 4)], lineNumber, startIndex,
-                    new($"Cannot have character {value} after \\ in quote (line {lineNumber})"));
-            ReadOnlyMemory<char> tokenText = text[index..(index + 4)];
-            index += 4;
-            return new CharacterLiteralToken(tokenText, value, lineNumber, startIndex);
-        }
-        char value_ = CharUtils.BasicEscapeCharacters[basicEscapeCharacter];
-        ReadOnlyMemory<char> tokenText_ = text[index..(index + 4)];
-        index += 4;
-        return new CharacterLiteralToken(tokenText_, value_, lineNumber, startIndex);
+            ['\'', '\'', ..] => GetBadToken(2, "Single quotes cannot be empty", ref index, ref lineNumber),
+            ['\'', '\0' or '\a' or '\b' or '\f' or '\n' or '\r' or '\t' or '\v', ..] =>
+                GetBadToken(1, "Invalid character (such as newline) after opening single quote", ref index, ref lineNumber),
+            ['\'', '\\', '\0' or '\a' or '\b' or '\f' or '\n' or '\r' or '\t' or '\v', ..] =>
+                GetBadToken(2, "Invalid character (such as newline) after opening single quote", ref index, ref lineNumber),
+            ['\'', not '\\', not '\'', ..] => GetBadToken(2, "Single quote not closed or quote contains too many characters", ref index, ref lineNumber),
+            ['\'', '\\', _, not '\'', ..] => GetBadToken(3, "Single quote not closed or quote contains too many characters", ref index, ref lineNumber),
+            ['\'', not ('\\' or '\''), '\'', ..] => GetToken(3, textSpan[1], ref index, ref lineNumber),
+            ['\'', '\\', '\'', '\'', ..] => GetToken(4, '\'', ref index, ref lineNumber),
+            ['\'', '\\', '"', '\'', ..] => GetToken(4, '"', ref index, ref lineNumber),
+            ['\'', '\\', '\\', '\'', ..] => GetToken(4, '\\', ref index, ref lineNumber),
+            ['\'', '\\', '0', '\'', ..] => GetToken(4, '\0', ref index, ref lineNumber),
+            ['\'', '\\', 'a', '\'', ..] => GetToken(4, '\a', ref index, ref lineNumber),
+            ['\'', '\\', 'b', '\'', ..] => GetToken(4, '\b', ref index, ref lineNumber),
+            ['\'', '\\', 'f', '\'', ..] => GetToken(4, '\f', ref index, ref lineNumber),
+            ['\'', '\\', 'n', '\'', ..] => GetToken(4, '\n', ref index, ref lineNumber),
+            ['\'', '\\', 'r', '\'', ..] => GetToken(4, '\r', ref index, ref lineNumber),
+            ['\'', '\\', 't', '\'', ..] => GetToken(4, '\t', ref index, ref lineNumber),
+            ['\'', '\\', 'v', '\'', ..] => GetToken(4, '\v', ref index, ref lineNumber),
+            ['\'', '\\', char badEscape, '\'', ..] => GetBadToken(4, $"Unrecognised escape sequence: \\{badEscape}", ref index, ref lineNumber),
+            _ => null
+        };
+
+        CharacterLiteralToken GetToken(int length, char value, ref int index, ref int lineNumber) =>
+            new(chunkText[startIndex..(index += length)], value, lineNumber, startIndex);
+
+        InvalidToken GetBadToken(int length, string message, ref int index, ref int lineNumber) =>
+            new(chunkText[startIndex..(index += length)], lineNumber, startIndex, new(message));
     }
 
     private static IToken? GetStringLiteralToken(ReadOnlyMemory<char> text, ref int index, ref int lineNumber)
