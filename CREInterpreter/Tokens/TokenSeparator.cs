@@ -141,24 +141,23 @@ public static class TokenSeparator
         return new IntegerLiteralToken(chunkText[startIndex..index], result, lineNumber, startIndex);
     }
 
-    private static IToken? GetDoubleFloatLiteralToken(ReadOnlyMemory<char> text, ref int index, ref int lineNumber)
+    private static IToken? GetDoubleFloatLiteralToken(ReadOnlyMemory<char> chunkText, ref int index, ref int lineNumber)
     {
         int startIndex = index;
-        int i = index;
-        ReadOnlySpan<char> textSpan = text.Span;
-        while (i < text.Length)
+        ReadOnlySpan<char> textSpan = chunkText.Span[index..];
+        int i = 0;
+        while (i < textSpan.Length)
         {
             if (!char.IsDigit(textSpan[i]) && textSpan[i] != '.')
                 break;
             i++;
         }
-        ReadOnlyMemory<char> tokenText = text[index..i];
-        ReadOnlySpan<char> tokenTextSpan = tokenText.Span;
-        bool success = double.TryParse(tokenTextSpan, out double result);
+        ReadOnlySpan<char> reducedTextSpan = textSpan[..i];
+        bool success = double.TryParse(reducedTextSpan, out double result);
         if (!success)
             return null;
-        index = i;
-        return new DoubleFloatLiteralToken(tokenText, result, lineNumber, startIndex);
+        index += i;
+        return new DoubleFloatLiteralToken(chunkText[startIndex..index], result, lineNumber, startIndex);
     }
 
     // this code is horrible
