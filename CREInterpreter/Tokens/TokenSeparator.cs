@@ -338,26 +338,31 @@ public static class TokenSeparator
                 ["Length"] =    (s, l, i) => new LengthKeywordToken(s, l, i)
             });
 
-    private static IToken? GetTypeNameToken(ReadOnlyMemory<char> text, ref int index, ref int lineNumber)
+    private static IToken? GetTypeNameToken(ReadOnlyMemory<char> chunkText, ref int index, ref int lineNumber)
     {
         int startIndex = index;
-        int i = index;
-        ReadOnlySpan<char> textSpan = text.Span;
-        VarType? varType = VarType.VarTypes
-            .Where(varType => !varType.IsArray)
-            .SingleOrDefault(varType =>
-                i + varType.Name.Length <= text.Length &&
-                text[i..(i + varType.Name.Length)].ToString() == varType.Name);
+        ReadOnlySpan<char> textSpan = chunkText.Span[index..];
+        IEnumerable<VarType> nonArrayVarTypes =
+            VarType.VarTypes
+            .Where(varType => !varType.IsArray);
+        VarType? varType = null;
+        foreach (VarType _varType in nonArrayVarTypes)
+            if (textSpan.StartsWith(_varType.Name))
+            {
+                varType = _varType;
+                break;
+            }
         if (varType == null)
             return null;
-        if (i + varType.Name.Length < text.Length)
-        {
-            char nextChar = textSpan[i + varType.Name.Length];
-            if (char.IsLetterOrDigit(nextChar) || nextChar == '_')
-                return null;
-        }
-        index += varType.Name.Length;
-        return new TypeNameToken(text[startIndex..index], varType, lineNumber, startIndex);
+        if (textSpan.Length == varType.Name.Length)
+            return ReturnTypeNameToken(ref index, ref lineNumber);
+        char nextChar = textSpan[varType.Name.Length];
+        if (char.IsLetterOrDigit(nextChar) || nextChar == '_')
+            return null;
+        return ReturnTypeNameToken(ref index, ref lineNumber);
+
+        TypeNameToken ReturnTypeNameToken(ref int index, ref int lineNumber) =>
+            new(chunkText[index..(index += varType.Name.Length)], varType, lineNumber, startIndex);
     }
 
     private static IToken? GetVariableNameToken(ReadOnlyMemory<char> text, ref int index, ref int lineNumber)
