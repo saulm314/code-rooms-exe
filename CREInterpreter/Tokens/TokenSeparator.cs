@@ -299,26 +299,28 @@ public static class TokenSeparator
                 ["]"] =     (s, l, i) => new CloseSquareBraceSymbolToken(s, l, i)
             });
 
-    private static IToken? GetKeywordToken(ReadOnlyMemory<char> text, ref int index, ref int lineNumber)
+    private static IToken? GetKeywordToken(ReadOnlyMemory<char> chunkText, ref int index, ref int lineNumber)
     {
         int startIndex = index;
-        int i = index;
-        ReadOnlySpan<char> textSpan = text.Span;
-        string[] possibleKeywords = KeywordMappings.Keys.ToArray();
-        string? keyword = Array.Find(possibleKeywords, _keyword =>
-            i + _keyword.Length <= text.Length &&
-            text[i..(i + _keyword.Length)].ToString() == _keyword);
+        ReadOnlySpan<char> textSpan = chunkText.Span[index..];
+        string? keyword = null;
+        foreach (string _keyword in KeywordMappings.Keys)
+            if (textSpan.StartsWith(_keyword))
+            {
+                keyword = _keyword;
+                break;
+            }
         if (keyword == null)
             return null;
-        if (i + keyword.Length < text.Length)
-        {
-            char nextChar = textSpan[i + keyword.Length];
-            if (char.IsLetterOrDigit(nextChar) || nextChar == '_')
-                return null;
-        }
-        Func<ReadOnlyMemory<char>, int, int, IToken> tokenCreator = KeywordMappings[keyword];
-        index += keyword.Length;
-        return tokenCreator(text[startIndex..index], lineNumber, startIndex);
+        if (textSpan.Length == keyword.Length)
+            return ReturnKeywordToken(ref index, ref lineNumber);
+        char nextChar = textSpan[keyword.Length];
+        if (char.IsLetterOrDigit(nextChar) || nextChar == '_')
+            return null;
+        return ReturnKeywordToken(ref index, ref lineNumber);
+
+        IToken ReturnKeywordToken(ref int index, ref int lineNumber) =>
+            KeywordMappings[keyword](chunkText[index..(index += keyword.Length)], lineNumber, startIndex);
     }
 
     private static ImmutableSortedDictionary<string, Func<ReadOnlyMemory<char>, int, int, IToken>> KeywordMappings { get; } =

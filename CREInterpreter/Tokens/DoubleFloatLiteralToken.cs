@@ -2,7 +2,7 @@
 
 namespace CREInterpreter.Tokens;
 
-public class DoubleFloatLiteralToken(ReadOnlyMemory<char> text, double value, int lineNumber, int index) : IToken, IValueTypeLiteral
+public class DoubleFloatLiteralToken(ReadOnlyMemory<char> text, double value, int lineNumber, int index) : IToken, IValueTypeLiteralToken
 {
     public ReadOnlyMemory<char> Text => text;
 
@@ -14,5 +14,5 @@ public class DoubleFloatLiteralToken(ReadOnlyMemory<char> text, double value, in
 
     public VarType _VarType => VarType.@double;
 
-    object IValueTypeLiteral.Value => value;
+    object IValueTypeLiteralToken.Value => value;
 }
