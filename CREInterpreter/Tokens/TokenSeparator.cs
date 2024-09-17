@@ -240,7 +240,7 @@ public static class TokenSeparator
             }
         if (symbol == null)
             return null;
-        Func<ReadOnlyMemory<char>, int, int, IToken> tokenCreator = SymbolMappings[symbol];
+        Func<ReadOnlyMemory<char>, int, int, ISymbolToken> tokenCreator = SymbolMappings[symbol];
         index += symbol.Length;
         return tokenCreator(chunkText[startIndex..index], lineNumber, startIndex);
     }
@@ -266,9 +266,9 @@ public static class TokenSeparator
     //      one may think that the whole symbol is "<"
     // therefore we check if the symbol is "<=" before checking if it is "<" to obtain the correct symbol
     // the symbols below are already ordered in this way, however the StringSizeComp adds another runtime sort to ensure this
-    private static ImmutableSortedDictionary<string, Func<ReadOnlyMemory<char>, int, int, IToken>> SymbolMappings { get; } =
+    private static ImmutableSortedDictionary<string, Func<ReadOnlyMemory<char>, int, int, ISymbolToken>> SymbolMappings { get; } =
         ImmutableSortedDictionary.CreateRange(new StringSizeComp(),
-            new Dictionary<string, Func<ReadOnlyMemory<char>, int, int, IToken>>()
+            new Dictionary<string, Func<ReadOnlyMemory<char>, int, int, ISymbolToken>>()
             {
                 ["<="] =    (s, l, i) => new LessThanOrEqualToSymbolToken(s, l, i),
                 [">="] =    (s, l, i) => new GreaterThanOrEqualToSymbolToken(s, l, i),
@@ -319,13 +319,13 @@ public static class TokenSeparator
             return null;
         return ReturnKeywordToken(ref index, ref lineNumber);
 
-        IToken ReturnKeywordToken(ref int index, ref int lineNumber) =>
+        IKeywordToken ReturnKeywordToken(ref int index, ref int lineNumber) =>
             KeywordMappings[keyword](chunkText[index..(index += keyword.Length)], lineNumber, startIndex);
     }
 
-    private static ImmutableSortedDictionary<string, Func<ReadOnlyMemory<char>, int, int, IToken>> KeywordMappings { get; } =
+    private static ImmutableSortedDictionary<string, Func<ReadOnlyMemory<char>, int, int, IKeywordToken>> KeywordMappings { get; } =
         ImmutableSortedDictionary.CreateRange(new StringSizeComp(),
-            new Dictionary<string, Func<ReadOnlyMemory<char>, int, int, IToken>>()
+            new Dictionary<string, Func<ReadOnlyMemory<char>, int, int, IKeywordToken>>()
             {
                 ["new"] =       (s, l, i) => new NewKeywordToken(s, l, i),
                 ["null"] =      (s, l, i) => new NullKeywordToken(s, l, i),
