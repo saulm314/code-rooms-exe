@@ -83,9 +83,17 @@ public static class StatementSeparator
         );
     }
 
-    private static InvalidStatement GetInvalidStatement(ReadOnlyMemory<char> text, ReadOnlyMemory<IToken> tokens, ref int index)
+    private static InvalidStatement GetInvalidStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> chunkTokens, ref int index)
     {
-        return new(text, tokens[index..++index]);
+        int startIndex = index;
+        SkipToFirstTopLevelSpecificToken<SemicolonSymbolToken>(chunkTokens.Span, ref index);
+        if (index == -1)
+        {
+            index = chunkTokens.Length;
+            return new(chunkText, chunkTokens[startIndex..]);
+        }
+        index++;
+        return new(chunkText, chunkTokens[startIndex..index]);
     }
 
     private static void GetOpenTokenCount(IToken token, ref int openTokenCount)
