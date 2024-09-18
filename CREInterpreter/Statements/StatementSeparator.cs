@@ -16,14 +16,6 @@ public static class StatementSeparator
                 GetInvalidStatement(text, tokens, ref index);
     }
 
-    private static IStatement? GetEmptyStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> chunkTokens, ref int index)
-    {
-        ReadOnlySpan<IToken> tokenSpan = chunkTokens.Span[index..];
-        if (tokenSpan[0] is not SemicolonSymbolToken)
-            return null;
-        return new EmptyStatement(chunkText, chunkTokens[index..++index]);
-    }
-
     private static IStatement? GetDeclarationStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> chunkTokens, ref int index)
     {
         int startIndex = index;
@@ -38,27 +30,28 @@ public static class StatementSeparator
                 new DeclarationStatement(chunkText, chunkTokens[index..(index += 5)], typeNameToken._VarType.Array!, variableNameToken.Text),
 
             [TypeNameToken typeNameToken, VariableNameToken variableNameToken, EqualsSymbolToken, ..] =>
-                GetDeclarationInitialisationStatement(tokenSpan, ref index, 3, typeNameToken._VarType, variableNameToken.Text),
+                GetDeclarationInitialisationStatement(tokenSpan[3..], startIndex + 3, ref index, typeNameToken._VarType, variableNameToken.Text),
 
             [TypeNameToken typeNameToken, OpenSquareBraceSymbolToken, CloseSquareBraceSymbolToken, VariableNameToken variableNameToken,
                 EqualsSymbolToken, ..] =>
-                GetDeclarationInitialisationStatement(tokenSpan, ref index, 5, typeNameToken._VarType.Array!, variableNameToken.Text),
+                GetDeclarationInitialisationStatement(tokenSpan[5..], startIndex + 5, ref index, typeNameToken._VarType.Array!, variableNameToken.Text),
 
             _ => null
         };
 
-        IStatement? GetDeclarationInitialisationStatement(ReadOnlySpan<IToken> tokenSpan, ref int chunkIndex, int offset,
+        IStatement? GetDeclarationInitialisationStatement(ReadOnlySpan<IToken> expressionTokenSpan, int expressionTokenSpanIndex, ref int index,
             VarType varType, ReadOnlyMemory<char> variableName)
         {
-            SkipToFirstTopLevelSpecificToken<SemicolonSymbolToken>(tokenSpan, ref offset);
+            int offset = 0;
+            SkipToFirstTopLevelSpecificToken<SemicolonSymbolToken>(expressionTokenSpan, ref offset);
             if (offset == -1)
             {
-                chunkIndex = chunkTokens.Length;
-                return new InvalidStatement(chunkText, chunkTokens[chunkIndex..], new("Declaration-initialisation statement never followed by a semicolon"));
+                index = chunkTokens.Length;
+                return new InvalidStatement(chunkText, chunkTokens[startIndex..], new("Declaration-initialisation statement never followed by a semicolon"));
             }
-            chunkIndex += offset + 1;
-            return new DeclarationInitialisationStatement(chunkText, chunkTokens[startIndex..chunkIndex], varType, variableName,
-                chunkTokens[(startIndex + 3)..(chunkIndex - 1)]);
+            index += offset + 1;
+            return new DeclarationInitialisationStatement(chunkText, chunkTokens[startIndex..index], varType, variableName,
+                chunkTokens[expressionTokenSpanIndex..(index - 1)]);
         }
     }
 
