@@ -1,3 +1,3 @@
 ﻿namespace CREInterpreter.Tokens;
 
-public interface ICloseToken : IToken { }
+public interface ICloseToken : IToken;

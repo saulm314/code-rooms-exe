@@ -13,6 +13,7 @@ public static class StatementSeparator
             yield return
                 GetEmptyStatement(text, tokens, ref index) ??
                 GetDeclarationStatement(text, tokens, ref index) ??
+                GetWriteStatement(text, tokens, ref index) ??
                 GetInvalidStatement(text, tokens, ref index);
     }
 
@@ -27,26 +28,8 @@ public static class StatementSeparator
     private static IStatement? GetDeclarationStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> chunkTokens, ref int index) =>
         DeclarationStatementSeparator.GetDeclarationStatement(chunkText, chunkTokens, ref index);
 
-    private static IStatement? GetWriteVariableStatement(ReadOnlyMemory<char> text, ReadOnlyMemory<IToken> tokens, ref int index)
-    {
-        int startIndex = index;
-        ReadOnlySpan<IToken> tokenSpan = tokens.Span;
-        if (tokens.Length < index + 4)
-            return null;
-        if (tokenSpan[index] is not VariableNameToken variableNameToken)
-            return null;
-        if (tokenSpan[index + 1] is not EqualsSymbolToken)
-            return null;
-        //if (!SkipToFirstTopLevelSpecificToken<SemicolonSymbolToken>(tokenSpan, ref index))
-        //    return new InvalidStatement(text, tokens[startIndex..], new($"Write-variable statement not followed up by a semicolon"));
-        return new WriteVariableStatement
-        (
-            text,
-            tokens[startIndex..index],
-            variableNameToken.Text,
-            tokens[(startIndex + 2)..(index - 1)]
-        );
-    }
+    private static IStatement? GetWriteStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> chunkTokens, ref int index) =>
+        WriteStatementSeparator.GetWriteStatement(chunkText, chunkTokens, ref index);
 
     private static InvalidStatement GetInvalidStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> chunkTokens, ref int index)
     {
