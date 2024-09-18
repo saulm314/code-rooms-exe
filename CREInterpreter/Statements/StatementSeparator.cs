@@ -124,13 +124,12 @@ public static class StatementSeparator
         int openTokenCount = 0;
         for (int i = index; i < tokenSpan.Length; i++)
         {
+            if (openTokenCount == 0 && tokenSpan[i] is TToken)
+            {
+                index = i;
+                return;
+            }
             GetOpenTokenCount(tokenSpan[i], ref openTokenCount);
-            if (openTokenCount > 0)
-                continue;
-            if (tokenSpan[i] is not TToken)
-                continue;
-            index = i;
-            return;
         }
         index = -1;
     }
