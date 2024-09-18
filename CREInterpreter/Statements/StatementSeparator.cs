@@ -14,7 +14,7 @@ public static class StatementSeparator
                 GetEmptyStatement(text, tokens, ref index) ??
                 GetDeclarationStatement(text, tokens, ref index) ??
                 GetWriteStatement(text, tokens, ref index) ??
-                GetIfStatement(text, tokens, ref index) ??
+                GetIfWhileStatement(text, tokens, ref index) ??
                 GetInvalidStatement(text, tokens, ref index);
     }
 
@@ -32,12 +32,22 @@ public static class StatementSeparator
     private static IStatement? GetWriteStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> chunkTokens, ref int index) =>
         WriteStatementSeparator.GetWriteStatement(chunkText, chunkTokens, ref index);
 
-    private static IStatement? GetIfStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> chunkTokens, ref int index)
+    private static IStatement? GetIfWhileStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> chunkTokens, ref int index)
     {
         int startIndex = index;
         ReadOnlySpan<IToken> tokenSpan = chunkTokens.Span[index..];
-        if (tokenSpan is not [IfKeywordToken, OpenBracketSymbolToken, ..])
-            return null;
+        Func<int, IStatement> generator;
+        switch (tokenSpan)
+        {
+            case [IfKeywordToken, OpenBracketSymbolToken, ..]:
+                generator = (index) => new IfStatement(chunkText, chunkTokens[startIndex..index], chunkTokens[2..(index - 1)]);
+                break;
+            case [WhileKeywordToken, OpenBracketSymbolToken, ..]:
+                generator = (index) => new WhileStatement(chunkText, chunkTokens[startIndex..index], chunkTokens[2..(index - 1)]);
+                break;
+            default:
+                return null;
+        }
         int offset = 2;
         SkipToFirstTopLevelSpecificToken<CloseBracketSymbolToken>(tokenSpan, ref offset);
         if (offset == -1)
@@ -46,7 +56,7 @@ public static class StatementSeparator
             return new InvalidStatement(chunkText, chunkTokens[startIndex..], new("Bracket never closed"));
         }
         index += offset + 1;
-        return new IfStatement(chunkText, chunkTokens[startIndex..index], chunkTokens[2..(index - 1)]);
+        return generator(index);
     }
 
     private static InvalidStatement GetInvalidStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> chunkTokens, ref int index)
