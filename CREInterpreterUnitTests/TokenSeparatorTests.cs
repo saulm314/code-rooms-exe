@@ -1,4 +1,3 @@
-using CREInterpreter;
 using CREInterpreter.Tokens;
 using System;
 using System.Collections.Generic;
@@ -277,7 +276,6 @@ public class TokenSeparatorTests
     [InlineData("')'", "')'", 1, 0, ')')]
     [InlineData("'['", "'['", 1, 0, '[')]
     [InlineData("']'", "']'", 1, 0, ']')]
-    [InlineData(@"'\q'", @"'\q'", 1, 0, 'q')]
     public void GetTokens_CharacterLiteral_ReturnsCharacterLiteralToken(string input, string expectedText, int expectedLineNumber, int expectedIndex,
         char expectedValue)
     {
@@ -298,21 +296,22 @@ public class TokenSeparatorTests
     }
 
     [Theory]
-    [InlineData("'/**/a'", "'/*", 1, 0)]
-    [InlineData("'\n'", "'\n'", 1, 0)]
-    [InlineData("'\''", "'\''", 1, 0)]
-    [InlineData("'\r'", "'\r'", 1, 0)]
-    [InlineData("'\t'", "'\t'", 1, 0)]
-    [InlineData("'\v'", "'\v'", 1, 0)]
-    [InlineData("'\na'", "'\na'", 1, 0)]
+    [InlineData("'/**/a'", "'/", 1, 0)]
+    [InlineData("'\n'", "'", 1, 0)]
+    [InlineData("'''", "''", 1, 0)]
+    [InlineData("'\r'", "'", 1, 0)]
+    [InlineData("'\t'", "'", 1, 0)]
+    [InlineData("'\v'", "'", 1, 0)]
+    [InlineData("'\na'", "'", 1, 0)]
     [InlineData("'a", "'a", 1, 0)]
     [InlineData("'\\'", "'\\'", 1, 0)]
-    [InlineData("'//\na'", "'//", 1, 0)]
-    [InlineData("'aa'", "'aa'", 1, 0)]
-    [InlineData("'\\\n'", "'\\\n'", 1, 0)]
-    [InlineData ("'\\\r'", "'\\\r'", 1, 0)]
-    [InlineData("'\\\t'", "'\\\t'", 1, 0)]
-    [InlineData("'\\\v'", "'\\\v'", 1, 0)]
+    [InlineData("'//\na'", "'/", 1, 0)]
+    [InlineData("'aa'", "'a", 1, 0)]
+    [InlineData("'\\\n'", "'\\", 1, 0)]
+    [InlineData ("'\\\r'", "'\\", 1, 0)]
+    [InlineData("'\\\t'", "'\\", 1, 0)]
+    [InlineData("'\\\v'", "'\\", 1, 0)]
+    [InlineData("'\\q'", "'\\q'", 1, 0)]
     public void GetTokens_InvalidCharacter_ReturnsInvalidToken(string input, string expectedText, int expectedLineNumber, int expectedIndex)
     {
         IEnumerable<IToken> tokens = TokenSeparator.GetTokens(input.AsMemory());
@@ -408,7 +407,7 @@ public class TokenSeparatorTests
 
         Assert.Single(tokens);
         Assert.IsAssignableFrom(expectedTokenType, token);
-        Assert.IsAssignableFrom<ISymbol>(token);
+        Assert.IsAssignableFrom<ISymbolToken>(token);
         Assert.Equal(expectedText, actualText);
         Assert.Equal(expectedLineNumber, actualLineNumber);
         Assert.Equal(expectedIndex, actualIndex);
@@ -434,7 +433,7 @@ public class TokenSeparatorTests
 
         Assert.Single(tokens);
         Assert.IsAssignableFrom(expectedTokenType, token);
-        Assert.IsAssignableFrom<IKeyword>(token);
+        Assert.IsAssignableFrom<IKeywordToken>(token);
         Assert.Equal(expectedText, actualText);
         Assert.Equal(expectedLineNumber, actualLineNumber);
         Assert.Equal(expectedIndex, actualIndex);

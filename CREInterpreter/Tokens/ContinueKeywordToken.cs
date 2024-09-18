@@ -2,7 +2,7 @@
 
 namespace CREInterpreter.Tokens;
 
-public class ContinueKeywordToken(ReadOnlyMemory<char> text, int lineNumber, int index) : IToken, IKeyword
+public class ContinueKeywordToken(ReadOnlyMemory<char> text, int lineNumber, int index) : IToken, IKeywordToken
 {
     public ReadOnlyMemory<char> Text => text;
 
@@ -10,5 +10,5 @@ public class ContinueKeywordToken(ReadOnlyMemory<char> text, int lineNumber, int
 
     public int Index => index;
 
-    string IKeyword.Text { get; } = text.ToString();
+    string IKeywordToken.Text { get; } = text.ToString();
 }
