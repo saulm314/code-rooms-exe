@@ -1,3 +1,3 @@
 ﻿namespace CREInterpreter.Statements;
 
-public interface IInitialiserStatement : IStatement { }
+public interface IInitialiserStatement : IStatement;

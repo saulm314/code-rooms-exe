@@ -13,6 +13,8 @@ public static class StatementSeparator
             yield return
                 GetEmptyStatement(text, tokens, ref index) ??
                 GetDeclarationStatement(text, tokens, ref index) ??
+                GetWriteStatement(text, tokens, ref index) ??
+                GetIfStatement(text, tokens, ref index) ??
                 GetInvalidStatement(text, tokens, ref index);
     }
 
@@ -24,64 +26,27 @@ public static class StatementSeparator
         return new EmptyStatement(chunkText, chunkTokens[index..++index]);
     }
 
-    private static IStatement? GetDeclarationStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> chunkTokens, ref int index)
+    private static IStatement? GetDeclarationStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> chunkTokens, ref int index) =>
+        DeclarationStatementSeparator.GetDeclarationStatement(chunkText, chunkTokens, ref index);
+
+    private static IStatement? GetWriteStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> chunkTokens, ref int index) =>
+        WriteStatementSeparator.GetWriteStatement(chunkText, chunkTokens, ref index);
+
+    private static IStatement? GetIfStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> chunkTokens, ref int index)
     {
         int startIndex = index;
         ReadOnlySpan<IToken> tokenSpan = chunkTokens.Span[index..];
-        return tokenSpan switch
+        if (tokenSpan is not [IfKeywordToken, OpenBracketSymbolToken, ..])
+            return null;
+        int offset = 2;
+        SkipToFirstTopLevelSpecificToken<CloseBracketSymbolToken>(tokenSpan, ref offset);
+        if (offset == -1)
         {
-            [TypeNameToken typeNameToken, VariableNameToken variableNameToken, SemicolonSymbolToken, ..] =>
-                new DeclarationStatement(chunkText, chunkTokens[index..(index += 3)], typeNameToken._VarType, variableNameToken.Text),
-
-            [TypeNameToken typeNameToken, OpenSquareBraceSymbolToken, CloseSquareBraceSymbolToken, VariableNameToken variableNameToken,
-                SemicolonSymbolToken, ..] =>
-                new DeclarationStatement(chunkText, chunkTokens[index..(index += 5)], typeNameToken._VarType.Array!, variableNameToken.Text),
-
-            [TypeNameToken typeNameToken, VariableNameToken variableNameToken, EqualsSymbolToken, ..] =>
-                GetDeclarationInitialisationStatement(tokenSpan[3..], startIndex + 3, ref index, typeNameToken._VarType, variableNameToken.Text),
-
-            [TypeNameToken typeNameToken, OpenSquareBraceSymbolToken, CloseSquareBraceSymbolToken, VariableNameToken variableNameToken,
-                EqualsSymbolToken, ..] =>
-                GetDeclarationInitialisationStatement(tokenSpan[5..], startIndex + 5, ref index, typeNameToken._VarType.Array!, variableNameToken.Text),
-
-            _ => null
-        };
-
-        IStatement? GetDeclarationInitialisationStatement(ReadOnlySpan<IToken> expressionTokenSpan, int expressionTokenSpanIndex, ref int index,
-            VarType varType, ReadOnlyMemory<char> variableName)
-        {
-            int offset = 0;
-            SkipToFirstTopLevelSpecificToken<SemicolonSymbolToken>(expressionTokenSpan, ref offset);
-            if (offset == -1)
-            {
-                index = chunkTokens.Length;
-                return new InvalidStatement(chunkText, chunkTokens[startIndex..], new("Declaration-initialisation statement never followed by a semicolon"));
-            }
-            index += offset + 1;
-            return new DeclarationInitialisationStatement(chunkText, chunkTokens[startIndex..index], varType, variableName,
-                chunkTokens[expressionTokenSpanIndex..(index - 1)]);
+            index = chunkTokens.Length;
+            return new InvalidStatement(chunkText, chunkTokens[startIndex..], new("Bracket never closed"));
         }
-    }
-
-    private static IStatement? GetWriteVariableStatement(ReadOnlyMemory<char> text, ReadOnlyMemory<IToken> tokens, ref int index)
-    {
-        int startIndex = index;
-        ReadOnlySpan<IToken> tokenSpan = tokens.Span;
-        if (tokens.Length < index + 4)
-            return null;
-        if (tokenSpan[index] is not VariableNameToken variableNameToken)
-            return null;
-        if (tokenSpan[index + 1] is not EqualsSymbolToken)
-            return null;
-        //if (!SkipToFirstTopLevelSpecificToken<SemicolonSymbolToken>(tokenSpan, ref index))
-        //    return new InvalidStatement(text, tokens[startIndex..], new($"Write-variable statement not followed up by a semicolon"));
-        return new WriteVariableStatement
-        (
-            text,
-            tokens[startIndex..index],
-            variableNameToken.Text,
-            tokens[(startIndex + 2)..(index - 1)]
-        );
+        index += offset + 1;
+        return new IfStatement(chunkText, chunkTokens[startIndex..index], chunkTokens[2..(index - 1)]);
     }
 
     private static InvalidStatement GetInvalidStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> chunkTokens, ref int index)
@@ -119,7 +84,7 @@ public static class StatementSeparator
     //      then the position of the final semicolon will be returned, since the first two semicolons are in parentheses
     // on the other hand if the starting index is 2 (i.e. corresponding to "int"), then the first semicolon will be returned,
     //      since the bracket was opened before the starting index
-    private static void SkipToFirstTopLevelSpecificToken<TToken>(ReadOnlySpan<IToken> tokenSpan, ref int index) where TToken : IToken
+    internal static void SkipToFirstTopLevelSpecificToken<TToken>(ReadOnlySpan<IToken> tokenSpan, ref int index) where TToken : IToken
     {
         int openTokenCount = 0;
         for (int i = index; i < tokenSpan.Length; i++)

@@ -1,3 +1,3 @@
 ﻿namespace CREInterpreter.Tokens;
 
-public interface IOpenToken : IToken { }
+public interface IOpenToken : IToken;
