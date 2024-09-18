@@ -16,6 +16,7 @@ public static class StatementSeparator
                 GetWriteStatement(text, tokens, ref index) ??
                 GetIfWhileStatement(text, tokens, ref index) ??
                 GetForStatement(text, tokens, ref index) ??
+                GetElseStatement(text, tokens, ref index) ??
                 GetInvalidStatement(text, tokens, ref index);
     }
 
@@ -102,6 +103,14 @@ public static class StatementSeparator
             chunkTokens[initialiserStatementBounds.Item1..initialiserStatementBounds.Item2],
             chunkTokens[expressionBounds.Item1..expressionBounds.Item2],
             chunkTokens[iteratorStatementBounds.Item1..iteratorStatementBounds.Item2]);
+    }
+
+    private static IStatement? GetElseStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> chunkTokens, ref int index)
+    {
+        ReadOnlySpan<IToken> tokenSpan = chunkTokens.Span[index..];
+        if (tokenSpan is not [ElseKeywordToken, ..])
+            return null;
+        return new ElseStatement(chunkText, chunkTokens[index..++index]);
     }
 
     private static InvalidStatement GetInvalidStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> chunkTokens, ref int index)
