@@ -15,6 +15,7 @@ public static class StatementSeparator
                 GetDeclarationStatement(text, tokens, ref index) ??
                 GetWriteStatement(text, tokens, ref index) ??
                 GetIfWhileStatement(text, tokens, ref index) ??
+                GetForStatement(text, tokens, ref index) ??
                 GetInvalidStatement(text, tokens, ref index);
     }
 
@@ -57,6 +58,50 @@ public static class StatementSeparator
         }
         index += offset + 1;
         return generator(index);
+    }
+
+    private static IStatement? GetForStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> chunkTokens, ref int index)
+    {
+        int startIndex = index;
+        ReadOnlySpan<IToken> tokenSpan = chunkTokens.Span[index..];
+        if (tokenSpan is not [ForKeywordToken, OpenBracketSymbolToken, ..])
+            return null;
+        int offset = 2;
+        SkipToFirstTopLevelSpecificToken<SemicolonSymbolToken>(tokenSpan, ref offset);
+        if (offset == -1)
+        {
+            offset = 2;
+            SkipToFirstTopLevelSpecificToken<CloseBracketSymbolToken>(tokenSpan, ref offset);
+            index = offset == -1 ? chunkTokens.Length : index + offset + 1;
+            return new InvalidStatement(chunkText, chunkTokens[startIndex..index], new("Semicolon expected in for statement"));
+        }
+        offset++;
+        (int, int) initialiserStatementBounds = (index + 2, index + offset);
+        int expressionOffset = offset;
+        SkipToFirstTopLevelSpecificToken<SemicolonSymbolToken>(tokenSpan, ref offset);
+        if (offset == -1)
+        {
+            offset = expressionOffset;
+            SkipToFirstTopLevelSpecificToken<CloseBracketSymbolToken>(tokenSpan, ref offset);
+            index = offset == -1 ? chunkTokens.Length : index + offset + 1;
+            return new InvalidStatement(chunkText, chunkTokens[startIndex..index], new("Second semicolon expected in for statement"));
+        }
+        offset++;
+        (int, int) expressionBounds = (index + expressionOffset, index + offset - 1);
+        int iteratorStatementOffset = offset;
+        SkipToFirstTopLevelSpecificToken<CloseBracketSymbolToken>(tokenSpan, ref offset);
+        if (offset == -1)
+        {
+            index = chunkTokens.Length;
+            return new InvalidStatement(chunkText, chunkTokens[startIndex..index], new("Bracket is never closed"));
+        }
+        offset++;
+        (int, int) iteratorStatementBounds = (index + iteratorStatementOffset, index + offset - 1);
+        index += offset;
+        return new ForStatement(chunkText, chunkTokens[startIndex..index],
+            chunkTokens[initialiserStatementBounds.Item1..initialiserStatementBounds.Item2],
+            chunkTokens[expressionBounds.Item1..expressionBounds.Item2],
+            chunkTokens[iteratorStatementBounds.Item1..iteratorStatementBounds.Item2]);
     }
 
     private static InvalidStatement GetInvalidStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> chunkTokens, ref int index)
@@ -105,6 +150,8 @@ public static class StatementSeparator
                 return;
             }
             GetOpenTokenCount(tokenSpan[i], ref openTokenCount);
+            if (openTokenCount < 0)
+                break;
         }
         index = -1;
     }
