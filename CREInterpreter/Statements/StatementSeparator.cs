@@ -16,6 +16,14 @@ public static class StatementSeparator
                 GetInvalidStatement(text, tokens, ref index);
     }
 
+    private static IStatement? GetEmptyStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> chunkTokens, ref int index)
+    {
+        ReadOnlySpan<IToken> tokenSpan = chunkTokens.Span[index..];
+        if (tokenSpan[0] is not SemicolonSymbolToken)
+            return null;
+        return new EmptyStatement(chunkText, chunkTokens[index..++index]);
+    }
+
     private static IStatement? GetDeclarationStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> chunkTokens, ref int index)
     {
         int startIndex = index;
