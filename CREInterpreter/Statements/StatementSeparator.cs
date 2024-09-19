@@ -12,6 +12,7 @@ public static class StatementSeparator
         while (index < tokens.Length)
             yield return
                 GetEmptyStatement(text, tokens, ref index) ??
+                GetBlockStatement(text, tokens, ref index) ??
                 GetDeclarationStatement(text, tokens, ref index) ??
                 GetWriteStatement(text, tokens, ref index) ??
                 GetIfWhileStatement(text, tokens, ref index) ??
@@ -28,6 +29,30 @@ public static class StatementSeparator
         if (tokenSpan[0] is not SemicolonSymbolToken)
             return null;
         return new EmptyStatement(chunkText, chunkTokens[index..++index]);
+    }
+
+    private static IStatement? GetBlockStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> chunkTokens, ref int index)
+    {
+        int startIndex = index;
+        ReadOnlySpan<IToken> tokenSpan = chunkTokens.Span[index..];
+        switch (tokenSpan)
+        {
+            case [OpenCurlyBraceSymbolToken, CloseCurlyBraceSymbolToken, ..]:
+                return new EmptyBlockStatement(chunkText, chunkTokens[index..(index += 2)]);
+            case [OpenCurlyBraceSymbolToken, ..]:
+                break;
+            default:
+                return null;
+        }
+        int offset = 1;
+        SkipToFirstTopLevelSpecificToken<CloseCurlyBraceSymbolToken>(tokenSpan, ref offset);
+        if (offset == -1)
+        {
+            index = chunkTokens.Length;
+            return new InvalidStatement(chunkText, chunkTokens[startIndex..], new("Curly brace block never closed"));
+        }
+        index += offset + 1;
+        return new BlockStatement(chunkText, chunkTokens[startIndex..index], chunkTokens[(startIndex + 1)..(index - 1)]);
     }
 
     private static IStatement? GetDeclarationStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> chunkTokens, ref int index) =>
