@@ -6,7 +6,7 @@ namespace CREInterpreter.Statements;
 
 public class WriteElementElementStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> tokens, ReadOnlyMemory<char> variableName,
     ReadOnlyMemory<IToken> element1ExpressionTokens, ReadOnlyMemory<IToken> element2ExpressionTokens, ReadOnlyMemory<IToken> expressionTokens)
-    : Statement(chunkText, tokens), IInitialiserStatement, IIteratorStatement
+    : Statement(chunkText, tokens), IStatement, IInitialiserStatement, IIteratorStatement
 {
     public ReadOnlyMemory<char> VariableName => variableName;
 

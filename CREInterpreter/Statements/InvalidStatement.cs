@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace CREInterpreter.Statements;
 
-public class InvalidStatement : Statement
+public class InvalidStatement : Statement, IStatement
 {
     public InvalidStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> tokens) : base(chunkText, tokens)
     {

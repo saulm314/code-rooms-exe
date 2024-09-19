@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace CREInterpreter.Statements;
 
 public class DeclarationStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> tokens, VarType varType, ReadOnlyMemory<char> variableName)
-    : Statement(chunkText, tokens)
+    : Statement(chunkText, tokens), IStatement
 {
     public VarType _VarType => varType;
 

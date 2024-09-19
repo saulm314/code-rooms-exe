@@ -6,7 +6,7 @@ namespace CREInterpreter.Statements;
 
 public class ForStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> tokens,
     ReadOnlyMemory<IToken> intialiserStatementTokens, ReadOnlyMemory<IToken> expressionTokens, ReadOnlyMemory<IToken> iteratorStatementTokens)
-    : Statement(chunkText, tokens)
+    : Statement(chunkText, tokens), IStatement
 {
     public ReadOnlyMemory<IToken> InitialiserStatementTokens => intialiserStatementTokens;
 
