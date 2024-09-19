@@ -28,8 +28,10 @@ internal static class IteratorStatementSeparator
         Debug.Assert(statements.Length == 1);
         Debug.Assert(statements[0] is Statement);
         Statement statement = (Statement)statements[0];
-        PropertyInfo tokensProperty = typeof(Statement).GetProperty(nameof(Statement.Tokens))!;
-        tokensProperty.SetValue(statement, tokens);
+        TokensProperty.SetValue(statement, tokens);
         return statement;
     }
+
+    private static PropertyInfo TokensProperty => _tokensProperty ??= typeof(Statement).GetProperty(nameof(Statement.Tokens))!;
+    private static PropertyInfo? _tokensProperty;
 }
