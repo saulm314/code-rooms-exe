@@ -2,7 +2,7 @@
 
 namespace CREInterpreter.Tokens;
 
-public class LessThanOrEqualToSymbolToken(ReadOnlyMemory<char> text, int lineNumber, int index) : IToken, ISymbol
+public class LessThanOrEqualToSymbolToken(ReadOnlyMemory<char> text, int lineNumber, int index) : IToken, ISymbolToken
 {
     public ReadOnlyMemory<char> Text => text;
 
@@ -10,5 +10,5 @@ public class LessThanOrEqualToSymbolToken(ReadOnlyMemory<char> text, int lineNum
 
     public int Index => index;
 
-    string ISymbol.Text { get; } = text.ToString();
+    string ISymbolToken.Text { get; } = text.ToString();
 }

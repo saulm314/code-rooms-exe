@@ -4,10 +4,10 @@ using System.Collections.Generic;
 
 namespace CREInterpreter.Statements;
 
-public class WhileStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> tokens, ReadOnlyMemory<char> expressionTokens)
-    : Statement(chunkText, tokens)
+public class WhileStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> tokens, ReadOnlyMemory<IToken> expressionTokens)
+    : Statement(chunkText, tokens), IStatement
 {
-    public ReadOnlyMemory<char> ExpressionTokens => expressionTokens;
+    public ReadOnlyMemory<IToken> ExpressionTokens => expressionTokens;
 
     public override InterpreterException? Compile(Memory memory)
     {

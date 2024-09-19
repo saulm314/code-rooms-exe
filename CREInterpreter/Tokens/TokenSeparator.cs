@@ -48,106 +48,84 @@ public static class TokenSeparator
         }
     }
 
-    private static IToken? GetSingleLineCommentToken(ReadOnlyMemory<char> text, ref int index, ref int lineNumber)
+    private static IToken? GetSingleLineCommentToken(ReadOnlyMemory<char> chunkText, ref int index, ref int lineNumber)
     {
         int startIndex = index;
-        int i;
-        ReadOnlySpan<char> textSpan = text.Span;
-        if (text.Length - startIndex < 2)
+        ReadOnlySpan<char> textSpan = chunkText.Span[index..];
+        if (textSpan is not ['/', '/', ..])
             return null;
-        if (textSpan[startIndex] != '/')
-            return null;
-        if (textSpan[startIndex + 1] != '/')
-            return null;
-        i = startIndex + 2;
-        while (i < text.Length && textSpan[i] != '\n')
-            i++;
-        index = i;
-        return new SingleLineCommentToken(text[startIndex..index], lineNumber, startIndex);
+        int newlineOffset = textSpan.IndexOf('\n');
+        if (newlineOffset == -1)
+        {
+            index = chunkText.Length;
+            return new SingleLineCommentToken(chunkText[startIndex..], lineNumber, startIndex);
+        }
+        index += newlineOffset;
+        return new SingleLineCommentToken(chunkText[startIndex..index], lineNumber, startIndex);
     }
 
-    private static IToken? GetMultiLineCommentToken(ReadOnlyMemory<char> text, ref int index, ref int lineNumber)
+    private static IToken? GetMultiLineCommentToken(ReadOnlyMemory<char> chunkText, ref int index, ref int lineNumber)
     {
         int startIndex = index;
-        int i;
-        int originalLineNumber = lineNumber;
-        int lineNumberTemp = lineNumber;
-        ReadOnlySpan<char> textSpan = text.Span;
-        if (text.Length - startIndex < 2)
+        int startLineNumber = lineNumber;
+        ReadOnlySpan<char> textSpan = chunkText.Span[index..];
+        if (textSpan is not ['/', '*', ..])
             return null;
-        if (textSpan[startIndex] != '/')
-            return null;
-        if (textSpan[startIndex + 1] != '*')
-            return null;
-        i = startIndex + 2;
-        bool previousIsAsterisk = false;
-        bool closed = false;
-        while (i < text.Length)
+        for (int i = 2; i < textSpan.Length; i++)
         {
-            if (textSpan[i] == '*')
+            if (textSpan[i] == '\n')
             {
-                previousIsAsterisk = true;
-                i++;
+                lineNumber++;
                 continue;
             }
-            if (textSpan[i] == '/' && previousIsAsterisk)
+            bool isClosingSlash =
+                i >= 3 &&
+                textSpan[i] == '/' &&
+                textSpan[i - 1] == '*';
+            if (isClosingSlash)
             {
-                i++;
-                closed = true;
-                break;
+                int offset = i + 1;
+                index += offset;
+                return new MultiLineCommentToken(chunkText[startIndex..index], startLineNumber, startIndex);
             }
-            if (textSpan[i] == '\n')
-                lineNumberTemp++;
-            previousIsAsterisk = false;
-            i++;
         }
-        index = i;
-        lineNumber = lineNumberTemp;
-        if (!closed)
-            return new InvalidToken(text[startIndex..], originalLineNumber, startIndex,
-                new($"Multi-line comment starting at line {originalLineNumber} is never closed"));
-        return new MultiLineCommentToken(text[startIndex..index], originalLineNumber, startIndex);
+        index = chunkText.Length;
+        return new InvalidToken(chunkText[startIndex..], startLineNumber, startIndex, new("Multi-line comment never closed"));
     }
 
-    private static IToken? GetLiteralToken(ReadOnlyMemory<char> text, ref int index, ref int lineNumber)
+    private static IToken? GetLiteralToken(ReadOnlyMemory<char> chunkText, ref int index, ref int lineNumber)
     {
         return
-            GetBooleanLiteralToken(text, ref index, ref lineNumber) ??
-            GetIntegerLiteralToken(text, ref index, ref lineNumber) ??
-            GetDoubleFloatLiteralToken(text, ref index, ref lineNumber) ??
-            GetCharacterLiteralToken(text, ref index, ref lineNumber) ??
-            GetStringLiteralToken(text, ref index, ref lineNumber);
+            GetBooleanLiteralToken(chunkText, ref index, ref lineNumber) ??
+            GetIntegerLiteralToken(chunkText, ref index, ref lineNumber) ??
+            GetDoubleFloatLiteralToken(chunkText, ref index, ref lineNumber) ??
+            GetCharacterLiteralToken(chunkText, ref index, ref lineNumber) ??
+            GetStringLiteralToken(chunkText, ref index, ref lineNumber);
     }
 
-    private static IToken? GetBooleanLiteralToken(ReadOnlyMemory<char> text, ref int index, ref int lineNumber)
+    private static IToken? GetBooleanLiteralToken(ReadOnlyMemory<char> chunkText, ref int index, ref int lineNumber)
     {
         int startIndex = index;
-        ReadOnlySpan<char> textSpan = text.Span;
-        const int TrueLength = 4;
-        const int FalseLength = 5;
-        if (text.Length - index < TrueLength)
-            return null;
-        if (textSpan[index..(index + TrueLength)].Equals("true".AsSpan(), default))
+        ReadOnlySpan<char> textSpan = chunkText.Span[index..];
+        if (textSpan is ['t', 'r', 'u', 'e', ..])
         {
-            index += TrueLength;
-            return new BooleanLiteralToken(text[startIndex..index], true, lineNumber, startIndex);
+            index += 4;
+            return new BooleanLiteralToken(chunkText[startIndex..index], true, lineNumber, startIndex);
         }
-        if (text.Length - index < FalseLength)
-            return null;
-        if (textSpan[index..(index + FalseLength)].Equals("false".AsSpan(), default))
+        if (textSpan is ['f', 'a', 'l', 's', 'e', ..])
         {
-            index += FalseLength;
-            return new BooleanLiteralToken(text[startIndex..index], false, lineNumber, startIndex);
+            index += 5;
+            return new BooleanLiteralToken(chunkText[startIndex..index], false, lineNumber, startIndex);
         }
         return null;
     }
 
-    private static IToken? GetIntegerLiteralToken(ReadOnlyMemory<char> text, ref int index, ref int lineNumber)
+    private static IToken? GetIntegerLiteralToken(ReadOnlyMemory<char> chunkText, ref int index, ref int lineNumber)
     {
         int startIndex = index;
-        int i = index;
-        ReadOnlySpan<char> textSpan = text.Span;
-        while (i < text.Length)
+        ReadOnlySpan<char> textSpan = chunkText.Span[index..];
+        int i = 0;
+        while (i < textSpan.Length)
         {
             if (textSpan[i] == '.')
                 return null;
@@ -155,118 +133,116 @@ public static class TokenSeparator
                 break;
             i++;
         }
-        ReadOnlyMemory<char> tokenText = text[index..i];
-        ReadOnlySpan<char> tokenTextSpan = tokenText.Span;
-        bool success = int.TryParse(tokenTextSpan, out int result);
+        ReadOnlySpan<char> reducedTextSpan = textSpan[..i];
+        bool success = int.TryParse(reducedTextSpan, out int result);
         if (!success)
             return null;
-        index = i;
-        return new IntegerLiteralToken(tokenText, result, lineNumber, startIndex);
+        index += i;
+        return new IntegerLiteralToken(chunkText[startIndex..index], result, lineNumber, startIndex);
     }
 
-    private static IToken? GetDoubleFloatLiteralToken(ReadOnlyMemory<char> text, ref int index, ref int lineNumber)
+    private static IToken? GetDoubleFloatLiteralToken(ReadOnlyMemory<char> chunkText, ref int index, ref int lineNumber)
     {
         int startIndex = index;
-        int i = index;
-        ReadOnlySpan<char> textSpan = text.Span;
-        while (i < text.Length)
+        ReadOnlySpan<char> textSpan = chunkText.Span[index..];
+        int i = 0;
+        while (i < textSpan.Length)
         {
             if (!char.IsDigit(textSpan[i]) && textSpan[i] != '.')
                 break;
             i++;
         }
-        ReadOnlyMemory<char> tokenText = text[index..i];
-        ReadOnlySpan<char> tokenTextSpan = tokenText.Span;
-        bool success = double.TryParse(tokenTextSpan, out double result);
+        ReadOnlySpan<char> reducedTextSpan = textSpan[..i];
+        bool success = double.TryParse(reducedTextSpan, out double result);
         if (!success)
             return null;
-        index = i;
-        return new DoubleFloatLiteralToken(tokenText, result, lineNumber, startIndex);
+        index += i;
+        return new DoubleFloatLiteralToken(chunkText[startIndex..index], result, lineNumber, startIndex);
     }
 
-    // this code is horrible
-    private static IToken? GetCharacterLiteralToken(ReadOnlyMemory<char> text, ref int index, ref int lineNumber)
+    private static IToken? GetCharacterLiteralToken(ReadOnlyMemory<char> chunkText, ref int index, ref int lineNumber)
     {
         int startIndex = index;
-        ReadOnlySpan<char> textSpan = text.Span;
-        if (text.Length - index < 3)
-            return null;
-        if (textSpan[index] != '\'')
-            return null;
-        int closingQuoteIndex =
-            (text.Length - index >= 4 && textSpan[index + 3] == '\'') ? index + 3 :
-            textSpan[index + 2] == '\'' ? index + 2 :
-            -1;
-        if (closingQuoteIndex == -1)
-            return new InvalidToken(text[index..(index += 3)], lineNumber, startIndex,
-                new($"Quote not closed or too many characters in quote at line {lineNumber}"));
-        if (closingQuoteIndex == index + 2)
+        ReadOnlySpan<char> textSpan = chunkText.Span[index..];
+        return textSpan switch
         {
-            char value = textSpan[index + 1];
-            if ((new char[] { '\'', '\\', '\n', '\r', '\t', '\v' }).Contains(value))
-                return new InvalidToken(text[index..(index += 3)], lineNumber, startIndex,
-                    new($"Cannot have single character {value} in char quote (line {lineNumber})"));
-            ReadOnlyMemory<char> tokenText = text[index..(index + 3)];
-            index += 3;
-            return new CharacterLiteralToken(tokenText, value, lineNumber, startIndex);
-        }
-        if (textSpan[index + 1] != '\\')
-            return new InvalidToken(text[index..(index += 4)], lineNumber, startIndex,
-                new($"First character in quote must be \\ (line {lineNumber})"));
-        string basicEscapeCharacter = text[(index + 1)..(index + 3)].ToString();
-        if (!CharUtils.BasicEscapeCharacters.ContainsKey(basicEscapeCharacter))
+            ['\'', '\'', ..] => GetBadToken(2, "Single quotes cannot be empty", ref index, ref lineNumber),
+            ['\'', '\0' or '\a' or '\b' or '\f' or '\n' or '\r' or '\t' or '\v', ..] =>
+                GetBadToken(1, "Invalid character (such as newline) after opening single quote", ref index, ref lineNumber),
+            ['\'', '\\', '\0' or '\a' or '\b' or '\f' or '\n' or '\r' or '\t' or '\v', ..] =>
+                GetBadToken(2, "Invalid character (such as newline) after opening single quote", ref index, ref lineNumber),
+            ['\'', not '\\', not '\'', ..] => GetBadToken(2, "Single quote not closed or quote contains too many characters", ref index, ref lineNumber),
+            ['\'', '\\', _, not '\'', ..] => GetBadToken(3, "Single quote not closed or quote contains too many characters", ref index, ref lineNumber),
+            ['\'', not ('\\' or '\''), '\'', ..] => GetToken(3, textSpan[1], ref index, ref lineNumber),
+            ['\'', '\\', '\'', '\'', ..] => GetToken(4, '\'', ref index, ref lineNumber),
+            ['\'', '\\', '"', '\'', ..] => GetToken(4, '"', ref index, ref lineNumber),
+            ['\'', '\\', '\\', '\'', ..] => GetToken(4, '\\', ref index, ref lineNumber),
+            ['\'', '\\', '0', '\'', ..] => GetToken(4, '\0', ref index, ref lineNumber),
+            ['\'', '\\', 'a', '\'', ..] => GetToken(4, '\a', ref index, ref lineNumber),
+            ['\'', '\\', 'b', '\'', ..] => GetToken(4, '\b', ref index, ref lineNumber),
+            ['\'', '\\', 'f', '\'', ..] => GetToken(4, '\f', ref index, ref lineNumber),
+            ['\'', '\\', 'n', '\'', ..] => GetToken(4, '\n', ref index, ref lineNumber),
+            ['\'', '\\', 'r', '\'', ..] => GetToken(4, '\r', ref index, ref lineNumber),
+            ['\'', '\\', 't', '\'', ..] => GetToken(4, '\t', ref index, ref lineNumber),
+            ['\'', '\\', 'v', '\'', ..] => GetToken(4, '\v', ref index, ref lineNumber),
+            ['\'', '\\', char badEscape, '\'', ..] => GetBadToken(4, $"Unrecognised escape sequence: \\{badEscape}", ref index, ref lineNumber),
+            _ => null
+        };
+
+        CharacterLiteralToken GetToken(int length, char value, ref int index, ref int lineNumber) =>
+            new(chunkText[startIndex..(index += length)], value, lineNumber, startIndex);
+
+        InvalidToken GetBadToken(int length, string message, ref int index, ref int lineNumber) =>
+            new(chunkText[startIndex..(index += length)], lineNumber, startIndex, new(message));
+    }
+
+    private static IToken? GetStringLiteralToken(ReadOnlyMemory<char> chunkText, ref int index, ref int lineNumber)
+    {
+        int startIndex = index;
+        ReadOnlySpan<char> textSpan = chunkText.Span[index..];
+        if (textSpan.Length < 2)
+            return null;
+        if (textSpan[0] != '"')
+            return null;
+        int i = 1;
+        for (; i < textSpan.Length; i++)
         {
-            char value = textSpan[index + 2];
-            if ((new char[] { '\n', '\r', '\t', '\v' }).Contains(value))
-                return new InvalidToken(text[index..(index += 4)], lineNumber, startIndex,
-                    new($"Cannot have character {value} after \\ in quote (line {lineNumber})"));
-            ReadOnlyMemory<char> tokenText = text[index..(index + 4)];
-            index += 4;
-            return new CharacterLiteralToken(tokenText, value, lineNumber, startIndex);
+            if (textSpan[i] == '"')
+                break;
+            bool badChar = textSpan[i] switch
+            {
+                '\0' or '\a' or '\b' or '\f' or '\n' or '\r' or '\t' or '\v' => true,
+                _ => false
+            };
+            if (badChar)
+                return new InvalidToken(chunkText[startIndex..(index += i)], lineNumber, startIndex,
+                    new("String literal contains invalid character (such as a newline)"));
         }
-        char value_ = CharUtils.BasicEscapeCharacters[basicEscapeCharacter];
-        ReadOnlyMemory<char> tokenText_ = text[index..(index + 4)];
-        index += 4;
-        return new CharacterLiteralToken(tokenText_, value_, lineNumber, startIndex);
+        if (i == textSpan.Length)
+        {
+            index = i;
+            return new InvalidToken(chunkText[startIndex..], lineNumber, startIndex, new("Quote never closed"));
+        }
+        index = i + 1;
+        return new StringLiteralToken(chunkText[startIndex..index], chunkText[(startIndex + 1)..(index - 1)], lineNumber, startIndex);
     }
 
-    private static IToken? GetStringLiteralToken(ReadOnlyMemory<char> text, ref int index, ref int lineNumber)
+    private static IToken? GetSymbolToken(ReadOnlyMemory<char> chunkText, ref int index, ref int lineNumber)
     {
         int startIndex = index;
-        int i;
-        ReadOnlySpan<char> textSpan = text.Span;
-        if (text.Length - startIndex < 2)
-            return null;
-        if (textSpan[startIndex] != '"')
-            return null;
-        i = startIndex + 1;
-        while (i < text.Length && textSpan[i] != '\n' && textSpan[i] != '"')
-            i++;
-        index = i;
-        if (i == text.Length)
-            return new InvalidToken(text[startIndex..index], lineNumber, startIndex,
-                new InterpreterException($"Quote at line {lineNumber} never closed"));
-        if (textSpan[i] == '\n')
-            return new InvalidToken(text[startIndex..index], lineNumber, startIndex,
-                new InterpreterException($"Cannot have a newline mid-quote (line {lineNumber})"));
-        index++;
-        return new StringLiteralToken(text[startIndex..index], text[(startIndex + 1)..(index - 1)], lineNumber, startIndex);
-    }
-
-    private static IToken? GetSymbolToken(ReadOnlyMemory<char> text, ref int index, ref int lineNumber)
-    {
-        int startIndex = index;
-        int i = index;
-        string[] possibleSymbols = SymbolMappings.Keys.ToArray();
-        Array.Sort(possibleSymbols, new StringSizeComp());
-        string? symbol = Array.Find(possibleSymbols, _symbol =>
-            i + _symbol.Length <= text.Length &&
-            text[i..(i + _symbol.Length)].ToString() == _symbol);
+        ReadOnlySpan<char> textSpan = chunkText.Span[index..];
+        string? symbol = null;
+        foreach (string _symbol in SymbolMappings.Keys)
+            if (textSpan.StartsWith(_symbol))
+            {
+                symbol = _symbol;
+                break;
+            }
         if (symbol == null)
             return null;
-        Func<ReadOnlyMemory<char>, int, int, IToken> tokenCreator = SymbolMappings[symbol];
+        Func<ReadOnlyMemory<char>, int, int, ISymbolToken> tokenCreator = SymbolMappings[symbol];
         index += symbol.Length;
-        return tokenCreator(text[startIndex..index], lineNumber, startIndex);
+        return tokenCreator(chunkText[startIndex..index], lineNumber, startIndex);
     }
 
     private class StringSizeComp : IComparer<string>
@@ -277,7 +253,10 @@ public static class TokenSeparator
             (null, null) => 0,
             (null, not null) => -1,
             (not null, null) => 1,
-            (not null, not null) => y.Length - x.Length
+            (not null, not null) =>
+                y.Length != x.Length ?
+                y.Length - x.Length :
+                x.CompareTo(y)
         };
     }
 
@@ -287,9 +266,9 @@ public static class TokenSeparator
     //      one may think that the whole symbol is "<"
     // therefore we check if the symbol is "<=" before checking if it is "<" to obtain the correct symbol
     // the symbols below are already ordered in this way, however the StringSizeComp adds another runtime sort to ensure this
-    private static ImmutableDictionary<string, Func<ReadOnlyMemory<char>, int, int, IToken>> SymbolMappings { get; } =
-        ImmutableDictionary<string, Func<ReadOnlyMemory<char>, int, int, IToken>>.Empty.AddRange(
-            new Dictionary<string, Func<ReadOnlyMemory<char>, int, int, IToken>>()
+    private static ImmutableSortedDictionary<string, Func<ReadOnlyMemory<char>, int, int, ISymbolToken>> SymbolMappings { get; } =
+        ImmutableSortedDictionary.CreateRange(new StringSizeComp(),
+            new Dictionary<string, Func<ReadOnlyMemory<char>, int, int, ISymbolToken>>()
             {
                 ["<="] =    (s, l, i) => new LessThanOrEqualToSymbolToken(s, l, i),
                 [">="] =    (s, l, i) => new GreaterThanOrEqualToSymbolToken(s, l, i),
@@ -320,31 +299,33 @@ public static class TokenSeparator
                 ["]"] =     (s, l, i) => new CloseSquareBraceSymbolToken(s, l, i)
             });
 
-    private static IToken? GetKeywordToken(ReadOnlyMemory<char> text, ref int index, ref int lineNumber)
+    private static IToken? GetKeywordToken(ReadOnlyMemory<char> chunkText, ref int index, ref int lineNumber)
     {
         int startIndex = index;
-        int i = index;
-        ReadOnlySpan<char> textSpan = text.Span;
-        string[] possibleKeywords = KeywordMappings.Keys.ToArray();
-        string? keyword = Array.Find(possibleKeywords, _keyword =>
-            i + _keyword.Length <= text.Length &&
-            text[i..(i + _keyword.Length)].ToString() == _keyword);
+        ReadOnlySpan<char> textSpan = chunkText.Span[index..];
+        string? keyword = null;
+        foreach (string _keyword in KeywordMappings.Keys)
+            if (textSpan.StartsWith(_keyword))
+            {
+                keyword = _keyword;
+                break;
+            }
         if (keyword == null)
             return null;
-        if (i + keyword.Length < text.Length)
-        {
-            char nextChar = textSpan[i + keyword.Length];
-            if (char.IsLetterOrDigit(nextChar) || nextChar == '_')
-                return null;
-        }
-        Func<ReadOnlyMemory<char>, int, int, IToken> tokenCreator = KeywordMappings[keyword];
-        index += keyword.Length;
-        return tokenCreator(text[startIndex..index], lineNumber, startIndex);
+        if (textSpan.Length == keyword.Length)
+            return ReturnKeywordToken(ref index, ref lineNumber);
+        char nextChar = textSpan[keyword.Length];
+        if (char.IsLetterOrDigit(nextChar) || nextChar == '_')
+            return null;
+        return ReturnKeywordToken(ref index, ref lineNumber);
+
+        IKeywordToken ReturnKeywordToken(ref int index, ref int lineNumber) =>
+            KeywordMappings[keyword](chunkText[index..(index += keyword.Length)], lineNumber, startIndex);
     }
 
-    private static ImmutableDictionary<string, Func<ReadOnlyMemory<char>, int, int, IToken>> KeywordMappings { get; } =
-        ImmutableDictionary<string, Func<ReadOnlyMemory<char>, int, int, IToken>>.Empty.AddRange(
-            new Dictionary<string, Func<ReadOnlyMemory<char>, int, int, IToken>>()
+    private static ImmutableSortedDictionary<string, Func<ReadOnlyMemory<char>, int, int, IKeywordToken>> KeywordMappings { get; } =
+        ImmutableSortedDictionary.CreateRange(new StringSizeComp(),
+            new Dictionary<string, Func<ReadOnlyMemory<char>, int, int, IKeywordToken>>()
             {
                 ["new"] =       (s, l, i) => new NewKeywordToken(s, l, i),
                 ["null"] =      (s, l, i) => new NullKeywordToken(s, l, i),
@@ -357,44 +338,46 @@ public static class TokenSeparator
                 ["Length"] =    (s, l, i) => new LengthKeywordToken(s, l, i)
             });
 
-    private static IToken? GetTypeNameToken(ReadOnlyMemory<char> text, ref int index, ref int lineNumber)
+    private static IToken? GetTypeNameToken(ReadOnlyMemory<char> chunkText, ref int index, ref int lineNumber)
     {
         int startIndex = index;
-        int i = index;
-        ReadOnlySpan<char> textSpan = text.Span;
-        VarType? varType = VarType.VarTypes
-            .Where(varType => !varType.IsArray)
-            .SingleOrDefault(varType =>
-                i + varType.Name.Length <= text.Length &&
-                text[i..(i + varType.Name.Length)].ToString() == varType.Name);
+        ReadOnlySpan<char> textSpan = chunkText.Span[index..];
+        IEnumerable<VarType> nonArrayVarTypes =
+            VarType.VarTypes
+            .Where(varType => !varType.IsArray);
+        VarType? varType = null;
+        foreach (VarType _varType in nonArrayVarTypes)
+            if (textSpan.StartsWith(_varType.Name))
+            {
+                varType = _varType;
+                break;
+            }
         if (varType == null)
             return null;
-        if (i + varType.Name.Length < text.Length)
-        {
-            char nextChar = textSpan[i + varType.Name.Length];
-            if (char.IsLetterOrDigit(nextChar) || nextChar == '_')
-                return null;
-        }
-        index += varType.Name.Length;
-        return new TypeNameToken(text[startIndex..index], varType, lineNumber, startIndex);
+        if (textSpan.Length == varType.Name.Length)
+            return ReturnTypeNameToken(ref index, ref lineNumber);
+        char nextChar = textSpan[varType.Name.Length];
+        if (char.IsLetterOrDigit(nextChar) || nextChar == '_')
+            return null;
+        return ReturnTypeNameToken(ref index, ref lineNumber);
+
+        TypeNameToken ReturnTypeNameToken(ref int index, ref int lineNumber) =>
+            new(chunkText[index..(index += varType.Name.Length)], varType, lineNumber, startIndex);
     }
 
-    private static IToken? GetVariableNameToken(ReadOnlyMemory<char> text, ref int index, ref int lineNumber)
+    private static IToken? GetVariableNameToken(ReadOnlyMemory<char> chunkText, ref int index, ref int lineNumber)
     {
         int startIndex = index;
-        ReadOnlySpan<char> textSpan = text.Span;
-        if (!char.IsLetter(textSpan[index]) && textSpan[index] != '_')
+        ReadOnlySpan<char> textSpan = chunkText.Span[index..];
+        if (!char.IsLetter(textSpan[0]) && textSpan[0] != '_')
             return null;
-        int i = index;
-        while (i < text.Length && (char.IsLetterOrDigit(textSpan[i]) || textSpan[i] == '_'))
-            i++;
-        ReadOnlyMemory<char> tokenText = text[index..i];
-        if (KeywordMappings.ContainsKey(tokenText.ToString()))
-            return null;
-        if (VarType.GetVarType(tokenText) != null)
-            return null;
-        index = i;
-        return new VariableNameToken(tokenText, lineNumber, startIndex);
+        int i = 1;
+        for (; i < textSpan.Length; i++)
+            if (!char.IsLetterOrDigit(textSpan[i]) && textSpan[i] != '_')
+                break;
+        ReadOnlySpan<char> reducedTextSpan = textSpan[..i];
+        index += i;
+        return new VariableNameToken(chunkText[startIndex..index], lineNumber, startIndex);
     }
 
     private static InvalidToken GetInvalidToken(ReadOnlyMemory<char> text, ref int index, ref int lineNumber)

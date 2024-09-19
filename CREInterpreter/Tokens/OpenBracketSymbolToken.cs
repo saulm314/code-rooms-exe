@@ -2,7 +2,7 @@
 
 namespace CREInterpreter.Tokens;
 
-public class OpenBracketSymbolToken(ReadOnlyMemory<char> text, int lineNumber, int index) : IToken, ISymbol
+public class OpenBracketSymbolToken(ReadOnlyMemory<char> text, int lineNumber, int index) : IToken, IOpenToken, ISymbolToken
 {
     public ReadOnlyMemory<char> Text => text;
 
@@ -10,5 +10,5 @@ public class OpenBracketSymbolToken(ReadOnlyMemory<char> text, int lineNumber, i
 
     public int Index => index;
 
-    string ISymbol.Text { get; } = text.ToString();
+    string ISymbolToken.Text { get; } = text.ToString();
 }

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace CREInterpreter.Statements;
 
 public class EmptyStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> tokens)
-    : Statement(chunkText, tokens), IInitialiserStatement, IIteratorStatement
+    : Statement(chunkText, tokens), IStatement, IInitialiserStatement, IIteratorStatement
 {
     public override InterpreterException? Compile(Memory memory)
     {

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace CREInterpreter.Statements;
 
 public class IfStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> tokens, ReadOnlyMemory<IToken> expressionTokens)
-    : Statement(chunkText, tokens)
+    : Statement(chunkText, tokens), IStatement
 {
     public ReadOnlyMemory<IToken> ExpressionTokens => expressionTokens;
 

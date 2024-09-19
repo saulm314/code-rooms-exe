@@ -1,3 +1,3 @@
 ﻿namespace CREInterpreter.Statements;
 
-public interface IIteratorStatement : IStatement { }
+public interface IIteratorStatement : IStatement;

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace CREInterpreter.Statements;
 
-public class ContinueStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> tokens) : Statement(chunkText, tokens)
+public class ContinueStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> tokens) : Statement(chunkText, tokens), IStatement
 {
     public override InterpreterException? Compile(Memory memory)
     {
