@@ -18,6 +18,7 @@ public static class StatementSeparator
                 GetForStatement(text, tokens, ref index) ??
                 GetElseStatement(text, tokens, ref index) ??
                 GetBreakStatement(text, tokens, ref index) ??
+                GetContinueStatement(text, tokens, ref index) ??
                 GetInvalidStatement(text, tokens, ref index);
     }
 
@@ -120,6 +121,14 @@ public static class StatementSeparator
         if (tokenSpan is not [BreakKeywordToken, SemicolonSymbolToken, ..])
             return null;
         return new BreakStatement(chunkText, chunkTokens[index..(index += 2)]);
+    }
+
+    private static IStatement? GetContinueStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> chunkTokens, ref int index)
+    {
+        ReadOnlySpan<IToken> tokenSpan = chunkTokens.Span[index..];
+        if (tokenSpan is not [ContinueKeywordToken, SemicolonSymbolToken, ..])
+            return null;
+        return new ContinueStatement(chunkText, chunkTokens[index..(index += 2)]);
     }
 
     private static InvalidStatement GetInvalidStatement(ReadOnlyMemory<char> chunkText, ReadOnlyMemory<IToken> chunkTokens, ref int index)
