@@ -1,0 +1,1 @@
+Properties for controlling appearance of components: https://github.com/AvaloniaUI/Avalonia/blob/master/src/Avalonia.Themes.Fluent/Controls/TextBox.xaml
