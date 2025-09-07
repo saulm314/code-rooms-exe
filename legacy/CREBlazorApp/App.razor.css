@@ -1,0 +1,17 @@
+﻿.error-404-background-root {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+}
+
+.error-404-foreground-root {
+    background-image: url('/Files/404/404.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: min(100vw, 200vh);
+    width: min(100vw, 200vh);
+    height: min(50vw, 100vh);
+    overflow: hidden;
+}
