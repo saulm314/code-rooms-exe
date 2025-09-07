@@ -1,4 +1,5 @@
 import http.server
+import os
 import os.path
 import shutil
 import subprocess
@@ -35,9 +36,11 @@ def build(env):
     shutil.move(path("code-rooms-exe/__blazor/wwwroot/404.html"), path("code-rooms-exe/404.html"))
 
     print("Moving static files...")
-    shutil.copytree(path("Files/Levels"), path("code-rooms-exe/Files/Levels"))
-    shutil.copytree(path("Files/Types"), path("code-rooms-exe/Files/Types"))
-    shutil.copy(path("Files/icon.png"), path("code-rooms-exe/Files/icon.png"))
+    shutil.copytree(path("Files"), path("code-rooms-exe/Files"))
+    shutil.rmtree(path("code-rooms-exe/Files/Save"))
+    shutil.rmtree(path("code-rooms-exe/Files/Tests"))
+    os.remove(path("code-rooms-exe/Files/Dummy.cs"))
+    os.remove(path("code-rooms-exe/Files/Dummy.java"))
     
     print("Build done.")
     return True
