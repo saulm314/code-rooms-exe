@@ -33,7 +33,7 @@ def build(env):
     shutil.copytree(path("publish/wwwroot"), path("code-rooms-exe/__blazor/wwwroot"))
     shutil.move(path("code-rooms-exe/__blazor/wwwroot/_framework"), path("code-rooms-exe/_framework"))
     shutil.move(path("code-rooms-exe/__blazor/wwwroot/index.html"), path("code-rooms-exe/index.html"))
-    shutil.move(path("code-rooms-exe/__blazor/wwwroot/404.html"), path("code-rooms-exe/404.html"))
+    shutil.copy(path("code-rooms-exe/index.html"), path("code-rooms-exe/404.html"))
 
     print("Moving static files...")
     shutil.copytree(path("Files"), path("code-rooms-exe/Files"))
