@@ -69,3 +69,41 @@ For some reason, using a grid just fixes this. Presumably the rendering happens 
 .stack-entry {
     padding-bottom: 15px;
 }
+
+.main-grid {
+    display: grid;
+    grid-template-columns: var(--heap-idecontrols-width) 1fr 1fr;
+    grid-template-rows: 1fr var(--heap-height);
+}
+
+.text-editor-container {
+    grid-column: 1 / 3;
+    grid-row: 1;
+    background-color: rgb(30, 30, 30);
+}
+
+.text-editor {
+    all: inherit;
+    width: 100%;
+    height: 100%;
+}
+
+.description-container {
+    grid-column: 3;
+    grid-row: 1;
+}
+
+.heap-idecontrols-container {
+    grid-column: 1;
+    grid-row: 2;
+}
+
+.output-container {
+    grid-column: 2;
+    grid-row: 2;
+}
+
+.menu-container {
+    grid-column: 3;
+    grid-row: 2;
+}
