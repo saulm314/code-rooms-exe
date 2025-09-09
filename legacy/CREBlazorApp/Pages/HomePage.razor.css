@@ -36,7 +36,6 @@ For some reason, using a grid just fixes this. Presumably the rendering happens 
     min-width: var(--stack-min-width);
     max-width: var(--stack-max-width);
     width: max-content;
-    height: 100%;
     display: flex;
     flex-direction: column;
 }
@@ -54,13 +53,18 @@ For some reason, using a grid just fixes this. Presumably the rendering happens 
     font-weight: bold;
 }
 
-.stack-contents-container {
-    padding-top: 10px;
-    padding-left: 5px;
-    padding-right: 5px;
+.stack-contents-scroll-container {
+    height: 100%;
     overflow-x: auto;
     overflow-y: auto;
     scrollbar-width: thin;
+    scrollbar-gutter: stable both-edges;
+    display: flex;
+    flex-direction: column;
+}
+
+.stack-contents-container {
+    padding-top: 10px;
     display: flex;
     flex-direction: column;
     align-items: safe center;
@@ -68,6 +72,8 @@ For some reason, using a grid just fixes this. Presumably the rendering happens 
 
 .stack-entry {
     padding-bottom: 15px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 .main-grid {
