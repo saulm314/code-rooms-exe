@@ -4,11 +4,15 @@
     font-family: "cascadia mono";
     font-size: 16px;
     color: white;
+    display: flex;
+    flex-direction: row;
 }
 
 .stack-container {
     min-height: 100vh;
     width: 130px;
+    display: flex;
+    flex-direction: column;
 }
 
 .stack-label-container {
@@ -22,4 +26,15 @@
 
 .stack-label {
     font-weight: bold;
+}
+
+.stack-label-contents-gap {
+    height: 10px;
+}
+
+.stack-contents {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
 }
