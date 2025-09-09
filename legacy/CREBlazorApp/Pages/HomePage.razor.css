@@ -1,4 +1,4 @@
-﻿.background-root {
+﻿.background-grid {
     --stack-min-width: 130px;
     --stack-max-width: 250px;
     --heap-width: 555px;
@@ -7,33 +7,38 @@
     --heap-idecontrols-width: calc(var(--heap-width) + var(--ide-controls-width));
 
     background-color: rgb(42, 42, 42);
-    min-height: 100vh;
-    max-height: 100vh;
+    width: 100vw;
+    height: 100vh;
     font-family: "cascadia mono";
     font-size: 16px;
     color: white;
     display: grid;
-    grid-template-columns: max-content var(--heap-idecontrols-width) 1fr 1fr;
-    grid-template-rows: 1fr var(--heap-height);
+    grid-template-columns: 100vw;
+    grid-template-rows: 100vh;
+}
+
+.foreground {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    grid-template-rows: 100%;
 }
 
 .stack-container {
+    min-width: var(--stack-min-width);
+    max-width: var(--stack-max-width);
     width: max-content;
-    min-width: 130px;
-    max-width: 250px;
+    height: 100%;
     display: flex;
     flex-direction: column;
-    grid-column: 1;
-    grid-row: 1 / 3;
 }
 
 .stack-label-container {
+    height: 20px;
     background-color: rgb(20, 20, 20);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 20px;
 }
 
 .stack-label {
@@ -41,49 +46,17 @@
 }
 
 .stack-contents-container {
+    padding-top: 10px;
+    padding-left: 5px;
+    padding-right: 5px;
+    scrollbar-width: thin;
     display: flex;
     flex-direction: column;
     align-items: safe center;
-    padding-top: 10px;
-    padding-left: 10px;
-    padding-right: 10px;
-    overflow-x: auto;
     overflow-y: auto;
-    scrollbar-width: thin;
+    overflow-x: auto;
 }
 
 .stack-entry {
     padding-bottom: 15px;
-}
-
-.text-editor-container {
-    grid-column: 2 / 4;
-    grid-row: 1;
-    background-color: rgb(30, 30, 30);
-}
-
-.text-editor {
-    all: inherit;
-    width: 100%;
-    height: 100%;
-}
-
-.description-container {
-    grid-column: 4;
-    grid-row: 1;
-}
-
-.heap-idecontrols-container {
-    grid-column: 2;
-    grid-row: 2;
-}
-
-.output-container {
-    grid-column: 3;
-    grid-row: 2;
-}
-
-.main-grid-bottom-right-container {
-    grid-column: 4;
-    grid-row: 2;
 }
