@@ -16,7 +16,7 @@
 }
 
 .stack-container {
-    min-height: 100vh;
+    max-height: 100vh;
     width: var(--stack-width);
     display: flex;
     flex-direction: column;
@@ -35,15 +35,17 @@
     font-weight: bold;
 }
 
-.stack-label-contents-gap {
-    height: 10px;
-}
-
-.stack-contents {
+.stack-contents-container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 15px;
+    padding-top: 10px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+.stack-entry {
+    padding-bottom: 15px;
 }
 
 .main-grid {
