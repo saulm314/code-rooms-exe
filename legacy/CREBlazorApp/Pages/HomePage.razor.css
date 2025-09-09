@@ -5,7 +5,7 @@
     --ide-controls-width: 100px;
     --heap-idecontrols-width: calc(var(--heap-width) + var(--ide-controls-width));
     --main-grid-min-width: calc(100vw - var(--stack-width));
-    
+
     background-color: rgb(42, 42, 42);
     min-height: 100vh;
     font-family: "cascadia mono";
@@ -56,6 +56,13 @@
 .text-editor-container {
     grid-column: 1 / 3;
     grid-row: 1;
+    background-color: rgb(30, 30, 30);
+}
+
+.text-editor {
+    all: inherit;
+    width: 100%;
+    height: 100%;
 }
 
 .description-container {
