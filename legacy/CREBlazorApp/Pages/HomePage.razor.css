@@ -1,0 +1,25 @@
+﻿.background-root {
+    background-color: rgb(42, 42, 42);
+    min-height: 100vh;
+    font-family: "cascadia mono";
+    font-size: 16px;
+    color: white;
+}
+
+.stack-container {
+    min-height: 100vh;
+    width: 130px;
+}
+
+.stack-label-container {
+    background-color: rgb(20, 20, 20);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 20px;
+}
+
+.stack-label {
+    font-weight: bold;
+}
