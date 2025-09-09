@@ -1,25 +1,30 @@
 ﻿.background-root {
-    --stack-width: 130px;
+    --stack-min-width: 130px;
+    --stack-max-width: 250px;
     --heap-width: 555px;
     --heap-height: 350px;
     --ide-controls-width: 100px;
     --heap-idecontrols-width: calc(var(--heap-width) + var(--ide-controls-width));
-    --main-grid-min-width: calc(100vw - var(--stack-width));
 
     background-color: rgb(42, 42, 42);
     min-height: 100vh;
+    max-height: 100vh;
     font-family: "cascadia mono";
     font-size: 16px;
     color: white;
-    display: flex;
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: max-content var(--heap-idecontrols-width) 1fr 1fr;
+    grid-template-rows: 1fr var(--heap-height);
 }
 
 .stack-container {
-    max-height: 100vh;
-    width: var(--stack-width);
+    width: max-content;
+    min-width: 130px;
+    max-width: 250px;
     display: flex;
     flex-direction: column;
+    grid-column: 1;
+    grid-row: 1 / 3;
 }
 
 .stack-label-container {
@@ -38,8 +43,11 @@
 .stack-contents-container {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: safe center;
     padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    overflow-x: auto;
     overflow-y: auto;
     scrollbar-width: thin;
 }
@@ -48,15 +56,8 @@
     padding-bottom: 15px;
 }
 
-.main-grid {
-    display: grid;
-    grid-template-columns: var(--heap-idecontrols-width) 1fr 1fr;
-    grid-template-rows: 1fr var(--heap-height);
-    min-width: var(--main-grid-min-width);
-}
-
 .text-editor-container {
-    grid-column: 1 / 3;
+    grid-column: 2 / 4;
     grid-row: 1;
     background-color: rgb(30, 30, 30);
 }
@@ -68,21 +69,21 @@
 }
 
 .description-container {
-    grid-column: 3;
+    grid-column: 4;
     grid-row: 1;
 }
 
 .heap-idecontrols-container {
-    grid-column: 1;
-    grid-row: 2;
-}
-
-.output-container {
     grid-column: 2;
     grid-row: 2;
 }
 
-.main-grid-bottom-right-container {
+.output-container {
     grid-column: 3;
+    grid-row: 2;
+}
+
+.main-grid-bottom-right-container {
+    grid-column: 4;
     grid-row: 2;
 }
