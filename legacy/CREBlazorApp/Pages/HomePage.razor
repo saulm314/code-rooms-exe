@@ -2,15 +2,15 @@
 
 <PageTitle>CodeRooms.exe</PageTitle>
 
-<div class="background-grid">
-<div class="foreground">
+<div id="background-grid">
+<div id="foreground">
 
-<div class="stack-container">
-	<div class="stack-label-container">
-		<label class="stack-label">Stack</label>
+<div id="stack-container">
+	<div id="stack-label-container">
+		<label id="stack-label">Stack</label>
 	</div>
-	<div class="stack-contents-scroll-container">
-		<div class="stack-contents-container">
+	<div id="stack-contents-scroll-container">
+		<div id="stack-contents-container">
 			<label class="stack-entry">Hello1</label>
 			<label class="stack-entry">Hello2</label>
 			<label class="stack-entry">Hello</label>
@@ -44,21 +44,29 @@
 	</div>
 </div>
 
-<div class="main-grid">
-	<div class="text-editor-container">
-		<textarea class="text-editor"/>
+<div id="main-grid">
+	<div id="text-editor-container">
+		<textarea id="text-editor"/>
 	</div>
-	<div class="description-container">
-		<textarea class="description" readonly>Description</textarea>
+	<div id="description-container">
+		<textarea id="description" readonly>Description</textarea>
 	</div>
-	<div class="heap-idecontrols-container">
+	<div id="heap-idecontrols-container">
 		<label>Heap, IDE Controls</label>
 	</div>
-	<div class="output-container">
-		<textarea class="output" readonly>Output</textarea>
+	<div id="output-container">
+		<textarea id="output" readonly>Output</textarea>
 	</div>
-	<div class="menu-container">
-		<label>Menu</label>
+	<div id="menu-container">
+		<div id="level-select-container"></div>
+		<div id="menu-bottom-bar-grid">
+			<div id="total-stars-display-container">
+				<label class="total-stars-label">Total:</label>
+				<label id="total-stars-label" class="total-stars-label">0/0 ⭐</label>
+			</div>
+			<button id="current-syntax-button">Current Syntax: C#</button>
+			<button id="solution-button">See Solution</button>
+		</div>
 	</div>
 </div>
 
