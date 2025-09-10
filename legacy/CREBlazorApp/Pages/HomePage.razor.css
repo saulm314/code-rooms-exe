@@ -98,11 +98,23 @@ For some reason, using a grid just fixes this. Presumably the rendering happens 
     height: 100%;
     padding: 8px;
     scrollbar-width: thin;
+    text-wrap-mode: nowrap;
 }
 
 .description-container {
     grid-column: 3;
     grid-row: 1;
+}
+
+.description {
+    all: inherit;
+    width: 100%;
+    height: 100%;
+    padding: 8px;
+    scrollbar-width: thin;
+    font-family: verdana;
+    text-wrap-mode: wrap;
+    overflow-wrap: anywhere;
 }
 
 .heap-idecontrols-container {
