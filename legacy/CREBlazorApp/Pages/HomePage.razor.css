@@ -125,6 +125,17 @@ For some reason, using a grid just fixes this. Presumably the rendering happens 
 .output-container {
     grid-column: 2;
     grid-row: 2;
+    background-color: black;
+}
+
+.output {
+    all: inherit;
+    width: 100%;
+    height: 100%;
+    padding: 8px;
+    scrollbar-width: thin;
+    text-wrap-mode: wrap;
+    word-break: break-all;
 }
 
 .menu-container {
