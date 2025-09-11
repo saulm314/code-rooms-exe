@@ -45,15 +45,27 @@
 			</div>
 			<div id="heap-contents-scroll-container">
 				<div id="heap-grid">
-					@for (int y = 0; y < 5; y++)
+					@for (int y = 0; y < _heapCapacity / 10; y++)
 					{
 						@for (int x = 0; x < 10; x++)
 						{
 							int index = 10 * y + x;
 							<div
-								class="heap-empty-entry"
+								class="heap-entry"
 								style="grid-column: @(2 * x + 2); grid-row: @(2 * y + 2);"
-							></div>
+							>
+								@if (index < _heapVariables.Count && _heapVariables[index] != null)
+								{
+									VarInfo varInfo = (VarInfo)_heapVariables[index]!;
+									<div class="var-image">
+										<img src="@varInfo.ImageSource"/>
+										<label
+											class="var-value"
+											style="color: @(varInfo.Black ? "black" : "white")"
+										>@varInfo.Value</label>
+									</div>
+								}
+							</div>
 							<div
 								class="heap-index-container"
 								style="grid-column: @(2 * x + 2); grid-row: @(2 * y + 3);"
@@ -112,6 +124,8 @@
 	private List<VarInfo> _stackVariables = [];
 	private string _textEditorText = string.Empty;
 	private bool _textEditorDisabled = false;
+	private int _heapCapacity = 50;
+	private List<VarInfo?> _heapVariables = [];
 	private bool _compileButtonDisabled = false;
 	private bool _editButtonDisabled = true;
 	private bool _runButtonDisabled = true;
@@ -247,14 +261,37 @@
 		_stackVariables.Add(new(imageSource, name, value, black));
 	}
 
-	// implement
 	private void ClearStack() => _stackVariables.Clear();
 
-	// implement
-	private void ClearHeap() { }
+	private void ClearHeap()
+	{
+		_heapCapacity = 50;
+		_heapVariables.Clear();
+	}
 
-	// implement
-	private void DisplayHeap(Heap? heap) { }
+	private void DisplayHeap(Heap? heap)
+	{
+		if (heap == null)
+		{
+			ClearHeap();
+			return;
+		}
+		_heapCapacity = heap.Size;
+		_heapVariables.Clear();
+		foreach (Variable? variable in heap)
+		{
+			if (variable == null || variable._VarType == null)
+			{
+				_heapVariables.Add(null);
+				continue;
+			}
+			string imageSource = $"Files/Types/{variable._VarType!.Slug}.png";
+			string name = string.Empty;
+			string value = variable.ValueAsString;
+			bool black = variable._VarType._Storage == VarType.Storage.Value;
+			_heapVariables.Add(new(imageSource, name, value, black));
+		}
+	}
 
 	private readonly record struct VarInfo(string ImageSource, string Name, string Value, bool Black);
 }
