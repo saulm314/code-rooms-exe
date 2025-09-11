@@ -109,7 +109,7 @@
 </div>
 
 @code {
-	private List<VarInfo> _stackVariables = [new("Files/Types/bool.png", "myBool", "trie", true), new("Files/Types/int.png", "myint", "501", true)];
+	private List<VarInfo> _stackVariables = [];
 	private string _textEditorText = string.Empty;
 	private bool _textEditorDisabled = false;
 	private bool _compileButtonDisabled = false;
@@ -240,11 +240,15 @@
 
 	private void PushToStack(Variable variable)
 	{
-		
+		string imageSource = $"Files/Types/{variable._VarType!.Slug}.png";
+		string name = variable.Name ?? string.Empty;
+		string value = variable.ValueAsString;
+		bool black = variable._VarType!._Storage == VarType.Storage.Value;
+		_stackVariables.Add(new(imageSource, name, value, black));
 	}
 
 	// implement
-	private void ClearStack() { }
+	private void ClearStack() => _stackVariables.Clear();
 
 	// implement
 	private void ClearHeap() { }
