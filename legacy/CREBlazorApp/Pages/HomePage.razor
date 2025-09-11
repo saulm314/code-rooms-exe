@@ -56,7 +56,28 @@
 			<div id="heap-label-container">
 				<label id="heap-label">Heap</label>
 			</div>
-			<div id="heap-contents-scroll-container"></div>
+			<div id="heap-contents-scroll-container">
+				<div id="heap-grid">
+					
+					@for (int y = 0; y < 5; y++)
+					{
+						@for (int x = 0; x < 10; x++)
+						{
+							int index = 10 * y + x;
+							<div
+								class="heap-empty-entry"
+								style="grid-column: @(2 * x + 2); grid-row: @(2 * y + 2);"
+							></div>
+							<div
+								class="heap-index-container"
+								style="grid-column: @(2 * x + 2); grid-row: @(2 * y + 3);"
+							>
+								<label class="heap-index-label">@(index == 0 ? "null" : index)</label>
+							</div>
+						}
+					}
+				</div>
+			</div>
 		</div>
 		<div id="ide-controls-container">
 			<button id="compile-button">Compile</button>
