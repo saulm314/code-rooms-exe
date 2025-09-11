@@ -33,7 +33,7 @@
 
 <div id="main-grid">
 	<div id="text-editor-container">
-		<textarea id="text-editor" @bind="_textEditorText" disabled="@_textEditorDisabled"/>
+		<textarea id="text-editor" @bind="_textEditorText" style="pointer-events: @(_textEditorDisabled ? "none" : "auto");"/>
 	</div>
 	<div id="description-container">
 		<textarea id="description" readonly>Description</textarea>
