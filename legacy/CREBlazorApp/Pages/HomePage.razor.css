@@ -156,6 +156,51 @@ For some reason, using a grid just fixes this. Presumably the rendering happens 
 #heap-idecontrols-container {
     grid-column: 1;
     grid-row: 2;
+    display: grid;
+    grid-template-columns: var(--heap-width) var(--ide-controls-width);
+    grid-template-rows: 100%;
+}
+
+#ide-controls-container {
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-rows: repeat(5, 1fr);
+}
+
+#compile-button {
+    --background-color: rgb(5, 97, 67);
+    font-family: inherit;
+    font-size: 20px;
+}
+
+#edit-button {
+    --background-color: rgb(138, 108, 5);
+    font-family: inherit;
+    font-size: 20px;
+}
+
+#run-button {
+    --background-color: rgb(10, 117, 1);
+    font-family: inherit;
+    font-size: 20px;
+}
+
+#arrow-buttons-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 100%;
+}
+
+.arrow-button {
+    --backround-color: black;
+    font-family: inherit;
+    font-size: 30px;
+}
+
+#next-button {
+    --background-color: rgb(0, 72, 130);
+    font-family: inherit;
+    font-size: 20px;
 }
 
 #output-container {
@@ -242,7 +287,6 @@ For some reason, using a grid just fixes this. Presumably the rendering happens 
    so we take off roughly 200px for that
 */
 @media screen and (max-width: 1511px), screen and (max-height: 663px) {
-    button,
     .variable-font-size {
         font-size: 12px !important;
     }

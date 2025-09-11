@@ -52,14 +52,24 @@
 		<textarea id="description" readonly>Description</textarea>
 	</div>
 	<div id="heap-idecontrols-container">
-		<label>Heap, IDE Controls</label>
+		<div id="heap-container"></div>
+		<div id="ide-controls-container">
+			<button id="compile-button">Compile</button>
+			<button id="edit-button">Edit</button>
+			<button id="run-button">Run</button>
+			<div id="arrow-buttons-container">
+				<button class="arrow-button">&lt;</button>
+				<button class="arrow-button">&gt;</button>
+			</div>
+			<button id="next-button">Next</button>
+		</div>
 	</div>
 	<div id="output-container">
 		<textarea id="output" readonly>Output</textarea>
 	</div>
-	<div id="menu-container">
-		<div id="level-select-container" class="variable-font-size">
-			<div id="level-select-grid">
+	<div id="menu-container" class="variable-font-size">
+		<div id="level-select-container">
+			<div id="level-select-grid" class="variable-font-size">
 				<button class="level-button">Free Code</button>
 				<button class="level-button">Level 1: Declaration</button>
 				<button class="level-button" disabled>Level 2: Initialisation</button>
