@@ -317,7 +317,7 @@ For some reason, using a grid just fixes this. Presumably the rendering happens 
     font-weight: bold;
 }
 
-#current-syntax-button {
+#syntax-button {
     --background-color: rgb(4, 58, 77);
     font-family: inherit;
     font-size: inherit;

@@ -58,7 +58,6 @@
 			</div>
 			<div id="heap-contents-scroll-container">
 				<div id="heap-grid">
-					
 					@for (int y = 0; y < 5; y++)
 					{
 						@for (int x = 0; x < 10; x++)
@@ -80,14 +79,14 @@
 			</div>
 		</div>
 		<div id="ide-controls-container">
-			<button id="compile-button">Compile</button>
-			<button id="edit-button">Edit</button>
-			<button id="run-button">Run</button>
+			<button id="compile-button" @onclick="OnCompilePressed">Compile</button>
+			<button id="edit-button" @onclick="OnEditPressed">Edit</button>
+			<button id="run-button" @onclick="OnRunPressed">Run</button>
 			<div id="arrow-buttons-container">
-				<button class="arrow-button">&lt;</button>
-				<button class="arrow-button">&gt;</button>
+				<button class="arrow-button" @onclick="OnLeftPressed">&lt;</button>
+				<button class="arrow-button" @onclick="OnRightPressed">&gt;</button>
 			</div>
-			<button id="next-button">Next</button>
+			<button id="next-button" @onclick="OnNextPressed">Next</button>
 		</div>
 	</div>
 	<div id="output-container">
@@ -113,11 +112,49 @@
 				<label class="total-stars-label">Total:</label>
 				<label id="total-stars-label" class="total-stars-label">0/0 ⭐</label>
 			</div>
-			<button id="current-syntax-button">Current Syntax: C#</button>
-			<button id="solution-button">See Solution</button>
+			<button id="syntax-button" @onclick="OnSyntaxPressed">Current Syntax: C#</button>
+			<button id="solution-button" @onclick="OnSolutionPressed">See Solution</button>
 		</div>
 	</div>
 </div>
 
 </div>
 </div>
+
+@code {
+	private void OnCompilePressed()
+	{
+	}
+
+	private void OnEditPressed()
+	{
+	}
+
+	private void OnRunPressed()
+	{
+	}
+
+	private void OnLeftPressed()
+	{
+	}
+
+	private void OnRightPressed()
+	{
+	}
+
+	private void OnNextPressed()
+	{
+	}
+
+	private void OnLevelPressed(int level)
+	{
+	}
+
+	private void OnSyntaxPressed()
+	{
+	}
+
+	private void OnSolutionPressed()
+	{
+	}
+}
