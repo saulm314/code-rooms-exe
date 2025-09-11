@@ -178,17 +178,17 @@ For some reason, using a grid just fixes this. Presumably the rendering happens 
     grid-template-rows: 1fr var(--bottom-bar-height);
 }
 
-#menu-bottom-bar-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: 100%;
+#level-select-container {
+    overflow-y: auto;
+    scrollbar-width: thin;
 }
 
-#level-select-container {
+#level-select-grid {
     font-size: 20px;
     display: grid;
     grid-template-columns: 100%;
-    grid-template-rows: 1fr 1fr 1fr 1fr;
+    grid-template-rows: repeat(4, var(--level-button-height));
+    grid-auto-rows: var(--level-button-height);
 }
 
 .level-button {
@@ -197,6 +197,12 @@ For some reason, using a grid just fixes this. Presumably the rendering happens 
     font-family: inherit;
     font-size: inherit;
     padding: 8px;
+}
+
+#menu-bottom-bar-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 100%;
 }
 
 #total-stars-display-container {
