@@ -30,8 +30,15 @@ button:active {
     transform: scale(0.95, 0.95);
 }
 
+button:disabled {
+    color: var(--global-color);
+    background-color: rgb(60, 60, 60);
+    transform: none;
+}
+
 #background-grid {
     --global-background-color: rgb(42, 42, 42);
+    --global-color: white;
     --stack-min-width: 130px;
     --stack-max-width: 250px;
     --heap-width: 555px;
@@ -44,7 +51,7 @@ button:active {
     height: 100vh;
     font-family: "cascadia mono";
     font-size: 16px;
-    color: white;
+    color: var(--global-color);
     display: grid;
     grid-template-columns: 100vw;
     grid-template-rows: 100vh;
