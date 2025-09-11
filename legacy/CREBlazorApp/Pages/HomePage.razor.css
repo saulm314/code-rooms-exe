@@ -161,6 +161,24 @@ For some reason, using a grid just fixes this. Presumably the rendering happens 
     grid-template-rows: 100%;
 }
 
+#heap-container {
+    display: flex;
+    flex-direction: column;
+}
+
+#heap-label-container {
+    height: 20px;
+    background-color: rgb(20, 20, 20);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#heap-label {
+    font-weight: bold;
+}
+
 #ide-controls-container {
     display: grid;
     grid-template-columns: 100%;
