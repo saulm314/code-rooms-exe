@@ -1,4 +1,7 @@
 ﻿@page "/"
+@inject IJSRuntime Js
+@using CRECSharpInterpreter
+@using Environment = CRECSharpInterpreter.Environment
 
 <PageTitle>CodeRooms.exe</PageTitle>
 
@@ -11,42 +14,26 @@
 	</div>
 	<div id="stack-contents-scroll-container">
 		<div id="stack-contents-container">
-			<label class="stack-entry">Hello1</label>
-			<label class="stack-entry">Hello2</label>
-			<label class="stack-entry">Hello</label>
-			<label class="stack-entry">Hello</label>
-			<label class="stack-entry">PrinceOfPersiaTheSandsOfTimePrinceOfPersiaWarriorWithinPrinceOfPersiaTheTwoThrones</label>
-			<label class="stack-entry">Hello</label>
-			<label class="stack-entry">Hello</label>
-			<label class="stack-entry">Hello</label>
-			<label class="stack-entry">Hello</label>
-			<label class="stack-entry">Hello</label>
-			<label class="stack-entry">Hello</label>
-			<label class="stack-entry">Hello</label>
-			<label class="stack-entry">Hello</label>
-			<label class="stack-entry">Hello</label>
-			<label class="stack-entry">Hello</label>
-			<label class="stack-entry">Hello</label>
-			<label class="stack-entry">Hello</label>
-			<label class="stack-entry">Hello</label>
-			<label class="stack-entry">Hello</label>
-			<label class="stack-entry">Hello</label>
-			<label class="stack-entry">Hello</label>
-			<label class="stack-entry">Hello</label>
-			<label class="stack-entry">Hello</label>
-			<label class="stack-entry">Hello</label>
-			<label class="stack-entry">Hello</label>
-			<label class="stack-entry">Hello</label>
-			<label class="stack-entry">Hello</label>
-			<label class="stack-entry">Hello</label>
-			<label class="stack-entry">Hello</label>
+			@for (int i = 0; i < _stackVariables.Count; i++)
+			{
+				<div class="stack-entry">
+					<div class="var-image">
+						<img src="@_stackVariables[i].ImageSource"/>
+						<label
+							class="var-value"
+							style="color: @(_stackVariables[i].Black ? "black" : "white")"
+						>@_stackVariables[i].Value</label>
+					</div>
+					<label class="var-name">@_stackVariables[i].Name</label>
+				</div>
+			}
 		</div>
 	</div>
 </div>
 
 <div id="main-grid">
 	<div id="text-editor-container">
-		<textarea id="text-editor"/>
+		<textarea id="text-editor" @bind="_textEditorText" disabled="@_textEditorDisabled"/>
 	</div>
 	<div id="description-container">
 		<textarea id="description" readonly>Description</textarea>
@@ -79,32 +66,32 @@
 			</div>
 		</div>
 		<div id="ide-controls-container">
-			<button id="compile-button" @onclick="OnCompilePressed">Compile</button>
-			<button id="edit-button" @onclick="OnEditPressed">Edit</button>
-			<button id="run-button" @onclick="OnRunPressed">Run</button>
+			<button id="compile-button" @onclick="OnCompilePressed" disabled="@_compileButtonDisabled">Compile</button>
+			<button id="edit-button" @onclick="OnEditPressed" disabled="@_editButtonDisabled">Edit</button>
+			<button id="run-button" @onclick="OnRunPressed" disabled="@_runButtonDisabled">Run</button>
 			<div id="arrow-buttons-container">
-				<button class="arrow-button" @onclick="OnLeftPressed">&lt;</button>
-				<button class="arrow-button" @onclick="OnRightPressed">&gt;</button>
+				<button class="arrow-button" @onclick="OnLeftPressed" disabled="@_leftButtonDisabled">&lt;</button>
+				<button class="arrow-button" @onclick="OnRightPressed" disabled="@_rightButtonDisabled">&gt;</button>
 			</div>
-			<button id="next-button" @onclick="OnNextPressed">Next</button>
+			<button id="next-button" disabled>Next</button>
 		</div>
 	</div>
 	<div id="output-container">
-		<textarea id="output" readonly>Output</textarea>
+		<textarea id="output" readonly @bind="_outputText">Output</textarea>
 	</div>
 	<div id="menu-container" class="variable-font-size">
 		<div id="level-select-container">
 			<div id="level-select-grid" class="variable-font-size">
-				<button class="level-button">Free Code</button>
-				<button class="level-button">Level 1: Declaration</button>
-				<button class="level-button" disabled>Level 2: Initialisation</button>
-				<button class="level-button" disabled>Level 3: Read/Write Variables</button>
-				<button class="level-button" disabled>Level 4: Arithmetic</button>
-				<button class="level-button" disabled>Level 5: Casts</button>
-				<button class="level-button" disabled>Level 6: Booleans</button>
-				<button class="level-button" disabled>Level 7: Reference Types</button>
-				<button class="level-button" disabled>Level 8: Garbage Collection</button>
-				<button class="level-button" disabled>Level 9: Reverse Array</button>
+				<button class="level-button" disabled>[WIP] Free Code</button>
+				<button class="level-button" disabled>[WIP] Level 1: Declaration</button>
+				<button class="level-button" disabled>[WIP] Level 2: Initialisation</button>
+				<button class="level-button" disabled>[WIP] Level 3: Read/Write Variables</button>
+				<button class="level-button" disabled>[WIP] Level 4: Arithmetic</button>
+				<button class="level-button" disabled>[WIP] Level 5: Casts</button>
+				<button class="level-button" disabled>[WIP] Level 6: Booleans</button>
+				<button class="level-button" disabled>[WIP] Level 7: Reference Types</button>
+				<button class="level-button" disabled>[WIP] Level 8: Garbage Collection</button>
+				<button class="level-button" disabled>[WIP] Level 9: Reverse Array</button>
 			</div>
 		</div>
 		<div id="menu-bottom-bar-grid">
@@ -112,8 +99,8 @@
 				<label class="total-stars-label">Total:</label>
 				<label id="total-stars-label" class="total-stars-label">0/0 ⭐</label>
 			</div>
-			<button id="syntax-button" @onclick="OnSyntaxPressed">Current Syntax: C#</button>
-			<button id="solution-button" @onclick="OnSolutionPressed">See Solution</button>
+			<button id="syntax-button" @onclick="OnSyntaxPressed" disabled="@_syntaxButtonDisabled">Current Syntax: @_syntax</button>
+			<button id="solution-button" disabled>[WIP] See Solution</button>
 		</div>
 	</div>
 </div>
@@ -122,39 +109,148 @@
 </div>
 
 @code {
-	private void OnCompilePressed()
+	private List<VarInfo> _stackVariables = [new("Files/Types/bool.png", "myBool", "trie", true), new("Files/Types/int.png", "myint", "501", true)];
+	private string _textEditorText = string.Empty;
+	private bool _textEditorDisabled = false;
+	private bool _compileButtonDisabled = false;
+	private bool _editButtonDisabled = true;
+	private bool _runButtonDisabled = true;
+	private bool _leftButtonDisabled = true;
+	private bool _rightButtonDisabled = true;
+	private bool _syntaxButtonDisabled = false;
+	private string _outputText = string.Empty;
+	private string _syntax = "C#";
+
+	public Interpreter? PInterpreter { get; private set; }
+
+	public static MemoryFrame Frame => Memory.Instance!.Frames[Memory.Instance.CurrentFrame];
+
+	private readonly List<object> _heapCells = new();
+
+	public void OnCompilePressed()
 	{
+		_compileButtonDisabled = true;
+		_editButtonDisabled = false;
+		_runButtonDisabled = false;
+		_syntaxButtonDisabled = true;
+		_textEditorDisabled = true;
+		OutputClear();
+		OutputWriteLine("Compiling...");
+		try
+		{
+			PInterpreter = new(_textEditorText);
+			OutputWriteLine("Compilation successful");
+		}
+		catch (InterpreterException exception)
+		{
+			OutputWriteLine(exception.Message);
+			_runButtonDisabled = true;
+		}
+		catch (Exception exception)
+		{
+			OutputWriteLine("Error, possibly internal:");
+			OutputWriteLine(exception);
+			_runButtonDisabled = true;
+		}
 	}
 
-	private void OnEditPressed()
+	public void OnEditPressed()
 	{
+		_editButtonDisabled = true;
+		_compileButtonDisabled = false;
+		_runButtonDisabled = true;
+		_leftButtonDisabled = true;
+		_rightButtonDisabled = true;
+		_syntaxButtonDisabled = false;
+		_textEditorDisabled = false;
+		ClearStack();
+		ClearHeap();
+
 	}
 
-	private void OnRunPressed()
+	public void OnRunPressed()
 	{
+		_runButtonDisabled = true;
+		_rightButtonDisabled = false;
+		_leftButtonDisabled = !Frame.CanMoveLeft;
+		_rightButtonDisabled = !Frame.CanMoveRight;
+		DisplayFrame();
+		OutputWriteLine("Running...");
 	}
 
-	private void OnLeftPressed()
+	public void OnLeftPressed()
 	{
+		PInterpreter!.MoveLeft();
+		_leftButtonDisabled = !Frame.CanMoveLeft;
+		_rightButtonDisabled = !Frame.CanMoveRight;
+		DisplayFrame();
 	}
 
-	private void OnRightPressed()
+	public void OnRightPressed()
 	{
+		PInterpreter!.MoveRight();
+		_leftButtonDisabled = !Frame.CanMoveLeft;
+		_rightButtonDisabled = !Frame.CanMoveRight;
+		DisplayFrame();
 	}
 
-	private void OnNextPressed()
+	public void OnSyntaxPressed()
 	{
+		Environment._Syntax = Environment._Syntax switch
+		{
+			Syntax.CSharp => Syntax.Java,
+			Syntax.Java => Syntax.CSharp,
+			_ => Syntax.CSharp
+		};
+		_syntax = Environment._Syntax switch
+		{
+			Syntax.CSharp => "C#",
+			Syntax.Java => "Java",
+			_ => string.Empty
+		};
 	}
 
-	private void OnLevelPressed(int level)
+	public void OutputWriteLine(object message) => _outputText += message + "\n";
+
+	public void OutputWrite(object message) => _outputText += message;
+
+	public void OutputClear() => _outputText = string.Empty;
+
+	private void DisplayFrame()
 	{
+		OutputClear();
+		OutputWriteLine(Frame);
+		DisplayStack(Frame.Stack, Frame.ActiveLoops, Frame.ActiveForHeaders);
+		DisplayHeap(Frame.Heap);
 	}
 
-	private void OnSyntaxPressed()
+	private void DisplayStack(Stack<Scope>? stack, Stack<int>? activeLoops, Stack<int>? activeForHeaders)
 	{
+		ClearStack();
+		if (stack == null || activeLoops == null || activeForHeaders == null)
+			return;
+		Scope[] scopes = [..stack];
+		for (int i = scopes.Length - 1; i >= 0; i--)
+		{
+			Scope scope = scopes[i];
+			foreach (Variable variable in scope.DeclaredVariables)
+				PushToStack(variable);
+		}
 	}
 
-	private void OnSolutionPressed()
+	private void PushToStack(Variable variable)
 	{
+		
 	}
+
+	// implement
+	private void ClearStack() { }
+
+	// implement
+	private void ClearHeap() { }
+
+	// implement
+	private void DisplayHeap(Heap? heap) { }
+
+	private readonly record struct VarInfo(string ImageSource, string Name, string Value, bool Black);
 }

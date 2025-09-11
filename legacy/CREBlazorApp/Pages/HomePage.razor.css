@@ -33,6 +33,7 @@ button:active {
 button:disabled {
     color: var(--global-color);
     background-color: rgb(60, 60, 60);
+    border-color: rgb(51, 51, 51);
     transform: none;
 }
 
@@ -114,6 +115,27 @@ For some reason, using a grid just fixes this. Presumably the rendering happens 
     padding-bottom: 15px;
     padding-left: 8px;
     padding-right: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.var-image {
+    position: relative;
+    width: 50px;
+}
+
+.var-value {
+    position: absolute;
+    width: 50px;
+    align-self: center;
+    text-align: center;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 16px;
+    font-weight: bold;
 }
 
 #main-grid {
