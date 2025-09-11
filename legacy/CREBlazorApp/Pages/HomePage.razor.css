@@ -95,16 +95,16 @@ For some reason, using a grid just fixes this. Presumably the rendering happens 
 
 #stack-contents-scroll-container {
     height: 100%;
-    overflow-x: auto;
     overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-gutter: stable both-edges;
+    scrollbar-width: none;
     display: flex;
     flex-direction: column;
 }
 
 #stack-contents-container {
     padding-top: 10px;
+    text-wrap-mode: wrap;
+    word-break: break-all;
     display: flex;
     flex-direction: column;
     align-items: safe center;
@@ -112,8 +112,8 @@ For some reason, using a grid just fixes this. Presumably the rendering happens 
 
 .stack-entry {
     padding-bottom: 15px;
-    padding-left: 10px;
-    padding-right: 10px;
+    padding-left: 8px;
+    padding-right: 8px;
 }
 
 #main-grid {
@@ -162,12 +162,12 @@ For some reason, using a grid just fixes this. Presumably the rendering happens 
 }
 
 #heap-container {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-rows: 20px 1fr;
 }
 
 #heap-label-container {
-    height: 20px;
     background-color: rgb(20, 20, 20);
     display: flex;
     flex-direction: column;
@@ -180,17 +180,16 @@ For some reason, using a grid just fixes this. Presumably the rendering happens 
 }
 
 #heap-contents-scroll-container {
-    height: 100%;
     background-color: black;
     overflow-y: auto;
-    scrollbar-width: thin;
+    scrollbar-width: none;
 }
 
 #heap-grid {
     display: grid;
     grid-template-columns: 5px repeat(10, 50px 5px);
     grid-template-rows: 5px repeat(5, 50px 15px);
-    grid-auto-rows: 50px 10px;
+    grid-auto-rows: 50px 15px;
 }
 
 .heap-empty-entry {
