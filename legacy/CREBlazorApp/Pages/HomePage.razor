@@ -36,7 +36,7 @@
 		<textarea id="text-editor" @bind="_textEditorText" style="pointer-events: @(_textEditorDisabled ? "none" : "auto");"/>
 	</div>
 	<div id="description-container">
-		<textarea id="description" readonly>Description</textarea>
+		<textarea id="description" @bind="_descriptionText" readonly></textarea>
 	</div>
 	<div id="heap-idecontrols-container">
 		<div id="heap-container">
@@ -122,31 +122,9 @@
 
 @code {
 	private List<VarInfo> _stackVariables = [];
-	private string _textEditorText = """"
-		int number = 5;
-		double pi = 3.14;
-		char character = 'a';
-		bool condition = false;
-
-		string[] animals = new string[] { "cat", "dog", "rabbit" };
-		string dog = animals[1];
-		animals = null;
-		dog = null;
-
-		int number2 = 0;
-		while (true)
-		{
-			if (true)
-			{
-				for (int i = 0; i < 5; i = i + 1)
-				{
-					number2 = number2 + 1;
-				}
-				break;
-			}
-		}
-		"""";
+	private string _textEditorText = DefaultStrings.TextEditor;
 	private bool _textEditorDisabled = false;
+	private string _descriptionText = DefaultStrings.Description;
 	private int _heapCapacity = 50;
 	private List<VarInfo?> _heapVariables = [];
 	private bool _compileButtonDisabled = false;
