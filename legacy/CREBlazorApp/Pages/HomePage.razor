@@ -16,20 +16,30 @@
 		<div id="stack-contents-container">
 			@for (int i = 0; i < _stackVariables.Count; i++)
 			{
+				StackVarInfo stackVarInfo = _stackVariables[i];
+				VarInfo varInfo = stackVarInfo.PVarInfo;
 				<div
 					class="stack-entry"
 					style="grid-row: @(2 * i + 1);"
 				>
 					<div class="var-container">
-						<img class="var-image" src="@_stackVariables[i].ImageSource"/>
+						<img class="var-image" src="@varInfo.ImageSource"/>
 						<div class="var-value-container">
 							<label
 								class="var-value"
-								style="color: @(_stackVariables[i].ValueBlack ? "black" : "white")"
-							>@_stackVariables[i].Value</label>
+								style="
+									font-size: @(varInfo.FontSize)px;
+									font-weight: @(varInfo.IsBold ? "bold" : "normal");
+									color: @(varInfo.IsBlack ? "black" : "white");
+									width: @(varInfo.Width)px;
+									height: @(varInfo.Height)px;
+									align-items: @varInfo.HorizontalAlignment;
+									justify-content: @varInfo.VerticalAlignment;
+								"
+							>@varInfo.Value</label>
 						</div>
 					</div>
-					<label class="var-name">@_stackVariables[i].Name</label>
+					<label class="var-name">@stackVarInfo.Name</label>
 				</div>
 				<div
 					class="stack-separator"
@@ -37,7 +47,7 @@
 				>
 					<div
 						class="stack-separator-solid"
-						style="background-color: @_stackVariables[i].SeparatorColor"
+						style="background-color: @stackVarInfo.SeparatorColor"
 					></div>
 				</div>
 			}
@@ -70,13 +80,21 @@
 							>
 								@if (index < _heapVariables.Count && _heapVariables[index] != null)
 								{
-									HeapVarInfo varInfo = (HeapVarInfo)_heapVariables[index]!;
+									VarInfo varInfo = (VarInfo)_heapVariables[index]!;
 									<div class="var-container">
 										<img class="var-image" src="@varInfo.ImageSource"/>
 										<div class="var-value-container">
 											<label
 												class="var-value"
-												style="color: @(varInfo.ValueBlack ? "black" : "white")"
+												style="
+													font-size: @(varInfo.FontSize)px;
+													font-weight: @(varInfo.IsBold ? "bold" : "normal");
+													color: @(varInfo.IsBlack ? "black" : "white");
+													width: @(varInfo.Width)px;
+													height: @(varInfo.Height)px;
+													align-items: @varInfo.HorizontalAlignment;
+													justify-content: @varInfo.VerticalAlignment;
+												"
 											>@varInfo.Value</label>
 										</div>
 									</div>
@@ -142,7 +160,7 @@
 	private bool _textEditorDisabled = false;
 	private string _descriptionText = DefaultStrings.Description;
 	private int _heapCapacity = 50;
-	private List<HeapVarInfo?> _heapVariables = [];
+	private List<VarInfo?> _heapVariables = [];
 	private bool _compileButtonDisabled = false;
 	private bool _editButtonDisabled = true;
 	private bool _runButtonDisabled = true;
@@ -291,14 +309,7 @@
 		}
 	}
 
-	private void PushToStack(Variable variable, string separatorColor)
-	{
-		string imageSource = $"Files/Types/{variable._VarType!.Slug}.png";
-		string value = variable.ValueAsString;
-		bool valueBlack = variable._VarType!._Storage == VarType.Storage.Value;
-		string name = variable.Name ?? string.Empty;
-		_stackVariables.Add(new(separatorColor, imageSource, value, valueBlack, name));
-	}
+	private void PushToStack(Variable variable, string separatorColor) => _stackVariables.Add(new(separatorColor, VarInfo.New(variable), variable.Name!));
 
 	private void ClearStack() => _stackVariables.Clear();
 
@@ -324,10 +335,7 @@
 				_heapVariables.Add(null);
 				continue;
 			}
-			string imageSource = $"Files/Types/{variable._VarType!.Slug}.png";
-			string value = variable.ValueAsString;
-			bool valueBlack = variable._VarType._Storage == VarType.Storage.Value;
-			_heapVariables.Add(new(imageSource, value, valueBlack));
+			_heapVariables.Add(VarInfo.New(variable));
 		}
 	}
 }

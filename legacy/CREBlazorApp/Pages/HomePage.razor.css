@@ -159,8 +159,8 @@ For some reason, using a grid just fixes this. Presumably the rendering happens 
 }
 
 .var-value {
-    font-size: 16px;
-    font-weight: bold;
+    display: flex;
+    flex-direction: column;
 }
 
 #main-grid {
