@@ -17,12 +17,14 @@
 			@for (int i = 0; i < _stackVariables.Count; i++)
 			{
 				<div class="stack-entry">
-					<div class="var-image">
-						<img src="@_stackVariables[i].ImageSource"/>
-						<label
-							class="var-value"
-							style="color: @(_stackVariables[i].Black ? "black" : "white")"
-						>@_stackVariables[i].Value</label>
+					<div class="var-container">
+						<img class="var-image" src="@_stackVariables[i].ImageSource"/>
+						<div class="var-value-container">
+							<label
+								class="var-value"
+								style="color: @(_stackVariables[i].Black ? "black" : "white")"
+							>@_stackVariables[i].Value</label>
+						</div>
 					</div>
 					<label class="var-name">@_stackVariables[i].Name</label>
 				</div>
@@ -57,12 +59,14 @@
 								@if (index < _heapVariables.Count && _heapVariables[index] != null)
 								{
 									VarInfo varInfo = (VarInfo)_heapVariables[index]!;
-									<div class="var-image">
-										<img src="@varInfo.ImageSource"/>
-										<label
-											class="var-value"
-											style="color: @(varInfo.Black ? "black" : "white")"
-										>@varInfo.Value</label>
+									<div class="var-container">
+										<img class="var-image" src="@varInfo.ImageSource"/>
+										<div class="var-value-container">
+											<label
+												class="var-value"
+												style="color: @(varInfo.Black ? "black" : "white")"
+											>@varInfo.Value</label>
+										</div>
 									</div>
 								}
 							</div>
