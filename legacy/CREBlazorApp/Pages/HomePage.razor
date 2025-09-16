@@ -16,18 +16,6 @@
 		<div id="stack-contents-container">
 			@for (int i = 0; i < _stackVariables.Count; i++)
 			{
-				@if (i > 0)
-				{
-					<div
-						class="stack-separator"
-						style="grid-row: @(2 * i);"
-					>
-						<div
-							class="stack-separator-solid"
-							style="background-color: @_stackVariables[i].SeparatorColor"
-						></div>
-					</div>
-				}
 				<div
 					class="stack-entry"
 					style="grid-row: @(2 * i + 1);"
@@ -43,13 +31,15 @@
 					</div>
 					<label class="var-name">@_stackVariables[i].Name</label>
 				</div>
-				@if (i == _stackVariables.Count - 1)
-				{
+				<div
+					class="stack-separator"
+					style="grid-row: @(2 * i + 2);"
+				>
 					<div
-						class="stack-separator"
-						style="grid-row: @(2 * i + 2);"
+						class="stack-separator-solid"
+						style="background-color: @_stackVariables[i].SeparatorColor"
 					></div>
-				}
+				</div>
 			}
 		</div>
 	</div>
@@ -274,18 +264,35 @@
 		for (int i = scopes.Length - 1; i >= 0; i--)
 		{
 			Scope scope = scopes[i];
-			foreach (Variable variable in scope.DeclaredVariables)
-				PushToStack(variable);
+			int antiIndex = scopes.Length - 1 - i;
+			bool scopeEndIsActiveForHeader = activeForHeaders.Contains(antiIndex + 1);
+			bool previousScopeEndIsActiveForHeader = activeForHeaders.Contains(antiIndex);
+			bool scopeEndIsActiveLoop = activeLoops.Contains(antiIndex + 1);
+			string separatorColor = (scopeEndIsActiveForHeader, previousScopeEndIsActiveForHeader, scopeEndIsActiveLoop) switch
+			{
+				(true, _, _) => "white",
+				(false, true, _) => "black",
+				(false, false, true) => "white",
+				_ => "rgb(100, 100, 100)"
+			};
+			for (int j = 0; j < scope.DeclaredVariables.Count - 1; j++)
+				PushToStack(scope.DeclaredVariables[j], "inherit");
+			if (scope.DeclaredVariables.Count > 0)
+			{
+				if (i == 0)
+					separatorColor = "inherit";
+				PushToStack(scope.DeclaredVariables[^1], separatorColor);
+			}
 		}
 	}
 
-	private void PushToStack(Variable variable)
+	private void PushToStack(Variable variable, string separatorColor)
 	{
 		string imageSource = $"Files/Types/{variable._VarType!.Slug}.png";
 		string value = variable.ValueAsString;
 		bool valueBlack = variable._VarType!._Storage == VarType.Storage.Value;
 		string name = variable.Name ?? string.Empty;
-		_stackVariables.Add(new("inherit", imageSource, value, valueBlack, name));
+		_stackVariables.Add(new(separatorColor, imageSource, value, valueBlack, name));
 	}
 
 	private void ClearStack() => _stackVariables.Clear();
