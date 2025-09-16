@@ -157,6 +157,7 @@ For some reason, using a grid just fixes this. Presumably the rendering happens 
     padding: 8px;
     scrollbar-width: thin;
     text-wrap-mode: nowrap;
+    white-space-collapse: preserve;
 }
 
 #description-container {
