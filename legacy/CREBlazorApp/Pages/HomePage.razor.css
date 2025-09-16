@@ -106,13 +106,26 @@ For some reason, using a grid just fixes this. Presumably the rendering happens 
     padding-top: 10px;
     text-wrap-mode: wrap;
     word-break: break-all;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: auto;
+    grid-template-rows: none;
+    grid-auto-rows: auto 15px;
     align-items: safe center;
 }
 
+.stack-separator {
+    grid-column: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.stack-separator-solid {
+    height: 7px;
+}
+
 .stack-entry {
-    padding-bottom: 15px;
+    grid-column: 1;
     padding-left: 8px;
     padding-right: 8px;
     display: flex;
