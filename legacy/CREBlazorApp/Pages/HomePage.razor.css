@@ -173,6 +173,7 @@ For some reason, using a grid just fixes this. Presumably the rendering happens 
     grid-column: 1 / 3;
     grid-row: 1;
     background-color: rgb(30, 30, 30);
+    min-height: 100px;
 }
 
 #text-editor {
@@ -302,6 +303,7 @@ For some reason, using a grid just fixes this. Presumably the rendering happens 
     grid-column: 2;
     grid-row: 2;
     background-color: black;
+    min-width: 100px;
 }
 
 #output {
