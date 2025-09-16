@@ -158,6 +158,12 @@
 
 	private readonly List<object> _heapCells = new();
 
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		await base.OnAfterRenderAsync(firstRender);
+		await Js.ScrollToBottom("stack-contents-scroll-container");
+	}
+
 	public void OnCompilePressed()
 	{
 		_compileButtonDisabled = true;

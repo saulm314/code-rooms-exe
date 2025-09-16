@@ -12,6 +12,12 @@
 
 <body style="margin: 0; padding: 0; background: rgb(42, 42, 42); color: white; color-scheme: dark;">
     <div id="app"></div>
+    <script>
+        function scrollToBottom(elementId) {
+            const element = document.getElementById(elementId);
+            element.scrollTop = element.scrollHeight;
+        }
+    </script>
     <script src="_framework/blazor.webassembly.js"></script>
 </body>
 
