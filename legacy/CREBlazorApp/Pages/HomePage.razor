@@ -162,6 +162,7 @@
 	{
 		await base.OnAfterRenderAsync(firstRender);
 		await Js.ScrollToBottom("stack-contents-scroll-container");
+		await Js.ScrollToBottom("heap-contents-scroll-container");
 	}
 
 	public void OnCompilePressed()
