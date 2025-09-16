@@ -156,8 +156,6 @@
 
 	public static MemoryFrame Frame => Memory.Instance!.Frames[Memory.Instance.CurrentFrame];
 
-	private readonly List<object> _heapCells = new();
-
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		await base.OnAfterRenderAsync(firstRender);
