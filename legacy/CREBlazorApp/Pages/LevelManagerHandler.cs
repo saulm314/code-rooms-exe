@@ -1,6 +1,6 @@
 ﻿using CREBlazorApp.GeneratedCode;
 using CRECSharpInterpreter.Levels;
-using System.Net.Http.Json;
+using Newtonsoft.Json;
 
 namespace CREBlazorApp.Pages;
 
@@ -13,8 +13,9 @@ public static class LevelManagerHandler
         Level[] levels = new Level[GeneratedLevels.JsonFiles.Length];
         for (int i = 0; i < levels.Length; i++)
         {
-            levels[i] = (await http.GetFromJsonAsync<Level>(LevelDirectory + GeneratedLevels.JsonFiles[i]))!;
-            levels[i].Description = await http.GetStringAsync(levels[i].slug + ".txt");
+            string jsonStr = await http.GetStringAsync(LevelDirectory + GeneratedLevels.JsonFiles[i]);
+            levels[i] = JsonConvert.DeserializeObject<Level>(jsonStr)!;
+            levels[i].Description = await http.GetStringAsync(LevelDirectory + levels[i].slug + ".txt");
         }
         return new(levels);
     }

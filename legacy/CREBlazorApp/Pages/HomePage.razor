@@ -1,8 +1,11 @@
 ﻿@page "/"
 @inject IJSRuntime Js
+@inject HttpClient Http
 @using CREBlazorApp.GeneratedCode
 @using CRECSharpInterpreter
+@using CRECSharpInterpreter.Levels
 @using Environment = CRECSharpInterpreter.Environment
+@using Variable = CRECSharpInterpreter.Variable
 
 <PageTitle>CodeRooms.exe</PageTitle>
 
@@ -138,16 +141,11 @@
 	<div id="menu-container" class="variable-font-size">
 		<div id="level-select-container">
 			<div id="level-select-grid" class="variable-font-size">
-				<button class="level-button" disabled>[WIP] Free Code</button>
-				<button class="level-button" disabled>[WIP] Level 1: Declaration</button>
-				<button class="level-button" disabled>[WIP] Level 2: Initialisation</button>
-				<button class="level-button" disabled>[WIP] Level 3: Read/Write Variables</button>
-				<button class="level-button" disabled>[WIP] Level 4: Arithmetic</button>
-				<button class="level-button" disabled>[WIP] Level 5: Casts</button>
-				<button class="level-button" disabled>[WIP] Level 6: Booleans</button>
-				<button class="level-button" disabled>[WIP] Level 7: Reference Types</button>
-				<button class="level-button" disabled>[WIP] Level 8: Garbage Collection</button>
-				<button class="level-button" disabled>[WIP] Level 9: Reverse Array</button>
+				@foreach (Level level in _levels)
+				{
+					<button class="level-button" disabled>Level @level.id: @level.name
+					         0/@level.maxStars ⭐</button>
+				}
 			</div>
 		</div>
 		<div id="menu-bottom-bar-grid">
@@ -180,11 +178,21 @@
 	private bool _rightButtonDisabled = true;
 	private bool _syntaxButtonDisabled = false;
 	private string _outputText = string.Empty;
+	private Level[] _levels = [];
 	private string _syntax = "C#";
 
 	public Interpreter? PInterpreter { get; private set; }
 
 	public static MemoryFrame Frame => Memory.Instance!.Frames[Memory.Instance.CurrentFrame];
+
+	public LevelManager? PLevelManager { get; private set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+		PLevelManager = await LevelManagerHandler.NewLevelManager(Http);
+		_levels = PLevelManager.Levels;
+	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
