@@ -8,6 +8,7 @@ namespace CRECSharpInterpreter.Levels
 {
     public class LevelManager
     {
+        #if !CREBLAZOR
         public LevelManager()
         {
             #if DEBUG
@@ -41,6 +42,9 @@ namespace CRECSharpInterpreter.Levels
         }
 
         public static LevelManager Instance { get; } = new();
+        #elif CREBLAZOR
+        public LevelManager(Level[] levels) => Levels = levels;
+        #endif
 
         public Level[] Levels { get; init; }
 

@@ -42,7 +42,7 @@ def build(env):
         shutil.rmtree(path("code-rooms-exe"), ignore_errors=True)
     
     print("Publishing CREBlazorApp...")
-    process_resp = subprocess.run(["dotnet", "publish", path("CREBlazorApp"), "-c", "Release", "-o", path("publish")])
+    process_resp = subprocess.run(["dotnet", "publish", path("CREBlazorApp"), "-c", "CREBlazor", "-o", path("publish")])
     if process_resp.returncode != 0:
         print("Dotnet build failed")
         return False

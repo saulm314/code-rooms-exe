@@ -5,6 +5,7 @@ using System.Reflection;
 
 namespace CRECSharpInterpreter.Tests
 {
+    #if !CREBLAZOR
     public static class TestRepository
     {
         static TestRepository()
@@ -104,4 +105,5 @@ namespace CRECSharpInterpreter.Tests
         public static int SuccessfulTests { get; set; } = 0;
         public static int TotalTests { get; set; } = 0;
     }
+    #endif
 }

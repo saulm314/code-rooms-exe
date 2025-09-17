@@ -5,6 +5,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <SelfContained>true</SelfContained>
+    <Configurations>Debug;Release;CREBlazor</Configurations>
   </PropertyGroup>
 
   <ItemGroup>

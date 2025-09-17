@@ -15,10 +15,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CREBlazorApp", "CREBlazorAp
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		CREBlazor|Any CPU = CREBlazor|Any CPU
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5AC041C7-3D0A-4D04-97E1-F1264F39011C}.CREBlazor|Any CPU.ActiveCfg = CREBlazor|Any CPU
+		{5AC041C7-3D0A-4D04-97E1-F1264F39011C}.CREBlazor|Any CPU.Build.0 = CREBlazor|Any CPU
 		{5AC041C7-3D0A-4D04-97E1-F1264F39011C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5AC041C7-3D0A-4D04-97E1-F1264F39011C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5AC041C7-3D0A-4D04-97E1-F1264F39011C}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -35,6 +38,8 @@ Global
 		{9F224EEF-7640-4A84-A4A6-D252772E6C83}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9F224EEF-7640-4A84-A4A6-D252772E6C83}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9F224EEF-7640-4A84-A4A6-D252772E6C83}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6C4052E-B8BB-4771-A2F5-DAEA86046AEC}.CREBlazor|Any CPU.ActiveCfg = Release|Any CPU
+		{A6C4052E-B8BB-4771-A2F5-DAEA86046AEC}.CREBlazor|Any CPU.Build.0 = Release|Any CPU
 		{A6C4052E-B8BB-4771-A2F5-DAEA86046AEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A6C4052E-B8BB-4771-A2F5-DAEA86046AEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A6C4052E-B8BB-4771-A2F5-DAEA86046AEC}.Release|Any CPU.ActiveCfg = Release|Any CPU

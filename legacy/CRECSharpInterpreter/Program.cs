@@ -9,6 +9,7 @@ namespace CRECSharpInterpreter
 {
     public class Program
     {
+        #if !CREBLAZOR
         private static void Main(string[] args)
         {
             Environment.Debug = true;
@@ -351,5 +352,8 @@ namespace CRECSharpInterpreter
             if (Environment.Verbose && Environment.ShouldPrint)
                 System.Console.WriteLine(obj);
         }
+        #elif CREBLAZOR
+        private static void Main(string[] args) { }
+        #endif
     }
 }
