@@ -154,13 +154,6 @@ For some reason, using a grid just fixes this. Presumably the rendering happens 
     height: 50px;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-.var-value {
-    display: flex;
-    flex-direction: column;
 }
 
 #main-grid {

@@ -2,8 +2,8 @@
 
 namespace CREBlazorApp.Pages;
 
-public readonly record struct VarInfo(string ImageSource, string Value, int FontSize, bool IsBold, bool IsBlack, int Width, int Height,
-	string HorizontalAlignment, string VerticalAlignment)
+public record VarInfo(string ImageSource, string Value, int FontSize, bool IsBold, bool IsBlack, int PaddingTop, int PaddingBottom, int PaddingLeft,
+	int PaddingRight, string HorizontalAlignment, string VerticalAlignment)
 {
 	public static VarInfo New(Variable variable)
 	{
@@ -13,11 +13,13 @@ public readonly record struct VarInfo(string ImageSource, string Value, int Font
 		int fontSize = GetFontSize(value.Length, varTypeSlug);
 		bool isBold = GetIsBold(variable._VarType._Storage);
 		bool isBlack = GetIsBlack(variable._VarType._Storage);
-		int width = GetWidth(varTypeSlug);
-		int height = GetHeight(value.Length, varTypeSlug);
+		int paddingTop = GetPaddingTop();
+		int paddingBottom = GetPaddingBottom();
+		int paddingLeft = GetPaddingLeft();
+		int paddingRight = GetPaddingRight(varTypeSlug);
 		string horizontalAlignment = GetHorizontalAlignment(varTypeSlug);
 		string verticalAlignment = GetVerticalAlignment(value.Length, varTypeSlug);
-		return new(imageSource, value, fontSize, isBold, isBlack, width, height, horizontalAlignment, verticalAlignment);
+		return new(imageSource, value, fontSize, isBold, isBlack, paddingTop, paddingBottom, paddingLeft, paddingRight, horizontalAlignment, verticalAlignment);
 	}
 
 	public static int GetFontSize(int length, string varTypeSlug)
@@ -27,9 +29,12 @@ public readonly record struct VarInfo(string ImageSource, string Value, int Font
 			"char" => 16,
 			"int" or "double" when length <= 4 => 16,
 			"int" or "double" when length <= 5 => 12,
-			"int" or "double" => 8,
+			"int" or "double" when length <= 7 => 10,
+			"int" or "double" when length <= 10 => 8,
+			"int" or "double" => 7,
 			"string" when length <= 3 => 16,
 			"string" when length <= 4 => 12,
+			"string" when length <= 5 => 10,
 			"string" => 8,
 			_ when length <= 4 => 16,
 			_ when length <= 6 => 12,
@@ -40,19 +45,17 @@ public readonly record struct VarInfo(string ImageSource, string Value, int Font
 
 	public static bool GetIsBlack(VarType.Storage varTypeStorage) => varTypeStorage == VarType.Storage.Value;
 
-	public static int GetWidth(string varTypeSlug)
-		=> varTypeSlug switch
-		{
-			"string" => 45,
-			_ => 50
-		};
+	public static int GetPaddingTop() => 0;
 
-	public static int GetHeight(int length, string varTypeSlug)
+	public static int GetPaddingBottom() => 0;
+	
+	public static int GetPaddingLeft() => 0;
+	
+	public static int GetPaddingRight(string varTypeSlug)
 		=> varTypeSlug switch
 		{
-			"int" or "double" when length <= 5 => 20,
-			"int" or "double" => 15,
-			_ => 20
+			"string" => 7,
+			_ => 0
 		};
 
 	public static string GetHorizontalAlignment(string varTypeSlug)

@@ -24,19 +24,21 @@
 				>
 					<div class="var-container">
 						<img class="var-image" src="@varInfo.ImageSource"/>
-						<div class="var-value-container">
-							<label
-								class="var-value"
-								style="
-									font-size: @(varInfo.FontSize)px;
-									font-weight: @(varInfo.IsBold ? "bold" : "normal");
-									color: @(varInfo.IsBlack ? "black" : "white");
-									width: @(varInfo.Width)px;
-									height: @(varInfo.Height)px;
-									align-items: @varInfo.HorizontalAlignment;
-									justify-content: @varInfo.VerticalAlignment;
-								"
-							>@varInfo.Value</label>
+						<div
+							class="var-value-container"
+							style="
+								font-size: @(varInfo.FontSize)px;
+								font-weight: @(varInfo.IsBold ? "bold" : "normal");
+								color: @(varInfo.IsBlack ? "black" : "white");
+								padding-top: @(varInfo.PaddingTop)px;
+								padding-bottom: @(varInfo.PaddingBottom)px;
+								padding-left: @(varInfo.PaddingLeft)px;
+								padding-right: @(varInfo.PaddingRight)px;
+								align-items: @varInfo.HorizontalAlignment;
+								justify-content: @varInfo.VerticalAlignment;
+							"
+						>
+							<label>@varInfo.Value</label>
 						</div>
 					</div>
 					<label class="var-name">@stackVarInfo.Name</label>
@@ -83,19 +85,21 @@
 									VarInfo varInfo = (VarInfo)_heapVariables[index]!;
 									<div class="var-container">
 										<img class="var-image" src="@varInfo.ImageSource"/>
-										<div class="var-value-container">
-											<label
-												class="var-value"
-												style="
-													font-size: @(varInfo.FontSize)px;
-													font-weight: @(varInfo.IsBold ? "bold" : "normal");
-													color: @(varInfo.IsBlack ? "black" : "white");
-													width: @(varInfo.Width)px;
-													height: @(varInfo.Height)px;
-													align-items: @varInfo.HorizontalAlignment;
-													justify-content: @varInfo.VerticalAlignment;
-												"
-											>@varInfo.Value</label>
+										<div
+											class="var-value-container"
+											style="
+												font-size: @(varInfo.FontSize)px;
+												font-weight: @(varInfo.IsBold ? "bold" : "normal");
+												color: @(varInfo.IsBlack ? "black" : "white");
+												padding-top: @(varInfo.PaddingTop)px;
+												padding-bottom: @(varInfo.PaddingBottom)px;
+												padding-left: @(varInfo.PaddingLeft)px;
+												padding-right: @(varInfo.PaddingRight)px;
+												align-items: @varInfo.HorizontalAlignment;
+												justify-content: @varInfo.VerticalAlignment;
+											"
+										>
+											<label>@varInfo.Value</label>
 										</div>
 									</div>
 								}
