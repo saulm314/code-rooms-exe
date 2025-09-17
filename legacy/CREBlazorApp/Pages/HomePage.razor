@@ -261,6 +261,12 @@
 		return storedSave;
 	}
 
+	private async Task UpdateSaveAsync(Save save)
+	{
+		string saveJson = JsonConvert.SerializeObject(save);
+		await Js.SetLocal<string>("save", saveJson);
+	}
+
 	public void OnCompilePressed()
 	{
 		_compileButtonDisabled = true;
