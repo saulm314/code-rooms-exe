@@ -4,6 +4,7 @@
 @using CREBlazorApp.GeneratedCode
 @using CRECSharpInterpreter
 @using CRECSharpInterpreter.Levels
+@using Newtonsoft.Json
 @using Environment = CRECSharpInterpreter.Environment
 @using Variable = CRECSharpInterpreter.Variable
 
@@ -148,9 +149,10 @@
 				@for (int i = 1; i < _levels.Length; i++)
 				{
 					Level level = _levels[i];
+					LevelSave levelSave = _save.levelSaves[i];
 					<button class="level-button" disabled>
 						<div class="level-button-top-label">Level @level.id: @level.name</div>
-						<div class="level-button-bottom-label">@Utils.GetSpaces(8)@Utils.GetSpaces(level.id.ToString().Length)0/@level.maxStars ⭐</div>
+						<div class="level-button-bottom-label">@Utils.GetSpaces(8)@Utils.GetSpaces(level.id.ToString().Length)@levelSave.starsCollected/@level.maxStars ⭐</div>
 					</button>
 				}
 			</div>
@@ -194,12 +196,15 @@
 
 	public LevelManager? PLevelManager { get; private set; }
 
+	private Save _save = new();
+
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
 		PLevelManager = await LevelManagerHandler.NewLevelManager(Http);
 		_levels = PLevelManager.Levels;
 		LoadLevel(0);
+		_save = await GetSaveAsync();
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -219,6 +224,38 @@
 	{
 		PLevelManager!.LoadLevel(id, cycle);
 		_descriptionText = PLevelManager.GetLevel(id).Description ?? string.Empty;
+	}
+
+	private async Task<Save> GetSaveAsync()
+	{
+		string? storedSaveJson = await Js.GetLocal<string?>("save");
+		Save save;
+		string saveJson;
+		if (storedSaveJson == null)
+		{
+			save = new(_levels.Length);
+			saveJson = JsonConvert.SerializeObject(save);
+			await Js.SetLocal<string>("save", saveJson);
+			return save;
+		}
+		Save storedSave = JsonConvert.DeserializeObject<Save>(storedSaveJson)!;
+		if (storedSave.levelSaves.Length < _levels.Length)
+		{
+			save = new(_levels.Length);
+			storedSave.levelSaves.CopyTo(save.levelSaves, 0);
+			saveJson = JsonConvert.SerializeObject(save);
+			await Js.SetLocal<string>("save", saveJson);
+			return save;
+		}
+		if (storedSave.levelSaves.Length > _levels.Length)
+		{
+			save = new(_levels.Length);
+			Array.Copy(storedSave.levelSaves, save.levelSaves, save.levelSaves.Length);
+			saveJson = JsonConvert.SerializeObject(save);
+			await Js.SetLocal<string>("save", saveJson);
+			return save;
+		}
+		return storedSave;
 	}
 
 	public void OnCompilePressed()
