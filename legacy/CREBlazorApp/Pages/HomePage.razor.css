@@ -50,7 +50,7 @@ button:disabled {
     background-color: var(--global-background-color);
     width: 100vw;
     height: 100vh;
-    font-family: "cascadia mono";
+    font-family: "cascadia mono", monospace;
     font-size: 16px;
     color: var(--global-color);
     display: grid;
@@ -190,7 +190,8 @@ For some reason, using a grid just fixes this. Presumably the rendering happens 
     height: 100%;
     padding: 8px;
     scrollbar-width: thin;
-    font-family: verdana;
+    font-family: "segoe ui", helvetica, arial, sans-serif;
+    line-height: 1.5;
     text-wrap-mode: wrap;
     overflow-wrap: anywhere;
 }
