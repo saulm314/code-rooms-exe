@@ -15,6 +15,26 @@ def get_env(args):
     print(f"environment: {env}")
     return env
 
+def add_cs_sources(env):
+    if env == "local":
+        print("Removing existing generated code...")
+        shutil.rmtree(path("CREBlazorApp/GeneratedCode"), ignore_errors=True)
+    
+    print("Adding generated code...")
+    os.mkdir(path("CREBlazorApp/GeneratedCode"))
+    with open(path("CREBlazorApp/GeneratedCode/GeneratedImageSources.cs"), "x") as image_sources_cs:
+        image_sources_cs.write("""namespace CREBlazorApp.GeneratedCode;
+
+public static class GeneratedImageSources
+{
+    public static readonly string[] ImageSources =
+    [
+""")
+        for image_source in os.listdir(path("Files/Types")):
+            image_sources_cs.write(f"        \"{image_source}\",\n")
+        image_sources_cs.write("""    ];
+}""")
+
 def build(env):
     if env == "local":
         # in a live deployment, we don't need to remove these as we are already in a fresh environment
@@ -60,6 +80,7 @@ def run_web_server():
 
 if __name__ == "__main__":
     env = get_env(sys.argv)
+    add_cs_sources(env)
     build_resp = build(env)
     if not build_resp:
         sys.exit(1)

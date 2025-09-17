@@ -1,5 +1,6 @@
 ﻿@page "/"
 @inject IJSRuntime Js
+@using CREBlazorApp.GeneratedCode
 @using CRECSharpInterpreter
 @using Environment = CRECSharpInterpreter.Environment
 
@@ -165,19 +166,7 @@
 
 @code {
 	private const string _imageSourceDirectory = "Files/Types/";
-	private string[] _preloadedImageSources =
-	[
-		"bool.png",
-		"bool[].png",
-		"char.png",
-		"char[].png",
-		"double.png",
-		"double[].png",
-		"int.png",
-		"int[].png",
-		"string.png",
-		"string[].png"
-	];
+	private string[] _preloadedImageSources = GeneratedImageSources.ImageSources;
 	private List<StackVarInfo> _stackVariables = [];
 	private string _textEditorText = DefaultStrings.TextEditor;
 	private bool _textEditorDisabled = false;
