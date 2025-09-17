@@ -141,8 +141,13 @@
 	<div id="menu-container" class="variable-font-size">
 		<div id="level-select-container">
 			<div id="level-select-grid" class="variable-font-size">
-				@foreach (Level level in _levels)
+				@if (_levels.Length > 0)
 				{
+					<button class="level-button">@_levels[0].name</button>
+				}
+				@for (int i = 1; i < _levels.Length; i++)
+				{
+					Level level = _levels[i];
 					<button class="level-button" disabled>
 						<div class="level-button-top-label">Level @level.id: @level.name</div>
 						<div class="level-button-bottom-label">         0/@level.maxStars ⭐</div>
