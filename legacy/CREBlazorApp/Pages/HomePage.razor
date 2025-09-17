@@ -183,6 +183,7 @@
 		await base.OnAfterRenderAsync(firstRender);
 		if (firstRender)
 		{
+			await Js.AddNewlineIndentEventListener("text-editor");
 			await Js.AddTextEditorCurlyBraceEventListener("text-editor");
 			await Js.AddTextEditorTabEventListener("text-editor");
 		}

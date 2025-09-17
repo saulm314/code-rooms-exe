@@ -3,6 +3,34 @@ function scrollToBottom(elementId) {
     element.scrollTop = element.scrollHeight;
 }
 
+function addNewlineIndentEventListener(textEditorId) {
+    const textEditor = document.getElementById(textEditorId);
+
+    textEditor.addEventListener('keydown', function(event) {
+        if (event.key !== 'Enter')
+            return;
+        event.preventDefault();
+        const start = this.selectionStart;
+        const end = this.selectionEnd;
+        const previousNewlineIndex = this.value.lastIndexOf('\n', start - 1);
+        let spaceCount = 0;
+        for (let i = previousNewlineIndex + 1; i < start; i++) {
+            if (this.value[i] !== ' ')
+                break;
+            spaceCount++;
+        }
+        let curlyBraces = start > 0 && this.value[start - 1] === '{' && end < this.value.length && this.value[end] === '}';
+        if (!curlyBraces) {
+            this.value = this.value.substring(0, start) + '\n' + ' '.repeat(spaceCount) + this.value.substring(end);
+            this.selectionStart = this.selectionEnd = start + spaceCount + 1;
+        }
+        else {
+            this.value = this.value.substring(0, start) + '\n' + ' '.repeat(spaceCount + 4) + '\n' + ' '.repeat(spaceCount) + this.value.substring(end);
+            this.selectionStart = this.selectionEnd = start + spaceCount + 5;
+        }
+    });
+}
+
 function addTextEditorCurlyBraceEventListener(textEditorId) {
     const textEditor = document.getElementById(textEditorId);
 
