@@ -5,6 +5,11 @@
 
 <PageTitle>CodeRooms.exe</PageTitle>
 
+@foreach (string imageSource in _preloadedImageSources)
+{
+	<link rel="preload" as="image" href="@(_imageSourceDirectory + imageSource)"/>
+}
+
 <div id="background-grid" class="variable-font-size">
 <div id="foreground">
 
@@ -159,6 +164,20 @@
 </div>
 
 @code {
+	private const string _imageSourceDirectory = "Files/Types/";
+	private string[] _preloadedImageSources =
+	[
+		"bool.png",
+		"bool[].png",
+		"char.png",
+		"char[].png",
+		"double.png",
+		"double[].png",
+		"int.png",
+		"int[].png",
+		"string.png",
+		"string[].png"
+	];
 	private List<StackVarInfo> _stackVariables = [];
 	private string _textEditorText = DefaultStrings.TextEditor;
 	private bool _textEditorDisabled = false;
