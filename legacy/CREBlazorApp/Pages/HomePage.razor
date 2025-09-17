@@ -144,15 +144,17 @@
 			<div id="level-select-grid" class="variable-font-size">
 				@if (_levels.Length > 0)
 				{
-					<button class="level-button">@_levels[0].name</button>
+					<button class="level-button" @onclick="() => OnLevelPressed(0)">@_levels[0].name</button>
 				}
 				@for (int i = 1; i < _levels.Length; i++)
 				{
 					Level level = _levels[i];
 					LevelSave levelSave = _save.levelSaves[i];
-					<button class="level-button" disabled="@(i > 1 && _save.levelSaves[i - 1].starsCollected < 1)">
+					<button class="level-button" @onclick="() => OnLevelPressed(level.id)" disabled="@(i > 1 && _save.levelSaves[i - 1].starsCollected < 1)">
 						<div class="level-button-top-label">Level @level.id: @level.name</div>
-						<div class="level-button-bottom-label">@Utils.GetSpaces(8)@Utils.GetSpaces(level.id.ToString().Length)@levelSave.starsCollected/@level.maxStars ⭐</div>
+						<div class="level-button-bottom-label">
+							@Utils.GetSpaces(8)@Utils.GetSpaces(level.id.ToString().Length)@levelSave.starsCollected/@level.maxStars ⭐
+						</div>
 					</button>
 				}
 			</div>
@@ -332,6 +334,13 @@
 		_leftButtonDisabled = !Frame.CanMoveLeft;
 		_rightButtonDisabled = !Frame.CanMoveRight;
 		DisplayFrame();
+	}
+
+	public void OnLevelPressed(int level)
+	{
+		_textEditorText = string.Empty;
+		OnEditPressed();
+		LoadLevel(level);
 	}
 
 	public void OnSyntaxPressed()
