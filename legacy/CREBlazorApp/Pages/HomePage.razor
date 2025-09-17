@@ -181,6 +181,8 @@
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		await base.OnAfterRenderAsync(firstRender);
+		if (firstRender)
+			await Js.AddTextEditorTabEventListener("text-editor");
 		await Js.ScrollToBottom("stack-contents-scroll-container");
 		await Js.ScrollToBottom("heap-contents-scroll-container");
 	}
