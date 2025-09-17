@@ -22,6 +22,8 @@ def add_cs_sources(env):
     
     print("Adding generated code...")
     os.mkdir(path("CREBlazorApp/GeneratedCode"))
+
+    print("Adding GeneratedImageSources.cs...")
     with open(path("CREBlazorApp/GeneratedCode/GeneratedImageSources.cs"), "x") as image_sources_cs:
         image_sources_cs.write("""namespace CREBlazorApp.GeneratedCode;
 
@@ -34,6 +36,24 @@ public static class GeneratedImageSources
             image_sources_cs.write(f"        \"{image_source}\",\n")
         image_sources_cs.write("""    ];
 }""")
+    
+    print("Adding GeneratedLevels.cs...")
+    with open(path("CREBlazorApp/GeneratedCode/GeneratedLevels.cs"), "x") as generated_levels_cs:
+        files = os.listdir(path("Files/Levels"))
+        generated_levels_cs.write("""namespace CREBlazorApp.GeneratedCode;
+
+public static class GeneratedLevels
+{
+    public static readonly string[] JsonFiles =
+    [
+""")
+        for file in files:
+            if not(file.endswith(".json")):
+                continue
+            generated_levels_cs.write(f"        \"{file}\",\n")
+        generated_levels_cs.write("""    ];
+}""")
+        
 
 def build(env):
     if env == "local":
