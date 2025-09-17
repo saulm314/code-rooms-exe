@@ -342,6 +342,10 @@ For some reason, using a grid just fixes this. Presumably the rendering happens 
     padding: 8px;
 }
 
+.level-button-bottom-label {
+    white-space-collapse: preserve;
+}
+
 #menu-bottom-bar-grid {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;

@@ -143,8 +143,10 @@
 			<div id="level-select-grid" class="variable-font-size">
 				@foreach (Level level in _levels)
 				{
-					<button class="level-button" disabled>Level @level.id: @level.name
-					         0/@level.maxStars ⭐</button>
+					<button class="level-button" disabled>
+						<div class="level-button-top-label">Level @level.id: @level.name</div>
+						<div class="level-button-bottom-label">         0/@level.maxStars ⭐</div>
+					</button>
 				}
 			</div>
 		</div>
