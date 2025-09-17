@@ -28,6 +28,7 @@ function addNewlineIndentEventListener(textEditorId) {
             this.value = this.value.substring(0, start) + '\n' + ' '.repeat(spaceCount + 4) + '\n' + ' '.repeat(spaceCount) + this.value.substring(end);
             this.selectionStart = this.selectionEnd = start + spaceCount + 5;
         }
+        textEditor.scrollLeft = 0;
     });
 }
 
