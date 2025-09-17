@@ -3,6 +3,20 @@ function scrollToBottom(elementId) {
     element.scrollTop = element.scrollHeight;
 }
 
+function addTextEditorCurlyBraceEventListener(textEditorId) {
+    const textEditor = document.getElementById(textEditorId);
+
+    textEditor.addEventListener('keydown', function(event) {
+        if (event.key !== '{')
+            return;
+        event.preventDefault();
+        const start = this.selectionStart;
+        const end = this.selectionEnd;
+        this.value = this.value.substring(0, start) + '{}' + this.value.substring(end);
+        this.selectionStart = this.selectionEnd = start + 1;
+    });
+}
+
 function addTextEditorTabEventListener(textEditorId) {
     const textEditor = document.getElementById(textEditorId);
 

@@ -182,7 +182,10 @@
 	{
 		await base.OnAfterRenderAsync(firstRender);
 		if (firstRender)
+		{
+			await Js.AddTextEditorCurlyBraceEventListener("text-editor");
 			await Js.AddTextEditorTabEventListener("text-editor");
+		}
 		await Js.ScrollToBottom("stack-contents-scroll-container");
 		await Js.ScrollToBottom("heap-contents-scroll-container");
 	}

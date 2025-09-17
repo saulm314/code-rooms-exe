@@ -8,4 +8,7 @@ public static class JsUtils
 
     public static async Task AddTextEditorTabEventListener(this IJSRuntime js, string textEditorId)
         => await js.InvokeVoidAsync("addTextEditorTabEventListener", textEditorId);
+
+    public static async Task AddTextEditorCurlyBraceEventListener(this IJSRuntime js, string textEditorId)
+        => await js.InvokeVoidAsync("addTextEditorCurlyBraceEventListener", textEditorId);
 }
