@@ -150,7 +150,7 @@
 					Level level = _levels[i];
 					<button class="level-button" disabled>
 						<div class="level-button-top-label">Level @level.id: @level.name</div>
-						<div class="level-button-bottom-label">         0/@level.maxStars ⭐</div>
+						<div class="level-button-bottom-label">@Utils.GetSpaces(8)@Utils.GetSpaces(level.id.ToString().Length)0/@level.maxStars ⭐</div>
 					</button>
 				}
 			</div>
