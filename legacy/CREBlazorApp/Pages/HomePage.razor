@@ -160,7 +160,7 @@
 		<div id="menu-bottom-bar-grid">
 			<div id="total-stars-display-container" class="variable-font-size">
 				<label class="total-stars-label">Total:</label>
-				<label id="total-stars-label" class="total-stars-label">0/0 ⭐</label>
+				<label id="total-stars-label" class="total-stars-label">0/@_totalStarsAvailable ⭐</label>
 			</div>
 			<button id="syntax-button" @onclick="OnSyntaxPressed" disabled="@_syntaxButtonDisabled">Current Syntax: @_syntax</button>
 			<button id="solution-button" disabled>[WIP] See Solution</button>
@@ -188,6 +188,8 @@
 	private bool _syntaxButtonDisabled = false;
 	private string _outputText = string.Empty;
 	private Level[] _levels = [];
+	private Save _save = new();
+	private int _totalStarsAvailable = 0;
 	private string _syntax = "C#";
 
 	public Interpreter? PInterpreter { get; private set; }
@@ -196,13 +198,12 @@
 
 	public LevelManager? PLevelManager { get; private set; }
 
-	private Save _save = new();
-
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
 		PLevelManager = await LevelManagerHandler.NewLevelManager(Http);
 		_levels = PLevelManager.Levels;
+		_totalStarsAvailable = _levels.Sum(level => level.maxStars);
 		LoadLevel(0);
 		_save = await GetSaveAsync();
 	}
