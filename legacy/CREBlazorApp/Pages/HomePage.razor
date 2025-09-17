@@ -199,6 +199,7 @@
 		await base.OnInitializedAsync();
 		PLevelManager = await LevelManagerHandler.NewLevelManager(Http);
 		_levels = PLevelManager.Levels;
+		LoadLevel(0);
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -212,6 +213,12 @@
 		}
 		await Js.ScrollToBottom("stack-contents-scroll-container");
 		await Js.ScrollToBottom("heap-contents-scroll-container");
+	}
+
+	private void LoadLevel(int id, int cycle = 0)
+	{
+		PLevelManager!.LoadLevel(id, cycle);
+		_descriptionText = PLevelManager.GetLevel(id).Description ?? string.Empty;
 	}
 
 	public void OnCompilePressed()
