@@ -69,7 +69,7 @@
 
 <div id="main-grid">
 	<div id="text-editor-container">
-		<textarea id="text-editor" @bind="_textEditorText" disabled="@_textEditorDisabled"/>
+		<textarea id="text-editor" @bind="_textEditorText" disabled="@(_textEditorDisabled || _viewingSolution)"/>
 	</div>
 	<div id="description-container">
 		<textarea id="description" @bind="_descriptionText" readonly></textarea>
@@ -288,6 +288,8 @@
 			return;
 		if (string.IsNullOrWhiteSpace(_textEditorText))
 			return;
+		if (_viewingSolution)
+			return;
 		if (_save.levelSaves[level].solution != string.Empty && !_save.levelSaves[level].hasError)
 			return;
 		_save.levelSaves[level].solution = _textEditorText;
@@ -302,6 +304,8 @@
 			return;
 		if (string.IsNullOrWhiteSpace(_textEditorText))
 			return;
+		if (_viewingSolution)
+			return;
 		if (_save.levelSaves[level].solution != string.Empty && _save.levelSaves[level].starsCollected != 0)
 			return;
 		_save.levelSaves[level].solution = _textEditorText;
@@ -315,6 +319,8 @@
 		if (level == 0)
 			return;
 		if (string.IsNullOrWhiteSpace(_textEditorText))
+			return;
+		if (_viewingSolution)
 			return;
 		if (_save.levelSaves[level].starsCollected > _minStars)
 			return;
@@ -445,6 +451,7 @@
 	{
 		_textEditorText = level == 0 ? DefaultStrings.TextEditor : _save.levelSaves[level].solution;
 		CancelReset();
+		_viewingSolution = false;
 		OnEditPressed();
 		LoadLevel(level);
 	}
@@ -520,7 +527,13 @@
 
 	public void OnActualSolutionPressed()
 	{
-		System.Console.WriteLine("Solution pressed");
+		if (_viewingSolution)
+		{
+			_viewingSolution = false;
+			OnLevelPressed(_currentLevel);
+			return;
+		}
+		_viewingSolution = true;
 	}
 
 	public void OutputWriteLine(object message) => _outputText += message + "\n";
