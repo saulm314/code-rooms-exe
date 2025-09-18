@@ -328,6 +328,7 @@
 		_save.levelSaves[level].solution = _textEditorText;
 		_save.levelSaves[level].hasError = hasError;
 		await UpdateSaveAsync(_save);
+		_totalStarsCollected = _save.levelSaves.Sum(levelSave => levelSave.starsCollected);
 	}
 
 	private async Task ResetSaveAsync()
@@ -528,6 +529,7 @@
 
 	public void OnActualSolutionPressed()
 	{
+		OnEditPressed();
 		if (_viewingSolution)
 		{
 			_viewingSolution = false;
