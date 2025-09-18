@@ -146,6 +146,10 @@ button:disabled {
     flex-direction: column;
 }
 
+.var-name {
+    padding-top: 4px;
+}
+
 #main-grid {
     display: grid;
     grid-template-columns: var(--heap-idecontrols-width) 1fr 1fr;

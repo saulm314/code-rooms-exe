@@ -51,7 +51,7 @@
 							<label>@varInfo.Value</label>
 						</div>
 					</div>
-					<label class="var-name">@stackVarInfo.Name</label>
+					<label class="var-name" style="font-size: @(stackVarInfo.FontSize)px;">@stackVarInfo.Name</label>
 				</div>
 				<div
 					class="stack-separator"
@@ -583,7 +583,8 @@
 		}
 	}
 
-	private void PushToStack(Variable variable, string separatorColor) => _stackVariables.Add(new(separatorColor, VarInfo.New(variable), variable.Name!));
+	private void PushToStack(Variable variable, string separatorColor)
+	=> _stackVariables.Add(new(separatorColor, VarInfo.New(variable), variable.Name!, StackVarInfo.GetFontSize(variable.Name!.Length)));
 
 	private void ClearStack() => _stackVariables.Clear();
 
