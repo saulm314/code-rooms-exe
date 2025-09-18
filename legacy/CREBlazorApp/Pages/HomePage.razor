@@ -382,7 +382,7 @@
 
 	public void OnLevelPressed(int level)
 	{
-		_textEditorText = string.Empty;
+		_textEditorText = level == 0 ? DefaultStrings.TextEditor : string.Empty;
 		OnEditPressed();
 		LoadLevel(level);
 	}
