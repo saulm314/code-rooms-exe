@@ -1,3 +1,8 @@
+function scrollToTop(elementId) {
+    const element = document.getElementById(elementId);
+    element.scrollTop = 0;
+}
+
 function scrollToBottom(elementId) {
     const element = document.getElementById(elementId);
     element.scrollTop = element.scrollHeight;

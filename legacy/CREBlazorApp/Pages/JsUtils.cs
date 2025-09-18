@@ -20,6 +20,8 @@ public static class JsUtils
 
     public static async Task ClearSession(this IJSRuntime js) => await js.InvokeVoidAsync("sessionStorage.clear");
 
+    public static async Task ScrollToTop(this IJSRuntime js, string elementId) => await js.InvokeVoidAsync("scrollToTop", elementId);
+
     public static async Task ScrollToBottom(this IJSRuntime js, string elementId) => await js.InvokeVoidAsync("scrollToBottom", elementId);
 
     public static async Task AddNewlineIndentEventListener(this IJSRuntime js, string textEditorId)
