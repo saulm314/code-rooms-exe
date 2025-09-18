@@ -150,11 +150,10 @@
 				{
 					Level level = _levels[i];
 					LevelSave levelSave = _save.levelSaves[i];
+					string blanks = Utils.GetSpaces(8 + level.id.ToString().Length);
 					<button class="level-button" @onclick="() => OnLevelPressed(level.id)" disabled="@(i > 1 && _save.levelSaves[i - 1].starsCollected < 1)">
-						<div class="level-button-top-label">Level @level.id: @level.name</div>
-						<div class="level-button-bottom-label">
-							@Utils.GetSpaces(8)@Utils.GetSpaces(level.id.ToString().Length)@levelSave.starsCollected/@level.maxStars ⭐
-						</div>
+						<div class="level-button-label">Level @level.id: @level.name</div>
+						<div class="level-button-label">@blanks@levelSave.starsCollected/@level.maxStars ⭐</div>
 					</button>
 				}
 			</div>
