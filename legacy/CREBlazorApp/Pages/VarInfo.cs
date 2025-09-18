@@ -10,6 +10,8 @@ public record VarInfo(string ImageSource, string Value, int FontSize, bool IsBol
 		string varTypeSlug = variable._VarType!.Slug;
 		string imageSource = $"Files/Types/{varTypeSlug}.png";
 		string value = variable.ValueAsString;
+		if (varTypeSlug == "double" && value.Length > 7)
+			value = value[..7];
 		int fontSize = GetFontSize(value.Length, varTypeSlug);
 		bool isBold = GetIsBold(variable._VarType._Storage);
 		bool isBlack = GetIsBlack(variable._VarType._Storage);
