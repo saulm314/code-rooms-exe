@@ -39,7 +39,7 @@ public static class GeneratedImageSources
     
     print("Adding GeneratedLevels.cs...")
     with open(path("CREBlazorApp/GeneratedCode/GeneratedLevels.cs"), "x") as generated_levels_cs:
-        files = os.listdir(path("Files/Levels"))
+        files = sorted(os.listdir(path("Files/Levels")))
         generated_levels_cs.write("""namespace CREBlazorApp.GeneratedCode;
 
 public static class GeneratedLevels
