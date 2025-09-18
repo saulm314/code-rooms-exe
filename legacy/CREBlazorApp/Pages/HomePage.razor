@@ -441,7 +441,10 @@
 		_currentCycle++;
 		if (_currentCycle >= PLevelManager!.GetCycleCount())
 		{
-			OutputWriteLine($"All passed with {_minStars} stars; next level unlocked");
+			if (!_viewingSolution)
+				OutputWriteLine($"All passed with {_minStars} stars; next level unlocked");
+			else
+				OutputWriteLine($"All passed with {_minStars} stars");
 			_ = UpdateSolutionIfEqualOrGreaterStarsAsync();
 			return;
 		}
@@ -539,6 +542,7 @@
 			return;
 		}
 		_viewingSolution = true;
+		_textEditorText = _levels[_currentLevel].Solution!;
 	}
 
 	public void OutputWriteLine(object message) => _outputText += message + "\n";

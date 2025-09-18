@@ -16,6 +16,8 @@ public static class LevelManagerHandler
             string jsonStr = await http.GetStringAsync(LevelDirectory + GeneratedLevels.JsonFiles[i]);
             levels[i] = JsonConvert.DeserializeObject<Level>(jsonStr)!;
             levels[i].Description = await http.GetStringAsync(LevelDirectory + levels[i].slug + ".txt");
+            if (i > 0)
+                levels[i].Solution = await http.GetStringAsync(LevelDirectory + levels[i].slug + ".cs");
         }
         return new(levels);
     }
