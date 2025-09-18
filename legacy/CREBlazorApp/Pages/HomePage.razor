@@ -329,12 +329,14 @@
 		_save.levelSaves[level].hasError = hasError;
 		await UpdateSaveAsync(_save);
 		_totalStarsCollected = _save.levelSaves.Sum(levelSave => levelSave.starsCollected);
+		StateHasChanged();
 	}
 
 	private async Task ResetSaveAsync()
 	{
 		await Js.RemoveLocal("save");
 		_save = await GetSaveAsync();
+		_totalStarsCollected = 0;
 		StateHasChanged();
 	}
 
