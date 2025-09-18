@@ -69,7 +69,7 @@
 
 <div id="main-grid">
 	<div id="text-editor-container">
-		<textarea id="text-editor" @bind="_textEditorText" disabled="@(_textEditorDisabled || _viewingSolution)"/>
+		<textarea id="text-editor" @bind="_textEditorText" disabled="@(_textEditorDisabled || _viewingSolution)" spellcheck="false"/>
 	</div>
 	<div id="description-container">
 		<textarea id="description" @bind="_descriptionText" readonly></textarea>

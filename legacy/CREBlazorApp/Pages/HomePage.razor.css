@@ -58,25 +58,15 @@ button:disabled {
     grid-template-rows: 100vh;
 }
 
-/*
-We use a grid here even though a flex should in theory be perfectly sufficient
-However, with a flex, the ".stack-container width: max-content" and the
-    ".stack-contents-container overflow-x: auto" lines get rendered in the wrong order,
-and as a result if the width of the content ends up somewhere between the minimum and maximum stack width values,
-then "overflow-x: auto" runs first and it displays a horizontal scrollbar, but then "width: max-content" runs second
-and the appropriate width is applied. So even though the content fits within the div, an empty scrollbar is also displayed.
-For some reason, using a grid just fixes this. Presumably the rendering happens over multiple passes or something.
-*/
 #foreground {
     display: grid;
-    grid-template-columns: max-content 1fr;
+    grid-template-columns: 130px 1fr;
     grid-template-rows: 100%;
 }
 
 #stack-container {
     min-width: var(--stack-min-width);
     max-width: var(--stack-max-width);
-    width: max-content;
     display: flex;
     flex-direction: column;
 }
