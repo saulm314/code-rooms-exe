@@ -133,7 +133,7 @@
 				<button class="arrow-button" @onclick="OnLeftPressed" disabled="@_leftButtonDisabled">&lt;</button>
 				<button class="arrow-button" @onclick="OnRightPressed" disabled="@_rightButtonDisabled">&gt;</button>
 			</div>
-			<button id="next-button" disabled>Next</button>
+			<button id="next-button" @onclick="OnNextPressed" disabled="@_nextButtonDisabled">Next</button>
 		</div>
 	</div>
 	<div id="output-container">
@@ -187,6 +187,7 @@
 	private bool _runButtonDisabled = true;
 	private bool _leftButtonDisabled = true;
 	private bool _rightButtonDisabled = true;
+	private bool _nextButtonDisabled = true;
 	private bool _syntaxButtonDisabled = false;
 	private string _outputText = string.Empty;
 	private Level[] _levels = [];
@@ -269,6 +270,8 @@
 		await Js.SetLocal<string>("save", saveJson);
 	}
 
+	private int _currentCycle = 0;
+	private int _minStars = int.MaxValue;
 	public void OnCompilePressed()
 	{
 		_compileButtonDisabled = true;
@@ -278,6 +281,7 @@
 		_textEditorDisabled = true;
 		OutputClear();
 		OutputWriteLine("Compiling...");
+		LoadLevel(PLevelManager!.CurrentLevel, _currentCycle);
 		try
 		{
 			PInterpreter = new(_textEditorText);
@@ -303,11 +307,13 @@
 		_runButtonDisabled = true;
 		_leftButtonDisabled = true;
 		_rightButtonDisabled = true;
+		_nextButtonDisabled = true;
 		_syntaxButtonDisabled = false;
 		_textEditorDisabled = false;
 		ClearStack();
 		ClearHeap();
-
+		_currentCycle = 0;
+		_minStars = int.MaxValue;
 	}
 
 	public void OnRunPressed()
@@ -334,6 +340,42 @@
 		_leftButtonDisabled = !Frame.CanMoveLeft;
 		_rightButtonDisabled = !Frame.CanMoveRight;
 		DisplayFrame();
+
+		if (Frame.CanMoveRight)
+			return;
+		ILevelTest levelTest = PLevelManager!.GetLevelTest();
+		int starsAchieved = levelTest.StarsAchieved(_currentCycle);
+		if (starsAchieved > 0)
+		{
+			OutputWriteLine($"Pass with {starsAchieved} stars");
+			_nextButtonDisabled = false;
+			_minStars = starsAchieved < _minStars ? starsAchieved : _minStars;
+			return;
+		}
+		if (PLevelManager.CurrentLevel != 0)
+			OutputWriteLine("Fail");
+	}
+
+	public void OnNextPressed()
+	{
+		_nextButtonDisabled = true;
+		_leftButtonDisabled = true;
+		_currentCycle++;
+		if (_currentCycle >= PLevelManager!.GetCycleCount())
+		{
+			OutputWriteLine($"All passed with {_minStars} stars; next level unlocked");
+			int current = PLevelManager.CurrentLevel;
+			if (_save.levelSaves[current].starsCollected <= _minStars)
+			{
+				_save.levelSaves[current].starsCollected = _minStars;
+				_save.levelSaves[current].solution = _textEditorText;
+				_ = UpdateSaveAsync(_save);
+			}
+			return;
+		}
+		OutputWriteLine("Running next...");
+		OnCompilePressed();
+		OnRunPressed();
 	}
 
 	public void OnLevelPressed(int level)
