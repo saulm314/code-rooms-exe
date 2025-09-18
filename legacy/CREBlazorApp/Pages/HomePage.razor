@@ -178,7 +178,7 @@
 	private List<StackVarInfo> _stackVariables = [];
 	private string _textEditorText = DefaultStrings.TextEditor;
 	private bool _textEditorDisabled = false;
-	private string _descriptionText = DefaultStrings.Description;
+	private string _descriptionText = string.Empty;
 	private int _heapCapacity = 50;
 	private List<VarInfo?> _heapVariables = [];
 	private bool _compileButtonDisabled = false;
@@ -204,6 +204,9 @@
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
+		if (Http.DefaultRequestHeaders.CacheControl == null)
+			Http.DefaultRequestHeaders.CacheControl = new();
+		Http.DefaultRequestHeaders.CacheControl.NoCache = true;
 		PLevelManager = await LevelManagerHandler.NewLevelManager(Http);
 		_levels = PLevelManager.Levels;
 		_totalStarsAvailable = _levels.Sum(level => level.maxStars);
