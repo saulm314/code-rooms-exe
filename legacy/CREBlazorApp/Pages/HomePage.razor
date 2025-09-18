@@ -255,15 +255,11 @@
 			await Js.SetLocal<string>("save", saveJson);
 			return save;
 		}
-		if (storedSave.levelSaves.Length > _levels.Length)
-		{
-			save = new(_levels.Length);
-			Array.Copy(storedSave.levelSaves, save.levelSaves, save.levelSaves.Length);
-			saveJson = JsonConvert.SerializeObject(save);
-			await Js.SetLocal<string>("save", saveJson);
-			return save;
-		}
-		return storedSave;
+		save = new(_levels.Length);
+		Array.Copy(storedSave.levelSaves, save.levelSaves, save.levelSaves.Length);
+		saveJson = JsonConvert.SerializeObject(save);
+		await Js.SetLocal<string>("save", saveJson);
+		return save;
 	}
 
 	private async Task UpdateSaveAsync(Save save)
@@ -275,6 +271,10 @@
 	private async Task UpdateSolutionIfEmptyOrHasErrorAsync(bool hasError = true)
 	{
 		int level = PLevelManager!.CurrentLevel;
+		if (level == 0)
+			return;
+		if (string.IsNullOrWhiteSpace(_textEditorText))
+			return;
 		if (_save.levelSaves[level].solution != string.Empty && !_save.levelSaves[level].hasError)
 			return;
 		_save.levelSaves[level].solution = _textEditorText;
@@ -282,12 +282,32 @@
 		await UpdateSaveAsync(_save);
 	}
 
-	private async Task UpdateSolutionIfEmptyOrZeroStarsAsync()
+	private async Task UpdateSolutionIfEmptyOrZeroStarsAsync(bool hasError = false)
 	{
 		int level = PLevelManager!.CurrentLevel;
+		if (level == 0)
+			return;
+		if (string.IsNullOrWhiteSpace(_textEditorText))
+			return;
 		if (_save.levelSaves[level].solution != string.Empty && _save.levelSaves[level].starsCollected != 0)
 			return;
 		_save.levelSaves[level].solution = _textEditorText;
+		_save.levelSaves[level].hasError = hasError;
+		await UpdateSaveAsync(_save);
+	}
+
+	private async Task UpdateSolutionIfEqualOrGreaterStarsAsync(bool hasError = false)
+	{
+		int level = PLevelManager!.CurrentLevel;
+		if (level == 0)
+			return;
+		if (string.IsNullOrWhiteSpace(_textEditorText))
+			return;
+		if (_save.levelSaves[level].starsCollected > _minStars)
+			return;
+		_save.levelSaves[level].starsCollected = _minStars;
+		_save.levelSaves[level].solution = _textEditorText;
+		_save.levelSaves[level].hasError = hasError;
 		await UpdateSaveAsync(_save);
 	}
 
@@ -388,13 +408,7 @@
 		if (_currentCycle >= PLevelManager!.GetCycleCount())
 		{
 			OutputWriteLine($"All passed with {_minStars} stars; next level unlocked");
-			int current = PLevelManager.CurrentLevel;
-			if (_save.levelSaves[current].starsCollected <= _minStars)
-			{
-				_save.levelSaves[current].starsCollected = _minStars;
-				_save.levelSaves[current].solution = _textEditorText;
-				_ = UpdateSaveAsync(_save);
-			}
+			_ = UpdateSolutionIfEqualOrGreaterStarsAsync();
 			return;
 		}
 		OutputWriteLine("Running next...");
