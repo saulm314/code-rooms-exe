@@ -272,6 +272,25 @@
 		await Js.SetLocal<string>("save", saveJson);
 	}
 
+	private async Task UpdateSolutionIfEmptyOrHasErrorAsync(bool hasError = true)
+	{
+		int level = PLevelManager!.CurrentLevel;
+		if (_save.levelSaves[level].solution != string.Empty && !_save.levelSaves[level].hasError)
+			return;
+		_save.levelSaves[level].solution = _textEditorText;
+		_save.levelSaves[level].hasError = hasError;
+		await UpdateSaveAsync(_save);
+	}
+
+	private async Task UpdateSolutionIfEmptyOrZeroStarsAsync()
+	{
+		int level = PLevelManager!.CurrentLevel;
+		if (_save.levelSaves[level].solution != string.Empty && _save.levelSaves[level].starsCollected != 0)
+			return;
+		_save.levelSaves[level].solution = _textEditorText;
+		await UpdateSaveAsync(_save);
+	}
+
 	private int _currentCycle = 0;
 	private int _minStars = int.MaxValue;
 	public void OnCompilePressed()
@@ -288,17 +307,20 @@
 		{
 			PInterpreter = new(_textEditorText);
 			OutputWriteLine("Compilation successful");
+			_ = UpdateSolutionIfEmptyOrZeroStarsAsync();
 		}
 		catch (InterpreterException exception)
 		{
 			OutputWriteLine(exception.Message);
 			_runButtonDisabled = true;
+			_ = UpdateSolutionIfEmptyOrHasErrorAsync();
 		}
 		catch (Exception exception)
 		{
 			OutputWriteLine("Error, possibly internal:");
 			OutputWriteLine(exception);
 			_runButtonDisabled = true;
+			_ = UpdateSolutionIfEmptyOrHasErrorAsync();
 		}
 	}
 
