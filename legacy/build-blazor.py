@@ -44,16 +44,42 @@ public static class GeneratedImageSources
 
 public static class GeneratedLevels
 {
-    public static readonly string[] JsonFiles =
+    public static readonly string[] JsonLevels =
     [
 """)
         for file in files:
             if not(file.endswith(".json")):
                 continue
-            generated_levels_cs.write(f"        \"{file}\",\n")
+            generated_levels_cs.write('"""\n')
+            with open(path(f"Files/Levels/{file}")) as json_level:
+                generated_levels_cs.write(json_level.read())
+            generated_levels_cs.write('\n""",\n')
         generated_levels_cs.write("""    ];
-}""")
-        
+
+    public static readonly string[] Descriptions =
+    [
+""")
+        for file in files:
+            if not(file.endswith(".txt")):
+                continue
+            generated_levels_cs.write('"""\n')
+            with open(path(f"Files/Levels/{file}")) as description:
+                generated_levels_cs.write(description.read())
+            generated_levels_cs.write('\n""",\n')
+        generated_levels_cs.write("""    ];
+
+    public static readonly string[] Solutions =
+    [
+""")
+        for file in files:
+            if not(file.endswith(".cs")):
+                continue
+            generated_levels_cs.write('"""\n')
+            with open(path(f"Files/Levels/{file}")) as solution:
+                generated_levels_cs.write(solution.read())
+            generated_levels_cs.write('\n""",\n')
+        generated_levels_cs.write("""    ];
+}""")  
 
 def build(env):
     if env == "local":

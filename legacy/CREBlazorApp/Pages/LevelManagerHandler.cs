@@ -6,18 +6,14 @@ namespace CREBlazorApp.Pages;
 
 public static class LevelManagerHandler
 {
-    public const string LevelDirectory = "Files/Levels/";
-
-    public static async Task<LevelManager> NewLevelManager(HttpClient http)
+    public static LevelManager NewLevelManager()
     {
-        Level[] levels = new Level[GeneratedLevels.JsonFiles.Length];
+        Level[] levels = new Level[GeneratedLevels.JsonLevels.Length];
         for (int i = 0; i < levels.Length; i++)
         {
-            string jsonStr = await http.GetStringAsync(LevelDirectory + GeneratedLevels.JsonFiles[i]);
-            levels[i] = JsonConvert.DeserializeObject<Level>(jsonStr)!;
-            levels[i].Description = await http.GetStringAsync(LevelDirectory + levels[i].slug + ".txt");
-            if (i > 0)
-                levels[i].Solution = await http.GetStringAsync(LevelDirectory + levels[i].slug + ".cs");
+            levels[i] = JsonConvert.DeserializeObject<Level>(GeneratedLevels.JsonLevels[i])!;
+            levels[i].Description = GeneratedLevels.Descriptions[i];
+            levels[i].Solution = GeneratedLevels.Solutions[i];
         }
         return new(levels);
     }
