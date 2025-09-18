@@ -164,7 +164,13 @@
 				<label id="total-stars-label" class="total-stars-label">@_totalStarsCollected/@_totalStarsAvailable ⭐</label>
 			</div>
 			<button id="syntax-button" @onclick="OnSyntaxPressed" disabled="@_syntaxButtonDisabled">Current Syntax: @_syntax</button>
-			<button id="solution-button" @onclick="OnSolutionPressed" style="--background-color: @_solutionButtonColor;">@_solutionButtonText</button>
+			<button
+				id="solution-button"
+				@onclick="OnSolutionPressed"
+				style="--background-color: @(_currentLevel == 0 ? _solutionButtonResetColor : _solutionButtonSolutionColor);"
+			>
+				@(_currentLevel == 0 ? (_resetInitiated ? "Cancel" : "Reset Progress") : (_viewingSolution ? "Back" : "See Solution"))
+			</button>
 		</div>
 	</div>
 </div>
@@ -197,8 +203,9 @@
 	private Save _save = new();
 	private int _totalStarsCollected = 0;
 	private string _syntax = "C#";
-	private string _solutionButtonText = "Reset Progress";
-	private string _solutionButtonColor = _solutionButtonResetColor;
+	private int _currentLevel = 0;
+	private bool _resetInitiated = false;
+	private bool _viewingSolution = false;
 
 	public Interpreter? PInterpreter { get; private set; }
 
@@ -235,6 +242,7 @@
 
 	private void LoadLevel(int id, int cycle = 0)
 	{
+		_currentLevel = id;
 		PLevelManager!.LoadLevel(id, cycle);
 		_descriptionText = PLevelManager.GetLevel(id).Description ?? string.Empty;
 	}
@@ -316,6 +324,13 @@
 		await UpdateSaveAsync(_save);
 	}
 
+	private async Task ResetSaveAsync()
+	{
+		await Js.RemoveLocal("save");
+		_save = await GetSaveAsync();
+		StateHasChanged();
+	}
+
 	private int _currentCycle = 0;
 	private int _minStars = int.MaxValue;
 	public void OnCompilePressed()
@@ -361,6 +376,7 @@
 		_textEditorDisabled = false;
 		ClearStack();
 		ClearHeap();
+		CancelReset();
 		_currentCycle = 0;
 		_minStars = int.MaxValue;
 	}
@@ -381,6 +397,7 @@
 		_leftButtonDisabled = !Frame.CanMoveLeft;
 		_rightButtonDisabled = !Frame.CanMoveRight;
 		DisplayFrame();
+		CancelReset(true);
 	}
 
 	public void OnRightPressed()
@@ -389,6 +406,9 @@
 		_leftButtonDisabled = !Frame.CanMoveLeft;
 		_rightButtonDisabled = !Frame.CanMoveRight;
 		DisplayFrame();
+
+		if (Memory.Instance!.CurrentFrame == 1)
+			ResetIfConditionsMet();
 
 		if (Frame.CanMoveRight)
 			return;
@@ -424,8 +444,7 @@
 	public void OnLevelPressed(int level)
 	{
 		_textEditorText = level == 0 ? DefaultStrings.TextEditor : _save.levelSaves[level].solution;
-		_solutionButtonText = level == 0 ? "Reset Progress" : "See Solution";
-		_solutionButtonColor = level == 0 ? _solutionButtonResetColor : _solutionButtonSolutionColor;
+		CancelReset();
 		OnEditPressed();
 		LoadLevel(level);
 	}
@@ -456,7 +475,47 @@
 
 	public void OnResetPressed()
 	{
-		System.Console.WriteLine("Reset pressed");
+		if (_resetInitiated)
+		{
+			CancelReset();
+			return;
+		}
+		_resetInitiated = true;
+		OutputWriteLine("WARNING: Are you sure you want to reset all progress? This will clear all stars and all saved solutions!");
+		OutputWriteLine();
+		OutputWriteLine("To confirm that you wish to reset all progress, declare a Boolean with the name \"reset\" and a value of true, and run your code.");
+		OutputWriteLine("If you've changed your mind, hit \"Cancel\"");
+	}
+
+	public void CancelReset(bool quiet = false)
+	{
+		_resetInitiated = false;
+		if (!quiet)
+			OutputClear();
+	}
+
+	private void ResetIfConditionsMet()
+	{
+		if (!_resetInitiated)
+			return;
+		if (Frame.Stack == null)
+			return;
+		if (Frame.Stack.Count != 1)
+			return;
+		Scope scope = Frame.Stack.Peek();
+		if (scope.DeclaredVariables.Count != 1)
+			return;
+		Variable variable = scope.DeclaredVariables[0];
+		if (variable._VarType != VarType.@bool)
+			return;
+		if (variable.Name != "reset")
+			return;
+		bool? value = (bool?)variable.Value;
+		if (value != true)
+			return;
+		_ = ResetSaveAsync();
+		CancelReset();
+		OutputWriteLine("All progress cleared.");
 	}
 
 	public void OnActualSolutionPressed()
@@ -465,6 +524,8 @@
 	}
 
 	public void OutputWriteLine(object message) => _outputText += message + "\n";
+
+	public void OutputWriteLine() => _outputText += "\n";
 
 	public void OutputWrite(object message) => _outputText += message;
 
