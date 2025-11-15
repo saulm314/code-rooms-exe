@@ -1,1 +1,1 @@
-int i;
+string myString = "Hello, World!";

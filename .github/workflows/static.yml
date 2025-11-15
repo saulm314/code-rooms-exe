@@ -45,7 +45,7 @@ jobs:
           dotnet-version: '9.0'
 
       - name: Run build-blazor.py
-        working-directory: ./legacy
+        working-directory: .
         run: python3 build-blazor.py deploy
 
       - name: Set up Pages
@@ -54,7 +54,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
         with:
-          path: './legacy/code-rooms-exe'
+          path: './code-rooms-exe'
 
       - name: Deploy to GitHub Pages
         id: deployment

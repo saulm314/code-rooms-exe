@@ -1,8 +1,4 @@
-// this file has been moved here:
-// https://github.com/saulm314/code-rooms-exe/blob/main/CRECSharpInterpreter/Operation.cs
-// keeping a copy here in case anyone still happens to click on this link
-
-using System;
+﻿using System;
 using CRECSharpInterpreter.Operators;
 using CRECSharpInterpreter.Collections.Generic;
 
